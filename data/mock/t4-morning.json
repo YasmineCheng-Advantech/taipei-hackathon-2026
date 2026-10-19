@@ -1,193 +1,215 @@
 {
-  "topicId": "t4-morning",
-  "_mock": {
-    "sim": true,
-    "generatedBy": "data/mock/gen_t4_morning.py",
-    "method": [
-      "全部數字為模擬，沿用 design/heatmap-canvas 設計稿的入口與數字，方便網站照稿接上。",
-      "熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動；同參數重跑結果相同。",
-      "label 依正式版的資料性質標：有 VD 的入口標 observed、無偵測器的入口標 assumed，但全部 sim: true，網站應加斜線紋路。",
-      "麥帥二橋為缺口（gap: true），值為 null，不補值。",
-      "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由網站工程師的排隊模型腳本以 model_input.json 重算。",
-      "認領人數、支持數為模擬備援值。"
-    ]
-  },
   "meta": {
+    "contract_version": "1.0",
+    "id": "t4-morning",
     "title": "內科晨峰車流",
     "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
-    "region": "臺北市內湖區（內湖科技園區聯外入口）",
-    "timeRange": {
+    "region": "內湖科技園區聯外入口",
+    "days": "平日",
+    "time_range": {
       "start": "07:00",
-      "end": "09:30",
-      "days": "平日"
+      "end": "09:30"
     },
-    "binMinutes": 15,
-    "units": {
-      "speed": "km/h",
-      "flow": "輛/15 分鐘"
-    },
+    "bin_minutes": 15,
     "sources": [
       {
+        "id": "vd-live",
         "name": "縣市即時路況（VD 每 5 分鐘統計）",
+        "kind": "real",
         "url": "https://data.gov.tw/dataset/166031",
-        "kind": "observed",
-        "used": false
+        "period": "2026-10-19～10-23 07:00–10:30（收集中，本檔未使用）"
       },
       {
+        "id": "vd-static",
         "name": "臺北市車輛偵測器（VD）靜態資料",
-        "url": "https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2",
-        "kind": "observed",
-        "used": false
+        "kind": "real",
+        "url": "https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2"
       },
       {
+        "id": "dot-2015",
         "name": "交通局 2015 年內湖上班時間調查",
+        "kind": "survey",
         "url": "https://dot.gov.taipei/News_Content.aspx?n=42F54DDC552218AD&sms=051295A13C5CC507&s=6B82592FD161ADB6",
-        "kind": "observed",
-        "used": true
+        "note": "82% 集中在上午 9 時；資料已逾十年"
       },
       {
-        "name": "本作品模擬資料",
-        "url": null,
-        "kind": "sim",
-        "used": true
+        "id": "honolulu-1988",
+        "name": "Giuliano & Golob，TRR 1280（1990）檀香山錯峰試辦",
+        "kind": "survey",
+        "url": "https://onlinepubs.trb.org/Onlinepubs/trr/1990/1280/1280-006.pdf"
+      },
+      {
+        "id": "mock",
+        "name": "本作品模擬資料（data/mock/gen_t4_morning.py）",
+        "kind": "mock"
       }
     ],
-    "updatedAt": "2026-10-19T12:00:00+08:00",
-    "label": "assumed",
-    "sim": true
+    "updated_at": "2026-10-19T12:00:00+08:00",
+    "sim": true,
+    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。label 依正式版的資料性質標：有 VD 的入口標 observed，無偵測器的入口標 assumed；麥帥二橋為缺口，不補值。幫你決定：路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。認領人數、支持數為模擬備援值。",
+    "disclaimer": "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"
   },
   "heatmap": {
+    "title": "早上八點半，車都卡在哪裡？",
+    "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
     "rows": [
       {
         "id": "neihu-rd-1",
         "name": "內湖路一段",
-        "direction": "由大直",
-        "coverage": "observed",
-        "vdIds": [],
+        "sub": "由大直",
+        "kind": "observed",
+        "x": 12,
+        "y": 35,
         "lat": 25.083,
         "lng": 121.562,
-        "coordsApprox": true,
-        "mapX": 12,
-        "mapY": 35,
-        "label": "assumed",
-        "sim": true
+        "src": "vd-live",
+        "detector": "[VD 編號待盤點]"
       },
       {
         "id": "tiding-n",
         "name": "堤頂大道",
-        "direction": "北向",
-        "coverage": "observed",
-        "vdIds": [],
+        "sub": "北向",
+        "kind": "observed",
+        "x": 24,
+        "y": 55,
         "lat": 25.0715,
         "lng": 121.571,
-        "coordsApprox": true,
-        "mapX": 24,
-        "mapY": 55,
-        "label": "assumed",
-        "sim": true
+        "src": "vd-live",
+        "detector": "[VD 編號待盤點]"
       },
       {
         "id": "minquan-br",
         "name": "民權大橋",
-        "direction": "往內湖",
-        "coverage": "observed",
-        "vdIds": [],
+        "sub": "往內湖",
+        "kind": "observed",
+        "x": 30,
+        "y": 74,
         "lat": 25.0662,
         "lng": 121.579,
-        "coordsApprox": true,
-        "mapX": 30,
-        "mapY": 74,
-        "label": "assumed",
-        "sim": true
+        "src": "vd-live",
+        "detector": "[VD 編號待盤點]"
       },
       {
         "id": "macarthur-2",
         "name": "麥帥二橋",
-        "direction": "往內湖",
-        "coverage": "gap",
-        "vdIds": [],
+        "sub": "往內湖",
+        "kind": "gap",
+        "x": 46,
+        "y": 86,
         "lat": 25.059,
-        "lng": 121.586,
-        "coordsApprox": true,
-        "mapX": 46,
-        "mapY": 86,
-        "label": "assumed",
-        "sim": true
+        "lng": 121.586
       },
       {
         "id": "chengmei-br",
         "name": "成美橋",
-        "direction": "往內湖",
-        "coverage": "observed",
-        "vdIds": [],
+        "sub": "往內湖",
+        "kind": "observed",
+        "x": 60,
+        "y": 88,
         "lat": 25.0575,
         "lng": 121.6005,
-        "coordsApprox": true,
-        "mapX": 60,
-        "mapY": 88,
-        "label": "assumed",
-        "sim": true
+        "src": "vd-live",
+        "detector": "[VD 編號待盤點]"
       },
       {
         "id": "huandong",
         "name": "環東大道",
-        "direction": "往內科",
-        "coverage": "sim",
-        "vdIds": [],
+        "sub": "往內科",
+        "kind": "sim",
+        "x": 74,
+        "y": 78,
         "lat": 25.064,
-        "lng": 121.615,
-        "coordsApprox": true,
-        "mapX": 74,
-        "mapY": 78,
-        "label": "assumed",
-        "sim": true
+        "lng": 121.615
       },
       {
         "id": "nh1-neihu-ic",
         "name": "國1 內湖交流道",
-        "direction": "下匝道",
-        "coverage": "sim",
-        "vdIds": [],
+        "sub": "下匝道",
+        "kind": "sim",
+        "x": 84,
+        "y": 62,
         "lat": 25.0735,
-        "lng": 121.596,
-        "coordsApprox": true,
-        "mapX": 84,
-        "mapY": 62,
-        "label": "assumed",
-        "sim": true
+        "lng": 121.596
       },
       {
         "id": "kangning-3",
         "name": "康寧路三段",
-        "direction": "由汐止",
-        "coverage": "sim",
-        "vdIds": [],
+        "sub": "由汐止",
+        "kind": "sim",
+        "x": 90,
+        "y": 30,
         "lat": 25.074,
-        "lng": 121.612,
-        "coordsApprox": true,
-        "mapX": 90,
-        "mapY": 30,
-        "label": "assumed",
-        "sim": true
+        "lng": 121.612
       }
     ],
     "cols": [
-      "07:00",
-      "07:15",
-      "07:30",
-      "07:45",
-      "08:00",
-      "08:15",
-      "08:30",
-      "08:45",
-      "09:00",
-      "09:15"
+      {
+        "id": "t0700",
+        "label": "07:00",
+        "start": "07:00",
+        "end": "07:15"
+      },
+      {
+        "id": "t0715",
+        "label": "07:15",
+        "start": "07:15",
+        "end": "07:30"
+      },
+      {
+        "id": "t0730",
+        "label": "07:30",
+        "start": "07:30",
+        "end": "07:45"
+      },
+      {
+        "id": "t0745",
+        "label": "07:45",
+        "start": "07:45",
+        "end": "08:00"
+      },
+      {
+        "id": "t0800",
+        "label": "08:00",
+        "start": "08:00",
+        "end": "08:15"
+      },
+      {
+        "id": "t0815",
+        "label": "08:15",
+        "start": "08:15",
+        "end": "08:30"
+      },
+      {
+        "id": "t0830",
+        "label": "08:30",
+        "start": "08:30",
+        "end": "08:45"
+      },
+      {
+        "id": "t0845",
+        "label": "08:45",
+        "start": "08:45",
+        "end": "09:00"
+      },
+      {
+        "id": "t0900",
+        "label": "09:00",
+        "start": "09:00",
+        "end": "09:15"
+      },
+      {
+        "id": "t0915",
+        "label": "09:15",
+        "start": "09:15",
+        "end": "09:30"
+      }
     ],
     "layers": [
       {
         "id": "speed",
         "name": "壅塞（車速）",
-        "unit": "km/h",
+        "unit": "平均車速 km/h",
+        "direction": "low_is_bad",
         "thresholds": [
           50,
           40,
@@ -195,14 +217,440 @@
           20,
           10
         ],
-        "worse": "lower",
-        "label": "assumed",
-        "sim": true
+        "legend": [
+          "50+",
+          "40–50",
+          "30–40",
+          "20–30",
+          "10–20",
+          "<10"
+        ],
+        "legend_ends": [
+          "順",
+          "塞 km/h"
+        ],
+        "level_text": [
+          "車流順暢。",
+          "略有車多。",
+          "開始變慢。",
+          "明顯壅塞。",
+          "嚴重壅塞，走走停停。",
+          "幾乎停滯。"
+        ],
+        "cells": [
+          [
+            {
+              "v": 56,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 57,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 57,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 54,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 47,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 30,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 22,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 24,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 36,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 49,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 58,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 59,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 59,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 52,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 44,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 29,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 14,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 10,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 17,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 35,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 60,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 56,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 55,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 51,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 40,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 26,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 12,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 18,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 33,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 48,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            }
+          ],
+          [
+            {
+              "v": 59,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 60,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 55,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 51,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 42,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 27,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 15,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 11,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 25,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 42,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 56,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 56,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 55,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 49,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 38,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 20,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 16,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 25,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 40,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 52,
+              "label": "assumed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 58,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 58,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 55,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 41,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 27,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 15,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 16,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 30,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 41,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 52,
+              "label": "assumed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 60,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 54,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 51,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 44,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 35,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 30,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 30,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 41,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 51,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 57,
+              "label": "assumed",
+              "sim": true
+            }
+          ]
+        ]
       },
       {
         "id": "flow",
         "name": "需求（流量）",
-        "unit": "輛/15 分鐘",
+        "unit": "輛 / 15 分鐘",
+        "direction": "high_is_bad",
         "thresholds": [
           400,
           600,
@@ -210,660 +658,507 @@
           1000,
           1200
         ],
-        "worse": "higher",
-        "label": "assumed",
-        "sim": true
+        "legend": [
+          "<400",
+          "400–600",
+          "600–800",
+          "800–1000",
+          "1000–1200",
+          "1200+"
+        ],
+        "legend_ends": [
+          "少",
+          "多 輛"
+        ],
+        "level_text": [
+          "車很少。",
+          "車流偏少。",
+          "車流中等。",
+          "車流偏多。",
+          "車流很多。",
+          "車流接近上限。"
+        ],
+        "cells": [
+          [
+            {
+              "v": 329,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 339,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 361,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 417,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 536,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 667,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 799,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 791,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 658,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 508,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 622,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 632,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 654,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 676,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 835,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1112,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1398,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1490,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1275,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 985,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 571,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 546,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 583,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 685,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 894,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1167,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1299,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1232,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 991,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 760,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            },
+            {
+              "gap": true,
+              "note": "無偵測器，不補值"
+            }
+          ],
+          [
+            {
+              "v": 479,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 490,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 474,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 540,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 691,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 919,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1109,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 1077,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 903,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 691,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 574,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 593,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 646,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 786,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 1039,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 1278,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 1391,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 1247,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 975,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 758,
+              "label": "assumed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 381,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 402,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 457,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 539,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 724,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 878,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 886,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 748,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 539,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 433,
+              "label": "assumed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 315,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 300,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 363,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 483,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 631,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 715,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 631,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 503,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 389,
+              "label": "assumed",
+              "sim": true
+            },
+            {
+              "v": 331,
+              "label": "assumed",
+              "sim": true
+            }
+          ]
+        ]
       }
     ],
-    "defaultLayer": "speed",
-    "cells": [
-      [
+    "default_layer": "speed",
+    "landmarks": [
+      {
+        "name": "內湖科技園區",
+        "x": 62,
+        "y": 30
+      },
+      {
+        "name": "基隆河",
+        "x": 40,
+        "y": 94
+      }
+    ],
+    "aux": {
+      "title": "文湖線負載",
+      "subtitle": "改搭捷運吃得下嗎？",
+      "unit": "%",
+      "alert_at": 90,
+      "values": [
         {
-          "speed": 56,
-          "flow": 329,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 57,
-          "flow": 339,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 57,
-          "flow": 361,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 54,
-          "flow": 417,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 47,
-          "flow": 536,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 30,
-          "flow": 667,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 22,
-          "flow": 799,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 24,
-          "flow": 791,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 36,
-          "flow": 658,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 49,
-          "flow": 508,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": 58,
-          "flow": 622,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 59,
-          "flow": 632,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 59,
-          "flow": 654,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 52,
-          "flow": 676,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 44,
-          "flow": 835,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 29,
-          "flow": 1112,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 14,
-          "flow": 1398,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 10,
-          "flow": 1490,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 17,
-          "flow": 1275,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 35,
-          "flow": 985,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": 60,
-          "flow": 571,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 56,
-          "flow": 546,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 55,
-          "flow": 583,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 51,
-          "flow": 685,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 40,
-          "flow": 894,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 26,
-          "flow": 1167,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 12,
-          "flow": 1299,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 18,
-          "flow": 1232,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 33,
-          "flow": 991,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 48,
-          "flow": 760,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": null,
-          "flow": null,
-          "gap": true,
-          "label": "observed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": 59,
-          "flow": 479,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 60,
-          "flow": 490,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 55,
-          "flow": 474,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 51,
-          "flow": 540,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 42,
-          "flow": 691,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 27,
-          "flow": 919,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 15,
-          "flow": 1109,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 11,
-          "flow": 1077,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 25,
-          "flow": 903,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        },
-        {
-          "speed": 42,
-          "flow": 691,
-          "gap": false,
-          "label": "observed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": 56,
-          "flow": 574,
-          "gap": false,
+          "v": 55,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 56,
-          "flow": 593,
-          "gap": false,
+          "v": 56,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 55,
-          "flow": 646,
-          "gap": false,
+          "v": 59,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 49,
-          "flow": 786,
-          "gap": false,
+          "v": 65,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 38,
-          "flow": 1039,
-          "gap": false,
+          "v": 76,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 20,
-          "flow": 1278,
-          "gap": false,
+          "v": 87,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 16,
-          "flow": 1391,
-          "gap": false,
+          "v": 95,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 25,
-          "flow": 1247,
-          "gap": false,
+          "v": 93,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 40,
-          "flow": 975,
-          "gap": false,
+          "v": 83,
           "label": "assumed",
           "sim": true
         },
         {
-          "speed": 52,
-          "flow": 758,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": 58,
-          "flow": 381,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 58,
-          "flow": 402,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 55,
-          "flow": 457,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 41,
-          "flow": 539,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 27,
-          "flow": 724,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 15,
-          "flow": 878,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 16,
-          "flow": 886,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 30,
-          "flow": 748,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 41,
-          "flow": 539,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 52,
-          "flow": 433,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        }
-      ],
-      [
-        {
-          "speed": 60,
-          "flow": 315,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 54,
-          "flow": 300,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 51,
-          "flow": 363,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 44,
-          "flow": 483,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 35,
-          "flow": 631,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 30,
-          "flow": 715,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 30,
-          "flow": 631,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 41,
-          "flow": 503,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 51,
-          "flow": 389,
-          "gap": false,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "speed": 57,
-          "flow": 331,
-          "gap": false,
+          "v": 71,
           "label": "assumed",
           "sim": true
         }
       ]
-    ],
-    "mrtLoad": {
-      "name": "文湖線負載",
-      "unit": "%",
-      "values": [
-        {
-          "time": "07:00",
-          "pct": 55,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "07:15",
-          "pct": 56,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "07:30",
-          "pct": 59,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "07:45",
-          "pct": 65,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "08:00",
-          "pct": 76,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "08:15",
-          "pct": 87,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "08:30",
-          "pct": 95,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "08:45",
-          "pct": 93,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "09:00",
-          "pct": 83,
-          "label": "assumed",
-          "sim": true
-        },
-        {
-          "time": "09:15",
-          "pct": 71,
-          "label": "assumed",
-          "sim": true
-        }
-      ],
-      "label": "assumed",
-      "sim": true
-    },
-    "label": "assumed",
-    "sim": true
+    }
   },
   "kpis": [
     {
@@ -871,9 +1166,11 @@
       "title": "最塞的一格",
       "value": 10,
       "unit": "km/h",
-      "caption": "堤頂大道 08:45，平均車速最低",
-      "rowId": "tiding-n",
-      "time": "08:45",
+      "note": "堤頂大道 08:45，平均車速最低",
+      "ref": {
+        "row": "tiding-n",
+        "col": "t0845"
+      },
       "label": "computed",
       "sim": true
     },
@@ -881,297 +1178,3254 @@
       "id": "peak-window",
       "title": "尖峰集中時段",
       "value": "08:30–09:15",
-      "unit": null,
-      "caption": "半數以上入口低於 20 km/h",
+      "note": "半數以上入口低於 20 km/h",
       "label": "computed",
       "sim": true
     },
     {
       "id": "coverage",
       "title": "偵測器覆蓋",
-      "value": 4,
-      "unit": "/ 8 個入口",
-      "caption": "其餘為模擬或缺口，格子另有標示",
+      "value": "4 / 8",
+      "unit": "個入口有真實資料",
+      "note": "其餘為模擬或缺口，格子另有標示",
       "label": "observed",
       "sim": true
     }
   ],
   "decide": {
-    "entranceId": "tiding-n",
-    "arriveBy": "09:00",
-    "options": [
-      {
-        "depart": "07:15",
-        "minutes": 9,
-        "arrive": "07:24",
-        "slotLeftPct": 70,
-        "full": false,
-        "late": false,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "depart": "07:30",
-        "minutes": 11,
-        "arrive": "07:41",
-        "slotLeftPct": 35,
-        "full": false,
-        "late": false,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "depart": "07:45",
-        "minutes": 14,
-        "arrive": "07:59",
-        "slotLeftPct": 12,
-        "full": false,
-        "late": false,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "depart": "08:00",
-        "minutes": 19,
-        "arrive": "08:19",
-        "slotLeftPct": 0,
-        "full": true,
-        "late": false,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "depart": "08:15",
-        "minutes": 26,
-        "arrive": "08:41",
-        "slotLeftPct": null,
-        "full": false,
-        "late": false,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "depart": "08:30",
-        "minutes": 31,
-        "arrive": "09:01",
-        "slotLeftPct": null,
-        "full": false,
-        "late": true,
-        "label": "computed",
-        "sim": true
-      }
-    ],
-    "recommended": "07:45",
-    "baseline": {
-      "depart": "08:15",
-      "minutes": 26,
-      "note": "平常出門時間（使用者設定）",
-      "label": "assumed",
-      "sim": true
+    "title": "今天的出門建議",
+    "metric": {
+      "name": "路上時間",
+      "unit": "分"
     },
-    "minutesSaved": 12,
-    "reason": "07:45 出門還有名額，比平常少 12 分鐘，09:00 前到得了。建議每天早上產生一次後固定，只有事故或施工才更新。",
-    "label": "computed",
-    "sim": true
+    "setup": {
+      "rows": [
+        "tiding-n",
+        "minquan-br",
+        "chengmei-br",
+        "huandong"
+      ],
+      "deadlines": [
+        "08:30",
+        "09:00",
+        "09:30",
+        "10:00"
+      ],
+      "flex": [
+        {
+          "id": "both",
+          "label": "可以提早或延後",
+          "note": "前後 45 分鐘都可以",
+          "allows": "both"
+        },
+        {
+          "id": "earlier",
+          "label": "只能提早",
+          "note": "例如晚上要早點離開",
+          "allows": "earlier"
+        },
+        {
+          "id": "later",
+          "label": "只能延後",
+          "note": "例如早上要先送小孩",
+          "allows": "later"
+        },
+        {
+          "id": "none",
+          "label": "不能調整",
+          "note": "我們會告訴你最不塞的路線，不會叫你改時間",
+          "allows": "none"
+        }
+      ]
+    },
+    "plans": [
+      {
+        "row": "tiding-n",
+        "deadline": "08:30",
+        "recommended": "d0730",
+        "baseline": "d0745",
+        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 4 分，08:30 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:08",
+            "cost": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:24",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:41",
+            "cost": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:00",
+            "cost": {
+              "value": 15,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:20",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "tiding-n",
+        "deadline": "09:00",
+        "recommended": "d0745",
+        "baseline": "d0815",
+        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 12 分，09:00 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:08",
+            "cost": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 19,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:24",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 18,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:41",
+            "cost": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:00",
+            "cost": {
+              "value": 15,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:20",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:01",
+            "cost": {
+              "value": 31,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:17",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "tiding-n",
+        "deadline": "09:30",
+        "recommended": "d0745",
+        "baseline": "d0845",
+        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 17 分，09:30 前到得了。",
+        "options": [
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:41",
+            "cost": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:00",
+            "cost": {
+              "value": 15,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 17,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:20",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:01",
+            "cost": {
+              "value": 31,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:17",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:28",
+            "cost": {
+              "value": 28,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:38",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "tiding-n",
+        "deadline": "10:00",
+        "recommended": "d0930",
+        "baseline": "d0915",
+        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 6 分，10:00 前到得了。",
+        "options": [
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:20",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 3,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:01",
+            "cost": {
+              "value": 31,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:17",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:28",
+            "cost": {
+              "value": 28,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:38",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0930",
+            "key": "09:30",
+            "arrive": "09:47",
+            "cost": {
+              "value": 17,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 60,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0945",
+            "key": "09:45",
+            "arrive": "09:57",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 75,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "minquan-br",
+        "deadline": "08:30",
+        "recommended": "d0730",
+        "baseline": "d0745",
+        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 4 分，08:30 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:09",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:25",
+            "cost": {
+              "value": 10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:42",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:01",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:21",
+            "cost": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "minquan-br",
+        "deadline": "09:00",
+        "recommended": "d0745",
+        "baseline": "d0815",
+        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 11 分，09:00 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:09",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 18,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:25",
+            "cost": {
+              "value": 10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 17,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:42",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 15,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:01",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:21",
+            "cost": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:01",
+            "cost": {
+              "value": 31,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:17",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "minquan-br",
+        "deadline": "09:30",
+        "recommended": "d0745",
+        "baseline": "d0845",
+        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 16 分，09:30 前到得了。",
+        "options": [
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:42",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:01",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:21",
+            "cost": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:01",
+            "cost": {
+              "value": 31,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:17",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:29",
+            "cost": {
+              "value": 29,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 3,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:38",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "minquan-br",
+        "deadline": "10:00",
+        "recommended": "d0930",
+        "baseline": "d0915",
+        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 6 分，10:00 前到得了。",
+        "options": [
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:21",
+            "cost": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 2,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:01",
+            "cost": {
+              "value": 31,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:17",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:29",
+            "cost": {
+              "value": 29,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:38",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0930",
+            "key": "09:30",
+            "arrive": "09:47",
+            "cost": {
+              "value": 17,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 60,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0945",
+            "key": "09:45",
+            "arrive": "09:58",
+            "cost": {
+              "value": 13,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 75,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "chengmei-br",
+        "deadline": "08:30",
+        "recommended": "d0730",
+        "baseline": "d0745",
+        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 4 分，08:30 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:10",
+            "cost": {
+              "value": 10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:26",
+            "cost": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:44",
+            "cost": {
+              "value": 14,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:03",
+            "cost": {
+              "value": 18,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:25",
+            "cost": {
+              "value": 25,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:47",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -14,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "chengmei-br",
+        "deadline": "09:00",
+        "recommended": "d0745",
+        "baseline": "d0815",
+        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 14 分，09:00 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:10",
+            "cost": {
+              "value": 10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 22,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:26",
+            "cost": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:44",
+            "cost": {
+              "value": 14,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 18,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:03",
+            "cost": {
+              "value": 18,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 14,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:25",
+            "cost": {
+              "value": 25,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:47",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:07",
+            "cost": {
+              "value": 37,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:23",
+            "cost": {
+              "value": 38,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "chengmei-br",
+        "deadline": "09:30",
+        "recommended": "d0745",
+        "baseline": "d0845",
+        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 20 分，09:30 前到得了。",
+        "options": [
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:44",
+            "cost": {
+              "value": 14,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 24,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "08:03",
+            "cost": {
+              "value": 18,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:25",
+            "cost": {
+              "value": 25,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 13,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:47",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:07",
+            "cost": {
+              "value": 37,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:23",
+            "cost": {
+              "value": 38,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:34",
+            "cost": {
+              "value": 34,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "chengmei-br",
+        "deadline": "10:00",
+        "recommended": "d0930",
+        "baseline": "d0915",
+        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 7 分，10:00 前到得了。",
+        "options": [
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:25",
+            "cost": {
+              "value": 25,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 2,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:47",
+            "cost": {
+              "value": 32,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "09:07",
+            "cost": {
+              "value": 37,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:23",
+            "cost": {
+              "value": 38,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:34",
+            "cost": {
+              "value": 34,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:42",
+            "cost": {
+              "value": 27,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0930",
+            "key": "09:30",
+            "arrive": "09:50",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 60,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0945",
+            "key": "09:45",
+            "arrive": "10:00",
+            "cost": {
+              "value": 15,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 75,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "huandong",
+        "deadline": "08:30",
+        "recommended": "d0730",
+        "baseline": "d0745",
+        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 3 分，08:30 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:07",
+            "cost": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 5,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:23",
+            "cost": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:39",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 3,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "07:57",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:16",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:35",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "huandong",
+        "deadline": "09:00",
+        "recommended": "d0745",
+        "baseline": "d0815",
+        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 8 分，09:00 前到得了。",
+        "options": [
+          {
+            "id": "d0700",
+            "key": "07:00",
+            "arrive": "07:07",
+            "cost": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 13,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 85,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0715",
+            "key": "07:15",
+            "arrive": "07:23",
+            "cost": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 70,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:39",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 11,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "07:57",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:16",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:35",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "08:53",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -3,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:09",
+            "cost": {
+              "value": 24,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late"
+          }
+        ]
+      },
+      {
+        "row": "huandong",
+        "deadline": "09:30",
+        "recommended": "d0745",
+        "baseline": "d0845",
+        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 12 分，09:30 前到得了。",
+        "options": [
+          {
+            "id": "d0730",
+            "key": "07:30",
+            "arrive": "07:39",
+            "cost": {
+              "value": 9,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 15,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 35,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0745",
+            "key": "07:45",
+            "arrive": "07:57",
+            "cost": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 12,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 12,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:16",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 8,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:35",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "08:53",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:09",
+            "cost": {
+              "value": 24,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:21",
+            "cost": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 3,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:32",
+            "cost": {
+              "value": 17,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "late",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "row": "huandong",
+        "deadline": "10:00",
+        "recommended": "d0930",
+        "baseline": "d0915",
+        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 4 分，10:00 前到得了。",
+        "options": [
+          {
+            "id": "d0800",
+            "key": "08:00",
+            "arrive": "08:16",
+            "cost": {
+              "value": 16,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "full",
+            "slot_left": {
+              "value": 0,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0815",
+            "key": "08:15",
+            "arrive": "08:35",
+            "cost": {
+              "value": 20,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -3,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0830",
+            "key": "08:30",
+            "arrive": "08:53",
+            "cost": {
+              "value": 23,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -6,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0845",
+            "key": "08:45",
+            "arrive": "09:09",
+            "cost": {
+              "value": 24,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0900",
+            "key": "09:00",
+            "arrive": "09:21",
+            "cost": {
+              "value": 21,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": -4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "peak"
+          },
+          {
+            "id": "d0915",
+            "key": "09:15",
+            "arrive": "09:32",
+            "cost": {
+              "value": 17,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 40,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0930",
+            "key": "09:30",
+            "arrive": "09:43",
+            "cost": {
+              "value": 13,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 4,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 60,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          },
+          {
+            "id": "d0945",
+            "key": "09:45",
+            "arrive": "09:55",
+            "cost": {
+              "value": 10,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "saved": {
+              "value": 7,
+              "unit": "分",
+              "label": "computed",
+              "sim": true
+            },
+            "status": "open",
+            "slot_left": {
+              "value": 75,
+              "unit": "%",
+              "label": "assumed",
+              "sim": true
+            }
+          }
+        ]
+      }
+    ]
   },
   "collective": {
-    "entranceId": "tiding-n",
+    "title": "如果大家都這樣做呢？",
+    "place": "堤頂大道北向",
     "cols": [
-      "07:00",
-      "07:15",
-      "07:30",
-      "07:45",
-      "08:00",
-      "08:15",
-      "08:30",
-      "08:45",
-      "09:00",
-      "09:15"
+      "t0700",
+      "t0715",
+      "t0730",
+      "t0745",
+      "t0800",
+      "t0815",
+      "t0830",
+      "t0845",
+      "t0900",
+      "t0915"
     ],
+    "layer": "speed",
     "modes": [
       {
-        "id": "only-you",
-        "name": "只有你這樣做",
-        "minutesDelta": -12,
-        "summary": "你省很多，但路況幾乎不變。",
-        "levels": [
-          0,
-          0,
-          1,
-          1,
-          2,
-          3,
-          4,
-          5,
-          5,
-          4
-        ],
-        "label": "assumed",
-        "sim": true
+        "id": "solo",
+        "title": "只有你這樣做",
+        "delta": {
+          "value": -12,
+          "unit": "分",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "你省很多，但路況幾乎不變。",
+        "curve": [
+          {
+            "v": 55,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 55,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 45,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 45,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 35,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 15,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 8,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 8,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 15,
+            "label": "assumed",
+            "sim": true
+          }
+        ]
       },
       {
-        "id": "same-advice",
-        "name": "大家都照同一建議",
-        "minutesDelta": -2,
-        "summary": "07:30 變成新尖峰，大家只省一點點。",
-        "levels": [
-          0,
-          1,
-          4,
-          5,
-          4,
-          3,
-          3,
-          4,
-          4,
-          3
+        "id": "same",
+        "title": "大家都照同一建議",
+        "delta": {
+          "value": -2,
+          "unit": "分",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "07:30 變成新尖峰，大家只省一點點。",
+        "curve": [
+          {
+            "v": 55,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 45,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 15,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 8,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 15,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 15,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 15,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          }
         ],
-        "label": "assumed",
-        "sim": true
+        "highlight": [
+          "t0730"
+        ]
       },
       {
-        "id": "by-slot",
-        "name": "依名額分配",
-        "minutesDelta": -7,
-        "summary": "尖峰被攤平，平均每人都省到時間。",
-        "levels": [
-          0,
-          1,
-          2,
-          2,
-          2,
-          3,
-          3,
-          3,
-          3,
-          2
-        ],
-        "label": "assumed",
-        "sim": true
+        "id": "split",
+        "title": "依名額分配",
+        "delta": {
+          "value": -7,
+          "unit": "分",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "尖峰被攤平，平均每人都省到時間。",
+        "curve": [
+          {
+            "v": 55,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 45,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 35,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 35,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 35,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 25,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 35,
+            "label": "assumed",
+            "sim": true
+          }
+        ]
       }
     ],
     "claims": {
-      "totalThisWeek": 1284,
+      "total": {
+        "value": 1284,
+        "unit": "人",
+        "note": "本週",
+        "label": "assumed",
+        "sim": true
+      },
+      "note": "08:00 已滿，系統開始把人推薦到 07:15 和 07:30，避免形成新尖峰。",
       "slots": [
         {
-          "time": "07:15",
-          "filledPct": 30,
-          "full": false,
-          "label": "assumed",
-          "sim": true
+          "key": "07:15",
+          "filled": {
+            "value": 30,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": false
         },
         {
-          "time": "07:30",
-          "filledPct": 65,
-          "full": false,
-          "label": "assumed",
-          "sim": true
+          "key": "07:30",
+          "filled": {
+            "value": 65,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": false
         },
         {
-          "time": "07:45",
-          "filledPct": 88,
-          "full": false,
-          "label": "assumed",
-          "sim": true
+          "key": "07:45",
+          "filled": {
+            "value": 88,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": false
         },
         {
-          "time": "08:00",
-          "filledPct": 100,
-          "full": true,
-          "label": "assumed",
-          "sim": true
+          "key": "08:00",
+          "filled": {
+            "value": 100,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": true
         }
-      ],
-      "note": "認領數為模擬備援值；後端正常時網站改用真實人數。",
-      "label": "assumed",
-      "sim": true
-    },
-    "label": "assumed",
-    "sim": true
+      ]
+    }
   },
   "scenario": {
-    "bottleneck": {
-      "entranceId": "tiding-n",
-      "name": "堤頂大道北向",
-      "capacityPer15min": 1000,
-      "capacityRangePct": 10,
-      "label": "assumed",
-      "sim": true
-    },
+    "title": "要多少人換時段，才不會塞？",
+    "intro": "拉動滑桿，把 08:30–09:15 的一部分車流移到其他時段。結果用區間表示（容量 ±10%），也會標出移過去之後是否形成新的尖峰。",
+    "place": "堤頂大道北向",
     "cols": [
-      "07:00",
-      "07:15",
-      "07:30",
-      "07:45",
-      "08:00",
-      "08:15",
-      "08:30",
-      "08:45",
-      "09:00",
-      "09:15",
-      "09:30",
-      "09:45",
-      "10:00",
-      "10:15"
+      {
+        "id": "s0700",
+        "label": "07:00",
+        "start": "07:00",
+        "end": "07:15"
+      },
+      {
+        "id": "s0715",
+        "label": "07:15",
+        "start": "07:15",
+        "end": "07:30"
+      },
+      {
+        "id": "s0730",
+        "label": "07:30",
+        "start": "07:30",
+        "end": "07:45"
+      },
+      {
+        "id": "s0745",
+        "label": "07:45",
+        "start": "07:45",
+        "end": "08:00"
+      },
+      {
+        "id": "s0800",
+        "label": "08:00",
+        "start": "08:00",
+        "end": "08:15"
+      },
+      {
+        "id": "s0815",
+        "label": "08:15",
+        "start": "08:15",
+        "end": "08:30"
+      },
+      {
+        "id": "s0830",
+        "label": "08:30",
+        "start": "08:30",
+        "end": "08:45"
+      },
+      {
+        "id": "s0845",
+        "label": "08:45",
+        "start": "08:45",
+        "end": "09:00"
+      },
+      {
+        "id": "s0900",
+        "label": "09:00",
+        "start": "09:00",
+        "end": "09:15"
+      },
+      {
+        "id": "s0915",
+        "label": "09:15",
+        "start": "09:15",
+        "end": "09:30"
+      },
+      {
+        "id": "s0930",
+        "label": "09:30",
+        "start": "09:30",
+        "end": "09:45"
+      },
+      {
+        "id": "s0945",
+        "label": "09:45",
+        "start": "09:45",
+        "end": "10:00"
+      },
+      {
+        "id": "s1000",
+        "label": "10:00",
+        "start": "10:00",
+        "end": "10:15"
+      },
+      {
+        "id": "s1015",
+        "label": "10:15",
+        "start": "10:15",
+        "end": "10:30"
+      }
     ],
     "slider": {
+      "name": "移出尖峰的比例",
+      "unit": "%",
       "min": 0,
       "max": 50,
       "step": 5,
-      "default": 5,
-      "unit": "%",
-      "label": "assumed",
-      "sim": true
+      "default": 5
     },
+    "references": [
+      {
+        "value": 6.5,
+        "text": "檀香山 1988 實際參與 6–7%",
+        "src": "honolulu-1988"
+      }
+    ],
+    "peak_cols": [
+      "s0830",
+      "s0845",
+      "s0900",
+      "s0915"
+    ],
     "targets": [
       {
         "id": "early",
-        "name": "提早到 07:30–08:00",
+        "label": "提早到 07:30–08:00",
         "cols": [
-          "07:30",
-          "07:45"
+          "s0730",
+          "s0745"
         ]
       },
       {
         "id": "late",
-        "name": "延後到 09:30–10:00",
+        "label": "延後到 09:30–10:00",
         "cols": [
-          "09:30",
-          "09:45"
+          "s0930",
+          "s0945"
         ]
       }
     ],
-    "shiftFrom": [
-      "08:30",
-      "08:45",
-      "09:00",
-      "09:15"
-    ],
-    "reference": {
-      "name": "檀香山 1988 實際參與",
-      "low": 6,
-      "high": 7,
-      "unit": "%",
-      "source": "Giuliano & Golob，TRR 1280（1990）",
-      "label": "observed",
+    "capacity": {
+      "value": 1000,
+      "lo": 900,
+      "hi": 1100,
+      "unit": "輛/15 分鐘",
+      "label": "assumed",
       "sim": true
     },
     "baseline": {
-      "demand": [
+      "queue_max": {
+        "value": 616,
+        "lo": 316,
+        "hi": 958,
+        "unit": "輛",
+        "note": "lo／hi 對應容量 +10%／−10%",
+        "label": "computed",
+        "sim": true
+      },
+      "clear_time": "09:45",
+      "delay_change": {
+        "value": 0,
+        "unit": "%",
+        "label": "computed",
+        "sim": true
+      },
+      "new_peak": null,
+      "cum_arrive": [
         500,
-        503,
-        516,
-        566,
-        694,
-        921,
-        1168,
-        1280,
-        1168,
-        921,
-        694,
-        566,
-        516,
-        503
+        1003,
+        1519,
+        2085,
+        2779,
+        3700,
+        4868,
+        6148,
+        7316,
+        8237,
+        8931,
+        9497,
+        10013,
+        10516
+      ],
+      "cum_depart": [
+        500,
+        1003,
+        1519,
+        2085,
+        2779,
+        3700,
+        4700,
+        5700,
+        6700,
+        7700,
+        8700,
+        9497,
+        10013,
+        10516
       ],
       "queue": [
         0,
@@ -1189,62 +4443,61 @@
         0,
         0
       ],
-      "cumArrive": [
-        500,
-        1003,
-        1519,
-        2085,
-        2779,
-        3700,
-        4868,
-        6148,
-        7316,
-        8237,
-        8931,
-        9497,
-        10013,
-        10516
-      ],
-      "cumDepart": [
-        500,
-        1003,
-        1519,
-        2085,
-        2779,
-        3700,
-        4700,
-        5700,
-        6700,
-        7700,
-        8700,
-        9497,
-        10013,
-        10516
-      ],
-      "maxQueue": 616,
-      "clearTime": "09:45",
       "label": "computed",
       "sim": true
     },
-    "cases": [
+    "results": [
       {
-        "shiftPct": 0,
         "target": "early",
-        "demand": [
+        "shift": 0,
+        "queue_max": {
+          "value": 616,
+          "lo": 316,
+          "hi": 958,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:45",
+        "delay_change": {
+          "value": 0,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          1168,
-          1280,
-          1168,
-          921,
-          694,
-          566,
-          516,
-          503
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4868,
+          6148,
+          7316,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cum_depart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4700,
+          5700,
+          6700,
+          7700,
+          8700,
+          9497,
+          10013,
+          10516
         ],
         "queue": [
           0,
@@ -1262,75 +4515,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 5,
+        "queue_max": {
+          "value": 435,
+          "lo": 135,
+          "hi": 756,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:45",
+        "delay_change": {
+          "value": -41,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
           1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4868,
-          6148,
-          7316,
+          1632,
+          2312,
+          3006,
+          3927,
+          5036,
+          6252,
+          7362,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4700,
-          5700,
-          6700,
-          7700,
-          8700,
+          1632,
+          2312,
+          3006,
+          3927,
+          4927,
+          5927,
+          6927,
+          7927,
+          8927,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 616,
-          "low": 316,
-          "high": 958,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:45",
-          "low": "09:30",
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 0,
-        "newPeak": null,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 5,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          629,
-          679,
-          694,
-          921,
-          1110,
-          1216,
-          1110,
-          875,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -1348,75 +4602,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -58,
+          -122,
+          -181,
+          -227,
+          -227,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 10,
+        "queue_max": {
+          "value": 254,
+          "lo": 52,
+          "hi": 575,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:30",
+        "delay_change": {
+          "value": -70,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
           1003,
-          1632,
-          2312,
-          3006,
-          3927,
-          5036,
-          6252,
-          7362,
+          1746,
+          2539,
+          3233,
+          4154,
+          5205,
+          6357,
+          7408,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
-          1632,
-          2312,
-          3006,
-          3927,
-          4927,
-          5927,
-          6927,
-          7927,
-          8927,
+          1746,
+          2539,
+          3233,
+          4154,
+          5154,
+          6154,
+          7154,
+          8154,
+          8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 435,
-          "low": 135,
-          "high": 756,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:45",
-          "low": "09:15",
-          "high": "10:00",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -41,
-        "newPeak": null,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 10,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          743,
-          793,
-          694,
-          921,
-          1051,
-          1152,
-          1051,
-          829,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -1434,75 +4689,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -117,
+          -245,
+          -362,
+          -454,
+          -231,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 15,
+        "queue_max": {
+          "value": 88,
+          "lo": 0,
+          "hi": 395,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:15",
+        "delay_change": {
+          "value": -92,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
           1003,
-          1746,
-          2539,
-          3233,
-          4154,
-          5205,
-          6357,
-          7408,
+          1859,
+          2766,
+          3460,
+          4381,
+          5373,
+          6461,
+          7454,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
-          1746,
-          2539,
-          3233,
-          4154,
-          5154,
-          6154,
-          7154,
-          8154,
+          1859,
+          2766,
+          3460,
+          4381,
+          5373,
+          6373,
+          7373,
+          8237,
           8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 254,
-          "low": 52,
-          "high": 575,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:30",
-          "low": "09:15",
-          "high": "09:45",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -70,
-        "newPeak": null,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 15,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          856,
-          906,
-          694,
-          921,
-          993,
-          1088,
-          993,
-          783,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -1520,75 +4776,76 @@
           0,
           0
         ],
-        "cumArrive": [
-          500,
-          1003,
-          1859,
-          2766,
-          3460,
-          4381,
-          5373,
-          6461,
-          7454,
-          8237,
-          8931,
-          9497,
-          10013,
-          10516
-        ],
-        "cumDepart": [
-          500,
-          1003,
-          1859,
-          2766,
-          3460,
-          4381,
-          5373,
-          6373,
-          7373,
-          8237,
-          8931,
-          9497,
-          10013,
-          10516
-        ],
-        "maxQueue": {
-          "mid": 88,
-          "low": 0,
-          "high": 395,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:15",
-          "low": null,
-          "high": "09:45",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -92,
-        "newPeak": null,
         "label": "computed",
-        "sim": true
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -360,
+          -535,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
       },
       {
-        "shiftPct": 20,
         "target": "early",
-        "demand": [
+        "shift": 20,
+        "queue_max": {
+          "value": 24,
+          "lo": 0,
+          "hi": 214,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:00",
+        "delay_change": {
+          "value": -98,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0745",
+        "cum_arrive": [
           500,
-          503,
-          970,
-          1020,
-          694,
-          921,
-          934,
-          1024,
-          934,
-          737,
-          694,
-          566,
-          516,
-          503
+          1003,
+          1973,
+          2992,
+          3686,
+          4607,
+          5542,
+          6566,
+          7500,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cum_depart": [
+          500,
+          1003,
+          1973,
+          2973,
+          3686,
+          4607,
+          5542,
+          6542,
+          7500,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
         ],
         "queue": [
           0,
@@ -1606,75 +4863,76 @@
           0,
           0
         ],
-        "cumArrive": [
-          500,
-          1003,
-          1973,
-          2992,
-          3686,
-          4607,
-          5542,
-          6566,
-          7500,
-          8237,
-          8931,
-          9497,
-          10013,
-          10516
-        ],
-        "cumDepart": [
-          500,
-          1003,
-          1973,
-          2973,
-          3686,
-          4607,
-          5542,
-          6542,
-          7500,
-          8237,
-          8931,
-          9497,
-          10013,
-          10516
-        ],
-        "maxQueue": {
-          "mid": 24,
-          "low": 0,
-          "high": 214,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:00",
-          "low": null,
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -98,
-        "newPeak": "07:45",
         "label": "computed",
-        "sim": true
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          20,
+          0,
+          0,
+          -168,
+          -424,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
       },
       {
-        "shiftPct": 25,
         "target": "early",
-        "demand": [
+        "shift": 25,
+        "queue_max": {
+          "value": 216,
+          "lo": 33,
+          "hi": 416,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "08:00",
+        "delay_change": {
+          "value": -85,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0730",
+        "cum_arrive": [
           500,
-          503,
-          1083,
-          1133,
-          694,
-          921,
-          876,
-          960,
-          876,
-          691,
-          694,
-          566,
-          516,
-          503
+          1003,
+          2086,
+          3219,
+          3913,
+          4834,
+          5710,
+          6670,
+          7546,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cum_depart": [
+          500,
+          1003,
+          2003,
+          3003,
+          3913,
+          4834,
+          5710,
+          6670,
+          7546,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
         ],
         "queue": [
           0,
@@ -1692,75 +4950,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          83,
+          216,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 30,
+        "queue_max": {
+          "value": 443,
+          "lo": 243,
+          "hi": 643,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "08:30",
+        "delay_change": {
+          "value": -58,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0730",
+        "cum_arrive": [
           500,
           1003,
-          2086,
-          3219,
-          3913,
-          4834,
-          5710,
-          6670,
-          7546,
+          2200,
+          3446,
+          4140,
+          5061,
+          5879,
+          6775,
+          7592,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           2003,
           3003,
-          3913,
-          4834,
-          5710,
-          6670,
-          7546,
+          4003,
+          5003,
+          5879,
+          6775,
+          7592,
           8237,
           8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 216,
-          "low": 33,
-          "high": 416,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "08:00",
-          "low": "08:00",
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -85,
-        "newPeak": "07:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 30,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          1197,
-          1247,
-          694,
-          921,
-          818,
-          896,
-          818,
-          645,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -1778,75 +5037,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          197,
+          443,
+          137,
+          58,
+          -168,
+          -448,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 35,
+        "queue_max": {
+          "value": 670,
+          "lo": 470,
+          "hi": 870,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "08:45",
+        "delay_change": {
+          "value": -16,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0730",
+        "cum_arrive": [
           500,
           1003,
-          2200,
-          3446,
-          4140,
-          5061,
-          5879,
-          6775,
-          7592,
+          2313,
+          3673,
+          4367,
+          5288,
+          6047,
+          6879,
+          7638,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           2003,
           3003,
           4003,
           5003,
-          5879,
-          6775,
-          7592,
+          6003,
+          6879,
+          7638,
           8237,
           8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 443,
-          "low": 243,
-          "high": 643,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "08:30",
-          "low": "08:00",
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -58,
-        "newPeak": "07:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 35,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          1310,
-          1360,
-          694,
-          921,
-          759,
-          832,
-          759,
-          599,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -1864,23 +5124,62 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          310,
+          670,
+          364,
+          285,
+          -124,
+          -448,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 40,
+        "queue_max": {
+          "value": 897,
+          "lo": 697,
+          "hi": 1097,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "08:45",
+        "delay_change": {
+          "value": 32,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0730",
+        "cum_arrive": [
           500,
           1003,
-          2313,
-          3673,
-          4367,
-          5288,
-          6047,
-          6879,
-          7638,
+          2426,
+          3900,
+          4594,
+          5515,
+          6216,
+          6984,
+          7684,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           2003,
@@ -1888,51 +5187,13 @@
           4003,
           5003,
           6003,
-          6879,
-          7638,
+          6984,
+          7684,
           8237,
           8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 670,
-          "low": 470,
-          "high": 870,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "08:45",
-          "low": "08:15",
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -16,
-        "newPeak": "07:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 40,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          1423,
-          1473,
-          694,
-          921,
-          701,
-          768,
-          701,
-          553,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -1950,23 +5211,62 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          423,
+          897,
+          591,
+          512,
+          45,
+          -448,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 45,
+        "queue_max": {
+          "value": 1124,
+          "lo": 924,
+          "hi": 1324,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:00",
+        "delay_change": {
+          "value": 84,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0730",
+        "cum_arrive": [
           500,
           1003,
-          2426,
-          3900,
-          4594,
-          5515,
-          6216,
-          6984,
-          7684,
+          2540,
+          4127,
+          4821,
+          5742,
+          6384,
+          7088,
+          7730,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           2003,
@@ -1974,51 +5274,13 @@
           4003,
           5003,
           6003,
-          6984,
-          7684,
+          7003,
+          7730,
           8237,
           8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 897,
-          "low": 697,
-          "high": 1097,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "08:45",
-          "low": "08:30",
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 32,
-        "newPeak": "07:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 45,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          1537,
-          1587,
-          694,
-          921,
-          642,
-          704,
-          642,
-          507,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2036,23 +5298,62 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          537,
+          1124,
+          818,
+          739,
+          213,
+          -363,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 50,
+        "queue_max": {
+          "value": 1350,
+          "lo": 1150,
+          "hi": 1550,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:00",
+        "delay_change": {
+          "value": 137,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0730",
+        "cum_arrive": [
           500,
           1003,
-          2540,
-          4127,
-          4821,
-          5742,
-          6384,
-          7088,
-          7730,
+          2653,
+          4354,
+          5048,
+          5968,
+          6552,
+          7192,
+          7776,
           8237,
           8931,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           2003,
@@ -2061,50 +5362,12 @@
           5003,
           6003,
           7003,
-          7730,
+          7776,
           8237,
           8931,
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 1124,
-          "low": 924,
-          "high": 1324,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:00",
-          "low": "08:30",
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 84,
-        "newPeak": "07:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 50,
-        "target": "early",
-        "demand": [
-          500,
-          503,
-          1650,
-          1700,
-          694,
-          921,
-          584,
-          640,
-          584,
-          460,
-          694,
-          566,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2122,75 +5385,76 @@
           0,
           0
         ],
-        "cumArrive": [
-          500,
-          1003,
-          2653,
-          4354,
-          5048,
-          5968,
-          6552,
-          7192,
-          7776,
-          8237,
-          8931,
-          9497,
-          10013,
-          10516
-        ],
-        "cumDepart": [
-          500,
-          1003,
-          2003,
-          3003,
-          4003,
-          5003,
-          6003,
-          7003,
-          7776,
-          8237,
-          8931,
-          9497,
-          10013,
-          10516
-        ],
-        "maxQueue": {
-          "mid": 1350,
-          "low": 1150,
-          "high": 1550,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:00",
-          "low": "08:45",
-          "high": "09:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 137,
-        "newPeak": "07:30",
         "label": "computed",
-        "sim": true
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          650,
+          1350,
+          1044,
+          966,
+          382,
+          -258,
+          -616,
+          -537,
+          -231,
+          0,
+          0,
+          0
+        ]
       },
       {
-        "shiftPct": 0,
         "target": "late",
-        "demand": [
+        "shift": 0,
+        "queue_max": {
+          "value": 616,
+          "lo": 316,
+          "hi": 958,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:45",
+        "delay_change": {
+          "value": 0,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          1168,
-          1280,
-          1168,
-          921,
-          694,
-          566,
-          516,
-          503
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4868,
+          6148,
+          7316,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cum_depart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4700,
+          5700,
+          6700,
+          7700,
+          8700,
+          9497,
+          10013,
+          10516
         ],
         "queue": [
           0,
@@ -2208,23 +5472,62 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 5,
+        "queue_max": {
+          "value": 435,
+          "lo": 135,
+          "hi": 756,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:45",
+        "delay_change": {
+          "value": -35,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4868,
-          6148,
-          7316,
-          8237,
-          8931,
+          4810,
+          6026,
+          7135,
+          8010,
+          8818,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
@@ -2239,44 +5542,6 @@
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 616,
-          "low": 316,
-          "high": 958,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:45",
-          "low": "09:30",
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 0,
-        "newPeak": null,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 5,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          1110,
-          1216,
-          1110,
-          875,
-          807,
-          679,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2294,23 +5559,62 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -58,
+          -122,
+          -181,
+          -227,
+          -113,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 10,
+        "queue_max": {
+          "value": 254,
+          "lo": 52,
+          "hi": 575,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:45",
+        "delay_change": {
+          "value": -70,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4810,
-          6026,
-          7135,
-          8010,
-          8818,
+          4751,
+          5903,
+          6954,
+          7783,
+          8704,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
@@ -2325,44 +5629,6 @@
           9497,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 435,
-          "low": 135,
-          "high": 756,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:45",
-          "low": "09:15",
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -35,
-        "newPeak": null,
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 10,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          1051,
-          1152,
-          1051,
-          829,
-          921,
-          793,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2380,75 +5646,76 @@
           0,
           0
         ],
-        "cumArrive": [
-          500,
-          1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4751,
-          5903,
-          6954,
-          7783,
-          8704,
-          9497,
-          10013,
-          10516
-        ],
-        "cumDepart": [
-          500,
-          1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4700,
-          5700,
-          6700,
-          7700,
-          8700,
-          9497,
-          10013,
-          10516
-        ],
-        "maxQueue": {
-          "mid": 254,
-          "low": 52,
-          "high": 575,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:45",
-          "low": "09:15",
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -70,
-        "newPeak": null,
         "label": "computed",
-        "sim": true
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -117,
+          -245,
+          -362,
+          -454,
+          -227,
+          0,
+          0,
+          0
+        ]
       },
       {
-        "shiftPct": 15,
         "target": "late",
-        "demand": [
+        "shift": 15,
+        "queue_max": {
+          "value": 88,
+          "lo": 0,
+          "hi": 418,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "09:45",
+        "delay_change": {
+          "value": -90,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          993,
-          1088,
-          993,
-          783,
-          1034,
-          906,
-          516,
-          503
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4693,
+          5781,
+          6774,
+          7556,
+          8591,
+          9497,
+          10013,
+          10516
+        ],
+        "cum_depart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4693,
+          5693,
+          6693,
+          7556,
+          8556,
+          9497,
+          10013,
+          10516
         ],
         "queue": [
           0,
@@ -2466,75 +5733,76 @@
           0,
           0
         ],
-        "cumArrive": [
-          500,
-          1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4693,
-          5781,
-          6774,
-          7556,
-          8591,
-          9497,
-          10013,
-          10516
-        ],
-        "cumDepart": [
-          500,
-          1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4693,
-          5693,
-          6693,
-          7556,
-          8556,
-          9497,
-          10013,
-          10516
-        ],
-        "maxQueue": {
-          "mid": 88,
-          "low": 0,
-          "high": 418,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "09:45",
-          "low": null,
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -90,
-        "newPeak": "09:30",
         "label": "computed",
-        "sim": true
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -360,
+          -535,
+          -537,
+          -197,
+          0,
+          0,
+          0
+        ]
       },
       {
-        "shiftPct": 20,
         "target": "late",
-        "demand": [
+        "shift": 20,
+        "queue_max": {
+          "value": 167,
+          "lo": 48,
+          "hi": 418,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:00",
+        "delay_change": {
+          "value": -83,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          934,
-          1024,
-          934,
-          737,
-          1148,
-          1020,
-          516,
-          503
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4634,
+          5658,
+          6593,
+          7330,
+          8477,
+          9497,
+          10013,
+          10516
+        ],
+        "cum_depart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4634,
+          5634,
+          6593,
+          7330,
+          8330,
+          9330,
+          10013,
+          10516
         ],
         "queue": [
           0,
@@ -2552,75 +5820,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -424,
+          -616,
+          -537,
+          -83,
+          167,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 25,
+        "queue_max": {
+          "value": 394,
+          "lo": 194,
+          "hi": 594,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:00",
+        "delay_change": {
+          "value": -67,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4634,
-          5658,
-          6593,
-          7330,
-          8477,
+          4576,
+          5536,
+          6412,
+          7103,
+          8364,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4634,
-          5634,
-          6593,
-          7330,
-          8330,
-          9330,
+          4576,
+          5536,
+          6412,
+          7103,
+          8103,
+          9103,
           10013,
           10516
-        ],
-        "maxQueue": {
-          "mid": 167,
-          "low": 48,
-          "high": 418,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:00",
-          "low": "09:45",
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -83,
-        "newPeak": "09:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 25,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          876,
-          960,
-          876,
-          691,
-          1261,
-          1133,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2638,75 +5907,76 @@
           0,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          30,
+          394,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 30,
+        "queue_max": {
+          "value": 621,
+          "lo": 421,
+          "hi": 821,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:15",
+        "delay_change": {
+          "value": -43,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4576,
-          5536,
-          6412,
-          7103,
-          8364,
+          4518,
+          5414,
+          6231,
+          6876,
+          8250,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4576,
-          5536,
-          6412,
-          7103,
-          8103,
-          9103,
-          10013,
+          4518,
+          5414,
+          6231,
+          6876,
+          7876,
+          8876,
+          9876,
           10516
-        ],
-        "maxQueue": {
-          "mid": 394,
-          "low": 194,
-          "high": 594,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:00",
-          "low": "10:00",
-          "high": "10:15",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -67,
-        "newPeak": "09:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 30,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          818,
-          896,
-          818,
-          645,
-          1375,
-          1247,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2724,75 +5994,76 @@
           137,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          144,
+          621,
+          137,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 35,
+        "queue_max": {
+          "value": 848,
+          "lo": 648,
+          "hi": 1048,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:15",
+        "delay_change": {
+          "value": -15,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4518,
-          5414,
-          6231,
-          6876,
-          8250,
+          4459,
+          5291,
+          6050,
+          6649,
+          8137,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4518,
-          5414,
-          6231,
-          6876,
-          7876,
-          8876,
-          9876,
+          4459,
+          5291,
+          6050,
+          6649,
+          7649,
+          8649,
+          9649,
           10516
-        ],
-        "maxQueue": {
-          "mid": 621,
-          "low": 421,
-          "high": 821,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:15",
-          "low": "10:00",
-          "high": "10:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -43,
-        "newPeak": "09:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 35,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          759,
-          832,
-          759,
-          599,
-          1488,
-          1360,
-          516,
-          503
         ],
         "queue": [
           0,
@@ -2810,75 +6081,76 @@
           364,
           0
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          257,
+          848,
+          364,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 40,
+        "queue_max": {
+          "value": 1075,
+          "lo": 875,
+          "hi": 1275,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:30",
+        "delay_change": {
+          "value": 18,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4459,
-          5291,
-          6050,
-          6649,
-          8137,
+          4401,
+          5169,
+          5870,
+          6422,
+          8024,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4459,
-          5291,
-          6050,
-          6649,
-          7649,
-          8649,
-          9649,
-          10516
-        ],
-        "maxQueue": {
-          "mid": 848,
-          "low": 648,
-          "high": 1048,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:15",
-          "low": "10:15",
-          "high": "10:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": -15,
-        "newPeak": "09:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 40,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          701,
-          768,
-          701,
-          553,
-          1601,
-          1473,
-          516,
-          503
+          4401,
+          5169,
+          5870,
+          6422,
+          7422,
+          8422,
+          9422,
+          10422
         ],
         "queue": [
           0,
@@ -2896,75 +6168,76 @@
           591,
           94
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          370,
+          1075,
+          591,
+          94
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 45,
+        "queue_max": {
+          "value": 1302,
+          "lo": 1102,
+          "hi": 1502,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:30",
+        "delay_change": {
+          "value": 58,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4401,
-          5169,
-          5870,
-          6422,
-          8024,
+          4342,
+          5046,
+          5689,
+          6195,
+          7910,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4401,
-          5169,
-          5870,
-          6422,
-          7422,
-          8422,
-          9422,
-          10422
-        ],
-        "maxQueue": {
-          "mid": 1075,
-          "low": 875,
-          "high": 1275,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:30",
-          "low": "10:15",
-          "high": "10:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 18,
-        "newPeak": "09:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 45,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          642,
-          704,
-          642,
-          507,
-          1715,
-          1587,
-          516,
-          503
+          4342,
+          5046,
+          5689,
+          6195,
+          7195,
+          8195,
+          9195,
+          10195
         ],
         "queue": [
           0,
@@ -2982,75 +6255,76 @@
           818,
           321
         ],
-        "cumArrive": [
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          484,
+          1302,
+          818,
+          321
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 50,
+        "queue_max": {
+          "value": 1528,
+          "lo": 1328,
+          "hi": 1728,
+          "unit": "輛",
+          "note": "lo／hi 對應容量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": "10:30",
+        "delay_change": {
+          "value": 97,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "s0930",
+        "cum_arrive": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4342,
-          5046,
-          5689,
-          6195,
-          7910,
+          4284,
+          4924,
+          5508,
+          5968,
+          7797,
           9497,
           10013,
           10516
         ],
-        "cumDepart": [
+        "cum_depart": [
           500,
           1003,
           1519,
           2085,
           2779,
           3700,
-          4342,
-          5046,
-          5689,
-          6195,
-          7195,
-          8195,
-          9195,
-          10195
-        ],
-        "maxQueue": {
-          "mid": 1302,
-          "low": 1102,
-          "high": 1502,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:30",
-          "low": "10:15",
-          "high": "10:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 58,
-        "newPeak": "09:30",
-        "label": "computed",
-        "sim": true
-      },
-      {
-        "shiftPct": 50,
-        "target": "late",
-        "demand": [
-          500,
-          503,
-          516,
-          566,
-          694,
-          921,
-          584,
-          640,
-          584,
-          460,
-          1828,
-          1700,
-          516,
-          503
+          4284,
+          4924,
+          5508,
+          5968,
+          6968,
+          7968,
+          8968,
+          9968
         ],
         "queue": [
           0,
@@ -3068,109 +6342,48 @@
           1044,
           548
         ],
-        "cumArrive": [
-          500,
-          1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4284,
-          4924,
-          5508,
-          5968,
-          7797,
-          9497,
-          10013,
-          10516
-        ],
-        "cumDepart": [
-          500,
-          1003,
-          1519,
-          2085,
-          2779,
-          3700,
-          4284,
-          4924,
-          5508,
-          5968,
-          6968,
-          7968,
-          8968,
-          9968
-        ],
-        "maxQueue": {
-          "mid": 1528,
-          "low": 1328,
-          "high": 1728,
-          "label": "computed",
-          "sim": true
-        },
-        "clearTime": {
-          "mid": "10:30",
-          "low": "10:30",
-          "high": "10:30",
-          "label": "computed",
-          "sim": true
-        },
-        "totalDelayChangePct": 97,
-        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -168,
+          -448,
+          -616,
+          -537,
+          597,
+          1528,
+          1044,
+          548
+        ]
+      }
+    ]
+  },
+  "city": {
+    "title": "大家的選擇，變成改善的證據",
+    "goal": {
+      "text": "要讓堤頂大道早上排隊減半，大約需要",
+      "need": {
+        "lo": 3000,
+        "hi": 4500,
+        "unit": "人換時段",
+        "note": "照抄設計稿，正式值由排隊模型腳本反推",
         "label": "computed",
         "sim": true
       }
-    ],
-    "label": "assumed",
-    "sim": true
-  },
-  "city": {
-    "target": {
-      "low": 3000,
-      "high": 4500,
-      "unit": "人",
-      "goal": "讓堤頂大道早上排隊減半",
-      "note": "由排隊模型推估的區間，不是保證值；正式值由排隊模型腳本產出",
-      "label": "computed",
-      "sim": true
     },
     "claimed": {
       "value": 1284,
       "unit": "人",
-      "period": "本週",
+      "note": "本週",
       "label": "assumed",
       "sim": true
     },
-    "slots": [
-      {
-        "time": "07:15",
-        "filledPct": 30,
-        "full": false,
-        "label": "assumed",
-        "sim": true
-      },
-      {
-        "time": "07:30",
-        "filledPct": 65,
-        "full": false,
-        "label": "assumed",
-        "sim": true
-      },
-      {
-        "time": "07:45",
-        "filledPct": 88,
-        "full": false,
-        "label": "assumed",
-        "sim": true
-      },
-      {
-        "time": "08:00",
-        "filledPct": 100,
-        "full": true,
-        "label": "assumed",
-        "sim": true
-      }
-    ],
-    "slotNote": "08:00 已滿，系統開始把人推薦到 07:15 和 07:30，避免形成新尖峰。",
+    "note": "人數為模擬資料；目標區間由排隊模型推估（程式計算），不是保證值。",
     "actions": [
       {
         "id": "flex",
@@ -3180,12 +6393,14 @@
           "產發局"
         ],
         "why": "要讓排隊減半，光靠個人不夠，需要整間公司一起調整上班時間。",
-        "forYou": "你的公司加入，你才真的能每天錯峰。",
-        "cost": null,
-        "costNote": "誘因預算，待推估",
-        "supporters": 412,
-        "label": "assumed",
-        "sim": true
+        "you": "你的公司加入，你才真的能每天錯峰。",
+        "cost": "誘因預算，待推估",
+        "support": {
+          "value": 412,
+          "unit": "人",
+          "label": "assumed",
+          "sim": true
+        }
       },
       {
         "id": "care",
@@ -3194,12 +6409,14 @@
           "教育局"
         ],
         "why": "設定中選「只能延後」的人，最常見的原因是早上要送小孩。",
-        "forYou": "要接送小孩的家長也能提早出門。",
-        "cost": null,
-        "costNote": "人力成本，待推估",
-        "supporters": 268,
-        "label": "assumed",
-        "sim": true
+        "you": "要接送小孩的家長也能提早出門。",
+        "cost": "人力成本，待推估",
+        "support": {
+          "value": 268,
+          "unit": "人",
+          "label": "assumed",
+          "sim": true
+        }
       },
       {
         "id": "shuttle",
@@ -3208,12 +6425,14 @@
           "公運處"
         ],
         "why": "提早出門的人改搭捷運後，最後一段到公司的接駁車還沒開。",
-        "forYou": "提早出門也有車可以搭。",
-        "cost": null,
-        "costNote": "加班車成本，待推估",
-        "supporters": 193,
-        "label": "assumed",
-        "sim": true
+        "you": "提早出門也有車可以搭。",
+        "cost": "加班車成本，待推估",
+        "support": {
+          "value": 193,
+          "unit": "人",
+          "label": "assumed",
+          "sim": true
+        }
       },
       {
         "id": "signal",
@@ -3222,152 +6441,328 @@
           "交工處"
         ],
         "why": "熱力圖上 08:30–09:00 最深的格子集中在這裡。",
-        "forYou": "就算不能改時間，也少塞一點。",
-        "cost": null,
-        "costNote": "低（調整既有號誌時制）",
-        "supporters": 157,
-        "label": "assumed",
-        "sim": true
+        "you": "就算不能改時間，也少塞一點。",
+        "cost": "低（調整既有號誌時制）",
+        "support": {
+          "value": 157,
+          "unit": "人",
+          "label": "assumed",
+          "sim": true
+        }
       }
     ],
-    "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。",
-    "label": "assumed",
-    "sim": true
+    "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。支持人數與成本欄位為模擬或待填。"
   },
   "brief": {
-    "company": "[企業名稱]",
-    "entranceShare": [
-      {
-        "entranceId": "tiding-n",
-        "pct": 42,
-        "label": "assumed",
-        "sim": true
-      },
-      {
-        "entranceId": "minquan-br",
-        "pct": 31,
-        "label": "assumed",
-        "sim": true
-      },
-      {
-        "entranceId": "chengmei-br",
-        "pct": 27,
-        "label": "assumed",
-        "sim": true
-      }
-    ],
-    "entranceShareNote": "員工經過各入口的比例為假設，正式版用員工通勤調查或認領資料。",
+    "title": "[企業名稱]：分批上班可以改善什麼",
+    "org": "[企業名稱]",
+    "date": "[產出日期]",
+    "exposure": {
+      "title": "貴公司員工經過的入口，什麼時候最塞",
+      "cols": [
+        "t0700",
+        "t0715",
+        "t0730",
+        "t0745",
+        "t0800",
+        "t0815",
+        "t0830",
+        "t0845",
+        "t0900"
+      ],
+      "layer": "speed",
+      "rows": [
+        {
+          "row": "tiding-n",
+          "share": {
+            "value": 42,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "cells": [
+            {
+              "v": 58,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 59,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 59,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 52,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 44,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 29,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 14,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 10,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 17,
+              "label": "observed",
+              "sim": true
+            }
+          ]
+        },
+        {
+          "row": "minquan-br",
+          "share": {
+            "value": 31,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "cells": [
+            {
+              "v": 60,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 56,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 55,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 51,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 40,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 26,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 12,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 18,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 33,
+              "label": "observed",
+              "sim": true
+            }
+          ]
+        },
+        {
+          "row": "chengmei-br",
+          "share": {
+            "value": 27,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "cells": [
+            {
+              "v": 59,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 60,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 55,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 51,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 42,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 27,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 15,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 11,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 25,
+              "label": "observed",
+              "sim": true
+            }
+          ]
+        }
+      ],
+      "note": "百分比為員工經過各入口的比例（假設，正式版用員工通勤調查或認領資料）。顏色越深車速越慢。"
+    },
     "conclusion": {
       "text": "貴公司若讓一半員工改 08:00 前到，員工平均每天通勤少 6–10 分鐘，堤頂大道 08:30 的排隊可縮短約 15–25%。",
-      "minutesSavedLow": 6,
-      "minutesSavedHigh": 10,
-      "queueCutLowPct": 15,
-      "queueCutHighPct": 25,
+      "note": "情境假設 · 程式計算 · 區間反映容量估計的不確定",
       "label": "computed",
       "sim": true
     },
     "options": [
       {
-        "id": "A",
+        "id": "a",
         "name": "維持現況",
-        "minutesSavedLow": 0,
-        "minutesSavedHigh": 0,
-        "queueChangeLowPct": null,
-        "queueChangeHighPct": null,
-        "opsCost": "無",
-        "label": "computed",
-        "sim": true
+        "saving": {
+          "value": 0,
+          "unit": "分",
+          "label": "computed",
+          "sim": true
+        },
+        "queue_change": {
+          "value": 0,
+          "unit": "%",
+          "note": "基準",
+          "label": "computed",
+          "sim": true
+        },
+        "cost_text": "無"
       },
       {
-        "id": "B",
+        "id": "b",
         "name": "三成員工改 08:00 前到",
-        "minutesSavedLow": 3,
-        "minutesSavedHigh": 5,
-        "queueChangeLowPct": -12,
-        "queueChangeHighPct": -8,
-        "opsCost": "共同會議時段由 09:00–18:00 縮為 09:30–17:00",
-        "label": "computed",
-        "sim": true
+        "saving": {
+          "lo": 3,
+          "hi": 5,
+          "unit": "分",
+          "label": "computed",
+          "sim": true
+        },
+        "queue_change": {
+          "lo": -12,
+          "hi": -8,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "cost_text": "共同會議時段由 09:00–18:00 縮為 09:30–17:00"
       },
       {
-        "id": "C",
+        "id": "c",
         "name": "分兩批：一半 08:00、一半 09:30",
-        "minutesSavedLow": 6,
-        "minutesSavedHigh": 10,
-        "queueChangeLowPct": -25,
-        "queueChangeHighPct": -15,
-        "opsCost": "共同會議時段 10:00–16:30；對外客服需排班",
-        "label": "computed",
-        "sim": true
+        "saving": {
+          "lo": 6,
+          "hi": 10,
+          "unit": "分",
+          "label": "computed",
+          "sim": true
+        },
+        "queue_change": {
+          "lo": -25,
+          "hi": -15,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "cost_text": "共同會議時段 10:00–16:30；對外客服需排班"
       }
     ],
-    "cityRoles": [
+    "support": [
       {
-        "depts": [
-          "交通局",
-          "產發局"
-        ],
-        "offer": "參與企業的錯峰成果可計入綠運輸 ESG 指標；[誘因方案待定]"
+        "dept": "交通局 · 產發局",
+        "text": "參與企業的錯峰成果可計入綠運輸 ESG 指標；[誘因方案待定]"
       },
       {
-        "depts": [
-          "教育局"
-        ],
-        "offer": "內科周邊幼兒園提早到 07:30 收托，讓有接送需求的員工也能參與"
+        "dept": "教育局",
+        "text": "內科周邊幼兒園提早到 07:30 收托，讓有接送需求的員工也能參與"
       },
       {
-        "depts": [
-          "公運處"
-        ],
-        "offer": "07:15 起加開捷運站接駁車"
+        "dept": "公運處",
+        "text": "07:15 起加開捷運站接駁車"
       },
       {
-        "depts": [
-          "交工處"
-        ],
-        "offer": "試辦期間調整堤頂大道早上號誌時制"
+        "dept": "交工處",
+        "text": "試辦期間調整堤頂大道早上號誌時制"
       }
     ],
-    "pilot": {
-      "weeks": 4,
-      "baselineWeeks": 2,
-      "control": "參與企業 vs. 同入口未參與企業",
-      "metrics": [
-        "門禁刷卡到達時間分布",
-        "入口 VD 排隊消散時間",
-        "員工通勤時間自評"
-      ],
-      "interference": "記錄施工、連假、颱風、開學日，分析時排除",
-      "stopRule": "第 2 週參與率低於 [門檻]，或新時段排隊比基準期更長",
-      "label": "assumed",
-      "sim": true
-    },
-    "publicOpinion": [
+    "pilot": [
       {
-        "id": "claims",
-        "value": 1284,
-        "caption": "本週認領錯峰時段的人數",
-        "label": "assumed",
-        "sim": true
+        "key": "對照",
+        "text": "參與企業 vs. 同入口未參與企業；試辦前 2 週為基準期"
       },
       {
-        "id": "flex-supporters",
-        "value": 412,
-        "caption": "支持「企業彈性上班誘因」的人數",
-        "label": "assumed",
-        "sim": true
+        "key": "指標",
+        "text": "門禁刷卡到達時間分布、入口 VD 排隊消散時間、員工通勤時間自評"
       },
       {
-        "id": "petitions",
-        "value": null,
-        "caption": "「市長，你給我聽好了」內湖交通陳情則數（彙總，不含原文）",
-        "note": "待主辦方資料",
-        "label": "observed",
-        "sim": true
+        "key": "干擾",
+        "text": "記錄施工、連假、颱風、開學日，分析時排除"
+      },
+      {
+        "key": "停止條件",
+        "text": "第 2 週參與率低於 [門檻]，或新時段排隊比基準期更長"
       }
     ],
-    "disclaimer": "本文件為黑客松作品之建議，不代表市府立場。",
-    "label": "assumed",
-    "sim": true
+    "public": [
+      {
+        "value": {
+          "value": 1284,
+          "unit": "人",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "本週在 App 認領錯峰時段的人數"
+      },
+      {
+        "value": {
+          "value": 412,
+          "unit": "人",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "支持「企業彈性上班誘因」的人數"
+      }
+    ],
+    "sources_text": "資料來源：[VD 偵測器資料集與期間] · [捷運分時進出量] · [認領彙總，不含個資]。標示：真實觀測／程式計算／情境假設／AI 生成。本文件為黑客松作品之建議，不代表市府立場。"
   }
 }
