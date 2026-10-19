@@ -1,0 +1,1392 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/YasmineCheng-Advantech/taipei-hackathon-2026/data/schema/topic.schema.json",
+  "title": "題目資料檔（資料契約 v1）",
+  "description": "網站只透過這份契約讀資料。v1 定版後只能新增欄位，不改名、不刪欄位。欄位用途與換題規則見同資料夾的 README.md；跨欄位的檢查（格子數量、id 參照）由 validate.py 負責。",
+  "type": "object",
+  "required": [
+    "meta",
+    "heatmap",
+    "kpis",
+    "decide",
+    "collective",
+    "scenario",
+    "city",
+    "brief"
+  ],
+  "properties": {
+    "meta": {
+      "$ref": "#/$defs/meta"
+    },
+    "heatmap": {
+      "$ref": "#/$defs/heatmap"
+    },
+    "kpis": {
+      "description": "Main 上方的 3 張重點數字卡。",
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/kpi"
+      }
+    },
+    "decide": {
+      "$ref": "#/$defs/decide"
+    },
+    "collective": {
+      "$ref": "#/$defs/collective"
+    },
+    "scenario": {
+      "$ref": "#/$defs/scenario"
+    },
+    "city": {
+      "$ref": "#/$defs/city"
+    },
+    "brief": {
+      "$ref": "#/$defs/brief"
+    }
+  },
+  "$defs": {
+    "id": {
+      "description": "小寫英數、底線、連字號。",
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+    },
+    "hhmm": {
+      "description": "24 小時制時間，如 07:45。",
+      "type": "string",
+      "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$"
+    },
+    "label": {
+      "description": "資料標示：observed 真實觀測、computed 程式計算、assumed 情境假設、ai AI 生成。",
+      "enum": [
+        "observed",
+        "computed",
+        "assumed",
+        "ai"
+      ]
+    },
+    "tag": {
+      "description": "硬規則：帶數字的最小物件都要有 label 與 sim。",
+      "type": "object",
+      "required": [
+        "label",
+        "sim"
+      ],
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/label"
+        },
+        "sim": {
+          "description": "是否為模擬資料；true 時畫面加斜線紋路。",
+          "type": "boolean"
+        },
+        "src": {
+          "description": "資料來源，填 meta.sources 裡的 id。",
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "num": {
+      "description": "一個帶標示的數字。單一值填 value；區間填 lo 與 hi（可同時給 value 當中間值）；還沒有數字時填 pending: true，網站顯示「待補」。",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/tag"
+        }
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "lo",
+            "hi"
+          ]
+        },
+        {
+          "required": [
+            "pending"
+          ]
+        }
+      ],
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "lo": {
+          "type": "number"
+        },
+        "hi": {
+          "type": "number"
+        },
+        "pending": {
+          "description": "還沒有數字，網站顯示「待補」。",
+          "const": true
+        },
+        "unit": {
+          "description": "顯示用單位，如 分、%、人、輛。",
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "label": true,
+        "sim": true,
+        "src": true
+      },
+      "additionalProperties": false
+    },
+    "cell": {
+      "description": "熱力格與曲線上的一個點。有值時帶 label 與 sim；沒有資料時只放 gap: true，不補值。",
+      "oneOf": [
+        {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/$defs/tag"
+            }
+          ],
+          "required": [
+            "v"
+          ],
+          "properties": {
+            "v": {
+              "type": "number"
+            },
+            "label": true,
+            "sim": true,
+            "src": true
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "gap"
+          ],
+          "properties": {
+            "gap": {
+              "const": true
+            },
+            "note": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "col": {
+      "description": "一個時段（或其他欄位，如停車題的小時）。",
+      "type": "object",
+      "required": [
+        "id",
+        "label"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "label": {
+          "description": "欄首顯示文字，如 07:15。",
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/hhmm"
+        },
+        "end": {
+          "$ref": "#/$defs/hhmm"
+        }
+      }
+    },
+    "meta": {
+      "description": "所有頁面的頁首與頁尾。",
+      "type": "object",
+      "required": [
+        "contract_version",
+        "id",
+        "title",
+        "region",
+        "time_range",
+        "bin_minutes",
+        "sources",
+        "updated_at",
+        "sim"
+      ],
+      "properties": {
+        "contract_version": {
+          "description": "契約版本，v1 期間固定 1.x。",
+          "type": "string",
+          "pattern": "^1\\.[0-9]+$"
+        },
+        "id": {
+          "description": "題目 id，同時是網址參數 ?topic= 與檔名，如 t4-morning。",
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "description": "題目名稱，如 內科晨峰車流。",
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "region": {
+          "description": "地區，如 內湖科技園區。",
+          "type": "string"
+        },
+        "days": {
+          "description": "適用日別，如 平日。",
+          "type": "string"
+        },
+        "time_range": {
+          "type": "object",
+          "required": [
+            "start",
+            "end"
+          ],
+          "properties": {
+            "start": {
+              "$ref": "#/$defs/hhmm"
+            },
+            "end": {
+              "$ref": "#/$defs/hhmm"
+            }
+          }
+        },
+        "bin_minutes": {
+          "description": "時間格長度（分鐘），如 15。",
+          "type": "integer",
+          "minimum": 1
+        },
+        "sources": {
+          "description": "這份檔案用到的所有資料來源；其他區塊用 src 參照這裡的 id。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "kind"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "kind": {
+                "description": "real 真實開放資料、mock 模擬、survey 調查、model 模型輸出。",
+                "enum": [
+                  "real",
+                  "mock",
+                  "survey",
+                  "model"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "period": {
+                "description": "資料期間，如 2026-10-19～10-23 07:00–10:30。",
+                "type": "string"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "updated_at": {
+          "description": "產出時間，ISO 8601，如 2026-10-19T12:00:00+08:00。",
+          "type": "string"
+        },
+        "sim": {
+          "description": "整份檔案是否為模擬資料。true 時檔內所有 sim 都必須是 true。",
+          "type": "boolean"
+        },
+        "mock_method": {
+          "description": "模擬方法說明（sim 為 true 時必填）。",
+          "type": "string"
+        },
+        "disclaimer": {
+          "description": "頁尾聲明，如 本作品之建議不代表市府立場。",
+          "type": "string"
+        }
+      },
+      "if": {
+        "properties": {
+          "sim": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "mock_method"
+        ]
+      }
+    },
+    "heatmap": {
+      "description": "Main 熱力儀表板：地點 × 時段矩陣、圖層、示意圖。",
+      "type": "object",
+      "required": [
+        "rows",
+        "cols",
+        "layers",
+        "default_layer"
+      ],
+      "properties": {
+        "title": {
+          "description": "頁面大標，如 早上八點半，車都卡在哪裡？",
+          "type": "string"
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "rows": {
+          "description": "地點（入口、路段、停車場、行政區…）。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "kind"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "name": {
+                "description": "如 堤頂大道。",
+                "type": "string"
+              },
+              "sub": {
+                "description": "方向或補充，如 北向、往內湖。",
+                "type": "string"
+              },
+              "kind": {
+                "description": "這一列的資料狀態，對應列首標籤：observed 真實觀測、sim 模擬、gap 無資料。",
+                "enum": [
+                  "observed",
+                  "sim",
+                  "gap"
+                ]
+              },
+              "x": {
+                "description": "示意圖座標（0–100，非比例）。",
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "y": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "lat": {
+                "type": "number"
+              },
+              "lng": {
+                "type": "number"
+              },
+              "src": {
+                "$ref": "#/$defs/id"
+              },
+              "detector": {
+                "description": "偵測器或資料編號，如 VD 編號。",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cols": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/col"
+          }
+        },
+        "layers": {
+          "description": "可切換的圖層，如 車速、流量。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "unit",
+              "direction",
+              "thresholds",
+              "cells"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "name": {
+                "description": "切換鈕文字，如 壅塞（車速）。",
+                "type": "string"
+              },
+              "unit": {
+                "description": "格內數字的單位說明，如 平均車速 km/h。",
+                "type": "string"
+              },
+              "direction": {
+                "description": "low_is_bad：數字越小越嚴重（車速）；high_is_bad：越大越嚴重（流量、佔用率）。",
+                "enum": [
+                  "low_is_bad",
+                  "high_is_bad"
+                ]
+              },
+              "thresholds": {
+                "description": "5 個分界點，切成 6 級色階（0 最輕、5 最嚴重），由輕到重排列。",
+                "type": "array",
+                "minItems": 5,
+                "maxItems": 5,
+                "items": {
+                  "type": "number"
+                }
+              },
+              "legend": {
+                "description": "6 級圖例文字。",
+                "type": "array",
+                "minItems": 6,
+                "maxItems": 6,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "legend_ends": {
+                "description": "圖例兩端文字，如 [\"順\", \"塞 km/h\"]。",
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 2,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "level_text": {
+                "description": "選取格子時的一句話，6 級各一句。",
+                "type": "array",
+                "minItems": 6,
+                "maxItems": 6,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "cells": {
+                "description": "rows × cols 的二維陣列，順序與 rows、cols 相同。",
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/$defs/cell"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "default_layer": {
+          "$ref": "#/$defs/id"
+        },
+        "landmarks": {
+          "description": "示意圖上的地標文字，如 基隆河。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "name",
+              "x",
+              "y"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "aux": {
+          "description": "矩陣旁的副圖，如 文湖線負載。值依 heatmap.cols 排列。",
+          "type": "object",
+          "required": [
+            "title",
+            "unit",
+            "values"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "subtitle": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "string"
+            },
+            "alert_at": {
+              "description": "達到此值就加深顯示。",
+              "type": "number"
+            },
+            "values": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/cell"
+              }
+            }
+          }
+        }
+      }
+    },
+    "kpi": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "value",
+        "label",
+        "sim"
+      ],
+      "allOf": [
+        {
+          "$ref": "#/$defs/tag"
+        }
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "description": "如 最塞的一格。",
+          "type": "string"
+        },
+        "value": {
+          "description": "主數字或短字串，如 08:30–09:15、3 / 8。",
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "unit": {
+          "type": "string"
+        },
+        "note": {
+          "description": "一句說明。",
+          "type": "string"
+        },
+        "ref": {
+          "description": "點卡片時要跳到的格子（選填）。",
+          "type": "object",
+          "properties": {
+            "row": {
+              "$ref": "#/$defs/id"
+            },
+            "col": {
+              "$ref": "#/$defs/id"
+            }
+          }
+        }
+      }
+    },
+    "decide": {
+      "description": "V2Setup、V2Today、A*App：幫你決定。依使用者設定選一份 plan。",
+      "type": "object",
+      "required": [
+        "metric",
+        "setup",
+        "plans"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "metric": {
+          "description": "選項比較的代價指標，如 路上時間（分）；停車題改成 步行（分）。",
+          "type": "object",
+          "required": [
+            "name",
+            "unit"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "unit": {
+              "type": "string"
+            }
+          }
+        },
+        "setup": {
+          "description": "第一次設定畫面的選項。",
+          "type": "object",
+          "required": [
+            "rows"
+          ],
+          "properties": {
+            "rows": {
+              "description": "可選的地點，填 heatmap.rows 的 id。",
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "deadlines": {
+              "description": "最晚到達時間選項。",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/hhmm"
+              }
+            },
+            "flex": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "label",
+                  "allows"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "allows": {
+                    "description": "網站據此篩掉不符合的選項。",
+                    "enum": [
+                      "both",
+                      "earlier",
+                      "later",
+                      "none"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "plans": {
+          "description": "每個 地點 × 最晚到達 一份；沒有 deadlines 時 deadline 省略。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "row",
+              "options",
+              "recommended",
+              "baseline"
+            ],
+            "properties": {
+              "row": {
+                "$ref": "#/$defs/id"
+              },
+              "deadline": {
+                "$ref": "#/$defs/hhmm"
+              },
+              "recommended": {
+                "description": "推薦選項的 id。",
+                "$ref": "#/$defs/id"
+              },
+              "baseline": {
+                "description": "平常基準選項的 id，如 平常 08:15 出門。",
+                "$ref": "#/$defs/id"
+              },
+              "reason": {
+                "description": "推薦理由。",
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "key",
+                    "cost",
+                    "status"
+                  ],
+                  "properties": {
+                    "id": {
+                      "$ref": "#/$defs/id"
+                    },
+                    "key": {
+                      "description": "選項主文字：出門時間（07:45）或地點名稱（停車場 C）。",
+                      "type": "string"
+                    },
+                    "arrive": {
+                      "description": "預估到達時間。",
+                      "$ref": "#/$defs/hhmm"
+                    },
+                    "detail": {
+                      "description": "補充文字。",
+                      "type": "string"
+                    },
+                    "cost": {
+                      "description": "代價指標的值，單位見 decide.metric。",
+                      "$ref": "#/$defs/num"
+                    },
+                    "saved": {
+                      "description": "與 baseline 相比省下多少（已算好，網站不做減法）。",
+                      "$ref": "#/$defs/num"
+                    },
+                    "slot_left": {
+                      "description": "剩餘名額（%、格、人）；不開放認領的選項省略。",
+                      "$ref": "#/$defs/num"
+                    },
+                    "status": {
+                      "description": "open 可選、full 已滿、peak 尖峰、late 可能遲到。",
+                      "enum": [
+                        "open",
+                        "full",
+                        "peak",
+                        "late"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "collective": {
+      "description": "V2Today、Scenario：如果大家都這樣。三種情況的分鐘差與曲線，以及各時段認領分布。",
+      "type": "object",
+      "required": [
+        "modes",
+        "claims"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "place": {
+          "description": "曲線對應的地點說明，如 堤頂大道北向。",
+          "type": "string"
+        },
+        "cols": {
+          "description": "曲線的時段，填 heatmap.cols 的 id。",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "layer": {
+          "description": "曲線用哪個 heatmap 圖層的色階。",
+          "$ref": "#/$defs/id"
+        },
+        "modes": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "delta",
+              "curve"
+            ],
+            "properties": {
+              "id": {
+                "description": "solo 只有你、same 大家照同一建議、split 依名額分散推薦。",
+                "enum": [
+                  "solo",
+                  "same",
+                  "split"
+                ]
+              },
+              "title": {
+                "type": "string"
+              },
+              "delta": {
+                "description": "每人平均分鐘差，如 −12。",
+                "$ref": "#/$defs/num"
+              },
+              "text": {
+                "description": "一句話結果。",
+                "type": "string"
+              },
+              "curve": {
+                "description": "依 collective.cols 排列。",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/cell"
+                }
+              },
+              "highlight": {
+                "description": "要框起來的時段 id（新尖峰或移入時段）。",
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          }
+        },
+        "claims": {
+          "description": "各時段認領分布。這裡放模擬值，認領後端掛掉時當備援。",
+          "type": "object",
+          "required": [
+            "slots"
+          ],
+          "properties": {
+            "total": {
+              "$ref": "#/$defs/num"
+            },
+            "note": {
+              "type": "string"
+            },
+            "slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "key",
+                  "filled"
+                ],
+                "properties": {
+                  "key": {
+                    "description": "時段或選項文字，對應 decide.options[].key。",
+                    "type": "string"
+                  },
+                  "filled": {
+                    "description": "名額已用比例（%）。",
+                    "$ref": "#/$defs/num"
+                  },
+                  "full": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "scenario": {
+      "description": "Scenario 錯峰情境。所有滑桿值的結果都由排隊模型預先算好，網站不即時計算。",
+      "type": "object",
+      "required": [
+        "cols",
+        "slider",
+        "targets",
+        "capacity",
+        "baseline",
+        "results"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "place": {
+          "description": "瓶頸，如 堤頂大道北向。",
+          "type": "string"
+        },
+        "cols": {
+          "description": "情境圖的時段（可比熱力圖長）。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/col"
+          }
+        },
+        "slider": {
+          "type": "object",
+          "required": [
+            "name",
+            "min",
+            "max",
+            "step",
+            "default"
+          ],
+          "properties": {
+            "name": {
+              "description": "如 移出尖峰的比例。",
+              "type": "string"
+            },
+            "unit": {
+              "type": "string"
+            },
+            "min": {
+              "type": "number"
+            },
+            "max": {
+              "type": "number"
+            },
+            "step": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "default": {
+              "type": "number"
+            }
+          }
+        },
+        "references": {
+          "description": "滑桿上的參考線，如 檀香山 1988 實際參與 6–7%。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value",
+              "text"
+            ],
+            "properties": {
+              "value": {
+                "type": "number"
+              },
+              "text": {
+                "type": "string"
+              },
+              "src": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        },
+        "peak_cols": {
+          "description": "被移出車流的尖峰時段 id。",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "targets": {
+          "description": "移去哪裡，如 提早、延後。",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "label",
+              "cols"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "label": {
+                "type": "string"
+              },
+              "cols": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/$defs/id"
+                }
+              }
+            }
+          }
+        },
+        "capacity": {
+          "description": "瓶頸容量估計（輛／時間格），含上下限。",
+          "$ref": "#/$defs/num"
+        },
+        "baseline": {
+          "description": "現況（移出 0%）。",
+          "$ref": "#/$defs/result"
+        },
+        "results": {
+          "description": "每個 target × 每個滑桿值一筆。",
+          "type": "array",
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/result"
+              }
+            ],
+            "required": [
+              "target",
+              "shift"
+            ],
+            "properties": {
+              "target": {
+                "$ref": "#/$defs/id"
+              },
+              "shift": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "result": {
+      "description": "一組情境結果。陣列依 scenario.cols 排列；整組共用一個 label 與 sim。",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/$defs/tag"
+        }
+      ],
+      "required": [
+        "queue_max",
+        "clear_time",
+        "delay_change",
+        "cum_arrive",
+        "cum_depart",
+        "queue"
+      ],
+      "properties": {
+        "queue_max": {
+          "description": "最長排隊（輛），區間。",
+          "$ref": "#/$defs/num"
+        },
+        "clear_time": {
+          "description": "排隊消散時間；不排隊時為 null。",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/hhmm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "delay_change": {
+          "description": "總延誤變化（%），現況為 0。",
+          "$ref": "#/$defs/num"
+        },
+        "new_peak": {
+          "description": "形成新尖峰的時段 id；沒有則為 null。",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "cum_arrive": {
+          "description": "累積到達車輛數。",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "cum_depart": {
+          "description": "累積通過車輛數。",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "queue": {
+          "description": "每格排隊長度（輛）。",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "queue_diff": {
+          "description": "與現況相比的排隊差（輛）；現況可省略。",
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "city": {
+      "description": "V2City、A*City：城市行動。",
+      "type": "object",
+      "required": [
+        "goal",
+        "claimed",
+        "actions"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "goal": {
+          "description": "目標區間，由排隊模型反推。",
+          "type": "object",
+          "required": [
+            "text",
+            "need"
+          ],
+          "properties": {
+            "text": {
+              "description": "如 要讓堤頂大道早上排隊減半，大約需要。",
+              "type": "string"
+            },
+            "need": {
+              "description": "如 3,000–4,500 人換時段。",
+              "$ref": "#/$defs/num"
+            }
+          }
+        },
+        "claimed": {
+          "description": "已認領人數。這裡放模擬值，後端掛掉時當備援。",
+          "$ref": "#/$defs/num"
+        },
+        "note": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "depts",
+              "why",
+              "support"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "depts": {
+                "description": "負責局處。",
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "why": {
+                "type": "string"
+              },
+              "you": {
+                "description": "對你的好處。",
+                "type": "string"
+              },
+              "cost": {
+                "description": "成本，文字；未知時寫待推估。",
+                "type": "string"
+              },
+              "support": {
+                "description": "「我也需要」人數。",
+                "$ref": "#/$defs/num"
+              }
+            }
+          }
+        },
+        "disclaimer": {
+          "type": "string"
+        }
+      }
+    },
+    "brief": {
+      "description": "V2Brief 協商一頁紙。",
+      "type": "object",
+      "required": [
+        "title",
+        "conclusion",
+        "options"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "org": {
+          "description": "企業名稱或佔位文字。",
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "exposure": {
+          "description": "第 1 節：員工經過的入口何時最塞。",
+          "type": "object",
+          "required": [
+            "cols",
+            "rows"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "cols": {
+              "description": "填 heatmap.cols 的 id。",
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            },
+            "layer": {
+              "$ref": "#/$defs/id"
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "row",
+                  "share",
+                  "cells"
+                ],
+                "properties": {
+                  "row": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "share": {
+                    "description": "員工經過此入口的比例（%）。",
+                    "$ref": "#/$defs/num"
+                  },
+                  "cells": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/cell"
+                    }
+                  }
+                }
+              }
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        "conclusion": {
+          "description": "一句話結論；句中數字以整句為單位標示。",
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/$defs/tag"
+            }
+          ],
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "type": "string"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        "options": {
+          "description": "第 2 節：做法比較表。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "saving",
+              "queue_change"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "name": {
+                "type": "string"
+              },
+              "saving": {
+                "description": "員工通勤平均省（分）。",
+                "$ref": "#/$defs/num"
+              },
+              "queue_change": {
+                "description": "入口尖峰排隊變化（%）。",
+                "$ref": "#/$defs/num"
+              },
+              "cost_text": {
+                "description": "營運代價，文字。",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "support": {
+          "description": "第 3 節：市府可以提供的配合。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "dept",
+              "text"
+            ],
+            "properties": {
+              "dept": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "pilot": {
+          "description": "第 4 節：試辦設計。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "key",
+              "text"
+            ],
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "public": {
+          "description": "第 5 節：民意依據。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "value",
+              "text"
+            ],
+            "properties": {
+              "value": {
+                "$ref": "#/$defs/num"
+              },
+              "text": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "sources_text": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
