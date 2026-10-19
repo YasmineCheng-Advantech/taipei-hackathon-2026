@@ -44,6 +44,12 @@
     },
     "brief": {
       "$ref": "#/$defs/brief"
+    },
+    "share": {
+      "$ref": "#/$defs/share"
+    },
+    "limits": {
+      "$ref": "#/$defs/limits"
     }
   },
   "$defs": {
@@ -141,7 +147,7 @@
       "additionalProperties": false
     },
     "cell": {
-      "description": "熱力格與曲線上的一個點。有值時帶 label 與 sim；沒有資料時只放 gap: true，不補值。",
+      "description": "熱力格與曲線上的一個點。有值時帶 label 與 sim；沒有資料時只放 gap: true，不補值。 多天資料時可加 lo、hi、days、bad_days，讓畫面呈現每天的變動，而不只是平均。",
       "oneOf": [
         {
           "type": "object",
@@ -159,7 +165,25 @@
             },
             "label": true,
             "sim": true,
-            "src": true
+            "src": true,
+            "lo": {
+              "description": "各天的最小值（多天資料時才有）。",
+              "type": "number"
+            },
+            "hi": {
+              "description": "各天的最大值（多天資料時才有）。",
+              "type": "number"
+            },
+            "days": {
+              "description": "這一格有資料的天數。",
+              "type": "integer",
+              "minimum": 1
+            },
+            "bad_days": {
+              "description": "達到所屬圖層 bad_at 的天數，網站顯示「N 天裡有 M 天會塞」。",
+              "type": "integer",
+              "minimum": 0
+            }
           },
           "additionalProperties": false
         },
@@ -492,6 +516,10 @@
                     "$ref": "#/$defs/cell"
                   }
                 }
+              },
+              "bad_at": {
+                "description": "達到這個值就算「塞」，用來數 cells 的 bad_days；low_is_bad 時是低於、high_is_bad 時是高於這個值。",
+                "type": "number"
               }
             }
           }
@@ -551,6 +579,10 @@
               }
             }
           }
+        },
+        "days_label": {
+          "description": "多天資料的說明，如 4 個平日（10/20–10/23）。",
+          "type": "string"
         }
       }
     },
@@ -681,6 +713,73 @@
                       "later",
                       "none"
                     ]
+                  }
+                }
+              }
+            },
+            "origins": {
+              "description": "設定第一步：從哪裡出發。選了之後只列出對應的入口；rows 為空代表目前沒有資料可以給建議，網站顯示 note。",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "label",
+                  "rows"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "label": {
+                    "description": "如 新店／文山。",
+                    "type": "string"
+                  },
+                  "region": {
+                    "description": "所屬縣市，如 新北市，用來彙總「多少人來自新北」。",
+                    "type": "string"
+                  },
+                  "rows": {
+                    "description": "常經過的入口，填 setup.rows 的 id。",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/id"
+                    }
+                  },
+                  "note": {
+                    "description": "補充說明，如 走基隆路接麥帥橋的人目前沒有資料。",
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "constraints": {
+              "description": "「為什麼沒辦法錯峰」的選項，可複選、可不填。彙總後放在 city.breakdowns，並連到對應的城市行動。",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "id",
+                  "label"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "label": {
+                    "description": "如 要接送小孩。",
+                    "type": "string"
+                  },
+                  "actions": {
+                    "description": "這個原因對應的城市行動，填 city.actions 的 id。",
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/$defs/id"
+                    }
+                  },
+                  "share_text": {
+                    "description": "分享卡「我想錯峰，但…」用的句子，如 要先送小孩去幼兒園。",
+                    "type": "string"
                   }
                 }
               }
@@ -1042,6 +1141,80 @@
               }
             }
           }
+        },
+        "sensitivity": {
+          "description": "敏感度分析：每個假設調高、調低時，結論（如 排隊減半要移出幾 %）差多少。items 由影響大到小排列，網站畫成橫向長條圖。",
+          "type": "object",
+          "required": [
+            "question",
+            "base",
+            "items"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "question": {
+              "description": "被檢驗的結論，如 最長排隊減半，08:30–09:15 經過的車要移出幾 %。",
+              "type": "string"
+            },
+            "base": {
+              "description": "所有假設取中間值時的結果。",
+              "$ref": "#/$defs/num"
+            },
+            "note": {
+              "type": "string"
+            },
+            "items": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/tag"
+                  }
+                ],
+                "required": [
+                  "id",
+                  "name",
+                  "low",
+                  "high",
+                  "spread"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "name": {
+                    "description": "假設名稱，如 道路容量。",
+                    "type": "string"
+                  },
+                  "low_text": {
+                    "description": "調低時的說明，如 容量 1,100 輛。",
+                    "type": "string"
+                  },
+                  "high_text": {
+                    "type": "string"
+                  },
+                  "low": {
+                    "$ref": "#/$defs/num"
+                  },
+                  "high": {
+                    "$ref": "#/$defs/num"
+                  },
+                  "spread": {
+                    "description": "high − low 的差距，用來排序。",
+                    "type": "number"
+                  },
+                  "needs": {
+                    "description": "要補什麼資料才能縮小這個不確定性。",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1207,12 +1380,66 @@
               "support": {
                 "description": "「我也需要」人數。不放模擬值，規則同 city.claimed。",
                 "$ref": "#/$defs/num"
+              },
+              "cross_agency": {
+                "description": "需要跨縣市或跨機關協調（如新北市、高公局），網站顯示「需跨機關協調」標籤。",
+                "type": "boolean"
               }
             }
           }
         },
         "disclaimer": {
           "type": "string"
+        },
+        "breakdowns": {
+          "description": "設定答案的彙總，如 大家從哪裡來、為什麼沒辦法錯峰。人數規則同 city.claimed：一律 pending，網站沒拿到後端數字時顯示「尚無資料」。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "source",
+              "items"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "source": {
+                "description": "彙總哪一組設定選項。",
+                "enum": [
+                  "origins",
+                  "constraints"
+                ]
+              },
+              "note": {
+                "type": "string"
+              },
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "key",
+                    "count"
+                  ],
+                  "properties": {
+                    "key": {
+                      "description": "填 source 那組選項的 id。",
+                      "$ref": "#/$defs/id"
+                    },
+                    "count": {
+                      "$ref": "#/$defs/num"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1399,6 +1626,178 @@
         },
         "sources_text": {
           "type": "string"
+        },
+        "operations": {
+          "description": "對企業營運的影響。算得出的給數字；算不出的填 pending，並寫明 how（怎麼算）與 needs（需要什麼資料）。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "value",
+              "needs"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/$defs/num"
+              },
+              "how": {
+                "type": "string"
+              },
+              "needs": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "share": {
+      "description": "分享卡：使用者自己選卡在哪裡與要用哪一張，只放使用者選的內容與已標示的數字。",
+      "type": "object",
+      "required": [
+        "templates"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "places": {
+          "description": "「我卡在哪裡」的選項。有 row 的對到熱力圖；沒有 row 的是資料範圍外的地點，只顯示使用者選的文字。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "label"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "label": {
+                "type": "string"
+              },
+              "row": {
+                "$ref": "#/$defs/id"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "templates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "text",
+              "needs"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "description": "卡片文字，{place} {time} {saved} {origin} {constraint} 由網站代入。",
+                "type": "string"
+              },
+              "needs": {
+                "description": "text 用到的代入欄位。",
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "place",
+                    "time",
+                    "saved",
+                    "origin",
+                    "constraint"
+                  ]
+                }
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "sim_badge": {
+          "description": "用到模擬數字時，印在卡片角落的文字，如 含模擬資料。不能只靠斜線紋路。",
+          "type": "string"
+        },
+        "footer": {
+          "description": "卡片底部文字，如 作品網址。",
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "limits": {
+      "description": "「我們可能錯在哪」頁：最可能推翻結論的地方，以及目前的處理。",
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "why",
+              "handling",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "why": {
+                "description": "為什麼可能錯。",
+                "type": "string"
+              },
+              "handling": {
+                "description": "我們目前怎麼處理。",
+                "type": "string"
+              },
+              "status": {
+                "description": "handled 已處理、partial 部分處理、open 尚未處理。",
+                "enum": [
+                  "handled",
+                  "partial",
+                  "open"
+                ]
+              }
+            }
+          }
         }
       }
     }

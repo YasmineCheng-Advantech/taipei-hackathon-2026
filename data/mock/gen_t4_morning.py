@@ -2,18 +2,26 @@
 
 用法：python3 data/mock/gen_t4_morning.py
 驗證：python3 data/schema/validate.py data/mock/t4-morning.json
+接真實 VD：python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json
+  有真實資料的格子改成真實觀測（sim: false），其餘維持模擬；預設輸出到 data/processed/t4-morning.json
 
 全部數字都是模擬值（sim: true），結果固定、可重跑。方法寫在輸出 JSON 的 meta.mock_method。
 入口、數字與文字沿用 design/heatmap-canvas 的 Main、V2Setup、V2Today、V2City、Scenario、V2Brief 畫板，
 讓網站照設計稿接上時畫面一致；城市目標與一頁紙的結論、做法比較改由下面的排隊模型反推，不再照抄設計稿。
 """
 
+import argparse
 import json
 import math
 from pathlib import Path
 
-OUT = Path(__file__).with_name("t4-morning.json")
-SIM = True
+ap = argparse.ArgumentParser(description="產生 #4 內科晨峰資料檔")
+ap.add_argument("--real", type=Path, help="build_vd_15min.py 的輸出；給了就用真實 VD 取代有資料的熱力格")
+ap.add_argument("--out", type=Path, help="輸出路徑")
+ARGS = ap.parse_args()
+REAL = json.loads(ARGS.real.read_text(encoding="utf-8")) if ARGS.real else None
+OUT = ARGS.out or (Path(__file__).parents[1] / "processed" / "t4-morning.json" if REAL else Path(__file__).with_name("t4-morning.json"))
+SIM = True  # 模擬數字的 sim；真實觀測的格子另外標 sim: false
 
 MOCK_METHOD = (
     "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。"
@@ -22,6 +30,8 @@ MOCK_METHOD = (
     "幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。"
     "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。"
     "城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。"
+    "熱力圖每格另有 4 個平日的最小值、最大值與低於 20 km/h 的天數（模擬的每天偏移）。"
+    "設定的出發地區與入口的對應是依路網推測的假設。"
     "人數類欄位（意向登記人數、「我也需要」人數）不放模擬值，一律 pending，由認領後端提供；後端沒有資料時網站顯示「尚無資料」。"
 )
 
@@ -46,8 +56,8 @@ def num(label, value=None, lo=None, hi=None, unit=None, note=None, src=None):
     return tag(label, **o)
 
 
-def cell(label, v):
-    return tag(label, v=v)
+def cell(label, v, **extra):
+    return tag(label, v=v, **extra)
 
 
 GAP = {"gap": True, "note": "無偵測器，不補值"}
@@ -113,7 +123,41 @@ def cell_label(e):
     return "observed" if e["kind"] == "observed" else "assumed"
 
 
+# 每天的變動：收集期間 10/20–10/23 共 4 個平日。各天相對平均的偏移加總為 0，越塞的格子變動越大
+DAY_F = (-0.25, -0.05, 0.1, 0.2)
+BAD_SPEED = 20  # 車速低於這個值算「塞」
+
+
+def speed_days(v):
+    return [max(5, round(v - (58 - v) * f)) for f in DAY_F]
+
+
+def flow_days(v):
+    return [round(v * (1 + 0.2 * f)) for f in DAY_F]
+
+
+def spread(days, bad=None):
+    o = dict(lo=min(days), hi=max(days), days=len(days))
+    if bad is not None:
+        o["bad_days"] = sum(bad(x) for x in days)
+    return o
+
+
+def real_cell(e, t):
+    """真實 VD 在這一格的彙整；沒有真實資料或不是 observed 入口時回傳 None。"""
+    if not REAL or e["kind"] != "observed":
+        return None
+    vid = e["detector"].split("（")[0]
+    return REAL["detectors"].get(vid, {}).get("cells", {}).get(HEAT_TIMES[t])
+
+
+def observed(x):
+    return {**x, "label": "observed", "sim": False, "src": "vd-live"}
+
+
 SPEED = {}  # (row id, col index) -> km/h，給 KPI 與一頁紙用
+BAD = {}  # (row id, col index) -> (塞的天數, 天數)
+n_real = 0
 speed_cells, flow_cells = [], []
 for i, e in enumerate(ENTRANCES):
     srow, frow = [], []
@@ -122,10 +166,18 @@ for i, e in enumerate(ENTRANCES):
             srow.append(GAP)
             frow.append(GAP)
             continue
-        sp, fl = speed_flow(i, e, t)
-        SPEED[(e["id"], t)] = sp
-        srow.append(cell(cell_label(e), sp))
-        frow.append(cell(cell_label(e), fl))
+        rc = real_cell(e, t)
+        if rc:
+            n_real += 1
+            sc, fc = observed(rc["speed"]), observed(rc["flow"])
+        else:
+            sp, fl = speed_flow(i, e, t)
+            sc = cell(cell_label(e), sp, **spread(speed_days(sp), lambda x: x < BAD_SPEED))
+            fc = cell(cell_label(e), fl, **spread(flow_days(fl)))
+        SPEED[(e["id"], t)] = sc["v"]
+        BAD[(e["id"], t)] = (sc["bad_days"], sc["days"])
+        srow.append(sc)
+        frow.append(fc)
     speed_cells.append(srow)
     flow_cells.append(frow)
 
@@ -140,12 +192,16 @@ for e in ENTRANCES:
 heatmap = {
     "title": "早上八點半，車都卡在哪裡？",
     "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
+    "days_label": (f"{len(REAL['days'])} 個平日（{'、'.join(d[5:].replace('-', '/') for d in REAL['days'])}）；"
+                   "標「真實觀測」的格子來自臺北市 VD，其餘為模擬" if REAL
+                   else f"{len(DAY_F)} 個平日（模擬，對應 10/20–10/23 收集期間）"),
     "rows": rows,
     "cols": HEAT_COLS,
     "layers": [
         {
             "id": "speed", "name": "壅塞（車速）", "unit": "平均車速 km/h", "direction": "low_is_bad",
             "thresholds": [50, 40, 30, 20, 10],
+            "bad_at": BAD_SPEED,
             "legend": ["50+", "40–50", "30–40", "20–30", "10–20", "<10"],
             "legend_ends": ["順", "塞 km/h"],
             "level_text": ["車流順暢。", "略有車多。", "開始變慢。", "明顯壅塞。", "嚴重壅塞，走走停停。", "幾乎停滯。"],
@@ -177,7 +233,9 @@ worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items())
 n_obs = sum(e["kind"] == "observed" for e in ENTRANCES)
 kpis = [
     tag("computed", id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
-        note=f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低", ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
+        note=(f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低；{BAD[(wrow, wt)][1]} 天裡有 "
+              f"{BAD[(wrow, wt)][0]} 天低於 {BAD_SPEED} km/h"),
+        ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
     tag("computed", id="peak-window", title="尖峰集中時段", value="08:30–09:15", note="半數以上入口低於 20 km/h"),
     tag("observed", id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(ENTRANCES)}", unit="個入口有真實資料",
         note="其餘為模擬或缺口，格子另有標示"),
@@ -267,6 +325,25 @@ decide = {
             {"id": "later", "label": "只能延後", "note": "例如早上要先送小孩", "allows": "later"},
             {"id": "none", "label": "不能調整", "note": "我們會告訴你最不塞的路線，不會叫你改時間", "allows": "none"},
         ],
+        # 出發地區對應的入口是依路網推測的假設，正式版用設定答案與 VD 資料校正
+        "origins": [
+            {"id": "xindian-wenshan", "label": "新店／文山", "region": "新北市・臺北市", "rows": ["huandong"],
+             "note": "多半走國 3 接南港系統、環東大道。走基隆路接麥帥橋的人：麥帥二橋往內湖方向沒有偵測器，目前無法給建議。"},
+            {"id": "songshan-nangang", "label": "松山／信義／南港", "region": "臺北市", "rows": ["chengmei-br", "minquan-br"]},
+            {"id": "zhongshan-dazhi", "label": "中山／大直／士林", "region": "臺北市", "rows": ["tiding-n", "minquan-br"]},
+            {"id": "ntpc-west", "label": "三重／蘆洲／板橋等新北西側", "region": "新北市", "rows": ["tiding-n"]},
+            {"id": "xizhi-keelung", "label": "汐止／基隆", "region": "新北市・基隆市", "rows": [],
+             "note": "多半走國 1 內湖交流道或康寧路：國 1 的資料還在等 TDX，康寧路沒有偵測器，目前無法給建議。"},
+            {"id": "other", "label": "其他", "rows": SETUP_ROWS},
+        ],
+        "constraints": [
+            {"id": "kids", "label": "要接送小孩", "actions": ["care", "care-ntpc"], "share_text": "要先送小孩去幼兒園"},
+            {"id": "shift", "label": "輪班或排班，時間不是自己決定", "actions": ["flex"], "share_text": "我的班表不是我能決定的"},
+            {"id": "company", "label": "公司規定固定的上班時間", "actions": ["flex"], "share_text": "公司規定幾點一定要到"},
+            {"id": "meeting", "label": "早上固定開會，主管期待準時", "actions": ["flex"], "share_text": "早上一到公司就要開會"},
+            {"id": "transit", "label": "改時段後沒有接駁或大眾運輸可搭", "actions": ["shuttle", "ntpc-bus"],
+             "share_text": "那個時段沒有車可以搭"},
+        ],
     },
     "plans": [plan(r, d) for r in SETUP_ROWS for d in DEADLINES],
 }
@@ -308,7 +385,14 @@ SC_COLS = [col("s", t) for t in SC_TIMES]
 CAP = 1000
 PEAK_IDX = [6, 7, 8, 9]  # 08:30–09:15
 TARGETS = [("early", "提早到 07:30–08:00", [2, 3]), ("late", "延後到 09:30–10:00", [10, 11])]
-base_demand = [round(CAP * (0.5 + 0.78 * g(t, 7, 1.8))) for t in range(len(SC_TIMES))]
+PEAK_AMP, PEAK_WIDTH = 0.78, 1.8  # 到達曲線：尖峰高度與寬度（假設）
+
+
+def demand(amp=PEAK_AMP, width=PEAK_WIDTH):
+    return [round(CAP * (0.5 + amp * g(t, 7, width))) for t in range(len(SC_TIMES))]
+
+
+base_demand = demand()
 
 
 def run_queue(arr, cap):
@@ -355,13 +439,14 @@ def result(arr, extra=None, new_peak=None):
     return r
 
 
-def shifted(share_pct, idx):
+def shifted(share_pct, idx, base=None):
+    base = base or base_demand
     s = share_pct / 100
-    after = [float(v) for v in base_demand]
+    after = [float(v) for v in base]
     moved = 0.0
     for i in PEAK_IDX:
-        after[i] -= base_demand[i] * s
-        moved += base_demand[i] * s
+        after[i] -= base[i] * s
+        moved += base[i] * s
     for i in idx:
         after[i] += moved / len(idx)
     return after
@@ -401,12 +486,42 @@ def first_share(ok):
     return next((p10 / 10 for p10 in range(501) if ok(p10 / 10)), None)
 
 
-# 最長排隊減半：和同一容量下的現況比。提早或延後算出來一樣，因為排隊只發生在尖峰
-HALF = [first_share(lambda p, c=c: run_queue(shifted(p, EARLY), c)["max"] <= run_queue(base_demand, c)["max"] / 2)
-        for c in CAPS]
+def half_share(cap=CAP, base=None):
+    """最長排隊減半要移出幾 %：和同一組假設下的現況比。提早或延後算出來一樣，因為排隊只發生在尖峰。"""
+    base = base or base_demand
+    target = run_queue(base, cap)["max"] / 2
+    return first_share(lambda p: run_queue(shifted(p, EARLY, base), cap)["max"] <= target)
+
+
+HALF = [half_share(c) for c in CAPS]
 # 新尖峰：移入的時段需求超過容量
 NEW_PEAK = [first_share(lambda p, c=c: any(v > c for i, v in enumerate(shifted(p, EARLY)) if i in EARLY))
             for c in CAPS]
+
+
+# 敏感度：每個假設調高、調低，看「排隊減半要移出幾 %」差多少。差最多的就是最需要補資料的假設
+REBOUND = 30  # 回流：移走的車有 30% 被「路變順了」吸引回尖峰
+
+
+def sens(id_, name, low_text, high_text, low, high, needs):
+    lo, hi = sorted((low, high))
+    return tag("computed", id=id_, name=name, low_text=low_text, high_text=high_text,
+               low=num("computed", round(low, 1), unit="%"), high=num("computed", round(high, 1), unit="%"),
+               spread=round(hi - lo, 1), needs=needs)
+
+
+SENSITIVITY = sorted([
+    sens("capacity", "道路容量（一次能過多少車）", "容量 1,100 輛", "容量 900 輛", HALF[0], HALF[2],
+         "VPMSV40 在塞車時段的最大通過量"),
+    sens("peak-height", "尖峰有多高", "尖峰低 20%", "尖峰高 20%",
+         half_share(base=demand(amp=PEAK_AMP * 0.8)), half_share(base=demand(amp=PEAK_AMP * 1.2)),
+         "收集期間 08:30–09:15 的實際流量"),
+    sens("rebound", "回流（路變順後有人搬回尖峰）", "沒有回流", f"回流 {REBOUND}%",
+         HALF[1], HALF[1] / (1 - REBOUND / 100), "試辦前後的尖峰車流比較"),
+    sens("peak-width", "尖峰有多寬", "尖峰窄 20%", "尖峰寬 20%",
+         half_share(base=demand(width=PEAK_WIDTH * 0.8)), half_share(base=demand(width=PEAK_WIDTH * 1.2)),
+         "收集期間各 15 分鐘的流量曲線"),
+], key=lambda x: -x["spread"])
 
 
 def avg_delay(arr, cap):
@@ -426,6 +541,14 @@ def effect(share, idx):
 def veh(p):
     return round(PEAK_TOTAL * p / 100, -1)
 
+
+scenario["sensitivity"] = {
+    "title": "哪個假設最影響結論？",
+    "question": "最長排隊減半，08:30–09:15 經過的車要移出幾 %",
+    "base": num("computed", round(HALF[1], 1), unit="%", note="容量 1,000 輛、沒有回流時"),
+    "items": SENSITIVITY,
+    "note": f"由影響大到小排列。目前最影響的是「{SENSITIVITY[0]['name']}」，最需要補的資料是：{SENSITIVITY[0]['needs']}。",
+}
 
 # ---------- 城市行動 ----------
 
@@ -451,6 +574,23 @@ city = {
         {"id": "signal", "title": "堤頂大道路口早上號誌調整", "depts": ["交工處"],
          "why": "熱力圖上 08:30–09:00 最深的格子集中在這裡。",
          "you": "就算不能改時間，也少塞一點。", "cost": "低（調整既有號誌時制）", "support": headcount()},
+        {"id": "care-ntpc", "title": "新北的幼兒園早上提早收托", "depts": ["新北市教育局"], "cross_agency": True,
+         "why": "從新北來的家長，小孩多半讀新北的幼兒園，臺北市的托育政策管不到。",
+         "you": "住新北、要先送小孩的人也能錯峰。", "cost": "人力成本，待推估", "support": headcount()},
+        {"id": "ntpc-bus", "title": "新店／文山直達內科的通勤車", "depts": ["新北市交通局", "臺北市公運處"], "cross_agency": True,
+         "why": "從新店到內科搭捷運要轉乘，門到門的時間沒有比開車短，開車的人很難改搭大眾運輸。",
+         "you": "不開車也能在差不多的時間到內科。", "cost": "營運補貼，待推估", "support": headcount()},
+        {"id": "freeway", "title": "國 3 往內湖路段與市區入口的路況放在同一張圖", "depts": ["交通部高速公路局", "臺北市交工處"],
+         "cross_agency": True,
+         "why": "從新店、文山來的人，最不穩的常是國 3 這段（使用者回饋），但它不歸臺北市管，兩邊的資料沒有放在一起。",
+         "you": "出門前能一起看到國道和入口的路況。", "cost": "資料介接，待推估", "support": headcount()},
+    ],
+    "breakdowns": [
+        {"id": "origin", "title": "大家從哪裡來", "source": "origins", "note": "依設定時選的出發地區彙總，未經驗證",
+         "items": [{"key": o, "count": headcount()} for o in
+                   ("xindian-wenshan", "songshan-nangang", "zhongshan-dazhi", "ntpc-west", "xizhi-keelung", "other")]},
+        {"id": "why-not", "title": "為什麼沒辦法錯峰", "source": "constraints", "note": "可複選；自願填答，不代表全體通勤者",
+         "items": [{"key": c, "count": headcount()} for c in ("kids", "shift", "company", "meeting", "transit")]},
     ],
     "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。「我也需要」人數只計真實登記，未經驗證；成本欄位待填。",
 }
@@ -489,6 +629,29 @@ brief = {
          **dict(zip(("saving", "queue_change"), effect(20, SPLIT))),
          "cost_text": "共同會議時段 10:00–16:30；對外客服需排班"},
     ],
+    # 營運面：算得出的就算，算不出的寫清楚要什麼資料，不硬給數字
+    "operations": [
+        {"id": "commute", "title": "員工每天少排隊的總時間",
+         "value": tag("computed", pending=True, unit="小時／天", note="平均每輛少排的分鐘 × 貴公司經過堤頂大道的車數"),
+         "how": "做法比較裡的「平均每輛少排幾分鐘」乘上貴公司經過這段的車數。",
+         "needs": "貴公司經過堤頂大道的員工車數（員工通勤調查或停車場進場紀錄）"},
+        {"id": "meeting", "title": "全員都在公司的共同時段",
+         "value": num("assumed", 7, unit="小時／天", note="原本 9 小時；假設每天上班 9 小時、兩批相差 2 小時"),
+         "how": "分兩批時（例如 08:00 與 10:00 到），共同時段 = 上班時數 − 兩批的時間差。",
+         "needs": "貴公司的上班時數與兩批的實際時間"},
+        {"id": "arrival", "title": "08:30–09:15 到公司的員工比例",
+         "value": tag("observed", pending=True, unit="%", note="試辦前後比較"),
+         "how": "門禁刷卡時間依 15 分鐘分組，看尖峰時段到的人有沒有變少。",
+         "needs": "試辦前 2 週與試辦期間的門禁刷卡時間（去識別化）"},
+        {"id": "parking", "title": "公司停車場尖峰的進場排隊",
+         "value": tag("observed", pending=True, unit="分鐘", note="試辦前後比較"),
+         "how": "比較試辦前後 08:30–09:15 每 15 分鐘的進場車數與排隊時間。",
+         "needs": "停車場進出紀錄（每 15 分鐘的進場車數）"},
+        {"id": "late", "title": "因塞車遲到的次數",
+         "value": tag("observed", pending=True, unit="次／月", note="試辦前後比較"),
+         "how": "出勤系統中標記為交通因素的遲到次數，試辦前後比較。",
+         "needs": "出勤系統的遲到紀錄（去識別化）"},
+    ],
     "support": [
         {"dept": "交通局 · 產發局", "text": "參與企業的錯峰成果可計入綠運輸 ESG 指標；[誘因方案待定]"},
         {"dept": "教育局", "text": "內科周邊幼兒園提早到 07:30 收托，讓有接送需求的員工也能參與"},
@@ -510,6 +673,78 @@ brief = {
     "sources_text": "資料來源：[VD 偵測器資料集與期間] · [捷運分時進出量] · [認領彙總，不含個資]。標示：真實觀測／程式計算／情境假設／AI 生成。本文件為黑客松作品之建議，不代表市府立場。",
 }
 
+# ---------- 我們可能錯在哪（自我紅隊） ----------
+
+limits = {
+    "title": "我們可能錯在哪",
+    "intro": "這個作品的結論建立在一些假設上。以下是最可能推翻結論的地方，以及我們目前怎麼處理。",
+    "items": [
+        {"id": "demand", "title": "偵測器量到的是「通過量」，不是「想進來的車」",
+         "why": "塞車時偵測器只數得到放行的車，最塞的時段流量反而可能顯得比較低；到達曲線也就無法直接從資料讀出。",
+         "handling": "情境結果用容量 ±10% 的區間呈現，並用敏感度分析列出影響最大的假設。",
+         "status": "partial"},
+        {"id": "assumptions", "title": "結論對「尖峰有多高」「道路容量」很敏感",
+         "why": f"這兩個假設各調 10–20%，「排隊減半要移出幾 %」就從約 {round(min(HALF[0], SENSITIVITY[0]['low']['value']))}% 變成約 "
+                f"{round(max(HALF[2], SENSITIVITY[0]['high']['value']))}%。",
+         "handling": "結論一律寫成區間；用 10/20–10/23 收集的實際流量校正尖峰高度與容量。",
+         "status": "partial"},
+        {"id": "days", "title": "真實資料只有 4 個早上",
+         "why": "4 天可能剛好遇到下雨、事故或施工，不足以代表平常。",
+         "handling": "每格顯示 4 天裡有幾天會塞與每天的範圍，不只顯示平均。",
+         "status": "partial"},
+        {"id": "coverage", "title": "有些入口沒有資料，有些偵測器不在入口上",
+         "why": "國 1 內湖交流道等 TDX 金鑰；麥帥二橋只量出城方向；康寧路沒有偵測器。民權大橋、成美橋的偵測器在引道上，可能和堤頂大道數到同一批車。",
+         "handling": "缺口格子不補值；不加總各入口的流量，也不說「流入內湖總量」。",
+         "status": "open"},
+        {"id": "scooter", "title": "機車可能數不準",
+         "why": "機車約佔進出內科私人運具四成（新聞轉述），在混合車道裡常被漏數；排隊模型以「輛」計算，沒有折算機車。",
+         "handling": "目前標為準確度未驗證；排隊模型只適合解讀汽車。",
+         "status": "open"},
+        {"id": "early-arrival", "title": "提早出門省下的路上時間，大多變成早到公司的時間",
+         "why": "交通經濟學的瓶頸模型指出，提早或延後有代價；檀香山試辦平均每趟只省 3–4 分鐘。",
+         "handling": "建議同時顯示「路上少幾分鐘」與「早到幾分鐘」；早到超過 30 分鐘就不推薦。",
+         "status": "handled"},
+        {"id": "rebound", "title": "路變順後，有人會搬回尖峰",
+         "why": "排隊縮短後，原本為了避塞提早出門的人可能改回尖峰出發，抵銷部分效果。",
+         "handling": f"敏感度分析納入回流 {REBOUND}% 的情況；試辦時要看尖峰車流有沒有回升。",
+         "status": "partial"},
+        {"id": "claims", "title": "意向登記可能重複，也不代表全體通勤者",
+         "why": "匿名登記擋不住同一人換裝置重複登記，登記的人也不一定是內科通勤族。",
+         "handling": "只顯示真實人數並標「意向登記，未經驗證」；不記 IP；結論不建立在人數上。",
+         "status": "handled"},
+        {"id": "company-share", "title": "一間公司改時段，對道路的影響取決於它佔多少車流",
+         "why": "排隊模型算的是整個內科移出多少比例；單一企業的效果要看員工佔這段車流的比例。",
+         "handling": "協商一頁紙的結論寫「貴公司約佔這段車流的 [待填]%」，不直接套用整體的數字。",
+         "status": "handled"},
+        {"id": "old-data", "title": "部分背景數字已經過時或口徑不明",
+         "why": "「82% 集中在 9 時」是 2015 年、疫情前的調查；檀香山 6–7% 的分母、6.3% 只指下午尖峰，都還要核對原文。",
+         "handling": "數字旁標年份與來源性質；口徑核對前不放在結論句裡。",
+         "status": "open"},
+    ],
+}
+
+# ---------- 分享卡 ----------
+
+share = {
+    "title": "分享你卡在哪裡",
+    "places": [{"id": r["id"], "label": f"{r['name']}（{r['sub']}）", "row": r["id"]} for r in rows] + [
+        {"id": "nh3-muzha", "label": "國 3 木柵隧道到南港系統", "note": "不在我們的資料範圍，卡片只顯示你選的地點"},
+        {"id": "keelung-rd-macarthur", "label": "基隆路接麥帥橋", "note": "不在我們的資料範圍，卡片只顯示你選的地點"},
+        {"id": "other", "label": "其他"},
+    ],
+    "templates": [
+        {"id": "save", "title": "錯峰可以少塞多久", "text": "我每天 {time} 卡在{place}。提早經過，路上可以少 {saved} 分鐘。",
+         "needs": ["time", "place", "saved"], "note": "{saved} 用今天建議的區間；今天沒有推薦時不能選這張"},
+        {"id": "cant", "title": "我想錯峰，但是…", "text": "我想錯峰，但{constraint}。內科通勤需要的不只是早點出門。",
+         "needs": ["constraint"]},
+        {"id": "from", "title": "我從哪裡來", "text": "我從{origin}開車到內科，每天卡在{place}。你卡在哪裡？",
+         "needs": ["origin", "place"]},
+    ],
+    "sim_badge": "含模擬資料",
+    "footer": "[作品網址]",
+    "note": "只放使用者自己選的內容與已標示的數字；用到模擬數字時，卡片角落一定印上 sim_badge。",
+}
+
 # ---------- 組合 ----------
 
 doc = {
@@ -524,7 +759,8 @@ doc = {
         "bin_minutes": 15,
         "sources": [
             {"id": "vd-live", "name": "臺北市交工處 VD 即時資料（VDLive.xml）", "kind": "real",
-             "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml", "period": "2026-10-19～10-23 07:00–10:30（收集中，本檔未使用）"},
+             "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml", "period": (f"{REAL['days'][0]}～{REAL['days'][-1]} 平日 07:00–10:30，共 {len(REAL['days'])} 天" if REAL
+                        else "2026-10-20～10-23 07:00–10:30（收集中，本檔未使用）")},
             {"id": "vd-static", "name": "臺北市交工處 VD 靜態資料（VD.xml）", "kind": "real",
              "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml", "note": "入口與 VD 對照見 entrances.csv"},
             {"id": "dot-2015", "name": "交通局 2015 年內湖上班時間調查", "kind": "survey",
@@ -535,9 +771,10 @@ doc = {
             {"id": "mock", "name": "本作品模擬資料（data/mock/gen_t4_morning.py）", "kind": "mock"},
         ],
         "updated_at": "2026-10-19T12:00:00+08:00",
-        "sim": SIM,
+        "sim": REAL is None,
         "mock_method": MOCK_METHOD,
-        "disclaimer": "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。",
+        "disclaimer": ("熱力圖中標「真實觀測」的格子來自臺北市 VD，其餘數字為模擬資料；入口位置為示意。本作品之建議不代表市府立場。"
+                       if REAL else "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"),
     },
     "heatmap": heatmap,
     "kpis": kpis,
@@ -546,7 +783,9 @@ doc = {
     "scenario": scenario,
     "city": city,
     "brief": brief,
+    "share": share,
+    "limits": limits,
 }
 
 OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-print(f"wrote {OUT} ({OUT.stat().st_size:,} bytes)")
+print(f"wrote {OUT} ({OUT.stat().st_size:,} bytes)" + (f"，{n_real} 格真實觀測" if REAL else ""))
