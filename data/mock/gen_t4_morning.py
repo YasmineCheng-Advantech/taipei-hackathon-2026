@@ -5,7 +5,7 @@
 
 全部數字都是模擬值（sim: true），結果固定、可重跑。方法寫在輸出 JSON 的 meta.mock_method。
 入口、數字與文字沿用 design/heatmap-canvas 的 Main、V2Setup、V2Today、V2City、Scenario、V2Brief 畫板，
-讓網站照設計稿接上時畫面一致。
+讓網站照設計稿接上時畫面一致；城市目標與一頁紙的結論、做法比較改由下面的排隊模型反推，不再照抄設計稿。
 """
 
 import json
@@ -19,8 +19,9 @@ MOCK_METHOD = (
     "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。"
     "熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。"
     "入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。"
-    "幫你決定：路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40；名額比例為假設值。"
+    "幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。"
     "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。"
+    "城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。"
     "認領人數、支持數為模擬備援值。"
 )
 
@@ -186,46 +187,65 @@ SLOT_PCT = {"07:00": 85, "07:15": 70, "07:30": 35, "07:45": 12, "08:00": 0, "09:
 PEAK_DEPARTS = {"08:15", "08:30", "08:45", "09:00"}  # 尖峰時段不開放認領
 
 
-def travel(row, depart):
-    return round(FREE_FLOW[row] * (1 + CONGEST[row] * g(mins(depart), PEAK_DEPART, 35)))
+DAY_SPREAD = (0.8, 1.2)  # 每天路況不同：壅塞係數 ±20%，給個人分鐘數的區間
+
+
+def travel(row, t, k=1.0):
+    """t 是經過入口的時間；回傳從入口到公司的分鐘。不含入口之前的路段，因為不知道使用者從哪裡出發。"""
+    return round(FREE_FLOW[row] * (1 + CONGEST[row] * k * g(mins(t), PEAK_DEPART, 35)))
 
 
 def plan(row, deadline):
     dl = mins(deadline)
-    departs = [hhmm(m) for m in range(dl - 120, dl, 15) if m >= 7 * 60]
+    times = [hhmm(m) for m in range(dl - 120, dl, 15) if m >= 7 * 60]
     opts = []
-    for d in departs:
+    for d in times:
         m = travel(row, d)
         arrive = hhmm(mins(d) + m)
         late = mins(arrive) > dl
         slot = None if d in PEAK_DEPARTS else SLOT_PCT.get(d)
         status = "late" if late else "peak" if slot is None else "full" if slot == 0 else "open"
-        opts.append(dict(d=d, m=m, arrive=arrive, slot=slot, status=status))
+        opts.append(dict(d=d, m=m, rng=[travel(row, d, k) for k in DAY_SPREAD], arrive=arrive, slot=slot, status=status))
     on_time = [o for o in opts if o["status"] != "late"]
-    # 平常：最晚到達前 45 分鐘出門（設計稿 09:00 到 → 08:15 出門）；來不及就往前找
+    # 平常：最晚到達前 45 分鐘經過入口（設計稿 09:00 到 → 08:15）；來不及就往前找
     base = next((o for o in reversed(on_time) if mins(o["d"]) <= dl - 45), on_time[0])
-    # 推薦：比平常省時間、還有名額的時段中，離平常出門時間最近的，改變最少
+    # 推薦：比平常省時間、還有名額的時段中，離平常時間最近的，改變最少
     better = [o for o in on_time if o["status"] == "open" and o["m"] < base["m"]]
     rec = min(better, key=lambda o: abs(mins(o["d"]) - mins(base["d"]))) if better else base
+
+    def saved_of(o):
+        s = [b - x for b, x in zip(base["rng"], o["rng"])]
+        return num("assumed", base["m"] - o["m"], lo=min(s), hi=max(s), unit="分",
+                   note="假設只有你改時間、其他車不變；區間是每天路況的差異")
+
     options = []
     for o in opts:
         x = {"id": "d" + o["d"].replace(":", ""), "key": o["d"], "arrive": o["arrive"],
-             "cost": num("computed", o["m"], unit="分"),
-             "saved": num("computed", base["m"] - o["m"], unit="分"),
+             "cost": num("computed", o["m"], lo=min(o["rng"]), hi=max(o["rng"]), unit="分",
+                         note="從入口到公司；區間是每天路況的差異"),
+             "saved": saved_of(o),
+             "arrive_early": num("computed", mins(base["arrive"]) - mins(o["arrive"]), unit="分",
+                                 note="正數＝比平常早到公司幾分鐘，負數＝晚到"),
              "status": o["status"]}
         if o["slot"] is not None:
             x["slot_left"] = num("assumed", o["slot"], unit="%")
         options.append(x)
-    saved = base["m"] - rec["m"]
-    reason = (f"{rec['d']} 出門還有名額，比平常 {base['d']} 出門路上少 {saved} 分，{deadline} 前到得了。"
-              if rec is not base else f"來得及的時段都沒有名額，維持 {base['d']} 出門。")
+    place = EBY[row]["name"]
+    if rec is base:
+        reason = f"來得及的時段都沒有名額，維持平常 {base['d']} 經過{place}。"
+    else:
+        s = saved_of(rec)
+        early = mins(base["arrive"]) - mins(rec["arrive"])
+        when = f"會比平常早 {early} 分到公司" if early > 0 else f"會比平常晚 {-early} 分到公司" if early < 0 else "到公司的時間和平常差不多"
+        reason = (f"{rec['d']} 經過{place}還有名額，路上比平常（{base['d']}）少 {s['lo']}–{s['hi']} 分，"
+                  f"但{when}；{deadline} 前到得了。")
     return {"row": row, "deadline": deadline, "recommended": "d" + rec["d"].replace(":", ""),
             "baseline": "d" + base["d"].replace(":", ""), "reason": reason, "options": options}
 
 
 decide = {
-    "title": "今天的出門建議",
-    "metric": {"name": "路上時間", "unit": "分"},
+    "title": "今天幾點經過入口最好",
+    "metric": {"name": "入口到公司的路上時間", "unit": "分"},
     "setup": {
         "rows": SETUP_ROWS,
         "deadlines": DEADLINES,
@@ -356,14 +376,54 @@ scenario = {
     "results": results,
 }
 
+# ---------- 從排隊模型反推：城市目標與一頁紙共用 ----------
+
+CAPS = (CAP * 1.1, CAP, CAP * 0.9)  # 容量高→低，結果由小到大
+EARLY = TARGETS[0][2]
+SPLIT = TARGETS[0][2] + TARGETS[1][2]  # 一半提早、一半延後
+PEAK_TOTAL = sum(base_demand[i] for i in PEAK_IDX)
+
+
+def first_share(ok):
+    """移出比例從 0% 往上找，每 0.1% 一次，回傳第一個讓 ok(p) 成立的比例。"""
+    return next((p10 / 10 for p10 in range(501) if ok(p10 / 10)), None)
+
+
+# 最長排隊減半：和同一容量下的現況比。提早或延後算出來一樣，因為排隊只發生在尖峰
+HALF = [first_share(lambda p, c=c: run_queue(shifted(p, EARLY), c)["max"] <= run_queue(base_demand, c)["max"] / 2)
+        for c in CAPS]
+# 新尖峰：移入的時段需求超過容量
+NEW_PEAK = [first_share(lambda p, c=c: any(v > c for i, v in enumerate(shifted(p, EARLY)) if i in EARLY))
+            for c in CAPS]
+
+
+def avg_delay(arr, cap):
+    """經過瓶頸的車，平均每輛排隊幾分鐘。"""
+    return run_queue(arr, cap)["sum"] * 15 / sum(arr)
+
+
+def effect(share, idx):
+    """移出 share% 後：平均每輛少排幾分鐘、最長排隊變化 %，區間對應容量 ±10%。"""
+    after = shifted(share, idx)
+    save = [avg_delay(base_demand, c) - avg_delay(after, c) for c in CAPS]
+    change = [(run_queue(after, c)["max"] / run_queue(base_demand, c)["max"] - 1) * 100 for c in CAPS]
+    return (num("computed", lo=round(min(save), 1), hi=round(max(save), 1), unit="分", note="經過瓶頸的車平均每輛少排的分鐘"),
+            num("computed", lo=round(min(change)), hi=round(max(change)), unit="%", note="最長排隊的變化"))
+
+
+def veh(p):
+    return round(PEAK_TOTAL * p / 100, -1)
+
+
 # ---------- 城市行動 ----------
 
 city = {
     "title": "大家的選擇，變成改善的證據",
-    "goal": {"text": "要讓堤頂大道早上排隊減半，大約需要",
-             "need": num("computed", lo=3000, hi=4500, unit="人換時段", note="照抄設計稿，正式值由排隊模型腳本反推")},
+    "goal": {"text": "要讓堤頂大道早上最長排隊減半，08:30–09:15 經過的車大約要移出",
+             "need": num("computed", value=round(HALF[1]), lo=round(HALF[0]), hi=round(HALF[2]), unit="% 改時段",
+                         note=f"約 {veh(HALF[0]):,.0f}–{veh(HALF[2]):,.0f} 輛車；區間對應容量 ±10%；由排隊模型反推，不換算成人數")},
     "claimed": num("assumed", 1284, unit="人", note="本週"),
-    "note": "人數為模擬資料；目標區間由排隊模型推估（程式計算），不是保證值。",
+    "note": "目標比例由排隊模型反推（程式計算），不是保證值；認領人數為模擬資料。",
     "actions": [
         {"id": "flex", "title": "企業彈性上班誘因", "depts": ["交通局", "產發局"],
          "why": "要讓排隊減半，光靠個人不夠，需要整間公司一起調整上班時間。",
@@ -401,16 +461,19 @@ brief = {
     },
     "conclusion": tag(
         "computed",
-        text="貴公司若讓一半員工改 08:00 前到，員工平均每天通勤少 6–10 分鐘，堤頂大道 08:30 的排隊可縮短約 15–25%。",
-        note="情境假設 · 程式計算 · 區間反映容量估計的不確定",
+        text=(f"內科整體若讓 08:30–09:15 經過堤頂大道的車移出約 {round(HALF[0])}–{round(HALF[2])}% 改時段，"
+              f"最長排隊可縮短一半；但如果全部改到 07:30–08:00，移出超過約 {round(NEW_PEAK[2])}–{round(NEW_PEAK[0])}% "
+              "就會在那裡形成新尖峰，所以要分散到提早與延後。貴公司員工約佔這段車流的 [待填]%。"),
+        note="情境假設 · 程式計算 · 區間反映容量估計 ±10%",
     ),
     "options": [
         {"id": "a", "name": "維持現況", "saving": num("computed", 0, unit="分"),
          "queue_change": num("computed", 0, unit="%", note="基準"), "cost_text": "無"},
-        {"id": "b", "name": "三成員工改 08:00 前到", "saving": num("computed", lo=3, hi=5, unit="分"),
-         "queue_change": num("computed", lo=-12, hi=-8, unit="%"), "cost_text": "共同會議時段由 09:00–18:00 縮為 09:30–17:00"},
-        {"id": "c", "name": "分兩批：一半 08:00、一半 09:30", "saving": num("computed", lo=6, hi=10, unit="分"),
-         "queue_change": num("computed", lo=-25, hi=-15, unit="%"), "cost_text": "共同會議時段 10:00–16:30；對外客服需排班"},
+        {"id": "b", "name": "尖峰車流移出 10%，改到 07:30–08:00", **dict(zip(("saving", "queue_change"), effect(10, EARLY))),
+         "cost_text": "改時段的員工共同會議時段縮短（例如 09:30–17:00）"},
+        {"id": "c", "name": "尖峰車流移出 20%，一半提早到 07:30–08:00、一半延後到 09:30–10:00",
+         **dict(zip(("saving", "queue_change"), effect(20, SPLIT))),
+         "cost_text": "共同會議時段 10:00–16:30；對外客服需排班"},
     ],
     "support": [
         {"dept": "交通局 · 產發局", "text": "參與企業的錯峰成果可計入綠運輸 ESG 指標；[誘因方案待定]"},

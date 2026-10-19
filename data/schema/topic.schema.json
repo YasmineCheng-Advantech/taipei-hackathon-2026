@@ -711,7 +711,7 @@
                 "$ref": "#/$defs/id"
               },
               "baseline": {
-                "description": "平常基準選項的 id，如 平常 08:15 出門。",
+                "description": "平常基準選項的 id，如 平常 08:15 經過入口。",
                 "$ref": "#/$defs/id"
               },
               "reason": {
@@ -734,7 +734,7 @@
                       "$ref": "#/$defs/id"
                     },
                     "key": {
-                      "description": "選項主文字：出門時間（07:45）或地點名稱（停車場 C）。",
+                      "description": "選項主文字：經過入口的時間（07:45）或地點名稱（停車場 C）。交通題不寫「出門時間」，因為不知道使用者從哪裡出發。",
                       "type": "string"
                     },
                     "arrive": {
@@ -750,7 +750,11 @@
                       "$ref": "#/$defs/num"
                     },
                     "saved": {
-                      "description": "與 baseline 相比省下多少（已算好，網站不做減法）。",
+                      "description": "與 baseline 相比省下多少（已算好，網站不做減法）。個人分鐘數一律給區間（lo／hi）。",
+                      "$ref": "#/$defs/num"
+                    },
+                    "arrive_early": {
+                      "description": "與 baseline 相比，早幾分鐘到達（正數早到、負數晚到）。和 saved 一起顯示，讓使用者看到省下路上時間的代價。",
                       "$ref": "#/$defs/num"
                     },
                     "slot_left": {
@@ -1138,11 +1142,11 @@
           ],
           "properties": {
             "text": {
-              "description": "如 要讓堤頂大道早上排隊減半，大約需要。",
+              "description": "如 要讓堤頂大道早上最長排隊減半，08:30–09:15 經過的車大約要移出。",
               "type": "string"
             },
             "need": {
-              "description": "如 3,000–4,500 人換時段。",
+              "description": "如 4–13% 改時段。由排隊模型反推，用比例或車輛數表示，不換算成人數。",
               "$ref": "#/$defs/num"
             }
           }
