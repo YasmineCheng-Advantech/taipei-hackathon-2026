@@ -60,7 +60,7 @@
 - `entrances_detail.csv`：每個入口的 LinkID、座標、偵測方向、偵測車道數、3 次即時抽樣結果、對應依據與信心。
 - `build_vd_15min.py`：把收集程式的讀數（`vd_taipei_targets.csv`）彙整成熱力圖的 15 分鐘格子，輸出 `vd_15min.json`：每支偵測器 × 每格的多天平均、最小、最大、天數、低於 20 km/h 的天數。只用狀態正常的讀數，同一筆不重複計算，車速依車輛數加權。接著用 `gen_t4_morning.py --real` 產生正式資料檔，見 `data/mock/README.md`。
 - `preview_vd.py`：收集期間隨時可以跑的預覽。讀 `data/raw/vd_taipei_targets.csv`，產生 `data/raw/preview.html`（含真實資料，不進 git），用瀏覽器打開就能看熱力圖、各入口車速折線、車種比例與最新讀數，不需要網路。
-- `explore_vd.py`：探索用的圖表（找靈感，不是作品畫面），產生 `data/raw/explore.html`：車速與流量、每天幾點開始塞、堤頂大道塞車怎麼往後傳、每天差多少、車種隨時間變化、早上 vs 傍晚。
+- `explore_vd.py`：探索用的圖表（找靈感，不是作品畫面），產生 `data/raw/explore.html`。先列出從資料算出的幾句結論，再用五張圖佐證：塞車時刻表、早一點經過有差嗎、每天都一樣塞嗎、早上 vs 傍晚、每 10 輛車裡有幾輛機車。
 - `build_entrances.py`：重跑腳本。先下載 `VD.xml` 與 `VDLive.xml`，再執行 `python3 data/processed/build_entrances.py <下載資料夾> data/processed VDLive.xml [更多 VDLive 檔]`。
 
 ## 待確認
