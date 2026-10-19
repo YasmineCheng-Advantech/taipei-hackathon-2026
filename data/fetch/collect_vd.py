@@ -15,6 +15,7 @@
 用法
     caffeinate -i python3 data/fetch/collect_vd.py          # 一直跑，時段外自動等待
     python3 data/fetch/collect_vd.py --once                  # 不管時段，立刻抓一次（測試用）
+    python3 data/fetch/collect_vd.py --today                 # 只跑今天的時段，10:30 後結束（GitHub Actions 用）
 """
 import argparse, csv, datetime as dt, gzip, json, os, sys, time, urllib.parse, urllib.request
 import xml.etree.ElementTree as ET
@@ -175,6 +176,7 @@ def in_window(now):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--once', action='store_true', help='立刻抓一次就結束（不管時段）')
+    ap.add_argument('--today', action='store_true', help='只跑今天的時段，10:30 後結束（給排程用）')
     args = ap.parse_args()
     ROOT.mkdir(parents=True, exist_ok=True)
     tdx = TDX()
@@ -190,6 +192,9 @@ def main():
         if in_window(now):
             waiting = False
             poll_once(tdx)
+        elif args.today and now.time() > END:
+            log('今天的收集時段結束')
+            return
         elif not waiting:
             log('不在收集時段，等待中')
             waiting = True
