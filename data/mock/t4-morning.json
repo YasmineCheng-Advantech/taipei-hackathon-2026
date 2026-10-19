@@ -47,7 +47,7 @@
     ],
     "updated_at": "2026-10-19T12:00:00+08:00",
     "sim": true,
-    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。幫你決定：路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。認領人數、支持數為模擬備援值。",
+    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。人數類欄位（意向登記人數、「我也需要」人數）不放模擬值，一律 pending，由認領後端提供；後端沒有資料時網站顯示「尚無資料」。",
     "disclaimer": "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"
   },
   "heatmap": {
@@ -1176,9 +1176,9 @@
     }
   ],
   "decide": {
-    "title": "今天的出門建議",
+    "title": "今天幾點經過入口最好",
     "metric": {
-      "name": "路上時間",
+      "name": "入口到公司的路上時間",
       "unit": "分"
     },
     "setup": {
@@ -1227,7 +1227,7 @@
         "deadline": "08:30",
         "recommended": "d0730",
         "baseline": "d0745",
-        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 4 分，08:30 前到得了。",
+        "reason": "07:30 經過堤頂大道還有名額，路上比平常（07:45）少 3–4 分，但會比平常早 19 分到公司；08:30 前到得了。",
         "options": [
           {
             "id": "d0700",
@@ -1235,13 +1235,26 @@
             "arrive": "07:08",
             "cost": {
               "value": 8,
+              "lo": 8,
+              "hi": 8,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 6,
+              "hi": 8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 52,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1259,13 +1272,26 @@
             "arrive": "07:24",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 6,
+              "lo": 5,
+              "hi": 6,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 36,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1283,13 +1309,26 @@
             "arrive": "07:41",
             "cost": {
               "value": 11,
+              "lo": 11,
+              "hi": 12,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1307,13 +1346,26 @@
             "arrive": "08:00",
             "cost": {
               "value": 15,
+              "lo": 14,
+              "hi": 16,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1331,13 +1383,26 @@
             "arrive": "08:20",
             "cost": {
               "value": 20,
+              "lo": 18,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -7,
+              "hi": -4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -20,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1355,13 +1420,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 23,
+              "hi": 30,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -12,
+              "lo": -14,
+              "hi": -9,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -42,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1372,9 +1450,9 @@
       {
         "row": "tiding-n",
         "deadline": "09:00",
-        "recommended": "d0745",
+        "recommended": "d0815",
         "baseline": "d0815",
-        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 12 分，09:00 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:15 經過堤頂大道就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0700",
@@ -1382,13 +1460,26 @@
             "arrive": "07:08",
             "cost": {
               "value": 8,
+              "lo": 8,
+              "hi": 8,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 19,
+              "lo": 15,
+              "hi": 22,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 94,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1406,13 +1497,26 @@
             "arrive": "07:24",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 18,
+              "lo": 14,
+              "hi": 20,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 78,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1430,13 +1534,26 @@
             "arrive": "07:41",
             "cost": {
               "value": 11,
+              "lo": 11,
+              "hi": 12,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 16,
+              "lo": 12,
+              "hi": 18,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 61,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1454,13 +1571,26 @@
             "arrive": "08:00",
             "cost": {
               "value": 15,
+              "lo": 14,
+              "hi": 16,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 12,
+              "lo": 9,
+              "hi": 14,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 42,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1478,13 +1608,26 @@
             "arrive": "08:20",
             "cost": {
               "value": 20,
+              "lo": 18,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 5,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 22,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1502,13 +1645,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 23,
+              "hi": 30,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1520,13 +1676,26 @@
             "arrive": "09:01",
             "cost": {
               "value": 31,
+              "lo": 26,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -6,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1538,13 +1707,26 @@
             "arrive": "09:17",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 37,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -7,
+              "hi": -4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -35,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1555,9 +1737,9 @@
       {
         "row": "tiding-n",
         "deadline": "09:30",
-        "recommended": "d0745",
+        "recommended": "d0845",
         "baseline": "d0845",
-        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 17 分，09:30 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:45 經過堤頂大道就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0730",
@@ -1565,13 +1747,26 @@
             "arrive": "07:41",
             "cost": {
               "value": 11,
+              "lo": 11,
+              "hi": 12,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 21,
+              "lo": 16,
+              "hi": 25,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 96,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1589,13 +1784,26 @@
             "arrive": "08:00",
             "cost": {
               "value": 15,
+              "lo": 14,
+              "hi": 16,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 17,
+              "lo": 13,
+              "hi": 21,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 77,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1613,13 +1821,26 @@
             "arrive": "08:20",
             "cost": {
               "value": 20,
+              "lo": 18,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 12,
+              "lo": 9,
+              "hi": 14,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 57,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1637,13 +1858,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 23,
+              "hi": 30,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 5,
+              "lo": 4,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 35,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1655,13 +1889,26 @@
             "arrive": "09:01",
             "cost": {
               "value": 31,
+              "lo": 26,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 1,
+              "lo": 1,
+              "hi": 1,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 16,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1673,13 +1920,26 @@
             "arrive": "09:17",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 37,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1691,13 +1951,26 @@
             "arrive": "09:28",
             "cost": {
               "value": 28,
+              "lo": 24,
+              "hi": 32,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -11,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1709,13 +1982,26 @@
             "arrive": "09:38",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 25,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 9,
+              "lo": 7,
+              "hi": 12,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -21,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1734,7 +2020,7 @@
         "deadline": "10:00",
         "recommended": "d0930",
         "baseline": "d0915",
-        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 6 分，10:00 前到得了。",
+        "reason": "09:30 經過堤頂大道還有名額，路上比平常（09:15）少 5–7 分，但會比平常晚 9 分到公司；10:00 前到得了。",
         "options": [
           {
             "id": "d0800",
@@ -1742,13 +2028,26 @@
             "arrive": "08:20",
             "cost": {
               "value": 20,
+              "lo": 18,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 3,
+              "lo": 2,
+              "hi": 2,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 78,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1766,13 +2065,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 23,
+              "hi": 30,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -5,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 56,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1784,13 +2096,26 @@
             "arrive": "09:01",
             "cost": {
               "value": 31,
+              "lo": 26,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -8,
+              "lo": -11,
+              "hi": -6,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 37,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1802,13 +2127,26 @@
             "arrive": "09:17",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 37,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -9,
+              "lo": -12,
+              "hi": -7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 21,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1820,13 +2158,26 @@
             "arrive": "09:28",
             "cost": {
               "value": 28,
+              "lo": 24,
+              "hi": 32,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -7,
+              "hi": -4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 10,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1838,13 +2189,26 @@
             "arrive": "09:38",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 25,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1862,13 +2226,26 @@
             "arrive": "09:47",
             "cost": {
               "value": 17,
+              "lo": 15,
+              "hi": 18,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 6,
+              "lo": 5,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -9,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1886,13 +2263,26 @@
             "arrive": "09:57",
             "cost": {
               "value": 12,
+              "lo": 11,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 11,
+              "lo": 9,
+              "hi": 12,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1911,7 +2301,7 @@
         "deadline": "08:30",
         "recommended": "d0730",
         "baseline": "d0745",
-        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 4 分，08:30 前到得了。",
+        "reason": "07:30 經過民權大橋還有名額，路上比平常（07:45）少 2–4 分，但會比平常早 19 分到公司；08:30 前到得了。",
         "options": [
           {
             "id": "d0700",
@@ -1919,13 +2309,26 @@
             "arrive": "07:09",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 9,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 5,
+              "hi": 8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 52,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1943,13 +2346,26 @@
             "arrive": "07:25",
             "cost": {
               "value": 10,
+              "lo": 10,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 6,
+              "lo": 4,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 36,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1967,13 +2383,26 @@
             "arrive": "07:42",
             "cost": {
               "value": 12,
+              "lo": 12,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 2,
+              "hi": 4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -1991,13 +2420,26 @@
             "arrive": "08:01",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2015,13 +2457,26 @@
             "arrive": "08:21",
             "cost": {
               "value": 21,
+              "lo": 19,
+              "hi": 24,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -7,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -20,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2039,13 +2494,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 24,
+              "hi": 31,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -11,
+              "lo": -14,
+              "hi": -10,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -41,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2056,9 +2524,9 @@
       {
         "row": "minquan-br",
         "deadline": "09:00",
-        "recommended": "d0745",
+        "recommended": "d0815",
         "baseline": "d0815",
-        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 11 分，09:00 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:15 經過民權大橋就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0700",
@@ -2066,13 +2534,26 @@
             "arrive": "07:09",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 9,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 18,
+              "lo": 15,
+              "hi": 22,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 93,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2090,13 +2571,26 @@
             "arrive": "07:25",
             "cost": {
               "value": 10,
+              "lo": 10,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 17,
+              "lo": 14,
+              "hi": 21,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 77,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2114,13 +2608,26 @@
             "arrive": "07:42",
             "cost": {
               "value": 12,
+              "lo": 12,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 15,
+              "lo": 12,
+              "hi": 18,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 60,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2138,13 +2645,26 @@
             "arrive": "08:01",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 11,
+              "lo": 10,
+              "hi": 14,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 41,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2162,13 +2682,26 @@
             "arrive": "08:21",
             "cost": {
               "value": 21,
+              "lo": 19,
+              "hi": 24,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 6,
+              "lo": 5,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 21,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2186,13 +2719,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 24,
+              "hi": 31,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2204,13 +2750,26 @@
             "arrive": "09:01",
             "cost": {
               "value": 31,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -5,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2222,13 +2781,26 @@
             "arrive": "09:17",
             "cost": {
               "value": 32,
+              "lo": 28,
+              "hi": 37,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -6,
+              "hi": -4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -35,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2239,9 +2811,9 @@
       {
         "row": "minquan-br",
         "deadline": "09:30",
-        "recommended": "d0745",
+        "recommended": "d0845",
         "baseline": "d0845",
-        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 16 分，09:30 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:45 經過民權大橋就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0730",
@@ -2249,13 +2821,26 @@
             "arrive": "07:42",
             "cost": {
               "value": 12,
+              "lo": 12,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 20,
+              "lo": 16,
+              "hi": 24,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 95,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2273,13 +2858,26 @@
             "arrive": "08:01",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 16,
+              "lo": 14,
+              "hi": 20,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 76,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2297,13 +2895,26 @@
             "arrive": "08:21",
             "cost": {
               "value": 21,
+              "lo": 19,
+              "hi": 24,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 11,
+              "lo": 9,
+              "hi": 13,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 56,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2321,13 +2932,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 24,
+              "hi": 31,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 5,
+              "lo": 4,
+              "hi": 6,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 35,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2339,13 +2963,26 @@
             "arrive": "09:01",
             "cost": {
               "value": 31,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 1,
+              "lo": 1,
+              "hi": 1,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 16,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2357,13 +2994,26 @@
             "arrive": "09:17",
             "cost": {
               "value": 32,
+              "lo": 28,
+              "hi": 37,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2375,13 +3025,26 @@
             "arrive": "09:29",
             "cost": {
               "value": 29,
+              "lo": 25,
+              "hi": 33,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 3,
+              "lo": 3,
+              "hi": 4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -12,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2393,13 +3056,26 @@
             "arrive": "09:38",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 26,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 9,
+              "lo": 8,
+              "hi": 11,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -21,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2418,7 +3094,7 @@
         "deadline": "10:00",
         "recommended": "d0930",
         "baseline": "d0915",
-        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 6 分，10:00 前到得了。",
+        "reason": "09:30 經過民權大橋還有名額，路上比平常（09:15）少 4–7 分，但會比平常晚 9 分到公司；10:00 前到得了。",
         "options": [
           {
             "id": "d0800",
@@ -2426,13 +3102,26 @@
             "arrive": "08:21",
             "cost": {
               "value": 21,
+              "lo": 19,
+              "hi": 24,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 2,
+              "lo": 1,
+              "hi": 2,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 77,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2450,13 +3139,26 @@
             "arrive": "08:42",
             "cost": {
               "value": 27,
+              "lo": 24,
+              "hi": 31,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -5,
+              "hi": -4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 56,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2468,13 +3170,26 @@
             "arrive": "09:01",
             "cost": {
               "value": 31,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -8,
+              "lo": -10,
+              "hi": -7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 37,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2486,13 +3201,26 @@
             "arrive": "09:17",
             "cost": {
               "value": 32,
+              "lo": 28,
+              "hi": 37,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -9,
+              "lo": -11,
+              "hi": -8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 21,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2504,13 +3232,26 @@
             "arrive": "09:29",
             "cost": {
               "value": 29,
+              "lo": 25,
+              "hi": 33,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -6,
+              "lo": -7,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 9,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2522,13 +3263,26 @@
             "arrive": "09:38",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 26,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2546,13 +3300,26 @@
             "arrive": "09:47",
             "cost": {
               "value": 17,
+              "lo": 16,
+              "hi": 19,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 6,
+              "lo": 4,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -9,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2570,13 +3337,26 @@
             "arrive": "09:58",
             "cost": {
               "value": 13,
+              "lo": 12,
+              "hi": 14,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 10,
+              "lo": 8,
+              "hi": 12,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -20,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2595,7 +3375,7 @@
         "deadline": "08:30",
         "recommended": "d0730",
         "baseline": "d0745",
-        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 4 分，08:30 前到得了。",
+        "reason": "07:30 經過成美橋還有名額，路上比平常（07:45）少 4–5 分，但會比平常早 19 分到公司；08:30 前到得了。",
         "options": [
           {
             "id": "d0700",
@@ -2603,13 +3383,26 @@
             "arrive": "07:10",
             "cost": {
               "value": 10,
+              "lo": 10,
+              "hi": 11,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 8,
+              "lo": 7,
+              "hi": 9,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 53,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2627,13 +3420,26 @@
             "arrive": "07:26",
             "cost": {
               "value": 11,
+              "lo": 11,
+              "hi": 12,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 6,
+              "hi": 8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 37,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2651,13 +3457,26 @@
             "arrive": "07:44",
             "cost": {
               "value": 14,
+              "lo": 13,
+              "hi": 15,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 4,
+              "hi": 5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2675,13 +3494,26 @@
             "arrive": "08:03",
             "cost": {
               "value": 18,
+              "lo": 17,
+              "hi": 20,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2699,13 +3531,26 @@
             "arrive": "08:25",
             "cost": {
               "value": 25,
+              "lo": 22,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -7,
+              "lo": -7,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -22,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2723,13 +3568,26 @@
             "arrive": "08:47",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -14,
+              "lo": -16,
+              "hi": -10,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -44,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2740,9 +3598,9 @@
       {
         "row": "chengmei-br",
         "deadline": "09:00",
-        "recommended": "d0745",
+        "recommended": "d0815",
         "baseline": "d0815",
-        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 14 分，09:00 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:15 經過成美橋就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0700",
@@ -2750,13 +3608,26 @@
             "arrive": "07:10",
             "cost": {
               "value": 10,
+              "lo": 10,
+              "hi": 11,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 22,
+              "lo": 17,
+              "hi": 25,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 97,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2774,13 +3645,26 @@
             "arrive": "07:26",
             "cost": {
               "value": 11,
+              "lo": 11,
+              "hi": 12,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 21,
+              "lo": 16,
+              "hi": 24,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 81,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2798,13 +3682,26 @@
             "arrive": "07:44",
             "cost": {
               "value": 14,
+              "lo": 13,
+              "hi": 15,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 18,
+              "lo": 14,
+              "hi": 21,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 63,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2822,13 +3719,26 @@
             "arrive": "08:03",
             "cost": {
               "value": 18,
+              "lo": 17,
+              "hi": 20,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 14,
+              "lo": 10,
+              "hi": 16,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 44,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2846,13 +3756,26 @@
             "arrive": "08:25",
             "cost": {
               "value": 25,
+              "lo": 22,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 5,
+              "hi": 9,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 22,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2870,13 +3793,26 @@
             "arrive": "08:47",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2888,13 +3824,26 @@
             "arrive": "09:07",
             "cost": {
               "value": 37,
+              "lo": 32,
+              "hi": 42,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -6,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -20,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2906,13 +3855,26 @@
             "arrive": "09:23",
             "cost": {
               "value": 38,
+              "lo": 32,
+              "hi": 43,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -6,
+              "lo": -7,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -36,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2923,9 +3885,9 @@
       {
         "row": "chengmei-br",
         "deadline": "09:30",
-        "recommended": "d0745",
+        "recommended": "d0845",
         "baseline": "d0845",
-        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 20 分，09:30 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:45 經過成美橋就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0730",
@@ -2933,13 +3895,26 @@
             "arrive": "07:44",
             "cost": {
               "value": 14,
+              "lo": 13,
+              "hi": 15,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 24,
+              "lo": 19,
+              "hi": 28,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 99,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2957,13 +3932,26 @@
             "arrive": "08:03",
             "cost": {
               "value": 18,
+              "lo": 17,
+              "hi": 20,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 20,
+              "lo": 15,
+              "hi": 23,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 80,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -2981,13 +3969,26 @@
             "arrive": "08:25",
             "cost": {
               "value": 25,
+              "lo": 22,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 13,
+              "lo": 10,
+              "hi": 16,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 58,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3005,13 +4006,26 @@
             "arrive": "08:47",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 6,
+              "lo": 5,
+              "hi": 7,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 36,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3023,13 +4037,26 @@
             "arrive": "09:07",
             "cost": {
               "value": 37,
+              "lo": 32,
+              "hi": 42,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 1,
+              "lo": 0,
+              "hi": 1,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 16,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3041,13 +4068,26 @@
             "arrive": "09:23",
             "cost": {
               "value": 38,
+              "lo": 32,
+              "hi": 43,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3059,13 +4099,26 @@
             "arrive": "09:34",
             "cost": {
               "value": 34,
+              "lo": 29,
+              "hi": 39,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -11,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3077,13 +4130,26 @@
             "arrive": "09:42",
             "cost": {
               "value": 27,
+              "lo": 24,
+              "hi": 30,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 11,
+              "lo": 8,
+              "hi": 13,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3102,7 +4168,7 @@
         "deadline": "10:00",
         "recommended": "d0930",
         "baseline": "d0915",
-        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 7 分，10:00 前到得了。",
+        "reason": "09:30 經過成美橋還有名額，路上比平常（09:15）少 6–8 分，但會比平常晚 8 分到公司；10:00 前到得了。",
         "options": [
           {
             "id": "d0800",
@@ -3110,13 +4176,26 @@
             "arrive": "08:25",
             "cost": {
               "value": 25,
+              "lo": 22,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 2,
+              "lo": 2,
+              "hi": 3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 77,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3134,13 +4213,26 @@
             "arrive": "08:47",
             "cost": {
               "value": 32,
+              "lo": 27,
+              "hi": 36,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -5,
+              "lo": -6,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 55,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3152,13 +4244,26 @@
             "arrive": "09:07",
             "cost": {
               "value": 37,
+              "lo": 32,
+              "hi": 42,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -10,
+              "lo": -12,
+              "hi": -8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 35,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3170,13 +4275,26 @@
             "arrive": "09:23",
             "cost": {
               "value": 38,
+              "lo": 32,
+              "hi": 43,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -11,
+              "lo": -13,
+              "hi": -8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3188,13 +4306,26 @@
             "arrive": "09:34",
             "cost": {
               "value": 34,
+              "lo": 29,
+              "hi": 39,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -7,
+              "lo": -9,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 8,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3206,13 +4337,26 @@
             "arrive": "09:42",
             "cost": {
               "value": 27,
+              "lo": 24,
+              "hi": 30,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3230,13 +4374,26 @@
             "arrive": "09:50",
             "cost": {
               "value": 20,
+              "lo": 18,
+              "hi": 22,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 6,
+              "hi": 8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -8,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3254,13 +4411,26 @@
             "arrive": "10:00",
             "cost": {
               "value": 15,
+              "lo": 14,
+              "hi": 16,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 12,
+              "lo": 10,
+              "hi": 14,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -18,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3279,7 +4449,7 @@
         "deadline": "08:30",
         "recommended": "d0730",
         "baseline": "d0745",
-        "reason": "07:30 出門還有名額，比平常 07:45 出門路上少 3 分，08:30 前到得了。",
+        "reason": "07:30 經過環東大道還有名額，路上比平常（07:45）少 2–3 分，但會比平常早 18 分到公司；08:30 前到得了。",
         "options": [
           {
             "id": "d0700",
@@ -3287,13 +4457,26 @@
             "arrive": "07:07",
             "cost": {
               "value": 7,
+              "lo": 7,
+              "hi": 7,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 5,
+              "lo": 4,
+              "hi": 6,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 50,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3311,13 +4494,26 @@
             "arrive": "07:23",
             "cost": {
               "value": 8,
+              "lo": 8,
+              "hi": 8,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 34,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3335,13 +4531,26 @@
             "arrive": "07:39",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 3,
+              "lo": 2,
+              "hi": 3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 18,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3359,13 +4568,26 @@
             "arrive": "07:57",
             "cost": {
               "value": 12,
+              "lo": 11,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3383,13 +4605,26 @@
             "arrive": "08:16",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -4,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3407,13 +4642,26 @@
             "arrive": "08:35",
             "cost": {
               "value": 20,
+              "lo": 17,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -8,
+              "lo": -10,
+              "hi": -6,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -38,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3424,9 +4672,9 @@
       {
         "row": "huandong",
         "deadline": "09:00",
-        "recommended": "d0745",
+        "recommended": "d0815",
         "baseline": "d0815",
-        "reason": "07:45 出門還有名額，比平常 08:15 出門路上少 8 分，09:00 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:15 經過環東大道就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0700",
@@ -3434,13 +4682,26 @@
             "arrive": "07:07",
             "cost": {
               "value": 7,
+              "lo": 7,
+              "hi": 7,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 13,
+              "lo": 10,
+              "hi": 16,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 88,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3458,13 +4719,26 @@
             "arrive": "07:23",
             "cost": {
               "value": 8,
+              "lo": 8,
+              "hi": 8,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 12,
+              "lo": 9,
+              "hi": 15,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 72,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3482,13 +4756,26 @@
             "arrive": "07:39",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 11,
+              "lo": 8,
+              "hi": 13,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 56,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3506,13 +4793,26 @@
             "arrive": "07:57",
             "cost": {
               "value": 12,
+              "lo": 11,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 8,
+              "lo": 6,
+              "hi": 10,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 38,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3530,13 +4830,26 @@
             "arrive": "08:16",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 6,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 19,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3554,13 +4867,26 @@
             "arrive": "08:35",
             "cost": {
               "value": 20,
+              "lo": 17,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3572,13 +4898,26 @@
             "arrive": "08:53",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 26,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -3,
+              "lo": -3,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -18,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3590,13 +4929,26 @@
             "arrive": "09:09",
             "cost": {
               "value": 24,
+              "lo": 20,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -4,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -34,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3607,9 +4959,9 @@
       {
         "row": "huandong",
         "deadline": "09:30",
-        "recommended": "d0745",
+        "recommended": "d0845",
         "baseline": "d0845",
-        "reason": "07:45 出門還有名額，比平常 08:45 出門路上少 12 分，09:30 前到得了。",
+        "reason": "今天沒有划算的時段，照平常 08:45 經過環東大道就好（還有名額的時段都要比平常早到 30 分鐘以上，省下的路上時間不夠多）。",
         "options": [
           {
             "id": "d0730",
@@ -3617,13 +4969,26 @@
             "arrive": "07:39",
             "cost": {
               "value": 9,
+              "lo": 9,
+              "hi": 10,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 15,
+              "lo": 11,
+              "hi": 17,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 90,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3641,13 +5006,26 @@
             "arrive": "07:57",
             "cost": {
               "value": 12,
+              "lo": 11,
+              "hi": 13,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 12,
+              "lo": 9,
+              "hi": 14,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 72,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3665,13 +5043,26 @@
             "arrive": "08:16",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 8,
+              "lo": 6,
+              "hi": 10,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 53,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3689,13 +5080,26 @@
             "arrive": "08:35",
             "cost": {
               "value": 20,
+              "lo": 17,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 4,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 34,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3707,13 +5111,26 @@
             "arrive": "08:53",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 26,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 1,
+              "lo": 0,
+              "hi": 1,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 16,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3725,13 +5142,26 @@
             "arrive": "09:09",
             "cost": {
               "value": 24,
+              "lo": 20,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3743,13 +5173,26 @@
             "arrive": "09:21",
             "cost": {
               "value": 21,
+              "lo": 18,
+              "hi": 24,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 3,
+              "lo": 2,
+              "hi": 3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -12,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3761,13 +5204,26 @@
             "arrive": "09:32",
             "cost": {
               "value": 17,
+              "lo": 15,
+              "hi": 19,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 5,
+              "hi": 8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -23,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3786,7 +5242,7 @@
         "deadline": "10:00",
         "recommended": "d0930",
         "baseline": "d0915",
-        "reason": "09:30 出門還有名額，比平常 09:15 出門路上少 4 分，10:00 前到得了。",
+        "reason": "09:30 經過環東大道還有名額，路上比平常（09:15）少 3–5 分，但會比平常晚 11 分到公司；10:00 前到得了。",
         "options": [
           {
             "id": "d0800",
@@ -3794,13 +5250,26 @@
             "arrive": "08:16",
             "cost": {
               "value": 16,
+              "lo": 14,
+              "hi": 17,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 1,
+              "lo": 1,
+              "hi": 2,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 76,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3818,13 +5287,26 @@
             "arrive": "08:35",
             "cost": {
               "value": 20,
+              "lo": 17,
+              "hi": 23,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -3,
+              "lo": -4,
+              "hi": -2,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 57,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3836,13 +5318,26 @@
             "arrive": "08:53",
             "cost": {
               "value": 23,
+              "lo": 20,
+              "hi": 26,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -6,
+              "lo": -7,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 39,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3854,13 +5349,26 @@
             "arrive": "09:09",
             "cost": {
               "value": 24,
+              "lo": 20,
+              "hi": 27,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -7,
+              "lo": -8,
+              "hi": -5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 23,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3872,13 +5380,26 @@
             "arrive": "09:21",
             "cost": {
               "value": 21,
+              "lo": 18,
+              "hi": 24,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": -4,
+              "lo": -5,
+              "hi": -3,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 11,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3890,13 +5411,26 @@
             "arrive": "09:32",
             "cost": {
               "value": 17,
+              "lo": 15,
+              "hi": 19,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 0,
+              "lo": 0,
+              "hi": 0,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": 0,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3914,13 +5448,26 @@
             "arrive": "09:43",
             "cost": {
               "value": 13,
+              "lo": 12,
+              "hi": 14,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 4,
+              "lo": 3,
+              "hi": 5,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -11,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -3938,13 +5485,26 @@
             "arrive": "09:55",
             "cost": {
               "value": 10,
+              "lo": 9,
+              "hi": 11,
               "unit": "分",
+              "note": "從入口到公司；區間是每天路況的差異",
               "label": "computed",
               "sim": true
             },
             "saved": {
               "value": 7,
+              "lo": 6,
+              "hi": 8,
               "unit": "分",
+              "note": "假設只有你改時間、其他車不變；區間是每天路況的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "arrive_early": {
+              "value": -23,
+              "unit": "分",
+              "note": "正數＝比平常早到公司幾分鐘，負數＝晚到",
               "label": "computed",
               "sim": true
             },
@@ -4172,10 +5732,10 @@
     ],
     "claims": {
       "total": {
-        "value": 1284,
+        "pending": true,
         "unit": "人",
-        "note": "本週",
-        "label": "assumed",
+        "note": "意向登記，未經驗證",
+        "label": "observed",
         "sim": true
       },
       "note": "08:00 已滿，系統開始把人推薦到 07:15 和 07:30，避免形成新尖峰。",
@@ -6349,24 +7909,27 @@
   "city": {
     "title": "大家的選擇，變成改善的證據",
     "goal": {
-      "text": "要讓堤頂大道早上排隊減半，大約需要",
+      "text": "要讓堤頂大道早上最長排隊減半，08:30–09:15 經過的車大約要移出",
       "need": {
-        "lo": 3000,
-        "hi": 4500,
-        "unit": "人換時段",
-        "note": "照抄設計稿，正式值由排隊模型腳本反推",
+        "value": 9,
+        "lo": 4,
+        "hi": 13,
+        "unit": "% 改時段",
+        "note": "約 200–580 輛車；區間對應容量 ±10%；由排隊模型反推，不換算成人數",
         "label": "computed",
         "sim": true
       }
     },
     "claimed": {
-      "value": 1284,
+      "pending": true,
       "unit": "人",
-      "note": "本週",
-      "label": "assumed",
+      "note": "意向登記，未經驗證",
+      "label": "observed",
       "sim": true
     },
-    "note": "人數為模擬資料；目標區間由排隊模型推估（程式計算），不是保證值。",
+    "claimed_since": "2026-10-24",
+    "claimed_caption": "意向登記，未經驗證：同一支手機每天每個入口只算一次，但同一人仍可能重複登記，也不代表全體通勤者。",
+    "note": "目標比例由排隊模型反推（程式計算），不是保證值；人數只計真實登記，沒有資料時顯示「尚無資料」。",
     "actions": [
       {
         "id": "flex",
@@ -6379,9 +7942,10 @@
         "you": "你的公司加入，你才真的能每天錯峰。",
         "cost": "誘因預算，待推估",
         "support": {
-          "value": 412,
+          "pending": true,
           "unit": "人",
-          "label": "assumed",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
           "sim": true
         }
       },
@@ -6395,9 +7959,10 @@
         "you": "要接送小孩的家長也能提早出門。",
         "cost": "人力成本，待推估",
         "support": {
-          "value": 268,
+          "pending": true,
           "unit": "人",
-          "label": "assumed",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
           "sim": true
         }
       },
@@ -6411,9 +7976,10 @@
         "you": "提早出門也有車可以搭。",
         "cost": "加班車成本，待推估",
         "support": {
-          "value": 193,
+          "pending": true,
           "unit": "人",
-          "label": "assumed",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
           "sim": true
         }
       },
@@ -6427,14 +7993,15 @@
         "you": "就算不能改時間，也少塞一點。",
         "cost": "低（調整既有號誌時制）",
         "support": {
-          "value": 157,
+          "pending": true,
           "unit": "人",
-          "label": "assumed",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
           "sim": true
         }
       }
     ],
-    "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。支持人數與成本欄位為模擬或待填。"
+    "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。「我也需要」人數只計真實登記，未經驗證；成本欄位待填。"
   },
   "brief": {
     "title": "[企業名稱]：分批上班可以改善什麼",
@@ -6627,8 +8194,8 @@
       "note": "百分比為員工經過各入口的比例（假設，正式版用員工通勤調查或認領資料）。顏色越深車速越慢。"
     },
     "conclusion": {
-      "text": "貴公司若讓一半員工改 08:00 前到，員工平均每天通勤少 6–10 分鐘，堤頂大道 08:30 的排隊可縮短約 15–25%。",
-      "note": "情境假設 · 程式計算 · 區間反映容量估計的不確定",
+      "text": "內科整體若讓 08:30–09:15 經過堤頂大道的車移出約 4–13% 改時段，最長排隊可縮短一半；但如果全部改到 07:30–08:00，移出超過約 15–24% 就會在那裡形成新尖峰，所以要分散到提早與延後。貴公司員工約佔這段車流的 [待填]%。",
+      "note": "情境假設 · 程式計算 · 區間反映容量估計 ±10%",
       "label": "computed",
       "sim": true
     },
@@ -6653,37 +8220,41 @@
       },
       {
         "id": "b",
-        "name": "三成員工改 08:00 前到",
+        "name": "尖峰車流移出 10%，改到 07:30–08:00",
         "saving": {
-          "lo": 3,
-          "hi": 5,
+          "lo": 1.0,
+          "hi": 3.0,
           "unit": "分",
+          "note": "經過瓶頸的車平均每輛少排的分鐘",
           "label": "computed",
           "sim": true
         },
         "queue_change": {
-          "lo": -12,
-          "hi": -8,
+          "lo": -84,
+          "hi": -40,
           "unit": "%",
+          "note": "最長排隊的變化",
           "label": "computed",
           "sim": true
         },
-        "cost_text": "共同會議時段由 09:00–18:00 縮為 09:30–17:00"
+        "cost_text": "改時段的員工共同會議時段縮短（例如 09:30–17:00）"
       },
       {
         "id": "c",
-        "name": "分兩批：一半 08:00、一半 09:30",
+        "name": "尖峰車流移出 20%，一半提早到 07:30–08:00、一半延後到 09:30–10:00",
         "saving": {
-          "lo": 6,
-          "hi": 10,
+          "lo": 1.1,
+          "hi": 5.0,
           "unit": "分",
+          "note": "經過瓶頸的車平均每輛少排的分鐘",
           "label": "computed",
           "sim": true
         },
         "queue_change": {
-          "lo": -25,
-          "hi": -15,
+          "lo": -100,
+          "hi": -78,
           "unit": "%",
+          "note": "最長排隊的變化",
           "label": "computed",
           "sim": true
         },
@@ -6729,21 +8300,23 @@
     "public": [
       {
         "value": {
-          "value": 1284,
+          "pending": true,
           "unit": "人",
-          "label": "assumed",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
           "sim": true
         },
-        "text": "本週在 App 認領錯峰時段的人數"
+        "text": "意向登記錯峰時段的人數（未經驗證，10/24 起）"
       },
       {
         "value": {
-          "value": 412,
+          "pending": true,
           "unit": "人",
-          "label": "assumed",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
           "sim": true
         },
-        "text": "支持「企業彈性上班誘因」的人數"
+        "text": "表示需要「企業彈性上班誘因」的人數（未經驗證）"
       },
       {
         "value": {

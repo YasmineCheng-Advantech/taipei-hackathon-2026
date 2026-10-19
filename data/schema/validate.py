@@ -118,6 +118,14 @@ def cross_checks(d):
             need(r["row"] in rows, f"brief.exposure.rows：「{r['row']}」不在 heatmap.rows 裡")
             need(len(r["cells"]) == len(ex["cols"]), f"brief.exposure.rows[{r['row']}].cells 數量要等於 exposure.cols")
 
+    # 人數不放模擬值：截圖會讓斜線紋路消失，看起來像真的民意
+    heads = [("city.claimed", d["city"]["claimed"]), ("collective.claims.total", co["claims"].get("total"))]
+    heads += [(f"city.actions[{a['id']}].support", a["support"]) for a in d["city"]["actions"]]
+    heads += [(f"brief.public[{i}].value", x["value"]) for i, x in enumerate(br.get("public", []))]
+    for p, v in heads:
+        if v and v.get("unit") == "人":
+            need(v.get("pending") or not v.get("sim"), f"{p}：人數不能放模擬值，請改成 pending: true（網站顯示「尚無資料」）")
+
     for p, obj in walk(d):
         if "src" in obj and isinstance(obj["src"], str):
             need(obj["src"] in sources, f"{p}.src「{obj['src']}」不在 meta.sources 裡")

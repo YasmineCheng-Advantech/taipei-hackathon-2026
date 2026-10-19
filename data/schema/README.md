@@ -31,7 +31,7 @@
 
 | 寫法 | 用在哪裡 | 例子 |
 | --- | --- | --- |
-| `num`：單一值或區間 | 所有單一數字（分鐘、名額、人數、容量…） | `{"value": 12, "unit": "分", "label": "computed", "sim": true}`<br>`{"lo": 3000, "hi": 4500, "unit": "人", "label": "computed", "sim": true}`<br>還沒有數字：`{"pending": true, "label": "observed", "sim": true}`（網站顯示「待補」） |
+| `num`：單一值或區間 | 所有單一數字（分鐘、名額、人數、容量…） | `{"value": 12, "unit": "分", "label": "computed", "sim": true}`<br>`{"value": 9, "lo": 4, "hi": 13, "unit": "% 改時段", "label": "computed", "sim": true}`<br>還沒有數字：`{"pending": true, "label": "observed", "sim": true}`（網站顯示「待補」） |
 | `cell`：格子或曲線上的點 | 熱力格、副圖、曲線、一頁紙色帶 | `{"v": 23, "label": "observed", "sim": false}`<br>沒有資料：`{"gap": true}`（不補值） |
 
 `label` 只能是 `observed`（真實觀測）、`computed`（程式計算）、`assumed`（情境假設）、`ai`（AI 生成）。`sim: true` 的數字網站要加斜線紋路。缺 `label` 或 `sim` 就是契約錯誤，網站顯示錯誤，不預設成真實。
@@ -63,18 +63,18 @@
 ### `decide`
 - `metric`：比較用的代價，#4 是「路上時間（分）」，停車題換成「步行（分）」。
 - `setup`：設定畫面的選項，`rows`（可選的入口）、`deadlines`、`flex`（每個選項的 `allows`：`both`／`earlier`／`later`／`none`）。
-- `plans`：每個「入口 × 最晚到達」一份，內含 `options`、`recommended`、`baseline`、`reason`。每個選項有 `key`（出門時間或地點名）、`arrive`、`cost`、`saved`（與基準相比，已算好）、`slot_left`、`status`（`open`／`full`／`peak`／`late`）。
+- `plans`：每個「入口 × 最晚到達」一份，內含 `options`、`recommended`、`baseline`、`reason`。每個選項有 `key`（經過入口的時間或地點名；交通題不寫出門時間，因為不知道使用者從哪裡出發）、`arrive`、`cost`、`saved`（與基準相比，已算好，個人分鐘數一律給區間）、`arrive_early`（比平常早幾分鐘到，和 `saved` 一起顯示）、`slot_left`、`status`（`open`／`full`／`peak`／`late`）。
 
 ### `collective`
 - `modes`：剛好 3 種，`solo`（只有你）、`same`（大家照同一建議）、`split`（依名額分散），各帶 `delta`、一句話、`curve`（依 `cols`）與要框起來的 `highlight` 時段。
-- `claims`：各時段認領分布（模擬值，認領後端掛掉時的備援）。
+- `claims`：各時段認領分布。名額比例（`slots`）可以是情境假設；人數（`total`）一律 `pending`。
 
 ### `scenario`
 - `slider`（`min`、`max`、`step`、`default`）、`references`（參考線，如檀香山 6–7%）、`peak_cols`、`targets`（提早／延後）、`capacity`（含上下限）。
 - `baseline` 是移出 0% 的現況；`results` 每個 target × 每個滑桿刻度一筆，含 `queue_max`（區間）、`clear_time`、`delay_change`、`new_peak`、累積到達／通過曲線、每格排隊與前後差。驗證會檢查是否每個刻度都有。
 
 ### `city`
-`goal`（一句話加需要人數區間）、`claimed`（模擬備援值）、`actions`（標題、負責局處、為什麼、對你、成本文字、「我也需要」人數）、`disclaimer`。
+`goal`（一句話加需要移出的比例區間，由排隊模型反推，不換算成人數）、`claimed`（意向登記人數，一律 `pending`，網站沒拿到後端數字時顯示「尚無資料」）、`claimed_since`（起算日期）、`claimed_caption`（固定說明，如「意向登記，未經驗證」）、`actions`（標題、負責局處、為什麼、對你、成本文字、「我也需要」人數）、`disclaimer`。
 
 ### `brief`
 `exposure`（入口占比與色帶）、`conclusion`（一句話結論，整句帶標示）、`options`（做法比較）、`support`（市府配合）、`pilot`（試辦設計）、`public`（民意數字）、`sources_text`。
@@ -99,4 +99,5 @@
 2. 8 個區塊都必填；題目用不到的區塊放最小內容。
 3. 分享卡（P1）不放進 v1，之後以新增欄位方式加入。
 4. 還沒有數字的項目寫 `{"pending": true}`，網站顯示「待補」，不刪掉項目。
+6. 人數（`city.claimed`、`collective.claims.total`、`city.actions[].support`、`brief.public[]` 中單位為「人」的值）不放模擬值，一律 `pending`，網站顯示「尚無資料」。驗證腳本會擋下 `sim: true` 的人數。（2026-10-19 追加）
 5. 曲線與格子一律填實際數值（如 `collective.modes[].curve` 填車速），色階等級由網站依 `thresholds` 判斷，不在 JSON 裡填等級。
