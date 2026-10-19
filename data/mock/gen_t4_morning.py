@@ -422,6 +422,8 @@ brief = {
     "public": [
         {"value": num("assumed", 1284, unit="人"), "text": "本週在 App 認領錯峰時段的人數"},
         {"value": num("assumed", 412, unit="人"), "text": "支持「企業彈性上班誘因」的人數"},
+        {"value": tag("observed", pending=True, unit="則", note="待主辦方提供陳情資料"),
+         "text": "「市長，你給我聽好了」內湖交通陳情則數（彙總，不含原文）"},
     ],
     "sources_text": "資料來源：[VD 偵測器資料集與期間] · [捷運分時進出量] · [認領彙總，不含個資]。標示：真實觀測／程式計算／情境假設／AI 生成。本文件為黑客松作品之建議，不代表市府立場。",
 }
