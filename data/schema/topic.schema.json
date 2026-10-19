@@ -47,6 +47,9 @@
     },
     "share": {
       "$ref": "#/$defs/share"
+    },
+    "limits": {
+      "$ref": "#/$defs/limits"
     }
   },
   "$defs": {
@@ -1138,6 +1141,80 @@
               }
             }
           }
+        },
+        "sensitivity": {
+          "description": "敏感度分析：每個假設調高、調低時，結論（如 排隊減半要移出幾 %）差多少。items 由影響大到小排列，網站畫成橫向長條圖。",
+          "type": "object",
+          "required": [
+            "question",
+            "base",
+            "items"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "question": {
+              "description": "被檢驗的結論，如 最長排隊減半，08:30–09:15 經過的車要移出幾 %。",
+              "type": "string"
+            },
+            "base": {
+              "description": "所有假設取中間值時的結果。",
+              "$ref": "#/$defs/num"
+            },
+            "note": {
+              "type": "string"
+            },
+            "items": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/tag"
+                  }
+                ],
+                "required": [
+                  "id",
+                  "name",
+                  "low",
+                  "high",
+                  "spread"
+                ],
+                "properties": {
+                  "id": {
+                    "$ref": "#/$defs/id"
+                  },
+                  "name": {
+                    "description": "假設名稱，如 道路容量。",
+                    "type": "string"
+                  },
+                  "low_text": {
+                    "description": "調低時的說明，如 容量 1,100 輛。",
+                    "type": "string"
+                  },
+                  "high_text": {
+                    "type": "string"
+                  },
+                  "low": {
+                    "$ref": "#/$defs/num"
+                  },
+                  "high": {
+                    "$ref": "#/$defs/num"
+                  },
+                  "spread": {
+                    "description": "high − low 的差距，用來排序。",
+                    "type": "number"
+                  },
+                  "needs": {
+                    "description": "要補什麼資料才能縮小這個不確定性。",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -1549,6 +1626,36 @@
         },
         "sources_text": {
           "type": "string"
+        },
+        "operations": {
+          "description": "對企業營運的影響。算得出的給數字；算不出的填 pending，並寫明 how（怎麼算）與 needs（需要什麼資料）。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "value",
+              "needs"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "value": {
+                "$ref": "#/$defs/num"
+              },
+              "how": {
+                "type": "string"
+              },
+              "needs": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
@@ -1638,6 +1745,59 @@
         },
         "note": {
           "type": "string"
+        }
+      }
+    },
+    "limits": {
+      "description": "「我們可能錯在哪」頁：最可能推翻結論的地方，以及目前的處理。",
+      "type": "object",
+      "required": [
+        "items"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "intro": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "why",
+              "handling",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "$ref": "#/$defs/id"
+              },
+              "title": {
+                "type": "string"
+              },
+              "why": {
+                "description": "為什麼可能錯。",
+                "type": "string"
+              },
+              "handling": {
+                "description": "我們目前怎麼處理。",
+                "type": "string"
+              },
+              "status": {
+                "description": "handled 已處理、partial 部分處理、open 尚未處理。",
+                "enum": [
+                  "handled",
+                  "partial",
+                  "open"
+                ]
+              }
+            }
+          }
         }
       }
     }

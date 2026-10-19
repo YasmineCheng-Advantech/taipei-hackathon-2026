@@ -17,7 +17,7 @@
         "name": "臺北市交工處 VD 即時資料（VDLive.xml）",
         "kind": "real",
         "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml",
-        "period": "2026-10-19～10-23 07:00–10:30（收集中，本檔未使用）"
+        "period": "2026-10-20～10-23 07:00–10:30（收集中，本檔未使用）"
       },
       {
         "id": "vd-static",
@@ -8424,7 +8424,109 @@
           548
         ]
       }
-    ]
+    ],
+    "sensitivity": {
+      "title": "哪個假設最影響結論？",
+      "question": "最長排隊減半，08:30–09:15 經過的車要移出幾 %",
+      "base": {
+        "value": 8.6,
+        "unit": "%",
+        "note": "容量 1,000 輛、沒有回流時",
+        "label": "computed",
+        "sim": true
+      },
+      "items": [
+        {
+          "id": "peak-height",
+          "name": "尖峰有多高",
+          "low_text": "尖峰低 20%",
+          "high_text": "尖峰高 20%",
+          "low": {
+            "value": 3.1,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "high": {
+            "value": 12.9,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "spread": 9.8,
+          "needs": "收集期間 08:30–09:15 的實際流量",
+          "label": "computed",
+          "sim": true
+        },
+        {
+          "id": "capacity",
+          "name": "道路容量（一次能過多少車）",
+          "low_text": "容量 1,100 輛",
+          "high_text": "容量 900 輛",
+          "low": {
+            "value": 4.4,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "high": {
+            "value": 12.7,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "spread": 8.3,
+          "needs": "VPMSV40 在塞車時段的最大通過量",
+          "label": "computed",
+          "sim": true
+        },
+        {
+          "id": "rebound",
+          "name": "回流（路變順後有人搬回尖峰）",
+          "low_text": "沒有回流",
+          "high_text": "回流 30%",
+          "low": {
+            "value": 8.6,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "high": {
+            "value": 12.3,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "spread": 3.7,
+          "needs": "試辦前後的尖峰車流比較",
+          "label": "computed",
+          "sim": true
+        },
+        {
+          "id": "peak-width",
+          "name": "尖峰有多寬",
+          "low_text": "尖峰窄 20%",
+          "high_text": "尖峰寬 20%",
+          "low": {
+            "value": 7.3,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "high": {
+            "value": 9.3,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "spread": 2.0,
+          "needs": "收集期間各 15 分鐘的流量曲線",
+          "label": "computed",
+          "sim": true
+        }
+      ],
+      "note": "由影響大到小排列。目前最影響的是「尖峰有多高」，最需要補的資料是：收集期間 08:30–09:15 的實際流量。"
+    }
   },
   "city": {
     "title": "大家的選擇，變成改善的證據",
@@ -8965,6 +9067,73 @@
         "cost_text": "共同會議時段 10:00–16:30；對外客服需排班"
       }
     ],
+    "operations": [
+      {
+        "id": "commute",
+        "title": "員工每天少排隊的總時間",
+        "value": {
+          "pending": true,
+          "unit": "小時／天",
+          "note": "平均每輛少排的分鐘 × 貴公司經過堤頂大道的車數",
+          "label": "computed",
+          "sim": true
+        },
+        "how": "做法比較裡的「平均每輛少排幾分鐘」乘上貴公司經過這段的車數。",
+        "needs": "貴公司經過堤頂大道的員工車數（員工通勤調查或停車場進場紀錄）"
+      },
+      {
+        "id": "meeting",
+        "title": "全員都在公司的共同時段",
+        "value": {
+          "value": 7,
+          "unit": "小時／天",
+          "note": "原本 9 小時；假設每天上班 9 小時、兩批相差 2 小時",
+          "label": "assumed",
+          "sim": true
+        },
+        "how": "分兩批時（例如 08:00 與 10:00 到），共同時段 = 上班時數 − 兩批的時間差。",
+        "needs": "貴公司的上班時數與兩批的實際時間"
+      },
+      {
+        "id": "arrival",
+        "title": "08:30–09:15 到公司的員工比例",
+        "value": {
+          "pending": true,
+          "unit": "%",
+          "note": "試辦前後比較",
+          "label": "observed",
+          "sim": true
+        },
+        "how": "門禁刷卡時間依 15 分鐘分組，看尖峰時段到的人有沒有變少。",
+        "needs": "試辦前 2 週與試辦期間的門禁刷卡時間（去識別化）"
+      },
+      {
+        "id": "parking",
+        "title": "公司停車場尖峰的進場排隊",
+        "value": {
+          "pending": true,
+          "unit": "分鐘",
+          "note": "試辦前後比較",
+          "label": "observed",
+          "sim": true
+        },
+        "how": "比較試辦前後 08:30–09:15 每 15 分鐘的進場車數與排隊時間。",
+        "needs": "停車場進出紀錄（每 15 分鐘的進場車數）"
+      },
+      {
+        "id": "late",
+        "title": "因塞車遲到的次數",
+        "value": {
+          "pending": true,
+          "unit": "次／月",
+          "note": "試辦前後比較",
+          "label": "observed",
+          "sim": true
+        },
+        "how": "出勤系統中標記為交通因素的遲到次數，試辦前後比較。",
+        "needs": "出勤系統的遲到紀錄（去識別化）"
+      }
+    ],
     "support": [
       {
         "dept": "交通局 · 產發局",
@@ -9126,5 +9295,81 @@
     "sim_badge": "含模擬資料",
     "footer": "[作品網址]",
     "note": "只放使用者自己選的內容與已標示的數字；用到模擬數字時，卡片角落一定印上 sim_badge。"
+  },
+  "limits": {
+    "title": "我們可能錯在哪",
+    "intro": "這個作品的結論建立在一些假設上。以下是最可能推翻結論的地方，以及我們目前怎麼處理。",
+    "items": [
+      {
+        "id": "demand",
+        "title": "偵測器量到的是「通過量」，不是「想進來的車」",
+        "why": "塞車時偵測器只數得到放行的車，最塞的時段流量反而可能顯得比較低；到達曲線也就無法直接從資料讀出。",
+        "handling": "情境結果用容量 ±10% 的區間呈現，並用敏感度分析列出影響最大的假設。",
+        "status": "partial"
+      },
+      {
+        "id": "assumptions",
+        "title": "結論對「尖峰有多高」「道路容量」很敏感",
+        "why": "這兩個假設各調 10–20%，「排隊減半要移出幾 %」就從約 3% 變成約 13%。",
+        "handling": "結論一律寫成區間；用 10/20–10/23 收集的實際流量校正尖峰高度與容量。",
+        "status": "partial"
+      },
+      {
+        "id": "days",
+        "title": "真實資料只有 4 個早上",
+        "why": "4 天可能剛好遇到下雨、事故或施工，不足以代表平常。",
+        "handling": "每格顯示 4 天裡有幾天會塞與每天的範圍，不只顯示平均。",
+        "status": "partial"
+      },
+      {
+        "id": "coverage",
+        "title": "有些入口沒有資料，有些偵測器不在入口上",
+        "why": "國 1 內湖交流道等 TDX 金鑰；麥帥二橋只量出城方向；康寧路沒有偵測器。民權大橋、成美橋的偵測器在引道上，可能和堤頂大道數到同一批車。",
+        "handling": "缺口格子不補值；不加總各入口的流量，也不說「流入內湖總量」。",
+        "status": "open"
+      },
+      {
+        "id": "scooter",
+        "title": "機車可能數不準",
+        "why": "機車約佔進出內科私人運具四成（新聞轉述），在混合車道裡常被漏數；排隊模型以「輛」計算，沒有折算機車。",
+        "handling": "目前標為準確度未驗證；排隊模型只適合解讀汽車。",
+        "status": "open"
+      },
+      {
+        "id": "early-arrival",
+        "title": "提早出門省下的路上時間，大多變成早到公司的時間",
+        "why": "交通經濟學的瓶頸模型指出，提早或延後有代價；檀香山試辦平均每趟只省 3–4 分鐘。",
+        "handling": "建議同時顯示「路上少幾分鐘」與「早到幾分鐘」；早到超過 30 分鐘就不推薦。",
+        "status": "handled"
+      },
+      {
+        "id": "rebound",
+        "title": "路變順後，有人會搬回尖峰",
+        "why": "排隊縮短後，原本為了避塞提早出門的人可能改回尖峰出發，抵銷部分效果。",
+        "handling": "敏感度分析納入回流 30% 的情況；試辦時要看尖峰車流有沒有回升。",
+        "status": "partial"
+      },
+      {
+        "id": "claims",
+        "title": "意向登記可能重複，也不代表全體通勤者",
+        "why": "匿名登記擋不住同一人換裝置重複登記，登記的人也不一定是內科通勤族。",
+        "handling": "只顯示真實人數並標「意向登記，未經驗證」；不記 IP；結論不建立在人數上。",
+        "status": "handled"
+      },
+      {
+        "id": "company-share",
+        "title": "一間公司改時段，對道路的影響取決於它佔多少車流",
+        "why": "排隊模型算的是整個內科移出多少比例；單一企業的效果要看員工佔這段車流的比例。",
+        "handling": "協商一頁紙的結論寫「貴公司約佔這段車流的 [待填]%」，不直接套用整體的數字。",
+        "status": "handled"
+      },
+      {
+        "id": "old-data",
+        "title": "部分背景數字已經過時或口徑不明",
+        "why": "「82% 集中在 9 時」是 2015 年、疫情前的調查；檀香山 6–7% 的分母、6.3% 只指下午尖峰，都還要核對原文。",
+        "handling": "數字旁標年份與來源性質；口徑核對前不放在結論句裡。",
+        "status": "open"
+      }
+    ]
   }
 }

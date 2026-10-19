@@ -72,13 +72,17 @@
 
 ### `scenario`
 - `slider`（`min`、`max`、`step`、`default`）、`references`（參考線，如檀香山 6–7%）、`peak_cols`、`targets`（提早／延後）、`capacity`（含上下限）。
+- `sensitivity`（選填）：敏感度分析。`question`（被檢驗的結論）、`base`（中間值）、`items`（每個假設的 `low`、`high`、`spread` 與 `needs`，由影響大到小排列）。
 - `baseline` 是移出 0% 的現況；`results` 每個 target × 每個滑桿刻度一筆，含 `queue_max`（區間）、`clear_time`、`delay_change`、`new_peak`、累積到達／通過曲線、每格排隊與前後差。驗證會檢查是否每個刻度都有。
 
 ### `city`
 `goal`（一句話加需要移出的比例區間，由排隊模型反推，不換算成人數）、`claimed`（意向登記人數，一律 `pending`，網站沒拿到後端數字時顯示「尚無資料」）、`claimed_since`（起算日期）、`claimed_caption`（固定說明，如「意向登記，未經驗證」）、`actions`（標題、負責局處、為什麼、對你、成本文字、「我也需要」人數；需要跨縣市或跨機關協調的標 `cross_agency: true`）、`breakdowns`（設定答案的彙總，如大家從哪裡來、為什麼沒辦法錯峰，人數一律 `pending`）、`disclaimer`。
 
 ### `brief`
-`exposure`（入口占比與色帶）、`conclusion`（一句話結論，整句帶標示）、`options`（做法比較）、`support`（市府配合）、`pilot`（試辦設計）、`public`（民意數字）、`sources_text`。
+`exposure`（入口占比與色帶）、`conclusion`（一句話結論，整句帶標示）、`options`（做法比較）、`support`（市府配合）、`pilot`（試辦設計）、`public`（民意數字）、`operations`（營運影響：算得出的給數字，算不出的填 `pending` 並寫 `how` 與 `needs`）、`sources_text`。
+
+### `limits`（選填）
+「我們可能錯在哪」頁。`items` 每件有 `title`、`why`（為什麼可能錯）、`handling`（目前怎麼處理）、`status`（`handled`／`partial`／`open`）。
 
 ### `share`（選填）
 分享卡。`places`（「我卡在哪裡」的選項，有 `row` 的對到熱力圖，沒有的是資料範圍外的地點）、`templates`（卡片文字，`{place}` `{time}` `{saved}` `{origin}` `{constraint}` 由網站代入，`needs` 要列出用到的欄位，驗證會檢查）、`sim_badge`（用到模擬數字時印在卡片上的文字）、`footer`。

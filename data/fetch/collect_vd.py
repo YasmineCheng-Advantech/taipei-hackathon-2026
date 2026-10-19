@@ -88,19 +88,24 @@ def parse_taipei(body):
             vol, spd, occ, n = {}, [], [], 0
             for ln in lf.iter(NS + 'Lane'):
                 n += 1
-                spd.append(float(ln.findtext(NS + 'Speed') or -99))
-                occ.append(float(ln.findtext(NS + 'Occupancy') or -99))
+                lane_vol = 0
                 for vh in ln.iter(NS + 'Vehicle'):
                     k = vh.findtext(NS + 'VehicleType')
-                    vol[k] = vol.get(k, 0) + max(0, int(float(vh.findtext(NS + 'Volume') or 0)))
-            ok_spd = [s for s in spd if s >= 0]
+                    c = max(0, int(float(vh.findtext(NS + 'Volume') or 0)))
+                    vol[k] = vol.get(k, 0) + c
+                    lane_vol += c
+                spd.append((float(ln.findtext(NS + 'Speed') or -99), lane_vol))
+                occ.append(float(ln.findtext(NS + 'Occupancy') or -99))
+            # 車速用各車道的車輛數加權：沒有車的車道常回報車速 0，直接平均會把車速算低
+            ok_spd = [(s, c) for s, c in spd if s >= 0 and c > 0]
             ok_occ = [o for o in occ if o >= 0]
+            w = sum(c for _, c in ok_spd)
             rows.append(dict(
                 entrance=TARGETS[vid], vdid=vid, link_id=lf.findtext(NS + 'LinkID'),
                 status=v.findtext(NS + 'Status'), collect_time=v.findtext(NS + 'DataCollectTime'),
                 lanes=n, vol_M=vol.get('M', 0), vol_S=vol.get('S', 0), vol_L=vol.get('L', 0),
                 vol_T=vol.get('T', 0),
-                speed=round(sum(ok_spd) / len(ok_spd), 1) if ok_spd else '',
+                speed=round(sum(s * c for s, c in ok_spd) / w, 1) if w else '',
                 occupancy=round(sum(ok_occ) / len(ok_occ), 1) if ok_occ else ''))
     return rows
 
