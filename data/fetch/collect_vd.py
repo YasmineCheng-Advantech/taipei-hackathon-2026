@@ -1,9 +1,11 @@
-"""收集即時 VD 資料：平日 07:00–10:30（台北時間），每 5 分鐘抓一次。
+"""收集即時 VD 資料：預設平日 07:00–10:30（台北時間），每 5 分鐘抓一次；時段、週末與結束日期可調。
 
 來源
 - 臺北市交工處 VDLive.xml（免金鑰）：市區 5 個入口的偵測器
 - TDX 國道即時 VD（需金鑰）：國1 內湖交流道；讀環境變數 TDX_CLIENT_ID、TDX_CLIENT_SECRET，
-  沒設就跳過 TDX，只抓臺北市
+  沒設就跳過 TDX，只抓臺北市。也可以寫在 repo 根目錄的 .env（已在 .gitignore，不會進 git）：
+      TDX_CLIENT_ID=...
+      TDX_CLIENT_SECRET=...
 
 輸出（data/raw/，不進 git；單獨下載時為同資料夾的 vd_raw/）
 - vd_taipei/YYYYMMDD/HHMM.xml.gz   每次抓到的完整原始檔
@@ -16,6 +18,9 @@
     caffeinate -i python3 data/fetch/collect_vd.py          # 一直跑，時段外自動等待
     python3 data/fetch/collect_vd.py --once                  # 不管時段，立刻抓一次（測試用）
     python3 data/fetch/collect_vd.py --today                 # 只跑今天的時段，10:30 後結束（GitHub Actions 用）
+
+    # 自己的電腦長時間收：每天 05:00–21:00、週末也收，收到 10/31 結束
+    caffeinate -is python3 data/fetch/collect_vd.py --start 05:00 --end 21:00 --weekends --until 2026-10-31
 """
 import argparse, csv, datetime as dt, gzip, json, os, sys, time, urllib.parse, urllib.request
 import xml.etree.ElementTree as ET
@@ -174,30 +179,52 @@ def poll_once(tdx):
             log(f"TDX 失敗：{e}")
 
 
-def in_window(now):
-    return now.weekday() < 5 and START <= now.time() <= END
+def load_env():
+    """讀 repo 根目錄的 .env（KEY=VALUE 一行一個），已經設定的環境變數優先。"""
+    env = _HERE.parent.parent / '.env' if _HERE.name == 'fetch' else _HERE / '.env'
+    if not env.exists():
+        return
+    for line in env.read_text(encoding='utf-8').splitlines():
+        line = line.strip()
+        if line and not line.startswith('#') and '=' in line:
+            k, v = line.split('=', 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+def in_window(now, start, end, weekends):
+    return (weekends or now.weekday() < 5) and start <= now.time() <= end
 
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--once', action='store_true', help='立刻抓一次就結束（不管時段）')
-    ap.add_argument('--today', action='store_true', help='只跑今天的時段，10:30 後結束（給排程用）')
+    ap.add_argument('--today', action='store_true', help='只跑今天的時段，時段結束後結束（給排程用）')
+    ap.add_argument('--start', type=dt.time.fromisoformat, default=START, help='每天開始收的時間，預設 07:00')
+    ap.add_argument('--end', type=dt.time.fromisoformat, default=END, help='每天結束收的時間，預設 10:30')
+    ap.add_argument('--weekends', action='store_true', help='週末也收（預設只收平日）')
+    ap.add_argument('--until', type=dt.date.fromisoformat, help='收到這一天的時段結束就停，如 2026-10-31')
     args = ap.parse_args()
     ROOT.mkdir(parents=True, exist_ok=True)
+    load_env()
     tdx = TDX()
     if not tdx.enabled():
         log('沒有設定 TDX_CLIENT_ID／TDX_CLIENT_SECRET，這次只抓臺北市資料')
     if args.once:
         poll_once(tdx)
         return
-    log(f"開始收集，平日 {START:%H:%M}–{END:%H:%M} 每 5 分鐘一次；輸出到 {ROOT}。按 Ctrl+C 停止")
+    days = '每天' if args.weekends else '平日'
+    log(f"開始收集，{days} {args.start:%H:%M}–{args.end:%H:%M} 每 5 分鐘一次"
+        + (f"，收到 {args.until} 為止" if args.until else '') + f"；輸出到 {ROOT}。按 Ctrl+C 停止")
     waiting = False
     while True:
         now = dt.datetime.now(TPE)
-        if in_window(now):
+        if args.until and (now.date() > args.until or (now.date() == args.until and now.time() > args.end)):
+            log(f"已收到 {args.until}，收集結束")
+            return
+        if in_window(now, args.start, args.end, args.weekends):
             waiting = False
             poll_once(tdx)
-        elif args.today and now.time() > END:
+        elif args.today and now.time() > args.end:
             log('今天的收集時段結束')
             return
         elif not waiting:

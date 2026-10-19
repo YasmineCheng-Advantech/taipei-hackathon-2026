@@ -176,4 +176,4 @@ python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json  # 輸�
 python3 data/schema/validate.py data/processed/t4-morning.json
 ```
 
-GitHub Actions 收集的資料在每次執行的 artifact 裡（`vd-raw-…`），下載後把各天的 `vd_taipei_targets.csv` 一起傳給第一行。產生的檔案 `meta.sim` 為 `false`，熱力圖的天數說明、最塞一格的「N 天裡有 M 天」、資料來源期間都會改用真實資料。
+資料有兩個來源：自己電腦長時間執行的收集程式（`data/raw/vd_taipei_targets.csv`），以及 GitHub Actions 每次執行的 artifact（`vd-raw-…`，下載後各有一份 `vd_taipei_targets.csv`）。全部一起傳給第一行，重複的讀數會自動去掉。全天收集的資料也能改時段彙整，例如晚尖峰用 `--start 17:00 --end 19:30`。產生的檔案 `meta.sim` 為 `false`，熱力圖的天數說明、最塞一格的「N 天裡有 M 天」、資料來源期間都會改用真實資料。

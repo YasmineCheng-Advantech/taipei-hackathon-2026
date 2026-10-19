@@ -1,6 +1,9 @@
 """把收集程式的 VD 讀數彙整成熱力圖要的 15 分鐘格子。
 
 用法：python3 data/processed/build_vd_15min.py data/raw/vd_taipei_targets.csv [更多 csv]
+      預設只取平日 07:00–10:30（#4 晨峰）；全天收集的資料可以改時段，例如晚尖峰：
+      python3 data/processed/build_vd_15min.py --start 17:00 --end 19:30 --out data/processed/vd_15min_evening.json data/raw/*.csv
+      電腦與 GitHub Actions 收到的 csv 可以一起傳入，重複的讀數會自動去掉。
 輸出：data/processed/vd_15min.json（每支偵測器 × 每個 15 分鐘：多天的平均、最小、最大、天數、塞的天數）
 接著：python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json
 
@@ -11,6 +14,7 @@
 - 一格的車速 = 各筆車速依車輛數加權平均。
 - 多天彙整：平均（v）、最小（lo）、最大（hi）、天數（days）；車速另記低於 BAD_SPEED 的天數（bad_days）。
 """
+import argparse
 import csv
 import datetime as dt
 import json
@@ -36,7 +40,15 @@ def summarize(values, bad=None):
     return o
 
 
-def main(paths):
+def main(argv):
+    ap = argparse.ArgumentParser(description="把 VD 讀數彙整成 15 分鐘格子")
+    ap.add_argument("csv", nargs="*")
+    ap.add_argument("--start", type=dt.time.fromisoformat, default=START)
+    ap.add_argument("--end", type=dt.time.fromisoformat, default=END)
+    ap.add_argument("--weekends", action="store_true", help="也納入週末（預設只取平日）")
+    ap.add_argument("--out", type=Path, default=OUT)
+    args = ap.parse_args(argv)
+    paths = args.csv
     if not paths:
         print(__doc__.strip())
         return 2
@@ -55,7 +67,7 @@ def main(paths):
                     skipped += 1
                     continue
                 t = dt.datetime.fromisoformat(r["collect_time"])
-                if not (START <= t.time() < END) or t.weekday() >= 5:
+                if not (args.start <= t.time() < args.end) or (t.weekday() >= 5 and not args.weekends):
                     continue
                 n = sum(int(r[k] or 0) for k in ("vol_M", "vol_S", "vol_L", "vol_T"))
                 reads[(r["vdid"], t.date().isoformat(), bin_of(t))].append((float(r["speed"]), n))
@@ -84,13 +96,14 @@ def main(paths):
     doc = {
         "source": "臺北市交工處 VDLive.xml，經 data/fetch/collect_vd.py 收集",
         "built_at": dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(timespec="seconds"),
+        "window": f"{'每天' if args.weekends else '平日'} {args.start:%H:%M}–{args.end:%H:%M}",
         "days": sorted(days),
         "bad_speed": BAD_SPEED,
         "skipped_reads": skipped,
         "detectors": detectors,
     }
-    OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {OUT}：{len(detectors)} 支偵測器、{len(days)} 天（{', '.join(sorted(days))}），略過 {skipped} 筆異常讀數")
+    args.out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"wrote {args.out}：{len(detectors)} 支偵測器、{len(days)} 天（{', '.join(sorted(days))}），略過 {skipped} 筆異常讀數")
     return 0
 
 
