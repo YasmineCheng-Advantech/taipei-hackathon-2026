@@ -22,6 +22,8 @@ MOCK_METHOD = (
     "幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。"
     "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。"
     "城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。"
+    "熱力圖每格另有 4 個平日的最小值、最大值與低於 20 km/h 的天數（模擬的每天偏移）。"
+    "設定的出發地區與入口的對應是依路網推測的假設。"
     "人數類欄位（意向登記人數、「我也需要」人數）不放模擬值，一律 pending，由認領後端提供；後端沒有資料時網站顯示「尚無資料」。"
 )
 
@@ -46,8 +48,8 @@ def num(label, value=None, lo=None, hi=None, unit=None, note=None, src=None):
     return tag(label, **o)
 
 
-def cell(label, v):
-    return tag(label, v=v)
+def cell(label, v, **extra):
+    return tag(label, v=v, **extra)
 
 
 GAP = {"gap": True, "note": "無偵測器，不補值"}
@@ -113,6 +115,26 @@ def cell_label(e):
     return "observed" if e["kind"] == "observed" else "assumed"
 
 
+# 每天的變動：收集期間 10/20–10/23 共 4 個平日。各天相對平均的偏移加總為 0，越塞的格子變動越大
+DAY_F = (-0.25, -0.05, 0.1, 0.2)
+BAD_SPEED = 20  # 車速低於這個值算「塞」
+
+
+def speed_days(v):
+    return [max(5, round(v - (58 - v) * f)) for f in DAY_F]
+
+
+def flow_days(v):
+    return [round(v * (1 + 0.2 * f)) for f in DAY_F]
+
+
+def spread(days, bad=None):
+    o = dict(lo=min(days), hi=max(days), days=len(days))
+    if bad is not None:
+        o["bad_days"] = sum(bad(x) for x in days)
+    return o
+
+
 SPEED = {}  # (row id, col index) -> km/h，給 KPI 與一頁紙用
 speed_cells, flow_cells = [], []
 for i, e in enumerate(ENTRANCES):
@@ -124,8 +146,8 @@ for i, e in enumerate(ENTRANCES):
             continue
         sp, fl = speed_flow(i, e, t)
         SPEED[(e["id"], t)] = sp
-        srow.append(cell(cell_label(e), sp))
-        frow.append(cell(cell_label(e), fl))
+        srow.append(cell(cell_label(e), sp, **spread(speed_days(sp), lambda x: x < BAD_SPEED)))
+        frow.append(cell(cell_label(e), fl, **spread(flow_days(fl))))
     speed_cells.append(srow)
     flow_cells.append(frow)
 
@@ -140,12 +162,14 @@ for e in ENTRANCES:
 heatmap = {
     "title": "早上八點半，車都卡在哪裡？",
     "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
+    "days_label": f"{len(DAY_F)} 個平日（模擬，對應 10/20–10/23 收集期間）",
     "rows": rows,
     "cols": HEAT_COLS,
     "layers": [
         {
             "id": "speed", "name": "壅塞（車速）", "unit": "平均車速 km/h", "direction": "low_is_bad",
             "thresholds": [50, 40, 30, 20, 10],
+            "bad_at": BAD_SPEED,
             "legend": ["50+", "40–50", "30–40", "20–30", "10–20", "<10"],
             "legend_ends": ["順", "塞 km/h"],
             "level_text": ["車流順暢。", "略有車多。", "開始變慢。", "明顯壅塞。", "嚴重壅塞，走走停停。", "幾乎停滯。"],
@@ -177,7 +201,9 @@ worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items())
 n_obs = sum(e["kind"] == "observed" for e in ENTRANCES)
 kpis = [
     tag("computed", id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
-        note=f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低", ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
+        note=(f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低；{len(DAY_F)} 天裡有 "
+              f"{sum(x < BAD_SPEED for x in speed_days(worst_speed))} 天低於 {BAD_SPEED} km/h"),
+        ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
     tag("computed", id="peak-window", title="尖峰集中時段", value="08:30–09:15", note="半數以上入口低於 20 km/h"),
     tag("observed", id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(ENTRANCES)}", unit="個入口有真實資料",
         note="其餘為模擬或缺口，格子另有標示"),
@@ -266,6 +292,25 @@ decide = {
             {"id": "earlier", "label": "只能提早", "note": "例如晚上要早點離開", "allows": "earlier"},
             {"id": "later", "label": "只能延後", "note": "例如早上要先送小孩", "allows": "later"},
             {"id": "none", "label": "不能調整", "note": "我們會告訴你最不塞的路線，不會叫你改時間", "allows": "none"},
+        ],
+        # 出發地區對應的入口是依路網推測的假設，正式版用設定答案與 VD 資料校正
+        "origins": [
+            {"id": "xindian-wenshan", "label": "新店／文山", "region": "新北市・臺北市", "rows": ["huandong"],
+             "note": "多半走國 3 接南港系統、環東大道。走基隆路接麥帥橋的人：麥帥二橋往內湖方向沒有偵測器，目前無法給建議。"},
+            {"id": "songshan-nangang", "label": "松山／信義／南港", "region": "臺北市", "rows": ["chengmei-br", "minquan-br"]},
+            {"id": "zhongshan-dazhi", "label": "中山／大直／士林", "region": "臺北市", "rows": ["tiding-n", "minquan-br"]},
+            {"id": "ntpc-west", "label": "三重／蘆洲／板橋等新北西側", "region": "新北市", "rows": ["tiding-n"]},
+            {"id": "xizhi-keelung", "label": "汐止／基隆", "region": "新北市・基隆市", "rows": [],
+             "note": "多半走國 1 內湖交流道或康寧路：國 1 的資料還在等 TDX，康寧路沒有偵測器，目前無法給建議。"},
+            {"id": "other", "label": "其他", "rows": SETUP_ROWS},
+        ],
+        "constraints": [
+            {"id": "kids", "label": "要接送小孩", "actions": ["care", "care-ntpc"], "share_text": "要先送小孩去幼兒園"},
+            {"id": "shift", "label": "輪班或排班，時間不是自己決定", "actions": ["flex"], "share_text": "我的班表不是我能決定的"},
+            {"id": "company", "label": "公司規定固定的上班時間", "actions": ["flex"], "share_text": "公司規定幾點一定要到"},
+            {"id": "meeting", "label": "早上固定開會，主管期待準時", "actions": ["flex"], "share_text": "早上一到公司就要開會"},
+            {"id": "transit", "label": "改時段後沒有接駁或大眾運輸可搭", "actions": ["shuttle", "ntpc-bus"],
+             "share_text": "那個時段沒有車可以搭"},
         ],
     },
     "plans": [plan(r, d) for r in SETUP_ROWS for d in DEADLINES],
@@ -451,6 +496,23 @@ city = {
         {"id": "signal", "title": "堤頂大道路口早上號誌調整", "depts": ["交工處"],
          "why": "熱力圖上 08:30–09:00 最深的格子集中在這裡。",
          "you": "就算不能改時間，也少塞一點。", "cost": "低（調整既有號誌時制）", "support": headcount()},
+        {"id": "care-ntpc", "title": "新北的幼兒園早上提早收托", "depts": ["新北市教育局"], "cross_agency": True,
+         "why": "從新北來的家長，小孩多半讀新北的幼兒園，臺北市的托育政策管不到。",
+         "you": "住新北、要先送小孩的人也能錯峰。", "cost": "人力成本，待推估", "support": headcount()},
+        {"id": "ntpc-bus", "title": "新店／文山直達內科的通勤車", "depts": ["新北市交通局", "臺北市公運處"], "cross_agency": True,
+         "why": "從新店到內科搭捷運要轉乘，門到門的時間沒有比開車短，開車的人很難改搭大眾運輸。",
+         "you": "不開車也能在差不多的時間到內科。", "cost": "營運補貼，待推估", "support": headcount()},
+        {"id": "freeway", "title": "國 3 往內湖路段與市區入口的路況放在同一張圖", "depts": ["交通部高速公路局", "臺北市交工處"],
+         "cross_agency": True,
+         "why": "從新店、文山來的人，最不穩的常是國 3 這段（使用者回饋），但它不歸臺北市管，兩邊的資料沒有放在一起。",
+         "you": "出門前能一起看到國道和入口的路況。", "cost": "資料介接，待推估", "support": headcount()},
+    ],
+    "breakdowns": [
+        {"id": "origin", "title": "大家從哪裡來", "source": "origins", "note": "依設定時選的出發地區彙總，未經驗證",
+         "items": [{"key": o, "count": headcount()} for o in
+                   ("xindian-wenshan", "songshan-nangang", "zhongshan-dazhi", "ntpc-west", "xizhi-keelung", "other")]},
+        {"id": "why-not", "title": "為什麼沒辦法錯峰", "source": "constraints", "note": "可複選；自願填答，不代表全體通勤者",
+         "items": [{"key": c, "count": headcount()} for c in ("kids", "shift", "company", "meeting", "transit")]},
     ],
     "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。「我也需要」人數只計真實登記，未經驗證；成本欄位待填。",
 }
@@ -510,6 +572,28 @@ brief = {
     "sources_text": "資料來源：[VD 偵測器資料集與期間] · [捷運分時進出量] · [認領彙總，不含個資]。標示：真實觀測／程式計算／情境假設／AI 生成。本文件為黑客松作品之建議，不代表市府立場。",
 }
 
+# ---------- 分享卡 ----------
+
+share = {
+    "title": "分享你卡在哪裡",
+    "places": [{"id": r["id"], "label": f"{r['name']}（{r['sub']}）", "row": r["id"]} for r in rows] + [
+        {"id": "nh3-muzha", "label": "國 3 木柵隧道到南港系統", "note": "不在我們的資料範圍，卡片只顯示你選的地點"},
+        {"id": "keelung-rd-macarthur", "label": "基隆路接麥帥橋", "note": "不在我們的資料範圍，卡片只顯示你選的地點"},
+        {"id": "other", "label": "其他"},
+    ],
+    "templates": [
+        {"id": "save", "title": "錯峰可以少塞多久", "text": "我每天 {time} 卡在{place}。提早經過，路上可以少 {saved} 分鐘。",
+         "needs": ["time", "place", "saved"], "note": "{saved} 用今天建議的區間；今天沒有推薦時不能選這張"},
+        {"id": "cant", "title": "我想錯峰，但是…", "text": "我想錯峰，但{constraint}。內科通勤需要的不只是早點出門。",
+         "needs": ["constraint"]},
+        {"id": "from", "title": "我從哪裡來", "text": "我從{origin}開車到內科，每天卡在{place}。你卡在哪裡？",
+         "needs": ["origin", "place"]},
+    ],
+    "sim_badge": "含模擬資料",
+    "footer": "[作品網址]",
+    "note": "只放使用者自己選的內容與已標示的數字；用到模擬數字時，卡片角落一定印上 sim_badge。",
+}
+
 # ---------- 組合 ----------
 
 doc = {
@@ -546,6 +630,7 @@ doc = {
     "scenario": scenario,
     "city": city,
     "brief": brief,
+    "share": share,
 }
 
 OUT.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -5,6 +5,7 @@
 需要 jsonschema（pip install jsonschema）。全部通過時結束碼為 0。
 """
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -118,8 +119,49 @@ def cross_checks(d):
             need(r["row"] in rows, f"brief.exposure.rows：「{r['row']}」不在 heatmap.rows 裡")
             need(len(r["cells"]) == len(ex["cols"]), f"brief.exposure.rows[{r['row']}].cells 數量要等於 exposure.cols")
 
+    for l in hm["layers"]:
+        for i, line in enumerate(l["cells"]):
+            for j, c in enumerate(line):
+                where = f"heatmap.layers[{l['id']}].cells[{i}][{j}]"
+                if "lo" in c:
+                    need(c["lo"] <= c["v"] <= c["hi"], f"{where}：v 要介於 lo 與 hi 之間")
+                if "bad_days" in c:
+                    need("bad_at" in l, f"{where}：有 bad_days，但圖層沒有 bad_at")
+                    need(c["bad_days"] <= c.get("days", 0), f"{where}：bad_days 不能大於 days")
+
+    setup = dc["setup"]
+    action_ids = [a["id"] for a in d["city"]["actions"]]
+    unique(action_ids, "city.actions")
+    groups = {"origins": setup.get("origins", []), "constraints": setup.get("constraints", [])}
+    for name, items in groups.items():
+        unique([x["id"] for x in items], f"decide.setup.{name}")
+    for o in groups["origins"]:
+        for r in o["rows"]:
+            need(r in setup["rows"], f"decide.setup.origins[{o['id']}].rows：「{r}」不在 setup.rows 裡")
+    for c in groups["constraints"]:
+        for a in c.get("actions", []):
+            need(a in action_ids, f"decide.setup.constraints[{c['id']}].actions：「{a}」不在 city.actions 裡")
+    for b in d["city"].get("breakdowns", []):
+        keys = [x["id"] for x in groups[b["source"]]]
+        for it in b["items"]:
+            need(it["key"] in keys, f"city.breakdowns[{b['id']}]：「{it['key']}」不在 decide.setup.{b['source']} 裡")
+
+    sh = d.get("share")
+    if sh:
+        for pl in sh.get("places", []):
+            if "row" in pl:
+                need(pl["row"] in rows, f"share.places[{pl['id']}].row「{pl['row']}」不在 heatmap.rows 裡")
+        for t in sh["templates"]:
+            used = set(re.findall(r"\{(\w+)\}", t["text"]))
+            need(used == set(t["needs"]), f"share.templates[{t['id']}]：text 用到 {sorted(used)}，needs 寫的是 {sorted(t['needs'])}")
+            need("origin" not in used or groups["origins"], f"share.templates[{t['id']}]：用到 origin，但沒有 decide.setup.origins")
+            need("constraint" not in used or groups["constraints"],
+                 f"share.templates[{t['id']}]：用到 constraint，但沒有 decide.setup.constraints")
+
     # 人數不放模擬值：截圖會讓斜線紋路消失，看起來像真的民意
     heads = [("city.claimed", d["city"]["claimed"]), ("collective.claims.total", co["claims"].get("total"))]
+    heads += [(f"city.breakdowns[{b['id']}][{it['key']}]", it["count"])
+              for b in d["city"].get("breakdowns", []) for it in b["items"]]
     heads += [(f"city.actions[{a['id']}].support", a["support"]) for a in d["city"]["actions"]]
     heads += [(f"brief.public[{i}].value", x["value"]) for i, x in enumerate(br.get("public", []))]
     for p, v in heads:

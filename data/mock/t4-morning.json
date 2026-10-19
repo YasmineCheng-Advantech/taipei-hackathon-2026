@@ -47,12 +47,13 @@
     ],
     "updated_at": "2026-10-19T12:00:00+08:00",
     "sim": true,
-    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。人數類欄位（意向登記人數、「我也需要」人數）不放模擬值，一律 pending，由認領後端提供；後端沒有資料時網站顯示「尚無資料」。",
+    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。熱力圖每格另有 4 個平日的最小值、最大值與低於 20 km/h 的天數（模擬的每天偏移）。設定的出發地區與入口的對應是依路網推測的假設。人數類欄位（意向登記人數、「我也需要」人數）不放模擬值，一律 pending，由認領後端提供；後端沒有資料時網站顯示「尚無資料」。",
     "disclaimer": "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"
   },
   "heatmap": {
     "title": "早上八點半，車都卡在哪裡？",
     "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
+    "days_label": "4 個平日（模擬，對應 10/20–10/23 收集期間）",
     "rows": [
       {
         "id": "neihu-rd-1",
@@ -220,6 +221,7 @@
           20,
           10
         ],
+        "bad_at": 20,
         "legend": [
           "50+",
           "40–50",
@@ -244,51 +246,91 @@
           [
             {
               "v": 56,
+              "lo": 56,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 57,
+              "lo": 57,
+              "hi": 57,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 57,
+              "lo": 57,
+              "hi": 57,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 54,
+              "lo": 53,
+              "hi": 55,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 47,
+              "lo": 45,
+              "hi": 50,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 30,
+              "lo": 24,
+              "hi": 37,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 22,
+              "lo": 15,
+              "hi": 31,
+              "days": 4,
+              "bad_days": 2,
               "label": "observed",
               "sim": true
             },
             {
               "v": 24,
+              "lo": 17,
+              "hi": 32,
+              "days": 4,
+              "bad_days": 1,
               "label": "observed",
               "sim": true
             },
             {
               "v": 36,
+              "lo": 32,
+              "hi": 42,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 49,
+              "lo": 47,
+              "hi": 51,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             }
@@ -296,51 +338,91 @@
           [
             {
               "v": 58,
+              "lo": 58,
+              "hi": 58,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 59,
+              "lo": 59,
+              "hi": 59,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 59,
+              "lo": 59,
+              "hi": 59,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 52,
+              "lo": 51,
+              "hi": 54,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 44,
+              "lo": 41,
+              "hi": 48,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 29,
+              "lo": 23,
+              "hi": 36,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 14,
+              "lo": 5,
+              "hi": 25,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 10,
+              "lo": 5,
+              "hi": 22,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 17,
+              "lo": 9,
+              "hi": 27,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 35,
+              "lo": 30,
+              "hi": 41,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             }
@@ -348,51 +430,91 @@
           [
             {
               "v": 60,
+              "lo": 60,
+              "hi": 60,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 56,
+              "lo": 56,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 55,
+              "lo": 54,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 51,
+              "lo": 50,
+              "hi": 53,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 40,
+              "lo": 36,
+              "hi": 44,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 26,
+              "lo": 20,
+              "hi": 34,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 12,
+              "lo": 5,
+              "hi": 24,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 18,
+              "lo": 10,
+              "hi": 28,
+              "days": 4,
+              "bad_days": 2,
               "label": "observed",
               "sim": true
             },
             {
               "v": 33,
+              "lo": 28,
+              "hi": 39,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 48,
+              "lo": 46,
+              "hi": 50,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             }
@@ -442,51 +564,91 @@
           [
             {
               "v": 59,
+              "lo": 59,
+              "hi": 59,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 60,
+              "lo": 60,
+              "hi": 60,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 55,
+              "lo": 54,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 51,
+              "lo": 50,
+              "hi": 53,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 42,
+              "lo": 39,
+              "hi": 46,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 27,
+              "lo": 21,
+              "hi": 35,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 15,
+              "lo": 6,
+              "hi": 26,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 11,
+              "lo": 5,
+              "hi": 23,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 25,
+              "lo": 18,
+              "hi": 33,
+              "days": 4,
+              "bad_days": 1,
               "label": "observed",
               "sim": true
             },
             {
               "v": 42,
+              "lo": 39,
+              "hi": 46,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             }
@@ -494,51 +656,91 @@
           [
             {
               "v": 56,
+              "lo": 56,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 56,
+              "lo": 56,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 55,
+              "lo": 54,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 49,
+              "lo": 47,
+              "hi": 51,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 38,
+              "lo": 34,
+              "hi": 43,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 20,
+              "lo": 12,
+              "hi": 30,
+              "days": 4,
+              "bad_days": 2,
               "label": "observed",
               "sim": true
             },
             {
               "v": 16,
+              "lo": 8,
+              "hi": 26,
+              "days": 4,
+              "bad_days": 3,
               "label": "observed",
               "sim": true
             },
             {
               "v": 25,
+              "lo": 18,
+              "hi": 33,
+              "days": 4,
+              "bad_days": 1,
               "label": "observed",
               "sim": true
             },
             {
               "v": 40,
+              "lo": 36,
+              "hi": 44,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             },
             {
               "v": 52,
+              "lo": 51,
+              "hi": 54,
+              "days": 4,
+              "bad_days": 0,
               "label": "observed",
               "sim": true
             }
@@ -546,51 +748,91 @@
           [
             {
               "v": 58,
+              "lo": 58,
+              "hi": 58,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 58,
+              "lo": 58,
+              "hi": 58,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 55,
+              "lo": 54,
+              "hi": 56,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 41,
+              "lo": 38,
+              "hi": 45,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 27,
+              "lo": 21,
+              "hi": 35,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 15,
+              "lo": 6,
+              "hi": 26,
+              "days": 4,
+              "bad_days": 3,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 16,
+              "lo": 8,
+              "hi": 26,
+              "days": 4,
+              "bad_days": 3,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 30,
+              "lo": 24,
+              "hi": 37,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 41,
+              "lo": 38,
+              "hi": 45,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 52,
+              "lo": 51,
+              "hi": 54,
+              "days": 4,
+              "bad_days": 0,
               "label": "assumed",
               "sim": true
             }
@@ -675,51 +917,81 @@
           [
             {
               "v": 329,
+              "lo": 313,
+              "hi": 342,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 339,
+              "lo": 322,
+              "hi": 353,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 361,
+              "lo": 343,
+              "hi": 375,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 417,
+              "lo": 396,
+              "hi": 434,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 536,
+              "lo": 509,
+              "hi": 557,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 667,
+              "lo": 634,
+              "hi": 694,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 799,
+              "lo": 759,
+              "hi": 831,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 791,
+              "lo": 751,
+              "hi": 823,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 658,
+              "lo": 625,
+              "hi": 684,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 508,
+              "lo": 483,
+              "hi": 528,
+              "days": 4,
               "label": "observed",
               "sim": true
             }
@@ -727,51 +999,81 @@
           [
             {
               "v": 622,
+              "lo": 591,
+              "hi": 647,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 632,
+              "lo": 600,
+              "hi": 657,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 654,
+              "lo": 621,
+              "hi": 680,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 676,
+              "lo": 642,
+              "hi": 703,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 835,
+              "lo": 793,
+              "hi": 868,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1112,
+              "lo": 1056,
+              "hi": 1156,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1398,
+              "lo": 1328,
+              "hi": 1454,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1490,
+              "lo": 1416,
+              "hi": 1550,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1275,
+              "lo": 1211,
+              "hi": 1326,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 985,
+              "lo": 936,
+              "hi": 1024,
+              "days": 4,
               "label": "observed",
               "sim": true
             }
@@ -779,51 +1081,81 @@
           [
             {
               "v": 571,
+              "lo": 542,
+              "hi": 594,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 546,
+              "lo": 519,
+              "hi": 568,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 583,
+              "lo": 554,
+              "hi": 606,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 685,
+              "lo": 651,
+              "hi": 712,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 894,
+              "lo": 849,
+              "hi": 930,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1167,
+              "lo": 1109,
+              "hi": 1214,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1299,
+              "lo": 1234,
+              "hi": 1351,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1232,
+              "lo": 1170,
+              "hi": 1281,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 991,
+              "lo": 941,
+              "hi": 1031,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 760,
+              "lo": 722,
+              "hi": 790,
+              "days": 4,
               "label": "observed",
               "sim": true
             }
@@ -873,51 +1205,81 @@
           [
             {
               "v": 479,
+              "lo": 455,
+              "hi": 498,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 490,
+              "lo": 466,
+              "hi": 510,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 474,
+              "lo": 450,
+              "hi": 493,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 540,
+              "lo": 513,
+              "hi": 562,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 691,
+              "lo": 656,
+              "hi": 719,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 919,
+              "lo": 873,
+              "hi": 956,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1109,
+              "lo": 1054,
+              "hi": 1153,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1077,
+              "lo": 1023,
+              "hi": 1120,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 903,
+              "lo": 858,
+              "hi": 939,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 691,
+              "lo": 656,
+              "hi": 719,
+              "days": 4,
               "label": "observed",
               "sim": true
             }
@@ -925,51 +1287,81 @@
           [
             {
               "v": 574,
+              "lo": 545,
+              "hi": 597,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 593,
+              "lo": 563,
+              "hi": 617,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 646,
+              "lo": 614,
+              "hi": 672,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 786,
+              "lo": 747,
+              "hi": 817,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1039,
+              "lo": 987,
+              "hi": 1081,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1278,
+              "lo": 1214,
+              "hi": 1329,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1391,
+              "lo": 1321,
+              "hi": 1447,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 1247,
+              "lo": 1185,
+              "hi": 1297,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 975,
+              "lo": 926,
+              "hi": 1014,
+              "days": 4,
               "label": "observed",
               "sim": true
             },
             {
               "v": 758,
+              "lo": 720,
+              "hi": 788,
+              "days": 4,
               "label": "observed",
               "sim": true
             }
@@ -977,51 +1369,81 @@
           [
             {
               "v": 381,
+              "lo": 362,
+              "hi": 396,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 402,
+              "lo": 382,
+              "hi": 418,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 457,
+              "lo": 434,
+              "hi": 475,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 539,
+              "lo": 512,
+              "hi": 561,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 724,
+              "lo": 688,
+              "hi": 753,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 878,
+              "lo": 834,
+              "hi": 913,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 886,
+              "lo": 842,
+              "hi": 921,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 748,
+              "lo": 711,
+              "hi": 778,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 539,
+              "lo": 512,
+              "hi": 561,
+              "days": 4,
               "label": "assumed",
               "sim": true
             },
             {
               "v": 433,
+              "lo": 411,
+              "hi": 450,
+              "days": 4,
               "label": "assumed",
               "sim": true
             }
@@ -1149,7 +1571,7 @@
       "title": "最塞的一格",
       "value": 10,
       "unit": "km/h",
-      "note": "堤頂大道 08:45，平均車速最低",
+      "note": "堤頂大道 08:45，平均車速最低；4 天裡有 3 天低於 20 km/h",
       "ref": {
         "row": "tiding-n",
         "col": "t0845"
@@ -1218,6 +1640,104 @@
           "label": "不能調整",
           "note": "我們會告訴你最不塞的路線，不會叫你改時間",
           "allows": "none"
+        }
+      ],
+      "origins": [
+        {
+          "id": "xindian-wenshan",
+          "label": "新店／文山",
+          "region": "新北市・臺北市",
+          "rows": [
+            "huandong"
+          ],
+          "note": "多半走國 3 接南港系統、環東大道。走基隆路接麥帥橋的人：麥帥二橋往內湖方向沒有偵測器，目前無法給建議。"
+        },
+        {
+          "id": "songshan-nangang",
+          "label": "松山／信義／南港",
+          "region": "臺北市",
+          "rows": [
+            "chengmei-br",
+            "minquan-br"
+          ]
+        },
+        {
+          "id": "zhongshan-dazhi",
+          "label": "中山／大直／士林",
+          "region": "臺北市",
+          "rows": [
+            "tiding-n",
+            "minquan-br"
+          ]
+        },
+        {
+          "id": "ntpc-west",
+          "label": "三重／蘆洲／板橋等新北西側",
+          "region": "新北市",
+          "rows": [
+            "tiding-n"
+          ]
+        },
+        {
+          "id": "xizhi-keelung",
+          "label": "汐止／基隆",
+          "region": "新北市・基隆市",
+          "rows": [],
+          "note": "多半走國 1 內湖交流道或康寧路：國 1 的資料還在等 TDX，康寧路沒有偵測器，目前無法給建議。"
+        },
+        {
+          "id": "other",
+          "label": "其他",
+          "rows": [
+            "tiding-n",
+            "minquan-br",
+            "chengmei-br",
+            "huandong"
+          ]
+        }
+      ],
+      "constraints": [
+        {
+          "id": "kids",
+          "label": "要接送小孩",
+          "actions": [
+            "care",
+            "care-ntpc"
+          ],
+          "share_text": "要先送小孩去幼兒園"
+        },
+        {
+          "id": "shift",
+          "label": "輪班或排班，時間不是自己決定",
+          "actions": [
+            "flex"
+          ],
+          "share_text": "我的班表不是我能決定的"
+        },
+        {
+          "id": "company",
+          "label": "公司規定固定的上班時間",
+          "actions": [
+            "flex"
+          ],
+          "share_text": "公司規定幾點一定要到"
+        },
+        {
+          "id": "meeting",
+          "label": "早上固定開會，主管期待準時",
+          "actions": [
+            "flex"
+          ],
+          "share_text": "早上一到公司就要開會"
+        },
+        {
+          "id": "transit",
+          "label": "改時段後沒有接駁或大眾運輸可搭",
+          "actions": [
+            "shuttle",
+            "ntpc-bus"
+          ],
+          "share_text": "那個時段沒有車可以搭"
         }
       ]
     },
@@ -7999,6 +8519,190 @@
           "label": "observed",
           "sim": true
         }
+      },
+      {
+        "id": "care-ntpc",
+        "title": "新北的幼兒園早上提早收托",
+        "depts": [
+          "新北市教育局"
+        ],
+        "cross_agency": true,
+        "why": "從新北來的家長，小孩多半讀新北的幼兒園，臺北市的托育政策管不到。",
+        "you": "住新北、要先送小孩的人也能錯峰。",
+        "cost": "人力成本，待推估",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      },
+      {
+        "id": "ntpc-bus",
+        "title": "新店／文山直達內科的通勤車",
+        "depts": [
+          "新北市交通局",
+          "臺北市公運處"
+        ],
+        "cross_agency": true,
+        "why": "從新店到內科搭捷運要轉乘，門到門的時間沒有比開車短，開車的人很難改搭大眾運輸。",
+        "you": "不開車也能在差不多的時間到內科。",
+        "cost": "營運補貼，待推估",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      },
+      {
+        "id": "freeway",
+        "title": "國 3 往內湖路段與市區入口的路況放在同一張圖",
+        "depts": [
+          "交通部高速公路局",
+          "臺北市交工處"
+        ],
+        "cross_agency": true,
+        "why": "從新店、文山來的人，最不穩的常是國 3 這段（使用者回饋），但它不歸臺北市管，兩邊的資料沒有放在一起。",
+        "you": "出門前能一起看到國道和入口的路況。",
+        "cost": "資料介接，待推估",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      }
+    ],
+    "breakdowns": [
+      {
+        "id": "origin",
+        "title": "大家從哪裡來",
+        "source": "origins",
+        "note": "依設定時選的出發地區彙總，未經驗證",
+        "items": [
+          {
+            "key": "xindian-wenshan",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "songshan-nangang",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "zhongshan-dazhi",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "ntpc-west",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "xizhi-keelung",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "other",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          }
+        ]
+      },
+      {
+        "id": "why-not",
+        "title": "為什麼沒辦法錯峰",
+        "source": "constraints",
+        "note": "可複選；自願填答，不代表全體通勤者",
+        "items": [
+          {
+            "key": "kids",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "shift",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "company",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "meeting",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "transit",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          }
+        ]
       }
     ],
     "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。「我也需要」人數只計真實登記，未經驗證；成本欄位待填。"
@@ -8330,5 +9034,97 @@
       }
     ],
     "sources_text": "資料來源：[VD 偵測器資料集與期間] · [捷運分時進出量] · [認領彙總，不含個資]。標示：真實觀測／程式計算／情境假設／AI 生成。本文件為黑客松作品之建議，不代表市府立場。"
+  },
+  "share": {
+    "title": "分享你卡在哪裡",
+    "places": [
+      {
+        "id": "neihu-rd-1",
+        "label": "內湖路一段（由大直）",
+        "row": "neihu-rd-1"
+      },
+      {
+        "id": "tiding-n",
+        "label": "堤頂大道（北向）",
+        "row": "tiding-n"
+      },
+      {
+        "id": "minquan-br",
+        "label": "民權大橋（往內湖）",
+        "row": "minquan-br"
+      },
+      {
+        "id": "macarthur-2",
+        "label": "麥帥二橋（往內湖）",
+        "row": "macarthur-2"
+      },
+      {
+        "id": "chengmei-br",
+        "label": "成美橋（往內湖）",
+        "row": "chengmei-br"
+      },
+      {
+        "id": "huandong",
+        "label": "環東大道（往內科）",
+        "row": "huandong"
+      },
+      {
+        "id": "nh1-neihu-ic",
+        "label": "國1 內湖交流道（下匝道）",
+        "row": "nh1-neihu-ic"
+      },
+      {
+        "id": "kangning-3",
+        "label": "康寧路三段（由汐止）",
+        "row": "kangning-3"
+      },
+      {
+        "id": "nh3-muzha",
+        "label": "國 3 木柵隧道到南港系統",
+        "note": "不在我們的資料範圍，卡片只顯示你選的地點"
+      },
+      {
+        "id": "keelung-rd-macarthur",
+        "label": "基隆路接麥帥橋",
+        "note": "不在我們的資料範圍，卡片只顯示你選的地點"
+      },
+      {
+        "id": "other",
+        "label": "其他"
+      }
+    ],
+    "templates": [
+      {
+        "id": "save",
+        "title": "錯峰可以少塞多久",
+        "text": "我每天 {time} 卡在{place}。提早經過，路上可以少 {saved} 分鐘。",
+        "needs": [
+          "time",
+          "place",
+          "saved"
+        ],
+        "note": "{saved} 用今天建議的區間；今天沒有推薦時不能選這張"
+      },
+      {
+        "id": "cant",
+        "title": "我想錯峰，但是…",
+        "text": "我想錯峰，但{constraint}。內科通勤需要的不只是早點出門。",
+        "needs": [
+          "constraint"
+        ]
+      },
+      {
+        "id": "from",
+        "title": "我從哪裡來",
+        "text": "我從{origin}開車到內科，每天卡在{place}。你卡在哪裡？",
+        "needs": [
+          "origin",
+          "place"
+        ]
+      }
+    ],
+    "sim_badge": "含模擬資料",
+    "footer": "[作品網址]",
+    "note": "只放使用者自己選的內容與已標示的數字；用到模擬數字時，卡片角落一定印上 sim_badge。"
   }
 }
