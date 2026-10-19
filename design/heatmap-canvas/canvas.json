@@ -1,0 +1,296 @@
+{
+  "v": 3,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-10-18T09:00:00Z"
+  },
+  "title": "內科車流熱力圖範本",
+  "launch": {
+    "view": "canvas"
+  },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": {
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 1180,
+      "title": "1 熱力儀表板（矩陣 × 示意地圖聯動）",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Scenario.dc.html": {
+      "x": 1520,
+      "y": 0,
+      "w": 1440,
+      "h": 1080,
+      "title": "2 錯峰情境（前後差異 + 排隊累積曲線）",
+      "expand": "fill",
+      "is_interactive": true
+    },
+    "Tokens.dc.html": {
+      "x": 0,
+      "y": 1600,
+      "w": 1440,
+      "h": 1040,
+      "title": "3 視覺規範（色階、資料標籤、格子狀態）"
+    },
+    "Mobile.dc.html": {
+      "x": 1520,
+      "y": 1600,
+      "w": 390,
+      "h": 844,
+      "title": "4 民眾入口「我的通勤」（手機）",
+      "is_interactive": true
+    },
+    "ShareCard.dc.html": {
+      "x": 1990,
+      "y": 1600,
+      "w": 1200,
+      "h": 630,
+      "title": "5 分享卡 1200×630"
+    },
+    "V2Setup.dc.html": {
+      "x": 0,
+      "y": 3200,
+      "w": 390,
+      "h": 844,
+      "title": "V2-1 第一次設定：打卡時間與限制",
+      "is_interactive": true
+    },
+    "V2Today.dc.html": {
+      "x": 470,
+      "y": 3200,
+      "w": 390,
+      "h": 1620,
+      "title": "V2-2 今天：鎖定建議 + 認領時段 + 如果大家都這樣",
+      "is_interactive": true
+    },
+    "V2City.dc.html": {
+      "x": 940,
+      "y": 3200,
+      "w": 390,
+      "h": 1500,
+      "title": "V2-3 城市：你的選擇變成城市的證據",
+      "is_interactive": true
+    },
+    "V2Brief.dc.html": {
+      "x": 1410,
+      "y": 3200,
+      "w": 1120,
+      "h": 1460,
+      "title": "V2-4 給市府與企業：協商一頁紙"
+    },
+    "TopicEvening.dc.html": {
+      "x": 0,
+      "y": 5400,
+      "w": 1280,
+      "h": 1180,
+      "title": "A1 內科晚尖峰／下班車流",
+      "is_interactive": true
+    },
+    "TopicScooter.dc.html": {
+      "x": 1360,
+      "y": 5400,
+      "w": 1280,
+      "h": 1180,
+      "title": "A2 機車通勤與待轉、機車道",
+      "is_interactive": true
+    },
+    "TopicLastMile.dc.html": {
+      "x": 2720,
+      "y": 5400,
+      "w": 1280,
+      "h": 1180,
+      "title": "A3 最後一哩路：公車、接駁、YouBike",
+      "is_interactive": true
+    },
+    "TopicWalk.dc.html": {
+      "x": 0,
+      "y": 6700,
+      "w": 1280,
+      "h": 1180,
+      "title": "A4 人行空間／行人安全",
+      "is_interactive": true
+    },
+    "TopicParking.dc.html": {
+      "x": 1360,
+      "y": 6700,
+      "w": 1280,
+      "h": 1180,
+      "title": "A5 停車供需",
+      "is_interactive": true
+    },
+    "TopicMetro.dc.html": {
+      "x": 2720,
+      "y": 6700,
+      "w": 1280,
+      "h": 1180,
+      "title": "A6 文湖線擁擠",
+      "is_interactive": true
+    },
+    "A1App.dc.html": {
+      "x": 0,
+      "y": 8480,
+      "w": 390,
+      "h": 1040,
+      "title": "A1 晚尖峰｜民眾：今晚幾點走",
+      "is_interactive": true
+    },
+    "A1City.dc.html": {
+      "x": 470,
+      "y": 8480,
+      "w": 390,
+      "h": 1040,
+      "title": "A1 晚尖峰｜城市：下班也要錯峰",
+      "is_interactive": true
+    },
+    "A2App.dc.html": {
+      "x": 1020,
+      "y": 8480,
+      "w": 390,
+      "h": 1040,
+      "title": "A2 機車｜民眾：我的騎車路線與回報",
+      "is_interactive": true
+    },
+    "A2City.dc.html": {
+      "x": 1490,
+      "y": 8480,
+      "w": 390,
+      "h": 1040,
+      "title": "A2 機車｜城市：路口改善排行",
+      "is_interactive": true
+    },
+    "A3App.dc.html": {
+      "x": 2040,
+      "y": 8480,
+      "w": 390,
+      "h": 1040,
+      "title": "A3 最後一哩路｜民眾：不開車試試看",
+      "is_interactive": true
+    },
+    "A3City.dc.html": {
+      "x": 2510,
+      "y": 8480,
+      "w": 390,
+      "h": 1040,
+      "title": "A3 最後一哩路｜城市：服務缺口與借光時刻",
+      "is_interactive": true
+    },
+    "A4App.dc.html": {
+      "x": 0,
+      "y": 9640,
+      "w": 390,
+      "h": 1040,
+      "title": "A4 人行空間｜民眾：安全步行路線",
+      "is_interactive": true
+    },
+    "A4City.dc.html": {
+      "x": 470,
+      "y": 9640,
+      "w": 390,
+      "h": 1040,
+      "title": "A4 人行空間｜城市：人行道改善清單",
+      "is_interactive": true
+    },
+    "A5App.dc.html": {
+      "x": 1020,
+      "y": 9640,
+      "w": 390,
+      "h": 1040,
+      "title": "A5 停車｜民眾：停哪裡",
+      "is_interactive": true
+    },
+    "A5City.dc.html": {
+      "x": 1490,
+      "y": 9640,
+      "w": 390,
+      "h": 1040,
+      "title": "A5 停車｜城市：滿場時刻與費率",
+      "is_interactive": true
+    },
+    "A6App.dc.html": {
+      "x": 2040,
+      "y": 9640,
+      "w": 390,
+      "h": 1040,
+      "title": "A6 文湖線｜民眾：搭哪一班",
+      "is_interactive": true
+    },
+    "A6City.dc.html": {
+      "x": 2510,
+      "y": 9640,
+      "w": 390,
+      "h": 1040,
+      "title": "A6 文湖線｜城市：捷運吃得下嗎",
+      "is_interactive": true
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Scenario.dc.html",
+    "Tokens.dc.html",
+    "Mobile.dc.html",
+    "ShareCard.dc.html",
+    "V2Setup.dc.html",
+    "V2Today.dc.html",
+    "V2City.dc.html",
+    "V2Brief.dc.html",
+    "TopicEvening.dc.html",
+    "TopicScooter.dc.html",
+    "TopicLastMile.dc.html",
+    "TopicWalk.dc.html",
+    "TopicParking.dc.html",
+    "TopicMetro.dc.html",
+    "A1App.dc.html",
+    "A1City.dc.html",
+    "A2App.dc.html",
+    "A2City.dc.html",
+    "A3App.dc.html",
+    "A3City.dc.html",
+    "A4App.dc.html",
+    "A4City.dc.html",
+    "A5App.dc.html",
+    "A5City.dc.html",
+    "A6App.dc.html",
+    "A6City.dc.html"
+  ],
+  "notes": {
+    "t1": {
+      "x": 0,
+      "y": -300,
+      "text": "工程師要做的畫面：熱力儀表板與錯峰情境",
+      "kind": "title1",
+      "maxW": 2960
+    },
+    "t2": {
+      "x": 0,
+      "y": 1300,
+      "text": "設計師可以先準備：規範、民眾入口、分享素材",
+      "kind": "title1",
+      "maxW": 3190
+    },
+    "t3": {
+      "x": 0,
+      "y": 2900,
+      "text": "V2 結果導向：幫你決定 → 大家一起 → 城市行動",
+      "kind": "title1",
+      "maxW": 2530
+    },
+    "t4": {
+      "x": 0,
+      "y": 5100,
+      "text": "交通類其他推測題目：同一套結構的熱力圖規劃",
+      "kind": "title1",
+      "maxW": 4000
+    },
+    "t5": {
+      "x": 0,
+      "y": 8180,
+      "text": "6 題的 App 畫面：民眾互動（左）× 給市政（右）",
+      "kind": "title1",
+      "maxW": 2900
+    }
+  },
+  "designSystems": []
+}

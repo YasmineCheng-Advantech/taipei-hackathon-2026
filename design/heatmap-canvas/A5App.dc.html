@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>停哪裡</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F4E79}a:hover{color:#123150}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1040px; box-sizing: border-box; background: #F5F4EF; color: #1A1D21; font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column">
+<div style="flex: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font: 500 12px 'IBM Plex Mono', monospace; color: #555B63">A5 · 停車 · 到 [你的公司] · 模擬</span>
+<h1 style="margin: 0; font-size: 24px; font-weight: 900">到了有地方停嗎？</h1>
+</div>
+
+<div role="group" aria-label="預計幾點到" style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 700">預計幾點到</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{arrives}}" as="a" hint-placeholder-count="3">
+<button onClick="{{a.pick}}" aria-pressed="{{a.on}}" style="min-height: 44px; border-radius: 10px; border: 1px solid {{a.border}}; background: {{a.bg}}; color: {{a.fg}}; font: 600 15px 'IBM Plex Mono', monospace; cursor: pointer">{{a.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<section aria-label="建議" style="background: #1A1D21; color: #F5F4EF; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; color: #FCB46E; font-weight: 700">建議停這裡</span>
+<span style="font-size: 24px; font-weight: 700">{{recName}}</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="background: #2B3138; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column"><span style="font-size: 11px; color: #B8BCC2">到時剩約</span><span style="font: 600 18px 'IBM Plex Mono', monospace">{{recFree}} 格</span></div>
+<div style="background: #2B3138; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column"><span style="font-size: 11px; color: #B8BCC2">走到公司</span><span style="font: 600 18px 'IBM Plex Mono', monospace">{{recWalk}} 分</span></div>
+<div style="background: #2B3138; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column"><span style="font-size: 11px; color: #B8BCC2">費用</span><span style="font: 600 18px 'IBM Plex Mono', monospace">[$]</span></div>
+</div>
+<span style="font-size: 12px; color: #B8BCC2; line-height: 1.6">今天已有 {{recSent}} 人被推薦到這裡，系統已扣掉這些車位；滿了會改推下一個。</span>
+</section>
+
+<section aria-label="各停車場" style="display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 14px; font-weight: 700">{{arrLabel}} 各停車場預估</span>
+<sc-for list="{{lots}}" as="l" hint-placeholder-count="5">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) 54px 64px; gap: 8px; align-items: center; padding: 8px 10px; border-radius: 10px; background: {{l.rowBg}}; border: 1px solid #DAD8D0">
+<span style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 500">{{l.name}}</span><span style="font-size: 11px; color: #555B63">走 {{l.walk}} 分</span></span>
+<span style="font: 500 13px 'IBM Plex Mono', monospace; text-align: right">{{l.free}}</span>
+<span style="justify-self: end; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: {{l.tagBg}}; color: {{l.tagFg}}">{{l.tag}}</span>
+</div>
+</sc-for>
+</section>
+
+<div style="padding: 12px 14px; border-radius: 12px; background: #E3ECF5; color: #1F4E79; font-size: 13px; line-height: 1.6"><span style="font-weight: 700">或者：</span>停 [外圍 H] 轉乘捷運，總共多 8 分鐘，但不用進內科排隊，停車費也較低。</div>
+
+<button style="min-height: 52px; border: 0; border-radius: 12px; background: #1F4E79; color: #FFFFFF; font: 700 16px 'Noto Sans TC', sans-serif; cursor: pointer">導航到 {{recName}}</button>
+</div>
+
+<nav aria-label="分頁" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #DAD8D0; background: #FFFFFF">
+<a href="A5App.dc.html" aria-current="page" style="min-height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #1A1D21; text-decoration: none; box-shadow: inset 0 3px 0 #1F4E79">我</a>
+<a href="A5City.dc.html" style="min-height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #555B63; text-decoration: none">城市</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1040}}'>
+class Component extends DCLogic {
+  state = { arr: 1 };
+
+  renderVals() {
+    const S = this.state;
+    const labels = ['07:45', '08:15', '08:45'];
+    const lots = [
+      { name: '[停車場 A]', walk: 2, free: [40, 0, 0], sent: [5, 0, 0] },
+      { name: '[停車場 C]', walk: 4, free: [120, 35, 0], sent: [8, 22, 0] },
+      { name: '[停車場 E]', walk: 5, free: [90, 40, 6], sent: [3, 14, 6] },
+      { name: '[停車場 F]', walk: 6, free: [260, 150, 70], sent: [2, 9, 18] },
+      { name: '[外圍 H]', walk: 3, free: [480, 420, 360], sent: [0, 4, 11] }
+    ];
+    const a = S.arr;
+    const cands = lots.slice(0, 4).filter((l) => l.free[a] - l.sent[a] >= 15);
+    const rec = cands[0] || lots[3];
+    return {
+      arrives: labels.map((l, i) => { const on = i === a; return { label: l, on: on ? 'true' : 'false', bg: on ? '#1A1D21' : '#FFFFFF', fg: on ? '#FFFFFF' : '#1A1D21', border: on ? '#1A1D21' : '#C9C6BC', pick: () => this.setState({ arr: i }) }; }),
+      arrLabel: labels[a],
+      recName: rec.name, recFree: Math.max(0, rec.free[a] - rec.sent[a]), recWalk: rec.walk, recSent: rec.sent[a],
+      lots: lots.map((l) => {
+        const f = l.free[a];
+        const isRec = l === rec;
+        const tag = isRec ? ['推薦', '#1F4E79', '#FFFFFF'] : f === 0 ? ['已滿', '#ECEAE3', '#555B63'] : f < 20 ? ['快滿', '#FCE9DC', '#7A2E0B'] : ['有位', '#E2F0E8', '#1F4F38'];
+        return { name: l.name, walk: l.walk, free: f === 0 ? '—' : f + ' 格', tag: tag[0], tagBg: tag[1], tagFg: tag[2], rowBg: isRec ? '#EEF3F8' : '#FFFFFF' };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>
