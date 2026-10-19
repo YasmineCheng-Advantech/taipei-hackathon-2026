@@ -94,10 +94,7 @@ def build(rows, skipped):
     )
 
 
-PAGE = r"""<!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>VD 收集預覽</title>
-<style>
+STYLE = r"""<style>
 :root{color-scheme:light;--page:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;
 --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--empty:#f0efec;
 --q0:#cde2fb;--q1:#9ec5f4;--q2:#6da7ec;--q3:#2a78d6;--q4:#1c5cab;--q5:#0d366b}
@@ -121,7 +118,12 @@ svg text{fill:var(--muted);font-size:11px}svg .lab{fill:var(--ink2);font-size:12
 table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--grid)}th{color:var(--ink2);font-weight:500}
 #tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--surface);font-size:12px;padding:6px 8px;border-radius:6px;display:none;z-index:9;max-width:260px}
 .bar{display:flex;height:22px;border-radius:4px;overflow:hidden;gap:2px;flex:1}.bar span{display:block;height:100%}.brow{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}.brow .n{width:150px;color:var(--ink2);flex:none}.brow .m{width:70px;text-align:right;flex:none;font-variant-numeric:tabular-nums}
-</style></head><body><main>
+</style>"""
+
+PAGE = r"""<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VD 收集預覽</title>
+__STYLE__</head><body><main>
 <h1>VD 收集預覽</h1><p class="sub" id="sub"></p>
 <div class="tiles" id="tiles"></div>
 <section class="card"><h2>哪個時段、哪個入口最慢？</h2>
@@ -233,7 +235,7 @@ def main(argv):
         print("檔案裡還沒有有效讀數")
         return 1
     data = json.dumps(build(rows, skipped), ensure_ascii=False, default=list)
-    OUT.write_text(PAGE.replace("__DATA__", data.replace("</", "<\\/")), encoding="utf-8")
+    OUT.write_text(PAGE.replace("__STYLE__", STYLE).replace("__DATA__", data.replace("</", "<\\/")), encoding="utf-8")
     print(f"wrote {OUT}（{len(rows):,} 筆讀數）。執行 open {OUT.relative_to(ROOT.parent)} 用瀏覽器打開")
     return 0
 
