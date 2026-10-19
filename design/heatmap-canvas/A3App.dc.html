@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>不開車試試看</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F4E79}a:hover{color:#123150}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1040px; box-sizing: border-box; background: #F5F4EF; color: #1A1D21; font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column">
+<div style="flex: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font: 500 12px 'IBM Plex Mono', monospace; color: #555B63">A3 · 最後一哩路 · 到 [你的公司] · 模擬</span>
+<h1 style="margin: 0; font-size: 24px; font-weight: 900">不開車，到得了嗎？</h1>
+</div>
+
+<div role="group" aria-label="幾點要到" style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 14px; font-weight: 700">幾點要到公司</span>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{arrives}}" as="a" hint-placeholder-count="3">
+<button onClick="{{a.pick}}" aria-pressed="{{a.on}}" style="min-height: 44px; border-radius: 10px; border: 1px solid {{a.border}}; background: {{a.bg}}; color: {{a.fg}}; font: 600 15px 'IBM Plex Mono', monospace; cursor: pointer">{{a.label}}</button>
+</sc-for>
+</div>
+</div>
+
+<section aria-label="比較" style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{opts}}" as="o" hint-placeholder-count="4">
+<div style="border-radius: 12px; border: 1px solid {{o.border}}; background: {{o.bg}}; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 8px">
+<span style="font-size: 15px; font-weight: 700">{{o.name}}</span>
+<span style="font: 600 18px 'IBM Plex Mono', monospace">{{o.mins}} 分</span>
+</div>
+<div style="display: flex; gap: 2px; height: 10px">
+<sc-for list="{{o.segs}}" as="s" hint-placeholder-count="3">
+<span style="display: block; height: 10px; width: {{s.w}}%; background: {{s.color}}; border-radius: 2px"></span>
+</sc-for>
+</div>
+<span style="font-size: 12px; color: #3A3F45">{{o.note}}</span>
+</div>
+</sc-for>
+<div style="display: flex; gap: 12px; font-size: 11px; color: #555B63">
+<span style="display: flex; align-items: center; gap: 4px"><span style="width: 12px; height: 8px; background: #2C7A7B"></span>捷運</span>
+<span style="display: flex; align-items: center; gap: 4px"><span style="width: 12px; height: 8px; background: #FCB46E"></span>最後一段</span>
+<span style="display: flex; align-items: center; gap: 4px"><span style="width: 12px; height: 8px; background: #C93A22"></span>開車／塞車</span>
+<span style="display: flex; align-items: center; gap: 4px"><span style="width: 12px; height: 8px; background: #B8BCC2"></span>等候</span>
+</div>
+</section>
+
+<section style="background: #1A1D21; color: #F5F4EF; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 13px; color: #FCB46E; font-weight: 700">這週試 2 天不開車</span>
+<span style="font-size: 14px; line-height: 1.6">{{challengeText}}</span>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="5">
+<button onClick="{{d.pick}}" aria-pressed="{{d.on}}" style="min-height: 44px; border-radius: 10px; border: 1px solid #3A4048; background: {{d.bg}}; color: {{d.fg}}; font: 500 14px 'Noto Sans TC', sans-serif; cursor: pointer">{{d.label}}</button>
+</sc-for>
+</div>
+</section>
+</div>
+
+<nav aria-label="分頁" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #DAD8D0; background: #FFFFFF">
+<a href="A3App.dc.html" aria-current="page" style="min-height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #1A1D21; text-decoration: none; box-shadow: inset 0 3px 0 #1F4E79">我</a>
+<a href="A3City.dc.html" style="min-height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #555B63; text-decoration: none">城市</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1040}}'>
+class Component extends DCLogic {
+  state = { arr: 1, days: {} };
+
+  renderVals() {
+    const S = this.state;
+    const labels = ['08:00', '08:30', '09:00'];
+    const car = [28, 41, 36];
+    const bikeOk = [85, 35, 60];
+    const opts = [
+      { name: '開車', segs: [[car[S.arr], '#C93A22']], note: '停車費約 [金額]；' + labels[S.arr] + ' 前後最塞' },
+      { name: '捷運＋走路', segs: [[18, '#2C7A7B'], [4, '#B8BCC2'], [16, '#FCB46E']], note: '最穩定，但最後一段要走 16 分鐘' },
+      { name: '捷運＋YouBike', segs: [[18, '#2C7A7B'], [4, '#B8BCC2'], [6, '#FCB46E']], note: '此時段在西湖站借得到車的機率約 ' + bikeOk[S.arr] + '%' },
+      { name: '捷運＋接駁車', segs: [[18, '#2C7A7B'], [9, '#B8BCC2'], [5, '#FCB46E']], note: '接駁車每 [N] 分鐘一班，要等比較久' }
+    ];
+    const total = (o) => o.segs.reduce((s, x) => s + x[0], 0);
+    const best = opts.slice(1).reduce((b, o) => (total(o) < total(b) ? o : b), opts[1]);
+    const picked = Object.keys(S.days).filter((k) => S.days[k]).length;
+    return {
+      arrives: labels.map((l, i) => { const on = i === S.arr; return { label: l, on: on ? 'true' : 'false', bg: on ? '#1A1D21' : '#FFFFFF', fg: on ? '#FFFFFF' : '#1A1D21', border: on ? '#1A1D21' : '#C9C6BC', pick: () => this.setState({ arr: i }) }; }),
+      opts: opts.map((o) => {
+        const t = total(o);
+        const isBest = o === best;
+        return { name: o.name + (isBest ? ' · 推薦' : ''), mins: t, note: o.note, border: isBest ? '#1F4E79' : '#DAD8D0', bg: isBest ? '#EEF3F8' : '#FFFFFF', segs: o.segs.map((s) => ({ w: Math.round((s[0] / 45) * 100), color: s[1] })) };
+      }),
+      days: ['一', '二', '三', '四', '五'].map((d, i) => { const on = !!S.days[i]; return { label: d, on: on ? 'true' : 'false', bg: on ? '#FCB46E' : 'transparent', fg: on ? '#1A1D21' : '#F5F4EF', pick: () => this.setState({ days: { ...S.days, [i]: !on } }) }; }),
+      challengeText: picked >= 2 ? '已選 ' + picked + ' 天。那幾天早上會提醒你幾點出門才借得到 YouBike。' : '選兩天試試看；那幾天早上我們會提醒你最佳的出門時間。'
+    };
+  }
+}
+</script>
+</body>
+</html>

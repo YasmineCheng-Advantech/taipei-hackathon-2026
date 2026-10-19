@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>服務缺口與借光時刻</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F4E79}a:hover{color:#123150}
+</style>
+</helmet>
+<div style="width: 390px; min-height: 1040px; box-sizing: border-box; background: #F5F4EF; color: #1A1D21; font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column">
+<div style="flex: 1; padding: 24px 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font: 500 12px 'IBM Plex Mono', monospace; color: #555B63">A3 · 城市 · 本週 · 模擬</span>
+<h1 style="margin: 0; font-size: 24px; font-weight: 900">哪裡不開車就到不了？</h1>
+</div>
+
+<section style="background: #1A1D21; color: #F5F4EF; border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 6px">
+<span style="font-size: 13px; color: #B8BCC2">服務缺口</span>
+<span style="font-size: 18px; font-weight: 700; line-height: 1.5"><span style="font-family: 'IBM Plex Mono', monospace; color: #FCB46E">23</span> 個網格離捷運站超過 15 分鐘，附近也沒有 YouBike 或接駁</span>
+<span style="font-size: 12px; color: #B8BCC2">約 [N] 名員工在這些區域上班（需企業資料）</span>
+</section>
+
+<section aria-label="YouBike 借光時刻" style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 15px; font-weight: 700">平日早上 YouBike 幾點借光</span>
+<sc-for list="{{stations}}" as="s" hint-placeholder-count="4">
+<div style="display: grid; grid-template-columns: 64px minmax(0, 1fr) 46px; gap: 8px; align-items: center">
+<span style="font-size: 13px; font-weight: 500">{{s.name}}</span>
+<span style="position: relative; display: block; height: 14px; border-radius: 3px; background: #ECEAE3">
+<span style="position: absolute; left: 0; top: 0; height: 14px; width: {{s.w}}%; border-radius: 3px; background: #2C7A7B"></span>
+<span style="position: absolute; left: {{s.w}}%; top: 0; height: 14px; right: 0; border-radius: 0 3px 3px 0; background: #C93A22"></span>
+</span>
+<span style="font: 600 13px 'IBM Plex Mono', monospace; color: #7E170F">{{s.time}}</span>
+</div>
+</sc-for>
+<div style="display: flex; justify-content: space-between; font: 400 11px 'IBM Plex Mono', monospace; color: #555B63; padding-left: 72px; padding-right: 54px"><span>07:30</span><span>08:15</span><span>09:00</span></div>
+<span style="font-size: 12px; color: #555B63">綠：借得到 · 紅：借光。由即時車位資料自行累積一週推算。</span>
+</section>
+
+<section style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px">
+<div style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font: 600 22px 'IBM Plex Mono', monospace">516</span><span style="font-size: 12px; color: #555B63">人報名「試 2 天不開車」</span></div>
+<div style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 2px"><span style="font: 600 22px 'IBM Plex Mono', monospace">742</span><span style="font-size: 12px; color: #555B63">天次沒有開車進內科</span></div>
+</section>
+
+<section aria-label="城市行動" style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 15px; font-weight: 700">城市可以做的事</span>
+<sc-for list="{{actions}}" as="a" hint-placeholder-count="3">
+<article style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; gap: 8px"><span style="font-size: 14px; font-weight: 700">{{a.title}}</span><span style="flex: none; font-size: 11px; color: #555B63">{{a.dept}}</span></div>
+<span style="font-size: 13px; color: #3A3F45; line-height: 1.5">{{a.why}}</span>
+<button onClick="{{a.vote}}" aria-pressed="{{a.on}}" style="align-self: flex-start; min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid #1F4E79; background: {{a.bg}}; color: {{a.fg}}; font: 500 13px 'Noto Sans TC', sans-serif; cursor: pointer">我也需要 · {{a.count}}</button>
+</article>
+</sc-for>
+</section>
+</div>
+
+<nav aria-label="分頁" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid #DAD8D0; background: #FFFFFF">
+<a href="A3App.dc.html" style="min-height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #555B63; text-decoration: none">我</a>
+<a href="A3City.dc.html" aria-current="page" style="min-height: 56px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #1A1D21; text-decoration: none; box-shadow: inset 0 3px 0 #1F4E79">城市</a>
+</nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1040}}'>
+class Component extends DCLogic {
+  state = { votes: {} };
+
+  renderVals() {
+    const S = this.state;
+    const toPct = (t) => { const [h, m] = t.split(':').map(Number); return Math.round(((h * 60 + m - 450) / 90) * 100); };
+    const stations = [
+      { name: '港墘站', time: '08:12' }, { name: '西湖站', time: '08:20' },
+      { name: '文德站', time: '08:35' }, { name: '內湖站', time: '08:50' }
+    ];
+    const actions = [
+      { id: 'dock', title: '缺口網格增設 YouBike 站', dept: '交通局', why: '23 個網格走到捷運站超過 15 分鐘。', base: 274 },
+      { id: 'move', title: '08:00–08:30 往捷運站調度', dept: '交通局', why: '港墘、西湖 08:20 前就借光，提早出門的人也借不到。', base: 236 },
+      { id: 'share', title: '企業共用接駁車', dept: '產發局 · 公運處', why: '多家公司合開一條接駁，比各自開車便宜，班次也更密。', base: 158 }
+    ];
+    return {
+      stations: stations.map((s) => ({ ...s, w: toPct(s.time) })),
+      actions: actions.map((a) => {
+        const on = !!S.votes[a.id];
+        return { ...a, count: a.base + (on ? 1 : 0), on: on ? 'true' : 'false', bg: on ? '#1F4E79' : '#FFFFFF', fg: on ? '#FFFFFF' : '#1F4E79', vote: () => this.setState({ votes: { ...S.votes, [a.id]: !on } }) };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

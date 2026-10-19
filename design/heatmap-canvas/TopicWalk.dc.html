@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>A4 人行空間</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#1F4E79}a:hover{color:#123150}
+</style>
+</helmet>
+<div style="width: 1280px; min-height: 1180px; box-sizing: border-box; padding: 40px 48px; background: #F5F4EF; color: #1A1D21; font-family: 'Noto Sans TC', sans-serif; display: flex; flex-direction: column; gap: 22px">
+
+<header style="display: flex; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<span style="font: 500 13px 'IBM Plex Mono', monospace; letter-spacing: 0.08em; color: #555B63">A4 · 推測題目 · 模擬資料範本</span>
+<h1 style="margin: 0; font-size: 34px; font-weight: 900">人行空間／行人安全</h1>
+</div>
+<span style="font-size: 22px; font-weight: 700; color: #1F4E79">「這段路走起來安全嗎？」</span>
+</header>
+
+<div style="display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: 20px">
+<section aria-label="熱力圖" style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap">
+<h2 style="margin: 0; font-size: 18px">網格地圖：{{layerTitle}}</h2>
+<div role="group" aria-label="圖層" style="display: flex; border: 1px solid #C9C6BC; border-radius: 8px; overflow: hidden">
+<sc-for list="{{modes}}" as="m" hint-placeholder-count="3">
+<button onClick="{{m.pick}}" aria-pressed="{{m.on}}" style="min-height: 40px; padding: 0 12px; border: 0; background: {{m.bg}}; color: {{m.fg}}; font: 500 13px 'Noto Sans TC', sans-serif; cursor: pointer">{{m.label}}</button>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 3px">
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="10">
+<div style="display: grid; grid-template-columns: repeat(16, minmax(0, 1fr)); gap: 3px">
+<sc-for list="{{r.cells}}" as="c" hint-placeholder-count="16">
+<button onMouseEnter="{{c.enter}}" onFocus="{{c.enter}}" onClick="{{c.enter}}" aria-label="{{c.aria}}" style="height: 38px; border: 0; border-radius: 3px; padding: 0; cursor: pointer; font: 700 12px 'Noto Sans TC', sans-serif; background-color: {{c.bg}}; color: {{c.fg}}; box-shadow: {{c.ring}}">{{c.txt}}</button>
+</sc-for>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 13px">
+<span style="font-weight: 500">{{detail}}</span>
+<span style="color: #555B63">M 捷運站 · 公 公司 · 藍框 建議步行路線</span>
+</div>
+</section>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<section aria-label="幫你決定" style="background: #1A1D21; color: #F5F4EF; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; color: #FCB46E">幫你決定｜走哪條路</span>
+<span style="font-size: 20px; font-weight: 700; line-height: 1.4">從捷運站走到公司，建議走藍框路線：多 1 分鐘，但避開 2 個高風險路口。推嬰兒車請避開 [路段]，那裡人行道寬度不足。</span>
+<span style="font-size: 12px; color: #B8BCC2">可以加入「推嬰兒車」「陪長輩」「輪椅」等選項，改變路線的權重。</span>
+</section>
+<section aria-label="如果大家都這樣" style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; color: #B4501A">如果大家都這樣</span>
+<span style="font-size: 15px; line-height: 1.6">走路不會因為人多而變塞，反而更安全。但要注意回報偏差：陳情多的地方不一定最危險，只是比較多人知道可以回報。切到「陳情」圖層，和「綜合風險」對照看看。</span>
+</section>
+<section aria-label="城市行動" style="background: #FBF0D9; border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 12px; font-weight: 700; color: #7A5200">城市行動</span>
+<span style="font-size: 15px; font-weight: 700">人行道改善優先清單</span>
+<span style="font-size: 14px; line-height: 1.6">依「風險 × 每天經過的人數」排序；高風險路口延長行人綠燈秒數，或做行人早開。</span>
+<span style="font-size: 12px; color: #6B4700">新工處 · 交工處</span>
+</section>
+</div>
+</div>
+
+<section aria-label="規劃" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<div style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.6">
+<span style="font-size: 14px; font-weight: 700">熱力圖怎麼畫</span>
+<span>網格地圖，可再換成街道段上色</span><span>顏色：綜合風險／人行道缺口／陳情</span><span>疊上建議路線</span>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.6">
+<span style="font-size: 14px; font-weight: 700">要準備的資料</span>
+<span>交通事故資料（篩選行人）</span><span>人行道、騎樓資料（開放程度待查）</span><span>1999 與「市長，你給我聽好了」陳情</span>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.6">
+<span style="font-size: 14px; font-weight: 700">真實或模擬</span>
+<span>真實：事故、陳情位置</span><span>計算：綜合風險分數（權重要公開）</span>
+</div>
+<div style="background: #FFFFFF; border: 1px solid #DAD8D0; border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; line-height: 1.6">
+<span style="font-size: 14px; font-weight: 700">要先確認</span>
+<span>沒有行人流量資料，風險難以正規化</span><span>可以讓民眾回報「這裡很難走」來補資料</span>
+</div>
+</section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":1180}}'>
+class Component extends DCLogic {
+  state = { r: 4, c: 7, layer: 'risk' };
+
+  renderVals() {
+    const S = this.state;
+    const P = ['#FEF3DC', '#FDD9A0', '#FCB46E', '#F2804A', '#C93A22', '#7E170F'];
+    const W = 16, H = 10;
+    const g2 = (r, c, pr, pc, w) => Math.exp(-((r - pr) * (r - pr) + (c - pc) * (c - pc)) / (2 * w * w));
+    const station = { r: 8, c: 2 }, office = { r: 3, c: 13 };
+    const route = {};
+    for (let c = 2; c <= 10; c++) route[8 + ',' + c] = true;
+    for (let r = 3; r <= 8; r++) route[r + ',' + 10] = true;
+    for (let c = 10; c <= 13; c++) route[3 + ',' + c] = true;
+    const score = (r, c) => {
+      const road = (r === 4 ? 30 : 0) + (c === 7 ? 30 : 0);
+      if (S.layer === 'risk') return road + 60 * g2(r, c, 4, 7, 1.2) + 45 * g2(r, c, 4, 12, 1.0) + 35 * g2(r, c, 8, 7, 1.0);
+      if (S.layer === 'side') return (r === 4 || c === 7 ? 25 : 5) + 70 * g2(r, c, 6, 4, 1.6) + 40 * g2(r, c, 2, 13, 1.2);
+      return 75 * g2(r, c, 2, 4, 1.3) + 55 * g2(r, c, 4, 7, 1.0) + 20 * g2(r, c, 7, 13, 1.2);
+    };
+    const lv = (s) => (s < 10 ? 0 : s < 25 ? 1 : s < 40 ? 2 : s < 55 ? 3 : s < 70 ? 4 : 5);
+    const rows = [];
+    for (let r = 0; r < H; r++) {
+      const cells = [];
+      for (let c = 0; c < W; c++) {
+        const s = Math.round(score(r, c));
+        const l = lv(s);
+        const isSt = r === station.r && c === station.c;
+        const isOf = r === office.r && c === office.c;
+        const onRoute = route[r + ',' + c];
+        const on = S.r === r && S.c === c;
+        cells.push({
+          txt: isSt ? 'M' : isOf ? '公' : '',
+          bg: isSt || isOf ? '#1A1D21' : P[l],
+          fg: '#FFFFFF',
+          ring: on ? '0 0 0 3px #1A1D21' : onRoute ? 'inset 0 0 0 3px #1F4E79' : 'none',
+          aria: '第 ' + (r + 1) + ' 列第 ' + (c + 1) + ' 格，分數 ' + s + (onRoute ? '，建議路線' : ''),
+          enter: () => this.setState({ r, c })
+        });
+      }
+      rows.push({ cells });
+    }
+    const titles = { risk: '綜合風險（事故 + 路口 + 人行道）', side: '人行道缺口', cmp: '陳情熱區' };
+    const mk = (l, layer) => ({ label: l, on: S.layer === layer ? 'true' : 'false', bg: S.layer === layer ? '#1A1D21' : '#FFFFFF', fg: S.layer === layer ? '#FFFFFF' : '#1A1D21', pick: () => this.setState({ layer }) });
+    return {
+      rows,
+      layerTitle: titles[S.layer],
+      modes: [mk('綜合風險', 'risk'), mk('人行道缺口', 'side'), mk('陳情', 'cmp')],
+      detail: '這一格：' + titles[S.layer] + ' 分數 ' + Math.round(score(S.r, S.c)) + ' / 100（模擬）'
+    };
+  }
+}
+</script>
+</body>
+</html>
