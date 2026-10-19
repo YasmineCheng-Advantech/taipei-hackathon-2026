@@ -188,6 +188,7 @@ PEAK_DEPARTS = {"08:15", "08:30", "08:45", "09:00"}  # 尖峰時段不開放認�
 
 
 DAY_SPREAD = (0.8, 1.2)  # 每天路況不同：壅塞係數 ±20%，給個人分鐘數的區間
+MAX_EARLY = 30  # 比平常早到超過這麼多分鐘就不推薦：早到的時間比省下的路上時間還多，多數人不會照做
 
 
 def travel(row, t, k=1.0):
@@ -209,8 +210,9 @@ def plan(row, deadline):
     on_time = [o for o in opts if o["status"] != "late"]
     # 平常：最晚到達前 45 分鐘經過入口（設計稿 09:00 到 → 08:15）；來不及就往前找
     base = next((o for o in reversed(on_time) if mins(o["d"]) <= dl - 45), on_time[0])
-    # 推薦：比平常省時間、還有名額的時段中，離平常時間最近的，改變最少
-    better = [o for o in on_time if o["status"] == "open" and o["m"] < base["m"]]
+    # 推薦：比平常省時間、還有名額、早到不超過 MAX_EARLY 分鐘的時段中，離平常時間最近的，改變最少
+    better = [o for o in on_time if o["status"] == "open" and o["m"] < base["m"]
+              and mins(base["arrive"]) - mins(o["arrive"]) <= MAX_EARLY]
     rec = min(better, key=lambda o: abs(mins(o["d"]) - mins(base["d"]))) if better else base
 
     def saved_of(o):
@@ -232,7 +234,10 @@ def plan(row, deadline):
         options.append(x)
     place = EBY[row]["name"]
     if rec is base:
-        reason = f"來得及的時段都沒有名額，維持平常 {base['d']} 經過{place}。"
+        too_early = any(o["status"] == "open" and o["m"] < base["m"] for o in on_time)
+        why = (f"還有名額的時段都要比平常早到 {MAX_EARLY} 分鐘以上，省下的路上時間不夠多" if too_early
+               else "來得及、又比較不塞的時段都沒有名額")
+        reason = f"今天沒有划算的時段，照平常 {base['d']} 經過{place}就好（{why}）。"
     else:
         s = saved_of(rec)
         early = mins(base["arrive"]) - mins(rec["arrive"])
