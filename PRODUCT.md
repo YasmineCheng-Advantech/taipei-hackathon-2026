@@ -2,7 +2,7 @@
 
 Oct 19, 2026 · 給沒參加 10/18 討論的成員
 
-設計稿畫布：https://claude.ai/artifact/SfUezmGAepBdbfkgcbWaiH（檔案在 [`design/heatmap-canvas/`](design/heatmap-canvas/)）。畫布上有 27 張畫板，不是每張都要做，本文件說明哪些是最終產品、哪些是備案。
+設計稿畫布：[線上畫布（可互動預覽）](https://claude.ai/artifact/SfUezmGAepBdbfkgcbWaiH)（檔案在 [`design/heatmap-canvas/`](design/heatmap-canvas/)）。畫布上有 27 張畫板，不是每張都要做，本文件說明哪些是最終產品、哪些是備案。
 
 ## 一句話
 

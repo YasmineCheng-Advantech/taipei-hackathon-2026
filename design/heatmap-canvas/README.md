@@ -2,7 +2,7 @@
 
 給團隊討論視覺設計與分工用的設計範本，**所有數字皆為模擬資料**，方括號（如 `[路口 A]`、`[$]`）為待填欄位。專案整體說明見[根目錄 README](../../README.md)。
 
-線上畫布（可互動預覽）：https://claude.ai/artifact/SfUezmGAepBdbfkgcbWaiH
+線上畫布：[可互動預覽](https://claude.ai/artifact/SfUezmGAepBdbfkgcbWaiH)
 
 ## 檔案格式
 
