@@ -59,6 +59,7 @@
 - `entrances.csv`：工項 4 規定的 6 個欄位（入口, 方向, VD編號, 是否涵蓋機車, 缺口標記, 資料來源）。
 - `entrances_detail.csv`：每個入口的 LinkID、座標、偵測方向、偵測車道數、3 次即時抽樣結果、對應依據與信心。
 - `build_vd_15min.py`：把收集程式的讀數（`vd_taipei_targets.csv`）彙整成熱力圖的 15 分鐘格子，輸出 `vd_15min.json`：每支偵測器 × 每格的多天平均、最小、最大、天數、低於 20 km/h 的天數。只用狀態正常的讀數，同一筆不重複計算，車速依車輛數加權。接著用 `gen_t4_morning.py --real` 產生正式資料檔，見 `data/mock/README.md`。
+- `preview_vd.py`：收集期間隨時可以跑的預覽。讀 `data/raw/vd_taipei_targets.csv`，產生 `data/raw/preview.html`（含真實資料，不進 git），用瀏覽器打開就能看熱力圖、各入口車速折線、車種比例與最新讀數，不需要網路。
 - `build_entrances.py`：重跑腳本。先下載 `VD.xml` 與 `VDLive.xml`，再執行 `python3 data/processed/build_entrances.py <下載資料夾> data/processed VDLive.xml [更多 VDLive 檔]`。
 
 ## 待確認
