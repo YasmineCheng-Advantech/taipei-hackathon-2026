@@ -18,7 +18,7 @@ SIM = True
 MOCK_METHOD = (
     "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。"
     "熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。"
-    "label 依正式版的資料性質標：有 VD 的入口標 observed，無偵測器的入口標 assumed；麥帥二橋為缺口，不補值。"
+    "入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。"
     "幫你決定：路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40；名額比例為假設值。"
     "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。"
     "認領人數、支持數為模擬備援值。"
@@ -78,14 +78,19 @@ CID = {c["label"]: c["id"] for c in HEAT_COLS}
 # kind：observed＝正式版用 VD 真實觀測；sim＝無公開偵測器，正式版仍用模擬；gap＝無偵測器
 # lat/lng 為大略位置；x/y 是設計稿入口示意圖座標
 ENTRANCES = [
-    dict(id="neihu-rd-1", name="內湖路一段", sub="由大直", kind="observed", peak=6.4, sev=0.72, cap=820, lat=25.0830, lng=121.5620, x=12, y=35),
-    dict(id="tiding-n", name="堤頂大道", sub="北向", kind="observed", peak=6.8, sev=1.0, cap=1480, lat=25.0715, lng=121.5710, x=24, y=55),
-    dict(id="minquan-br", name="民權大橋", sub="往內湖", kind="observed", peak=6.2, sev=0.88, cap=1320, lat=25.0662, lng=121.5790, x=30, y=74),
-    dict(id="macarthur-2", name="麥帥二橋", sub="往內湖", kind="gap", lat=25.0590, lng=121.5860, x=46, y=86),
-    dict(id="chengmei-br", name="成美橋", sub="往內湖", kind="observed", peak=6.5, sev=0.95, cap=1120, lat=25.0575, lng=121.6005, x=60, y=88),
-    dict(id="huandong", name="環東大道", sub="往內科", kind="sim", peak=5.9, sev=0.82, cap=1400, lat=25.0640, lng=121.6150, x=74, y=78),
-    dict(id="nh1-neihu-ic", name="國1 內湖交流道", sub="下匝道", kind="sim", peak=5.5, sev=0.9, cap=900, lat=25.0735, lng=121.5960, x=84, y=62),
-    dict(id="kangning-3", name="康寧路三段", sub="由汐止", kind="sim", peak=5.1, sev=0.6, cap=700, lat=25.0740, lng=121.6120, x=90, y=30),
+    dict(id="neihu-rd-1", name="內湖路一段", sub="由大直", kind="observed", peak=6.4, sev=0.72, cap=820, lat=25.08487, lng=121.5586, x=12, y=35,
+         detector="VTXQJ20"),
+    dict(id="tiding-n", name="堤頂大道", sub="北向", kind="observed", peak=6.8, sev=1.0, cap=1480, lat=25.06689, lng=121.57246, x=24, y=55,
+         detector="VPMSV40"),
+    dict(id="minquan-br", name="民權大橋", sub="往內湖", kind="observed", peak=6.2, sev=0.88, cap=1320, lat=25.06674, lng=121.57845, x=30, y=74,
+         detector="VQBUL20（橋上無 VD，以橋東端民權東路六段代替）"),
+    dict(id="macarthur-2", name="麥帥二橋", sub="往內湖", kind="gap", lat=25.0590, lng=121.5860, x=46, y=86),  # 唯一 VD 只測出城方向
+    dict(id="chengmei-br", name="成美橋", sub="往內湖", kind="observed", peak=6.5, sev=0.95, cap=1120, lat=25.05537, lng=121.59419, x=60, y=88,
+         detector="VMLXB00（橋上無 VD，以南岸引道向陽路代替）"),
+    dict(id="huandong", name="環東大道", sub="往內科", kind="observed", peak=5.9, sev=0.82, cap=1400, lat=25.05829, lng=121.62187, x=74, y=78,
+         detector="V6310G0"),
+    dict(id="nh1-neihu-ic", name="國1 內湖交流道", sub="下匝道", kind="sim", peak=5.5, sev=0.9, cap=900, lat=25.0735, lng=121.5960, x=84, y=62),  # 待 TDX
+    dict(id="kangning-3", name="康寧路三段", sub="由汐止", kind="gap", lat=25.0740, lng=121.6120, x=90, y=30),  # 無 VD
 ]
 EBY = {e["id"]: e for e in ENTRANCES}
 
@@ -121,7 +126,7 @@ for e in ENTRANCES:
     r = {k: e[k] for k in ("id", "name", "sub", "kind", "x", "y", "lat", "lng")}
     if e["kind"] == "observed":
         r["src"] = "vd-live"
-        r["detector"] = "[VD 編號待盤點]"
+        r["detector"] = e["detector"]
     rows.append(r)
 
 heatmap = {
@@ -441,10 +446,10 @@ doc = {
         "time_range": {"start": "07:00", "end": "09:30"},
         "bin_minutes": 15,
         "sources": [
-            {"id": "vd-live", "name": "縣市即時路況（VD 每 5 分鐘統計）", "kind": "real",
-             "url": "https://data.gov.tw/dataset/166031", "period": "2026-10-19～10-23 07:00–10:30（收集中，本檔未使用）"},
-            {"id": "vd-static", "name": "臺北市車輛偵測器（VD）靜態資料", "kind": "real",
-             "url": "https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2"},
+            {"id": "vd-live", "name": "臺北市交工處 VD 即時資料（VDLive.xml）", "kind": "real",
+             "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml", "period": "2026-10-19～10-23 07:00–10:30（收集中，本檔未使用）"},
+            {"id": "vd-static", "name": "臺北市交工處 VD 靜態資料（VD.xml）", "kind": "real",
+             "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml", "note": "入口與 VD 對照見 entrances.csv"},
             {"id": "dot-2015", "name": "交通局 2015 年內湖上班時間調查", "kind": "survey",
              "url": "https://dot.gov.taipei/News_Content.aspx?n=42F54DDC552218AD&sms=051295A13C5CC507&s=6B82592FD161ADB6",
              "note": "82% 集中在上午 9 時；資料已逾十年"},

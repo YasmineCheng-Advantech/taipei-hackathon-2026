@@ -14,16 +14,17 @@
     "sources": [
       {
         "id": "vd-live",
-        "name": "縣市即時路況（VD 每 5 分鐘統計）",
+        "name": "臺北市交工處 VD 即時資料（VDLive.xml）",
         "kind": "real",
-        "url": "https://data.gov.tw/dataset/166031",
+        "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml",
         "period": "2026-10-19～10-23 07:00–10:30（收集中，本檔未使用）"
       },
       {
         "id": "vd-static",
-        "name": "臺北市車輛偵測器（VD）靜態資料",
+        "name": "臺北市交工處 VD 靜態資料（VD.xml）",
         "kind": "real",
-        "url": "https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2"
+        "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml",
+        "note": "入口與 VD 對照見 entrances.csv"
       },
       {
         "id": "dot-2015",
@@ -46,7 +47,7 @@
     ],
     "updated_at": "2026-10-19T12:00:00+08:00",
     "sim": true,
-    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。label 依正式版的資料性質標：有 VD 的入口標 observed，無偵測器的入口標 assumed；麥帥二橋為缺口，不補值。幫你決定：路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。認領人數、支持數為模擬備援值。",
+    "mock_method": "全部數字為模擬，入口與數字沿用 design/heatmap-canvas 設計稿。熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。幫你決定：路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40；名額比例為假設值。情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。認領人數、支持數為模擬備援值。",
     "disclaimer": "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"
   },
   "heatmap": {
@@ -60,10 +61,10 @@
         "kind": "observed",
         "x": 12,
         "y": 35,
-        "lat": 25.083,
-        "lng": 121.562,
+        "lat": 25.08487,
+        "lng": 121.5586,
         "src": "vd-live",
-        "detector": "[VD 編號待盤點]"
+        "detector": "VTXQJ20"
       },
       {
         "id": "tiding-n",
@@ -72,10 +73,10 @@
         "kind": "observed",
         "x": 24,
         "y": 55,
-        "lat": 25.0715,
-        "lng": 121.571,
+        "lat": 25.06689,
+        "lng": 121.57246,
         "src": "vd-live",
-        "detector": "[VD 編號待盤點]"
+        "detector": "VPMSV40"
       },
       {
         "id": "minquan-br",
@@ -84,10 +85,10 @@
         "kind": "observed",
         "x": 30,
         "y": 74,
-        "lat": 25.0662,
-        "lng": 121.579,
+        "lat": 25.06674,
+        "lng": 121.57845,
         "src": "vd-live",
-        "detector": "[VD 編號待盤點]"
+        "detector": "VQBUL20（橋上無 VD，以橋東端民權東路六段代替）"
       },
       {
         "id": "macarthur-2",
@@ -106,20 +107,22 @@
         "kind": "observed",
         "x": 60,
         "y": 88,
-        "lat": 25.0575,
-        "lng": 121.6005,
+        "lat": 25.05537,
+        "lng": 121.59419,
         "src": "vd-live",
-        "detector": "[VD 編號待盤點]"
+        "detector": "VMLXB00（橋上無 VD，以南岸引道向陽路代替）"
       },
       {
         "id": "huandong",
         "name": "環東大道",
         "sub": "往內科",
-        "kind": "sim",
+        "kind": "observed",
         "x": 74,
         "y": 78,
-        "lat": 25.064,
-        "lng": 121.615
+        "lat": 25.05829,
+        "lng": 121.62187,
+        "src": "vd-live",
+        "detector": "V6310G0"
       },
       {
         "id": "nh1-neihu-ic",
@@ -135,7 +138,7 @@
         "id": "kangning-3",
         "name": "康寧路三段",
         "sub": "由汐止",
-        "kind": "sim",
+        "kind": "gap",
         "x": 90,
         "y": 30,
         "lat": 25.074,
@@ -491,52 +494,52 @@
           [
             {
               "v": 56,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 56,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 55,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 49,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 38,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 20,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 16,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 25,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 40,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 52,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             }
           ],
@@ -594,54 +597,44 @@
           ],
           [
             {
-              "v": 60,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 54,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 51,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 44,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 35,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 30,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 30,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 41,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 51,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 57,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             }
           ]
         ]
@@ -932,52 +925,52 @@
           [
             {
               "v": 574,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 593,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 646,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 786,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 1039,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 1278,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 1391,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 1247,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 975,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             },
             {
               "v": 758,
-              "label": "assumed",
+              "label": "observed",
               "sim": true
             }
           ],
@@ -1035,54 +1028,44 @@
           ],
           [
             {
-              "v": 315,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 300,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 363,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 483,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 631,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 715,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 631,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 503,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 389,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             },
             {
-              "v": 331,
-              "label": "assumed",
-              "sim": true
+              "gap": true,
+              "note": "無偵測器，不補值"
             }
           ]
         ]
@@ -1185,7 +1168,7 @@
     {
       "id": "coverage",
       "title": "偵測器覆蓋",
-      "value": "4 / 8",
+      "value": "5 / 8",
       "unit": "個入口有真實資料",
       "note": "其餘為模擬或缺口，格子另有標示",
       "label": "observed",
