@@ -1,0 +1,3373 @@
+{
+  "topicId": "t4-morning",
+  "_mock": {
+    "sim": true,
+    "generatedBy": "data/mock/gen_t4_morning.py",
+    "method": [
+      "全部數字為模擬，沿用 design/heatmap-canvas 設計稿的入口與數字，方便網站照稿接上。",
+      "熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動；同參數重跑結果相同。",
+      "label 依正式版的資料性質標：有 VD 的入口標 observed、無偵測器的入口標 assumed，但全部 sim: true，網站應加斜線紋路。",
+      "麥帥二橋為缺口（gap: true），值為 null，不補值。",
+      "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由網站工程師的排隊模型腳本以 model_input.json 重算。",
+      "認領人數、支持數為模擬備援值。"
+    ]
+  },
+  "meta": {
+    "title": "內科晨峰車流",
+    "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
+    "region": "臺北市內湖區（內湖科技園區聯外入口）",
+    "timeRange": {
+      "start": "07:00",
+      "end": "09:30",
+      "days": "平日"
+    },
+    "binMinutes": 15,
+    "units": {
+      "speed": "km/h",
+      "flow": "輛/15 分鐘"
+    },
+    "sources": [
+      {
+        "name": "縣市即時路況（VD 每 5 分鐘統計）",
+        "url": "https://data.gov.tw/dataset/166031",
+        "kind": "observed",
+        "used": false
+      },
+      {
+        "name": "臺北市車輛偵測器（VD）靜態資料",
+        "url": "https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2",
+        "kind": "observed",
+        "used": false
+      },
+      {
+        "name": "交通局 2015 年內湖上班時間調查",
+        "url": "https://dot.gov.taipei/News_Content.aspx?n=42F54DDC552218AD&sms=051295A13C5CC507&s=6B82592FD161ADB6",
+        "kind": "observed",
+        "used": true
+      },
+      {
+        "name": "本作品模擬資料",
+        "url": null,
+        "kind": "sim",
+        "used": true
+      }
+    ],
+    "updatedAt": "2026-10-19T12:00:00+08:00",
+    "label": "assumed",
+    "sim": true
+  },
+  "heatmap": {
+    "rows": [
+      {
+        "id": "neihu-rd-1",
+        "name": "內湖路一段",
+        "direction": "由大直",
+        "coverage": "observed",
+        "vdIds": [],
+        "lat": 25.083,
+        "lng": 121.562,
+        "coordsApprox": true,
+        "mapX": 12,
+        "mapY": 35,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "tiding-n",
+        "name": "堤頂大道",
+        "direction": "北向",
+        "coverage": "observed",
+        "vdIds": [],
+        "lat": 25.0715,
+        "lng": 121.571,
+        "coordsApprox": true,
+        "mapX": 24,
+        "mapY": 55,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "minquan-br",
+        "name": "民權大橋",
+        "direction": "往內湖",
+        "coverage": "observed",
+        "vdIds": [],
+        "lat": 25.0662,
+        "lng": 121.579,
+        "coordsApprox": true,
+        "mapX": 30,
+        "mapY": 74,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "macarthur-2",
+        "name": "麥帥二橋",
+        "direction": "往內湖",
+        "coverage": "gap",
+        "vdIds": [],
+        "lat": 25.059,
+        "lng": 121.586,
+        "coordsApprox": true,
+        "mapX": 46,
+        "mapY": 86,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "chengmei-br",
+        "name": "成美橋",
+        "direction": "往內湖",
+        "coverage": "observed",
+        "vdIds": [],
+        "lat": 25.0575,
+        "lng": 121.6005,
+        "coordsApprox": true,
+        "mapX": 60,
+        "mapY": 88,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "huandong",
+        "name": "環東大道",
+        "direction": "往內科",
+        "coverage": "sim",
+        "vdIds": [],
+        "lat": 25.064,
+        "lng": 121.615,
+        "coordsApprox": true,
+        "mapX": 74,
+        "mapY": 78,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "nh1-neihu-ic",
+        "name": "國1 內湖交流道",
+        "direction": "下匝道",
+        "coverage": "sim",
+        "vdIds": [],
+        "lat": 25.0735,
+        "lng": 121.596,
+        "coordsApprox": true,
+        "mapX": 84,
+        "mapY": 62,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "kangning-3",
+        "name": "康寧路三段",
+        "direction": "由汐止",
+        "coverage": "sim",
+        "vdIds": [],
+        "lat": 25.074,
+        "lng": 121.612,
+        "coordsApprox": true,
+        "mapX": 90,
+        "mapY": 30,
+        "label": "assumed",
+        "sim": true
+      }
+    ],
+    "cols": [
+      "07:00",
+      "07:15",
+      "07:30",
+      "07:45",
+      "08:00",
+      "08:15",
+      "08:30",
+      "08:45",
+      "09:00",
+      "09:15"
+    ],
+    "layers": [
+      {
+        "id": "speed",
+        "name": "壅塞（車速）",
+        "unit": "km/h",
+        "thresholds": [
+          50,
+          40,
+          30,
+          20,
+          10
+        ],
+        "worse": "lower",
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "flow",
+        "name": "需求（流量）",
+        "unit": "輛/15 分鐘",
+        "thresholds": [
+          400,
+          600,
+          800,
+          1000,
+          1200
+        ],
+        "worse": "higher",
+        "label": "assumed",
+        "sim": true
+      }
+    ],
+    "defaultLayer": "speed",
+    "cells": [
+      [
+        {
+          "speed": 56,
+          "flow": 329,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 57,
+          "flow": 339,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 57,
+          "flow": 361,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 54,
+          "flow": 417,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 47,
+          "flow": 536,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 30,
+          "flow": 667,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 22,
+          "flow": 799,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 24,
+          "flow": 791,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 36,
+          "flow": 658,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 49,
+          "flow": 508,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": 58,
+          "flow": 622,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 59,
+          "flow": 632,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 59,
+          "flow": 654,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 52,
+          "flow": 676,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 44,
+          "flow": 835,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 29,
+          "flow": 1112,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 14,
+          "flow": 1398,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 10,
+          "flow": 1490,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 17,
+          "flow": 1275,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 35,
+          "flow": 985,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": 60,
+          "flow": 571,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 56,
+          "flow": 546,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 55,
+          "flow": 583,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 51,
+          "flow": 685,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 40,
+          "flow": 894,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 26,
+          "flow": 1167,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 12,
+          "flow": 1299,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 18,
+          "flow": 1232,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 33,
+          "flow": 991,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 48,
+          "flow": 760,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": null,
+          "flow": null,
+          "gap": true,
+          "label": "observed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": 59,
+          "flow": 479,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 60,
+          "flow": 490,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 55,
+          "flow": 474,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 51,
+          "flow": 540,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 42,
+          "flow": 691,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 27,
+          "flow": 919,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 15,
+          "flow": 1109,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 11,
+          "flow": 1077,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 25,
+          "flow": 903,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        },
+        {
+          "speed": 42,
+          "flow": 691,
+          "gap": false,
+          "label": "observed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": 56,
+          "flow": 574,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 56,
+          "flow": 593,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 55,
+          "flow": 646,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 49,
+          "flow": 786,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 38,
+          "flow": 1039,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 20,
+          "flow": 1278,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 16,
+          "flow": 1391,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 25,
+          "flow": 1247,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 40,
+          "flow": 975,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 52,
+          "flow": 758,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": 58,
+          "flow": 381,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 58,
+          "flow": 402,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 55,
+          "flow": 457,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 41,
+          "flow": 539,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 27,
+          "flow": 724,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 15,
+          "flow": 878,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 16,
+          "flow": 886,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 30,
+          "flow": 748,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 41,
+          "flow": 539,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 52,
+          "flow": 433,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        }
+      ],
+      [
+        {
+          "speed": 60,
+          "flow": 315,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 54,
+          "flow": 300,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 51,
+          "flow": 363,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 44,
+          "flow": 483,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 35,
+          "flow": 631,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 30,
+          "flow": 715,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 30,
+          "flow": 631,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 41,
+          "flow": 503,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 51,
+          "flow": 389,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "speed": 57,
+          "flow": 331,
+          "gap": false,
+          "label": "assumed",
+          "sim": true
+        }
+      ]
+    ],
+    "mrtLoad": {
+      "name": "文湖線負載",
+      "unit": "%",
+      "values": [
+        {
+          "time": "07:00",
+          "pct": 55,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "07:15",
+          "pct": 56,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "07:30",
+          "pct": 59,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "07:45",
+          "pct": 65,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "08:00",
+          "pct": 76,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "08:15",
+          "pct": 87,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "08:30",
+          "pct": 95,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "08:45",
+          "pct": 93,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "09:00",
+          "pct": 83,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "09:15",
+          "pct": 71,
+          "label": "assumed",
+          "sim": true
+        }
+      ],
+      "label": "assumed",
+      "sim": true
+    },
+    "label": "assumed",
+    "sim": true
+  },
+  "kpis": [
+    {
+      "id": "worst-cell",
+      "title": "最塞的一格",
+      "value": 10,
+      "unit": "km/h",
+      "caption": "堤頂大道 08:45，平均車速最低",
+      "rowId": "tiding-n",
+      "time": "08:45",
+      "label": "computed",
+      "sim": true
+    },
+    {
+      "id": "peak-window",
+      "title": "尖峰集中時段",
+      "value": "08:30–09:15",
+      "unit": null,
+      "caption": "半數以上入口低於 20 km/h",
+      "label": "computed",
+      "sim": true
+    },
+    {
+      "id": "coverage",
+      "title": "偵測器覆蓋",
+      "value": 4,
+      "unit": "/ 8 個入口",
+      "caption": "其餘為模擬或缺口，格子另有標示",
+      "label": "observed",
+      "sim": true
+    }
+  ],
+  "decide": {
+    "entranceId": "tiding-n",
+    "arriveBy": "09:00",
+    "options": [
+      {
+        "depart": "07:15",
+        "minutes": 9,
+        "arrive": "07:24",
+        "slotLeftPct": 70,
+        "full": false,
+        "late": false,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "depart": "07:30",
+        "minutes": 11,
+        "arrive": "07:41",
+        "slotLeftPct": 35,
+        "full": false,
+        "late": false,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "depart": "07:45",
+        "minutes": 14,
+        "arrive": "07:59",
+        "slotLeftPct": 12,
+        "full": false,
+        "late": false,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "depart": "08:00",
+        "minutes": 19,
+        "arrive": "08:19",
+        "slotLeftPct": 0,
+        "full": true,
+        "late": false,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "depart": "08:15",
+        "minutes": 26,
+        "arrive": "08:41",
+        "slotLeftPct": null,
+        "full": false,
+        "late": false,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "depart": "08:30",
+        "minutes": 31,
+        "arrive": "09:01",
+        "slotLeftPct": null,
+        "full": false,
+        "late": true,
+        "label": "computed",
+        "sim": true
+      }
+    ],
+    "recommended": "07:45",
+    "baseline": {
+      "depart": "08:15",
+      "minutes": 26,
+      "note": "平常出門時間（使用者設定）",
+      "label": "assumed",
+      "sim": true
+    },
+    "minutesSaved": 12,
+    "reason": "07:45 出門還有名額，比平常少 12 分鐘，09:00 前到得了。建議每天早上產生一次後固定，只有事故或施工才更新。",
+    "label": "computed",
+    "sim": true
+  },
+  "collective": {
+    "entranceId": "tiding-n",
+    "cols": [
+      "07:00",
+      "07:15",
+      "07:30",
+      "07:45",
+      "08:00",
+      "08:15",
+      "08:30",
+      "08:45",
+      "09:00",
+      "09:15"
+    ],
+    "modes": [
+      {
+        "id": "only-you",
+        "name": "只有你這樣做",
+        "minutesDelta": -12,
+        "summary": "你省很多，但路況幾乎不變。",
+        "levels": [
+          0,
+          0,
+          1,
+          1,
+          2,
+          3,
+          4,
+          5,
+          5,
+          4
+        ],
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "same-advice",
+        "name": "大家都照同一建議",
+        "minutesDelta": -2,
+        "summary": "07:30 變成新尖峰，大家只省一點點。",
+        "levels": [
+          0,
+          1,
+          4,
+          5,
+          4,
+          3,
+          3,
+          4,
+          4,
+          3
+        ],
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "by-slot",
+        "name": "依名額分配",
+        "minutesDelta": -7,
+        "summary": "尖峰被攤平，平均每人都省到時間。",
+        "levels": [
+          0,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3,
+          3,
+          3,
+          2
+        ],
+        "label": "assumed",
+        "sim": true
+      }
+    ],
+    "claims": {
+      "totalThisWeek": 1284,
+      "slots": [
+        {
+          "time": "07:15",
+          "filledPct": 30,
+          "full": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "07:30",
+          "filledPct": 65,
+          "full": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "07:45",
+          "filledPct": 88,
+          "full": false,
+          "label": "assumed",
+          "sim": true
+        },
+        {
+          "time": "08:00",
+          "filledPct": 100,
+          "full": true,
+          "label": "assumed",
+          "sim": true
+        }
+      ],
+      "note": "認領數為模擬備援值；後端正常時網站改用真實人數。",
+      "label": "assumed",
+      "sim": true
+    },
+    "label": "assumed",
+    "sim": true
+  },
+  "scenario": {
+    "bottleneck": {
+      "entranceId": "tiding-n",
+      "name": "堤頂大道北向",
+      "capacityPer15min": 1000,
+      "capacityRangePct": 10,
+      "label": "assumed",
+      "sim": true
+    },
+    "cols": [
+      "07:00",
+      "07:15",
+      "07:30",
+      "07:45",
+      "08:00",
+      "08:15",
+      "08:30",
+      "08:45",
+      "09:00",
+      "09:15",
+      "09:30",
+      "09:45",
+      "10:00",
+      "10:15"
+    ],
+    "slider": {
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "default": 5,
+      "unit": "%",
+      "label": "assumed",
+      "sim": true
+    },
+    "targets": [
+      {
+        "id": "early",
+        "name": "提早到 07:30–08:00",
+        "cols": [
+          "07:30",
+          "07:45"
+        ]
+      },
+      {
+        "id": "late",
+        "name": "延後到 09:30–10:00",
+        "cols": [
+          "09:30",
+          "09:45"
+        ]
+      }
+    ],
+    "shiftFrom": [
+      "08:30",
+      "08:45",
+      "09:00",
+      "09:15"
+    ],
+    "reference": {
+      "name": "檀香山 1988 實際參與",
+      "low": 6,
+      "high": 7,
+      "unit": "%",
+      "source": "Giuliano & Golob，TRR 1280（1990）",
+      "label": "observed",
+      "sim": true
+    },
+    "baseline": {
+      "demand": [
+        500,
+        503,
+        516,
+        566,
+        694,
+        921,
+        1168,
+        1280,
+        1168,
+        921,
+        694,
+        566,
+        516,
+        503
+      ],
+      "queue": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        168,
+        448,
+        616,
+        537,
+        231,
+        0,
+        0,
+        0
+      ],
+      "cumArrive": [
+        500,
+        1003,
+        1519,
+        2085,
+        2779,
+        3700,
+        4868,
+        6148,
+        7316,
+        8237,
+        8931,
+        9497,
+        10013,
+        10516
+      ],
+      "cumDepart": [
+        500,
+        1003,
+        1519,
+        2085,
+        2779,
+        3700,
+        4700,
+        5700,
+        6700,
+        7700,
+        8700,
+        9497,
+        10013,
+        10516
+      ],
+      "maxQueue": 616,
+      "clearTime": "09:45",
+      "label": "computed",
+      "sim": true
+    },
+    "cases": [
+      {
+        "shiftPct": 0,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          1168,
+          1280,
+          1168,
+          921,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          168,
+          448,
+          616,
+          537,
+          231,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4868,
+          6148,
+          7316,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4700,
+          5700,
+          6700,
+          7700,
+          8700,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 616,
+          "low": 316,
+          "high": 958,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:45",
+          "low": "09:30",
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 0,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 5,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          629,
+          679,
+          694,
+          921,
+          1110,
+          1216,
+          1110,
+          875,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          110,
+          326,
+          435,
+          310,
+          4,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1632,
+          2312,
+          3006,
+          3927,
+          5036,
+          6252,
+          7362,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1632,
+          2312,
+          3006,
+          3927,
+          4927,
+          5927,
+          6927,
+          7927,
+          8927,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 435,
+          "low": 135,
+          "high": 756,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:45",
+          "low": "09:15",
+          "high": "10:00",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -41,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 10,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          743,
+          793,
+          694,
+          921,
+          1051,
+          1152,
+          1051,
+          829,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          51,
+          203,
+          254,
+          83,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1746,
+          2539,
+          3233,
+          4154,
+          5205,
+          6357,
+          7408,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1746,
+          2539,
+          3233,
+          4154,
+          5154,
+          6154,
+          7154,
+          8154,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 254,
+          "low": 52,
+          "high": 575,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:30",
+          "low": "09:15",
+          "high": "09:45",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -70,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 15,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          856,
+          906,
+          694,
+          921,
+          993,
+          1088,
+          993,
+          783,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          88,
+          81,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1859,
+          2766,
+          3460,
+          4381,
+          5373,
+          6461,
+          7454,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1859,
+          2766,
+          3460,
+          4381,
+          5373,
+          6373,
+          7373,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 88,
+          "low": 0,
+          "high": 395,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:15",
+          "low": null,
+          "high": "09:45",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -92,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 20,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          970,
+          1020,
+          694,
+          921,
+          934,
+          1024,
+          934,
+          737,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          20,
+          0,
+          0,
+          0,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1973,
+          2992,
+          3686,
+          4607,
+          5542,
+          6566,
+          7500,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1973,
+          2973,
+          3686,
+          4607,
+          5542,
+          6542,
+          7500,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 24,
+          "low": 0,
+          "high": 214,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:00",
+          "low": null,
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -98,
+        "newPeak": "07:45",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 25,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          1083,
+          1133,
+          694,
+          921,
+          876,
+          960,
+          876,
+          691,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          83,
+          216,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          2086,
+          3219,
+          3913,
+          4834,
+          5710,
+          6670,
+          7546,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          2003,
+          3003,
+          3913,
+          4834,
+          5710,
+          6670,
+          7546,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 216,
+          "low": 33,
+          "high": 416,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "08:00",
+          "low": "08:00",
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -85,
+        "newPeak": "07:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 30,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          1197,
+          1247,
+          694,
+          921,
+          818,
+          896,
+          818,
+          645,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          197,
+          443,
+          137,
+          58,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          2200,
+          3446,
+          4140,
+          5061,
+          5879,
+          6775,
+          7592,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          2003,
+          3003,
+          4003,
+          5003,
+          5879,
+          6775,
+          7592,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 443,
+          "low": 243,
+          "high": 643,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "08:30",
+          "low": "08:00",
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -58,
+        "newPeak": "07:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 35,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          1310,
+          1360,
+          694,
+          921,
+          759,
+          832,
+          759,
+          599,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          310,
+          670,
+          364,
+          285,
+          44,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          2313,
+          3673,
+          4367,
+          5288,
+          6047,
+          6879,
+          7638,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          2003,
+          3003,
+          4003,
+          5003,
+          6003,
+          6879,
+          7638,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 670,
+          "low": 470,
+          "high": 870,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "08:45",
+          "low": "08:15",
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -16,
+        "newPeak": "07:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 40,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          1423,
+          1473,
+          694,
+          921,
+          701,
+          768,
+          701,
+          553,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          423,
+          897,
+          591,
+          512,
+          213,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          2426,
+          3900,
+          4594,
+          5515,
+          6216,
+          6984,
+          7684,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          2003,
+          3003,
+          4003,
+          5003,
+          6003,
+          6984,
+          7684,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 897,
+          "low": 697,
+          "high": 1097,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "08:45",
+          "low": "08:30",
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 32,
+        "newPeak": "07:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 45,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          1537,
+          1587,
+          694,
+          921,
+          642,
+          704,
+          642,
+          507,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          537,
+          1124,
+          818,
+          739,
+          381,
+          85,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          2540,
+          4127,
+          4821,
+          5742,
+          6384,
+          7088,
+          7730,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          2003,
+          3003,
+          4003,
+          5003,
+          6003,
+          7003,
+          7730,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 1124,
+          "low": 924,
+          "high": 1324,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:00",
+          "low": "08:30",
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 84,
+        "newPeak": "07:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 50,
+        "target": "early",
+        "demand": [
+          500,
+          503,
+          1650,
+          1700,
+          694,
+          921,
+          584,
+          640,
+          584,
+          460,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          650,
+          1350,
+          1044,
+          966,
+          550,
+          190,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          2653,
+          4354,
+          5048,
+          5968,
+          6552,
+          7192,
+          7776,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          2003,
+          3003,
+          4003,
+          5003,
+          6003,
+          7003,
+          7776,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 1350,
+          "low": 1150,
+          "high": 1550,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:00",
+          "low": "08:45",
+          "high": "09:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 137,
+        "newPeak": "07:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 0,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          1168,
+          1280,
+          1168,
+          921,
+          694,
+          566,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          168,
+          448,
+          616,
+          537,
+          231,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4868,
+          6148,
+          7316,
+          8237,
+          8931,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4700,
+          5700,
+          6700,
+          7700,
+          8700,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 616,
+          "low": 316,
+          "high": 958,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:45",
+          "low": "09:30",
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 0,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 5,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          1110,
+          1216,
+          1110,
+          875,
+          807,
+          679,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          110,
+          326,
+          435,
+          310,
+          118,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4810,
+          6026,
+          7135,
+          8010,
+          8818,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4700,
+          5700,
+          6700,
+          7700,
+          8700,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 435,
+          "low": 135,
+          "high": 756,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:45",
+          "low": "09:15",
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -35,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 10,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          1051,
+          1152,
+          1051,
+          829,
+          921,
+          793,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          51,
+          203,
+          254,
+          83,
+          4,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4751,
+          5903,
+          6954,
+          7783,
+          8704,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4700,
+          5700,
+          6700,
+          7700,
+          8700,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 254,
+          "low": 52,
+          "high": 575,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:45",
+          "low": "09:15",
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -70,
+        "newPeak": null,
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 15,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          993,
+          1088,
+          993,
+          783,
+          1034,
+          906,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          88,
+          81,
+          0,
+          34,
+          0,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4693,
+          5781,
+          6774,
+          7556,
+          8591,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4693,
+          5693,
+          6693,
+          7556,
+          8556,
+          9497,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 88,
+          "low": 0,
+          "high": 418,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "09:45",
+          "low": null,
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -90,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 20,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          934,
+          1024,
+          934,
+          737,
+          1148,
+          1020,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          24,
+          0,
+          0,
+          148,
+          167,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4634,
+          5658,
+          6593,
+          7330,
+          8477,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4634,
+          5634,
+          6593,
+          7330,
+          8330,
+          9330,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 167,
+          "low": 48,
+          "high": 418,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:00",
+          "low": "09:45",
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -83,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 25,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          876,
+          960,
+          876,
+          691,
+          1261,
+          1133,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          261,
+          394,
+          0,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4576,
+          5536,
+          6412,
+          7103,
+          8364,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4576,
+          5536,
+          6412,
+          7103,
+          8103,
+          9103,
+          10013,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 394,
+          "low": 194,
+          "high": 594,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:00",
+          "low": "10:00",
+          "high": "10:15",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -67,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 30,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          818,
+          896,
+          818,
+          645,
+          1375,
+          1247,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          375,
+          621,
+          137,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4518,
+          5414,
+          6231,
+          6876,
+          8250,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4518,
+          5414,
+          6231,
+          6876,
+          7876,
+          8876,
+          9876,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 621,
+          "low": 421,
+          "high": 821,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:15",
+          "low": "10:00",
+          "high": "10:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -43,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 35,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          759,
+          832,
+          759,
+          599,
+          1488,
+          1360,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          488,
+          848,
+          364,
+          0
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4459,
+          5291,
+          6050,
+          6649,
+          8137,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4459,
+          5291,
+          6050,
+          6649,
+          7649,
+          8649,
+          9649,
+          10516
+        ],
+        "maxQueue": {
+          "mid": 848,
+          "low": 648,
+          "high": 1048,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:15",
+          "low": "10:15",
+          "high": "10:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": -15,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 40,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          701,
+          768,
+          701,
+          553,
+          1601,
+          1473,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          601,
+          1075,
+          591,
+          94
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4401,
+          5169,
+          5870,
+          6422,
+          8024,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4401,
+          5169,
+          5870,
+          6422,
+          7422,
+          8422,
+          9422,
+          10422
+        ],
+        "maxQueue": {
+          "mid": 1075,
+          "low": 875,
+          "high": 1275,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:30",
+          "low": "10:15",
+          "high": "10:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 18,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 45,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          642,
+          704,
+          642,
+          507,
+          1715,
+          1587,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          715,
+          1302,
+          818,
+          321
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4342,
+          5046,
+          5689,
+          6195,
+          7910,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4342,
+          5046,
+          5689,
+          6195,
+          7195,
+          8195,
+          9195,
+          10195
+        ],
+        "maxQueue": {
+          "mid": 1302,
+          "low": 1102,
+          "high": 1502,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:30",
+          "low": "10:15",
+          "high": "10:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 58,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "shiftPct": 50,
+        "target": "late",
+        "demand": [
+          500,
+          503,
+          516,
+          566,
+          694,
+          921,
+          584,
+          640,
+          584,
+          460,
+          1828,
+          1700,
+          516,
+          503
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          828,
+          1528,
+          1044,
+          548
+        ],
+        "cumArrive": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4284,
+          4924,
+          5508,
+          5968,
+          7797,
+          9497,
+          10013,
+          10516
+        ],
+        "cumDepart": [
+          500,
+          1003,
+          1519,
+          2085,
+          2779,
+          3700,
+          4284,
+          4924,
+          5508,
+          5968,
+          6968,
+          7968,
+          8968,
+          9968
+        ],
+        "maxQueue": {
+          "mid": 1528,
+          "low": 1328,
+          "high": 1728,
+          "label": "computed",
+          "sim": true
+        },
+        "clearTime": {
+          "mid": "10:30",
+          "low": "10:30",
+          "high": "10:30",
+          "label": "computed",
+          "sim": true
+        },
+        "totalDelayChangePct": 97,
+        "newPeak": "09:30",
+        "label": "computed",
+        "sim": true
+      }
+    ],
+    "label": "assumed",
+    "sim": true
+  },
+  "city": {
+    "target": {
+      "low": 3000,
+      "high": 4500,
+      "unit": "人",
+      "goal": "讓堤頂大道早上排隊減半",
+      "note": "由排隊模型推估的區間，不是保證值；正式值由排隊模型腳本產出",
+      "label": "computed",
+      "sim": true
+    },
+    "claimed": {
+      "value": 1284,
+      "unit": "人",
+      "period": "本週",
+      "label": "assumed",
+      "sim": true
+    },
+    "slots": [
+      {
+        "time": "07:15",
+        "filledPct": 30,
+        "full": false,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "time": "07:30",
+        "filledPct": 65,
+        "full": false,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "time": "07:45",
+        "filledPct": 88,
+        "full": false,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "time": "08:00",
+        "filledPct": 100,
+        "full": true,
+        "label": "assumed",
+        "sim": true
+      }
+    ],
+    "slotNote": "08:00 已滿，系統開始把人推薦到 07:15 和 07:30，避免形成新尖峰。",
+    "actions": [
+      {
+        "id": "flex",
+        "title": "企業彈性上班誘因",
+        "depts": [
+          "交通局",
+          "產發局"
+        ],
+        "why": "要讓排隊減半，光靠個人不夠，需要整間公司一起調整上班時間。",
+        "forYou": "你的公司加入，你才真的能每天錯峰。",
+        "cost": null,
+        "costNote": "誘因預算，待推估",
+        "supporters": 412,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "care",
+        "title": "幼兒園提早到 07:30 收托",
+        "depts": [
+          "教育局"
+        ],
+        "why": "設定中選「只能延後」的人，最常見的原因是早上要送小孩。",
+        "forYou": "要接送小孩的家長也能提早出門。",
+        "cost": null,
+        "costNote": "人力成本，待推估",
+        "supporters": 268,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "shuttle",
+        "title": "捷運站接駁車 07:15 起加班",
+        "depts": [
+          "公運處"
+        ],
+        "why": "提早出門的人改搭捷運後，最後一段到公司的接駁車還沒開。",
+        "forYou": "提早出門也有車可以搭。",
+        "cost": null,
+        "costNote": "加班車成本，待推估",
+        "supporters": 193,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "signal",
+        "title": "堤頂大道路口早上號誌調整",
+        "depts": [
+          "交工處"
+        ],
+        "why": "熱力圖上 08:30–09:00 最深的格子集中在這裡。",
+        "forYou": "就算不能改時間，也少塞一點。",
+        "cost": null,
+        "costNote": "低（調整既有號誌時制）",
+        "supporters": 157,
+        "label": "assumed",
+        "sim": true
+      }
+    ],
+    "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。",
+    "label": "assumed",
+    "sim": true
+  },
+  "brief": {
+    "company": "[企業名稱]",
+    "entranceShare": [
+      {
+        "entranceId": "tiding-n",
+        "pct": 42,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "entranceId": "minquan-br",
+        "pct": 31,
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "entranceId": "chengmei-br",
+        "pct": 27,
+        "label": "assumed",
+        "sim": true
+      }
+    ],
+    "entranceShareNote": "員工經過各入口的比例為假設，正式版用員工通勤調查或認領資料。",
+    "conclusion": {
+      "text": "貴公司若讓一半員工改 08:00 前到，員工平均每天通勤少 6–10 分鐘，堤頂大道 08:30 的排隊可縮短約 15–25%。",
+      "minutesSavedLow": 6,
+      "minutesSavedHigh": 10,
+      "queueCutLowPct": 15,
+      "queueCutHighPct": 25,
+      "label": "computed",
+      "sim": true
+    },
+    "options": [
+      {
+        "id": "A",
+        "name": "維持現況",
+        "minutesSavedLow": 0,
+        "minutesSavedHigh": 0,
+        "queueChangeLowPct": null,
+        "queueChangeHighPct": null,
+        "opsCost": "無",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "id": "B",
+        "name": "三成員工改 08:00 前到",
+        "minutesSavedLow": 3,
+        "minutesSavedHigh": 5,
+        "queueChangeLowPct": -12,
+        "queueChangeHighPct": -8,
+        "opsCost": "共同會議時段由 09:00–18:00 縮為 09:30–17:00",
+        "label": "computed",
+        "sim": true
+      },
+      {
+        "id": "C",
+        "name": "分兩批：一半 08:00、一半 09:30",
+        "minutesSavedLow": 6,
+        "minutesSavedHigh": 10,
+        "queueChangeLowPct": -25,
+        "queueChangeHighPct": -15,
+        "opsCost": "共同會議時段 10:00–16:30；對外客服需排班",
+        "label": "computed",
+        "sim": true
+      }
+    ],
+    "cityRoles": [
+      {
+        "depts": [
+          "交通局",
+          "產發局"
+        ],
+        "offer": "參與企業的錯峰成果可計入綠運輸 ESG 指標；[誘因方案待定]"
+      },
+      {
+        "depts": [
+          "教育局"
+        ],
+        "offer": "內科周邊幼兒園提早到 07:30 收托，讓有接送需求的員工也能參與"
+      },
+      {
+        "depts": [
+          "公運處"
+        ],
+        "offer": "07:15 起加開捷運站接駁車"
+      },
+      {
+        "depts": [
+          "交工處"
+        ],
+        "offer": "試辦期間調整堤頂大道早上號誌時制"
+      }
+    ],
+    "pilot": {
+      "weeks": 4,
+      "baselineWeeks": 2,
+      "control": "參與企業 vs. 同入口未參與企業",
+      "metrics": [
+        "門禁刷卡到達時間分布",
+        "入口 VD 排隊消散時間",
+        "員工通勤時間自評"
+      ],
+      "interference": "記錄施工、連假、颱風、開學日，分析時排除",
+      "stopRule": "第 2 週參與率低於 [門檻]，或新時段排隊比基準期更長",
+      "label": "assumed",
+      "sim": true
+    },
+    "publicOpinion": [
+      {
+        "id": "claims",
+        "value": 1284,
+        "caption": "本週認領錯峰時段的人數",
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "flex-supporters",
+        "value": 412,
+        "caption": "支持「企業彈性上班誘因」的人數",
+        "label": "assumed",
+        "sim": true
+      },
+      {
+        "id": "petitions",
+        "value": null,
+        "caption": "「市長，你給我聽好了」內湖交通陳情則數（彙總，不含原文）",
+        "note": "待主辦方資料",
+        "label": "observed",
+        "sim": true
+      }
+    ],
+    "disclaimer": "本文件為黑客松作品之建議，不代表市府立場。",
+    "label": "assumed",
+    "sim": true
+  }
+}
