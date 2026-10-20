@@ -314,7 +314,7 @@ figcaption { font-size: 13px; color: var(--muted); }
         <tr><td>Demo 開場（約 5 秒）</td><td>3D 瑞士捲 ＋ 三問三答</td><td>頁首、<a href="#s4">4</a></td></tr>
         <tr><td>Demo 熱力圖（約 40 秒）</td><td>入口果醬柱按播放，或蛋糕天際線從 3D 切回 2D</td><td><a href="#s6">6 3D</a></td></tr>
         <tr><td>Demo 講「為什麼要分開走」</td><td>大家一起換，會怎樣？</td><td><a href="#s4">4</a></td></tr>
-        <tr><td>網站熱力儀表板</td><td>果醬格 ＋ 入口地圖「河與橋」（雙向聯動）</td><td><a href="#s5">5 熱力圖</a></td></tr>
+        <tr><td>網站熱力儀表板</td><td>果醬格 ＋ 入口地圖（雙向聯動）</td><td><a href="#s5">5 熱力圖</a></td></tr>
         <tr><td>簡報的熱力圖頁</td><td>一條捲一個入口</td><td><a href="#s5">5</a></td></tr>
         <tr><td>簡報章節頁</td><td>做一條捲的四步</td><td><a href="#s7">7</a></td></tr>
         <tr><td>錯峰情境、協商一頁紙</td><td>不改，沿用現在的規範</td><td>—</td></tr>
@@ -501,7 +501,7 @@ figcaption { font-size: 13px; color: var(--muted); }
     <h3>入口地圖：三種畫法，跟果醬格雙向聯動</h3>
     <div class="plate">
       <div class="row"><div class="ttl">拉滑桿，看每個入口什麼時候塞</div><span class="chip sim">模擬資料</span></div>
-      <div class="tabs" role="tablist" aria-label="入口地圖的畫法"><button type="button" role="tab" data-v="river" aria-selected="true">河與橋</button><button type="button" role="tab" data-v="rank" aria-selected="false">入口排行</button><button type="button" role="tab" data-v="line" aria-selected="false">時間路線</button></div>
+      <div class="tabs" role="tablist" aria-label="入口地圖的畫法"><button type="button" role="tab" data-v="river" aria-selected="true">地圖</button><button type="button" role="tab" data-v="rank" aria-selected="false">入口排行</button><button type="button" role="tab" data-v="line" aria-selected="false">時間路線</button></div>
       <div class="g-grid">
         <div class="stack" style="gap:10px">
           <div class="g-map" id="mapG"></div>
@@ -559,7 +559,7 @@ figcaption { font-size: 13px; color: var(--muted); }
   <div class="stack">
     <h3>蛋糕天際線</h3>
     <div class="studio">
-      <div class="stage" id="stageSky" role="img" aria-label="3D 蛋糕天際線：6 個入口乘 10 個時段，越塞的格子疊越多層、越紅">
+      <div class="stage" id="stageSky" role="img" aria-label="3D 蛋糕天際線：8 個入口乘 10 個時段，越塞的格子疊越多層、越紅">
         <div class="fb" id="fbSky" hidden></div>
         <span class="sim">模擬資料</span><span class="hud">拖曳旋轉 · 點兩下回原位 · 移到柱子上看數字</span>
       </div>
@@ -570,15 +570,15 @@ figcaption { font-size: 13px; color: var(--muted); }
         <div class="read" id="readSky" aria-live="polite"></div>
       </div>
     </div>
-    <p class="prose small">學 GitHub：3D 是可以切換的第二個視角，旁邊固定放大數字。高度只分 6 級，跟色階同一組門檻；最塞的堤頂大道放最後一排，減少遮擋。</p>
+    <p class="prose small">學 GitHub：3D 是可以切換的第二個視角，旁邊固定放大數字。高度只分 6 級，跟色階同一組門檻；最塞的堤頂大道排在後面，沒有資料的入口大多在前面，減少遮擋。</p>
   </div>
 
   <div class="stack">
     <h3>入口果醬柱</h3>
     <div class="studio">
-      <div class="stage" id="stagePil" role="img" aria-label="3D 入口果醬柱：內湖示意圖上每個入口一根柱子，越塞越高越紅">
+      <div class="stage" id="stagePil" role="img" aria-label="3D 入口果醬柱：內湖地圖上每個入口一根柱子，越塞越高越紅">
         <div class="fb" id="fbPil" hidden></div>
-        <span class="sim">模擬資料</span><span class="hud">示意圖，不是實際位置 · 拖曳旋轉</span>
+        <span class="sim">模擬資料</span><span class="hud">入口依偵測器位置 · 河道為示意 · 拖曳旋轉</span>
       </div>
       <div class="side">
         <div class="stat"><span>時間</span><b id="tB"></b></div>
@@ -587,7 +587,7 @@ figcaption { font-size: 13px; color: var(--muted); }
         <div class="read" id="readB" aria-live="polite"></div>
       </div>
     </div>
-    <p class="prose small">學台北那張的「高度加顏色」，但只在 6 個入口立柱，不鋪六角格：內湖只有 5 個入口有偵測器，鋪滿會變成一片空格。如果最後抽到 1999 陳情、YouBike 這類資料點很多的題目，再用六角格。</p>
+    <p class="prose small">學台北那張的「高度加顏色」，但只在 8 個入口的實際位置立柱，不鋪六角格：內湖只有 5 個入口有偵測器，鋪滿會變成一片空格。如果最後抽到 1999 陳情、YouBike 這類資料點很多的題目，再用六角格。</p>
   </div>
 
   <div class="stack">
@@ -692,12 +692,22 @@ figcaption { font-size: 13px; color: var(--muted); }
   var JAM = ['#FEF3DC','#FDD9A0','#FCB46E','#F2804A','#C93A22','#7E170F'];
   var NAMES = ['鮮奶油','卡士達','焦糖','柑橘醬','草莓醬','莓果醬'];
   var RANGE = ['≥50','40–50','30–40','20–30','10–20','<10'];
+  // 8 個正式入口（data/processed/entrances.csv）。pt 為偵測器經緯度；缺口的 3 個是手繪的大概位置
   var ROWS = [
-    { n: '堤頂大道北向', s: '堤頂', sev: 46 }, { n: '民權大橋', s: '民權', sev: 33 }, { n: '麥帥一橋', s: '麥帥', sev: 29 },
-    { n: '成美橋', s: '成美', sev: 21 }, { n: '環東大道', s: '環東', sev: 37 }, { n: '國道 1 號內湖交流道', s: '國1', gap: true }
+    { n: '內湖路一段', s: '內湖路', sev: 30, pt: [121.5586, 25.08487], from: [121.5455, 25.0855], lab: [146, 36, 'start'] },
+    { n: '堤頂大道北向', s: '堤頂', sev: 46, pt: [121.57246, 25.06689], from: [121.5712, 25.0600], lab: [200, 218, 'end'] },
+    { n: '民權大橋', s: '民權', sev: 33, pt: [121.57845, 25.06674], from: [121.5655, 25.0662], lab: [276, 174, 'start'] },
+    { n: '麥帥二橋', s: '麥帥二', gap: true, why: '只測離開內湖的方向', pt: [121.5855, 25.0575], from: [121.5838, 25.0500], lab: [286, 262, 'end'] },
+    { n: '成美橋', s: '成美', sev: 21, pt: [121.59419, 25.05537], from: [121.5930, 25.0478], lab: [378, 242, 'start'] },
+    { n: '環東大道', s: '環東', sev: 37, pt: [121.62187, 25.05829], from: [121.6310, 25.0600], lab: [556, 250, 'end'] },
+    { n: '國道 1 號內湖交流道', s: '國1', gap: true, why: '等 TDX 資料', pt: [121.5990, 25.0690], from: [121.6060, 25.0640], lab: [404, 126, 'start'] },
+    { n: '康寧路三段', s: '康寧', gap: true, why: '沒有偵測器', pt: [121.6140, 25.0740], from: [121.6260, 25.0800], lab: [502, 147, 'start'] }
   ];
+  // 經緯度 → 地圖座標（600×320，緯度 25 度的經緯比例）
+  function P(ll) { return [(ll[0] - 121.540) * 6667, (25.092 - ll[1]) * 6042 + 14]; }
+  var RIVER = [[121.540, 25.0800], [121.550, 25.0785], [121.558, 25.0765], [121.564, 25.0730], [121.568, 25.0680], [121.570, 25.0630], [121.574, 25.0585], [121.580, 25.0560], [121.588, 25.0545], [121.596, 25.0525], [121.606, 25.0525], [121.615, 25.0550], [121.630, 25.0565]];
   var T = ['07:00','07:15','07:30','07:45','08:00','08:15','08:30','08:45','09:00','09:15'];
-  function sp(r, c) { var R = ROWS[r]; if (R.gap) return null; return Math.round(56 - R.sev * Math.exp(-Math.pow(c - 6.2, 2) / (2 * 1.7 * 1.7)) - r); }
+  function sp(r, c) { var R = ROWS[r]; if (R.gap) return null; return Math.round(56 - R.sev * Math.exp(-Math.pow(c - 6.2, 2) / (2 * 1.7 * 1.7)) - (r % 3)); }
   function bin(v) { var b = [50, 40, 30, 20, 10]; for (var i = 0; i < b.length; i++) if (v >= b[i]) return i; return 5; }
   function col(v) { return JAM[bin(v)]; }
   function ink(v) { return bin(v) >= 4 ? '#FFFFFF' : '#3A1F14'; }
@@ -855,42 +865,41 @@ figcaption { font-size: 13px; color: var(--muted); }
     $('legA').innerHTML = JAM.map(function (c, i) { return '<span><i style="background:' + c + '"></i>' + NAMES[i] + ' ' + RANGE[i] + '</span>'; }).join('') + '<span><i style="border:1.5px dashed #B9A48E;box-shadow:none"></i>沒有偵測器</span>';
   })();
   (function () {
-    // 入口地圖：河與橋、入口排行、時間路線，共用時間與選取
-    var t = 6, sel = 0, view = 'river', slider = $('tG');
+    // 入口地圖：地圖、入口排行、時間路線，共用時間與選取
+    var t = 6, sel = 1, view = 'river', slider = $('tG');
     function lvl(v) { return v >= 40 ? 0 : v >= 20 ? 1 : 2; }
     function inner(svg) { return svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, ''); }
     var FONT = 'font-family="Huninn, Noto Sans TC, sans-serif"';
-    // 河與橋：示意位置。內湖在河的北邊，三座橋從南岸跨河進來
-    var ENT = [
-      { d: 'M24 228 C 70 224, 120 216, 168 204', f: [26, 228], l: [14, 166], an: 'start' },
-      { d: 'M196 330 L206 206', f: [196, 330], l: [196, 366], an: 'middle' },
-      { d: 'M322 340 L322 206', f: [322, 340], l: [322, 376], an: 'middle' },
-      { d: 'M448 336 L436 206', f: [448, 336], l: [448, 372], an: 'middle' },
-      { d: 'M566 352 C 556 300, 540 250, 520 206', f: [566, 352], l: [596, 392], an: 'end' },
-      { d: 'M590 20 L548 46', f: [590, 20], l: [536, 22], an: 'end' }
-    ];
+    // 地圖：依偵測器經緯度畫的插畫風地圖
+    function pts(list) { return list.map(function (ll) { var q = P(ll); return X(q[0]) + ' ' + X(q[1]); }).join(' L'); }
     function river() {
-      var s = '<path d="M0 270 C 120 246, 230 300, 340 298 S 520 290, 600 326" fill="none" stroke="#BFD9E8" stroke-width="46"/>' +
-        '<text x="70" y="290" font-size="15" fill="#4F7F9C" ' + FONT + '>基隆河</text>' +
-        '<rect x="40" y="34" width="520" height="172" rx="30" fill="#F8DDA8" opacity=".6"/>' +
-        '<text x="300" y="118" text-anchor="middle" font-size="24" fill="#3A1F14" ' + FONT + '>內湖科學園區</text>' +
-        '<text x="300" y="144" text-anchor="middle" font-size="13" fill="#86664F" ' + FONT + '>示意圖，不是實際位置</text>';
-      ENT.forEach(function (e, r) {
-        var v = sp(r, t), name = ROWS[r].n;
+      var rv = 'M' + pts(RIVER), air = P([121.551, 25.0697]), park = [P([121.566, 25.0850]), P([121.592, 25.0745])];
+      var s = '<rect x="0" y="0" width="600" height="320" fill="#FFF3E2"/>' +
+        '<path d="M0 0 H600 V44 C 560 58, 520 30, 470 46 C 420 62, 380 34, 330 40 C 280 46, 240 28, 190 32 C 140 36, 80 18, 0 30 Z" fill="#DCE7C6"/>' +
+        '<path d="M600 60 C 570 80, 560 120, 600 150 Z" fill="#DCE7C6"/>' +
+        '<text x="470" y="30" font-size="13" fill="#6F8A55" ' + FONT + '>山區</text>' +
+        '<path d="' + rv + '" fill="none" stroke="#A9CBDF" stroke-width="20" stroke-linejoin="round" stroke-linecap="round"/><path d="' + rv + '" fill="none" stroke="#C8E0EE" stroke-width="14" stroke-linejoin="round" stroke-linecap="round"/>' +
+        '<text x="400" y="276" font-size="14" fill="#4F7F9C" font-style="italic" ' + FONT + '>基隆河</text>' +
+        '<rect x="' + X(park[0][0]) + '" y="' + X(park[0][1]) + '" width="' + X(park[1][0] - park[0][0]) + '" height="' + X(park[1][1] - park[0][1]) + '" rx="22" fill="#F8DDA8" stroke="#E2B97E" stroke-width="2" stroke-dasharray="5 5"/>' +
+        '<text x="' + X((park[0][0] + park[1][0]) / 2) + '" y="' + X((park[0][1] + park[1][1]) / 2 + 6) + '" text-anchor="middle" font-size="17" fill="#3A1F14" ' + FONT + '>內湖科技園區</text>' +
+        '<g transform="translate(' + X(air[0] - 12) + ' ' + X(air[1] - 10) + ')"><path d="M12 0 L14 8 L24 13 L24 15 L14 12 L13 19 L16 21 L16 22 L12 21 L8 22 L8 21 L11 19 L10 12 L0 15 L0 13 L10 8 Z" fill="#9C8A7A"/></g>' +
+        '<text x="' + X(air[0]) + '" y="' + X(air[1] + 26) + '" text-anchor="middle" font-size="13" fill="#86664F" ' + FONT + '>松山機場</text>' +
+        '<text x="28" y="94" font-size="13" fill="#86664F" ' + FONT + '>大直</text><text x="470" y="302" font-size="13" fill="#86664F" ' + FONT + '>南港</text><text x="596" y="196" text-anchor="end" font-size="13" fill="#86664F" ' + FONT + '>往汐止 →</text>';
+      ROWS.forEach(function (R, r) {
+        var v = sp(r, t), a = P(R.from), q = P(R.pt), d = 'M' + X(a[0]) + ' ' + X(a[1]) + ' L' + X(q[0]) + ' ' + X(q[1]), L = R.lab;
         if (v === null) {
-          s += '<path d="' + e.d + '" stroke="#B9A48E" stroke-width="3" stroke-dasharray="6 6" fill="none"/>' +
-            '<circle cx="' + e.f[0] + '" cy="' + e.f[1] + '" r="12" fill="#FBE8DA" stroke="#B9A48E" stroke-width="2" stroke-dasharray="4 3"/>' +
-            '<text x="' + e.l[0] + '" y="' + e.l[1] + '" text-anchor="' + e.an + '" font-size="14" fill="#86664F" ' + FONT + '>' + name + '　沒有偵測器</text>';
+          s += '<path d="' + d + '" stroke="#B9A48E" stroke-width="3" stroke-dasharray="5 5" fill="none"/><circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="11" fill="#FFF6E6" stroke="#B9A48E" stroke-width="2" stroke-dasharray="4 3"/>' +
+            '<text x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="14" fill="#86664F" ' + FONT + '>' + R.n.replace('內湖交流道', '') + '<tspan x="' + L[0] + '" dy="17" font-size="12">' + R.why + '</tspan></text>';
           return;
         }
-        if (r === sel) s += '<path d="' + e.d + '" stroke="#1F4E79" stroke-width="26" stroke-linecap="round" fill="none"/>';
-        s += '<path data-r="' + r + '" d="' + e.d + '" stroke="' + col(v) + '" stroke-width="16" stroke-linecap="round" fill="none"/>' +
-          '<path d="' + e.d + '" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="8 8" fill="none" pointer-events="none" opacity=".85"/>' +
-          '<g data-r="' + r + '" transform="translate(' + (e.f[0] - 19) + ' ' + (e.f[1] - 19) + ') scale(.38)">' + inner(face(lvl(v))) + '</g>' +
-          '<text data-r="' + r + '" x="' + e.l[0] + '" y="' + e.l[1] + '" text-anchor="' + e.an + '" font-size="16" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + name.replace('北向', '') +
-          '<tspan x="' + e.l[0] + '" dy="19" font-size="14" fill="' + (lvl(v) === 2 ? '#B3261E' : '#86664F') + '">' + LV[lvl(v)].n + ' · ' + v + '</tspan></text>';
+        if (r === sel) s += '<path d="' + d + '" stroke="#1F4E79" stroke-width="18" stroke-linecap="round" fill="none"/><circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="20" fill="#1F4E79"/>';
+        s += '<path data-r="' + r + '" d="' + d + '" stroke="' + col(v) + '" stroke-width="11" stroke-linecap="round" fill="none"/>' +
+          '<g data-r="' + r + '" transform="translate(' + X(q[0] - 16) + ' ' + X(q[1] - 16) + ') scale(.32)">' + inner(face(lvl(v))) + '</g>' +
+          '<text data-r="' + r + '" x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="15" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + R.n.replace('北向', '') +
+          '<tspan x="' + L[0] + '" dy="18" font-size="13" fill="' + (lvl(v) === 2 ? '#B3261E' : '#86664F') + '">' + LV[lvl(v)].n + ' · ' + v + '</tspan></text>';
       });
-      return '<svg viewBox="0 0 600 420" role="img" aria-label="基隆河與進內湖的橋，顏色越紅、表情越慌越塞">' + s + '</svg>';
+      return '<svg viewBox="0 0 600 320" role="img" aria-label="內湖地圖：依偵測器位置標出 8 個入口，表情越慌、路越紅越塞">' + s + '</svg>' +
+        '<div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:#86664F;margin-top:6px"><span>入口依偵測器的實際位置；河道、山區與缺口位置是手繪示意</span></div>';
     }
     function rank() {
       var list = ROWS.map(function (R, r) { return { r: r, v: sp(r, t) }; }).sort(function (a, b) { if (a.v === null) return 1; if (b.v === null) return -1; return a.v - b.v; });
@@ -918,7 +927,7 @@ figcaption { font-size: 13px; color: var(--muted); }
       return '<svg viewBox="0 0 600 ' + (ROWS.length * 52 + 34) + '" role="img" aria-label="每個入口一條線、每個時間一站，站點越紅越塞">' + s + '</svg>';
     }
     var NOTE = {
-      river: '內湖的入口大多是跨過基隆河的橋。點路或表情可以選入口；路越紅、表情越慌越塞。',
+      river: '每個入口標在偵測器的位置，路從外面進到內湖。點表情或路可以選入口；路越紅、表情越慌越塞。',
       rank: '選好時間，最塞的排最上面。不用看地圖，最快讀完。',
       line: '像捷運路線圖：每個入口一條線，每個時間一站。點站可以換時間。'
     };
@@ -991,7 +1000,7 @@ figcaption { font-size: 13px; color: var(--muted); }
   $('sPeak').textContent = T[peakC];
   window.__readSky = function (r, c) { var v = sp(r, c); $('readSky').innerHTML = '<b>' + ROWS[r].n + ' · ' + T[c] + '</b><br>' + (v === null ? '沒有偵測器，不補數字' : v + ' km/h，' + NAMES[bin(v)] + '等級'); };
   window.__readSky(worst.r, worst.c);
-  window.__data = { JAM: JAM, NAMES: NAMES, ROWS: ROWS, T: T, sp: sp, bin: bin, worst: worst };
+  window.__data = { JAM: JAM, NAMES: NAMES, ROWS: ROWS, T: T, sp: sp, bin: bin, worst: worst, P: P, RIVER: RIVER };
 
   // ---------- 7 素材 ----------
   $('cards').innerHTML = [
@@ -1153,10 +1162,10 @@ figcaption { font-size: 13px; color: var(--muted); }
     if (!st) { fallback('fbSky', '這台裝置不支援 3D。'); return; }
     var grid = new THREE.Group(), bars = new THREE.Group(); st.scene.add(grid); grid.add(bars);
     var LH = 0.22, CH = 0.035, layerG = new THREE.BoxGeometry(0.8, LH, 0.8), creamG = new THREE.BoxGeometry(0.8, CH, 0.8), pick = [];
-    function cx(c) { return c - 4.5; } function cz(r) { return r - 2.5; }
-    var board = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.26, 7.2), new THREE.MeshStandardMaterial({ color: lin('#EFCFAE'), roughness: 0.8 })); board.position.y = -0.13; board.receiveShadow = true; grid.add(board);
-    var rim = new THREE.Mesh(new THREE.BoxGeometry(11.5, 0.16, 7.5), crust); rim.position.y = -0.32; rim.castShadow = true; grid.add(rim);
-    var short = ['堤頂大道', '民權大橋', '麥帥一橋', '成美橋', '環東大道', '國道 1 號'];
+    function cx(c) { return c - 4.5; } function cz(r) { return r - 3.5; }
+    var board = new THREE.Mesh(new THREE.BoxGeometry(11.6, 0.26, 9.2), new THREE.MeshStandardMaterial({ color: lin('#EFCFAE'), roughness: 0.8 })); board.position.y = -0.13; board.receiveShadow = true; grid.add(board);
+    var rim = new THREE.Mesh(new THREE.BoxGeometry(11.9, 0.16, 9.5), crust); rim.position.y = -0.32; rim.castShadow = true; grid.add(rim);
+    var short = ['內湖路一段', '堤頂大道', '民權大橋', '麥帥二橋', '成美橋', '環東大道', '國道 1 號', '康寧路三段'];
     D.ROWS.forEach(function (R, r) {
       var lb = label(short[r], 0.36, '#3A1F14'); lb.position.set(-5.2 - lb.scale.x / 2, 0.25, cz(r)); grid.add(lb);
       D.T.forEach(function (t, c) {
@@ -1174,12 +1183,12 @@ figcaption { font-size: 13px; color: var(--muted); }
         bars.add(g);
       });
     });
-    D.T.forEach(function (t, c) { if (c % 2) return; var lb = label(t, 0.3, '#86664F'); lb.position.set(cx(c), 0.05, 3.55); grid.add(lb); });
+    D.T.forEach(function (t, c) { if (c % 2) return; var lb = label(t, 0.3, '#86664F'); lb.position.set(cx(c), 0.05, 4.55); grid.add(lb); });
     var hl = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.92, 1, 0.92)), new THREE.LineBasicMaterial({ color: 0x1F4E79 })), hlH = 0.1;
     grid.add(hl);
     function highlight(r, c, h) { hlH = Math.max(0.08, h) + 0.04; hl.position.x = cx(c); hl.position.z = cz(r); }
     highlight(D.worst.r, D.worst.c, (D.bin(D.worst.v) + 1) * (LH + CH));
-    var o = orbit(host, st, new THREE.Vector3(-0.6, 0.4, 0), { az: 0.3, el: 0.66, r: 16 }, function (e) {
+    var o = orbit(host, st, new THREE.Vector3(-0.6, 0.4, 0), { az: 0.3, el: 0.7, r: 20 }, function (e) {
       var hit = pointer(host, e, st, pick); if (hit) { var u = hit.object.userData; window.__readSky(u.r, u.c); highlight(u.r, u.c, u.h); }
     });
     var flat = false, sy = 1, b2 = document.getElementById('v2d'), b3 = document.getElementById('v3d');
@@ -1196,23 +1205,30 @@ figcaption { font-size: 13px; color: var(--muted); }
   function pillars() {
     var host = document.getElementById('stagePil'), st = studio(host);
     if (!st) { fallback('fbPil', '這台裝置不支援 3D。'); return; }
-    var W = function (p) { return [(p[0] - 300) / 58, (p[1] - 230) / 58]; };
-    var roads = [[[36, 340], [222, 262]], [[150, 418], [256, 300]], [[330, 424], [314, 308]], [[560, 372], [384, 276]], [[34, 160], [206, 196]], [[560, 88], [378, 152]]];
+    function W(ll) { var q = D.P(ll); return [(q[0] - 300) / 38, (q[1] - 165) / 38]; }
+    var ground = new THREE.Mesh(new THREE.BoxGeometry(16.6, 0.2, 9.4), new THREE.MeshStandardMaterial({ color: lin('#F1DCC2'), roughness: 0.9 })); ground.position.y = -0.52; ground.receiveShadow = true; st.scene.add(ground);
+    var hill = new THREE.MeshStandardMaterial({ color: lin('#DCE7C6'), roughness: 0.9 });
+    [[-5, -3.9, 3.2], [0.5, -4.1, 3.6], [5.6, -3.8, 3.0]].forEach(function (h) { var m = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 16), hill); m.scale.set(h[2], 0.35, 1.1); m.position.set(h[0], -0.42, h[1]); m.receiveShadow = true; st.scene.add(m); });
+    var water = new THREE.MeshStandardMaterial({ color: lin('#9FC4DB'), roughness: 0.3 });
+    for (var i = 0; i < D.RIVER.length - 1; i++) {
+      var a0 = W(D.RIVER[i]), a1 = W(D.RIVER[i + 1]), ddx = a1[0] - a0[0], ddz = a1[1] - a0[1];
+      var seg = new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(ddx, ddz) + 0.4, 0.04, 0.42), water);
+      seg.position.set((a0[0] + a1[0]) / 2, -0.41, (a0[1] + a1[1]) / 2); seg.rotation.y = -Math.atan2(ddz, ddx); seg.receiveShadow = true; st.scene.add(seg);
+    }
+    var pc = W([121.579, 25.0798]);
     var capM = new THREE.MeshStandardMaterial({ map: capTexture(30, '#C93A22', 512), roughness: 0.55 });
-    var hub = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.7, 72), [crust, capM, capM]); hub.position.set(0, -0.05, -0.3); hub.castShadow = true; hub.receiveShadow = true; st.scene.add(hub);
-    var hubL = label('內湖科學園區', 0.4, '#3A1F14', 'rgba(255,246,230,.92)'); hubL.position.set(0, 0.75, -0.3); st.scene.add(hubL);
-    var ground = new THREE.Mesh(new THREE.CylinderGeometry(6.4, 6.4, 0.2, 96), cream); ground.position.y = -0.52; ground.receiveShadow = true; st.scene.add(ground);
-    var roadMat = new THREE.MeshStandardMaterial({ color: lin('#E3C3AC'), roughness: 0.8 }), dashMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.5 });
-    var cols = [], unit = new THREE.CylinderGeometry(0.36, 0.36, 1, 40); unit.translate(0, 0.5, 0);
-    var iceG = new THREE.CylinderGeometry(0.42, 0.4, 0.09, 40);
-    roads.forEach(function (rd, r) {
-      var a = W(rd[0]), b = W(rd[1]), dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz), ang = Math.atan2(dz, dx);
-      var road = new THREE.Mesh(new THREE.BoxGeometry(L, 0.05, 0.42), roadMat); road.position.set((a[0] + b[0]) / 2, -0.4, (a[1] + b[1]) / 2); road.rotation.y = -ang; road.receiveShadow = true; st.scene.add(road);
-      for (var k = 0.08; k < 0.95; k += 0.12) { var d = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.06, 0.05), dashMat); d.position.set(a[0] + dx * k, -0.37, a[1] + dz * k); d.rotation.y = -ang; st.scene.add(d); }
-      var p = [a[0] + dx * 0.42, a[1] + dz * 0.42], col = { r: r, p: p, h: 0.2, th: 0.2 };
-      if (D.ROWS[r].gap) {
-        var ring = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.04, 8, 40), new THREE.MeshStandardMaterial({ color: lin('#B9A48E') })); ring.rotation.x = Math.PI / 2; ring.position.set(p[0], -0.36, p[1]); st.scene.add(ring);
-        var gl = label(D.ROWS[r].s + '　沒有偵測器', 0.3, '#86664F', 'rgba(255,246,230,.85)'); gl.position.set(p[0], 0.25, p[1]); st.scene.add(gl);
+    var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 2.6, 64), [crust, capM, capM]); hub.rotation.z = Math.PI / 2; hub.position.set(pc[0], 0.1, pc[1]); hub.castShadow = true; st.scene.add(hub);
+    var hubL = label('內湖科技園區', 0.36, '#3A1F14', 'rgba(255,246,230,.92)'); hubL.position.set(pc[0], 1.0, pc[1] - 0.2); st.scene.add(hubL);
+    var roadMat = new THREE.MeshStandardMaterial({ color: lin('#E3C3AC'), roughness: 0.8 });
+    var cols = [], unit = new THREE.CylinderGeometry(0.3, 0.3, 1, 40); unit.translate(0, 0.5, 0);
+    var iceG = new THREE.CylinderGeometry(0.35, 0.33, 0.08, 40);
+    D.ROWS.forEach(function (R, r) {
+      var a = W(R.from), p = W(R.pt), dx = p[0] - a[0], dz = p[1] - a[1], L = Math.hypot(dx, dz);
+      var road = new THREE.Mesh(new THREE.BoxGeometry(L, 0.06, 0.26), roadMat); road.position.set((a[0] + p[0]) / 2, -0.39, (a[1] + p[1]) / 2); road.rotation.y = -Math.atan2(dz, dx); road.receiveShadow = true; st.scene.add(road);
+      var col = { r: r, p: p, h: 0.2, th: 0.2 };
+      if (R.gap) {
+        var ring = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.04, 8, 40), new THREE.MeshStandardMaterial({ color: lin('#B9A48E') })); ring.rotation.x = Math.PI / 2; ring.position.set(p[0], -0.35, p[1]); st.scene.add(ring);
+        var gl = label(R.s + '：' + R.why, 0.26, '#86664F', 'rgba(255,246,230,.85)'); gl.position.set(p[0], 0.2, p[1]); st.scene.add(gl);
       } else {
         col.mesh = new THREE.Mesh(unit, mats[0]); col.mesh.position.set(p[0], -0.4, p[1]); col.mesh.castShadow = true; col.mesh.userData = { r: r }; st.scene.add(col.mesh);
         col.ice = new THREE.Mesh(iceG, cream); col.ice.castShadow = true; st.scene.add(col.ice);
@@ -1240,7 +1256,7 @@ figcaption { font-size: 13px; color: var(--muted); }
       setT(0); playBtn.textContent = '停止';
       timer = setInterval(function () { if (t >= 9) { stop(); return; } setT(t + 1); }, still ? 1400 : 900);
     });
-    var o = orbit(host, st, new THREE.Vector3(0, 0.3, 0), { az: 0.35, el: 0.72, r: 17 }, function (e) {
+    var o = orbit(host, st, new THREE.Vector3(0, 0.3, 0), { az: 0.0, el: 0.95, r: 21 }, function (e) {
       var hit = pointer(host, e, st, cols.filter(function (c) { return c.mesh; }).map(function (c) { return c.mesh; }));
       if (hit) { var r = hit.object.userData.r, v = D.sp(r, t); readB.innerHTML = '<b>' + D.T[t] + '　' + D.ROWS[r].n + '</b><br>' + v + ' km/h，' + D.NAMES[D.bin(v)] + '等級'; }
     });
