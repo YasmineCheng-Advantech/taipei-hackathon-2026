@@ -1,0 +1,411 @@
+<title>交通捲 3D 熱力圖</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&family=Huninn&display=swap">
+<style>
+/* 版面：一欄閱讀寬度的說明，中間兩個 3D 原型放在蜜桃色的「攝影棚」裡，旁邊放重點數字（學 GitHub 那張圖的做法）。 */
+:root {
+  --bg: #FFF8EF;
+  --surface: #FFFFFF;
+  --fg: #3A1F14;
+  --muted: #86664F;
+  --line: #F0DCC6;
+  --accent: #B3261E;
+  --accent-soft: #FCE4DB;
+  --display: 'Huninn', 'Noto Sans TC', 'PingFang TC', sans-serif;
+  --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1D1411; --surface: #291D18; --fg: #F6E9DD; --muted: #C4A893; --line: #3E2D25;
+    --accent: #FF8A75; --accent-soft: #43231C; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1D1411; --surface: #291D18; --fg: #F6E9DD; --muted: #C4A893; --line: #3E2D25;
+  --accent: #FF8A75; --accent-soft: #43231C; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.75; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 56px 88px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 64px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 54px); color: var(--accent); }
+h2 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 3vw, 30px); color: var(--accent); }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+.prose { max-width: 42em; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font: 500 13px/1.4 var(--mono); letter-spacing: .08em; color: var(--muted); }
+.muted { color: var(--muted); }
+code { font-family: var(--mono); font-size: .9em; }
+a { color: var(--accent); }
+
+.verdict { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.verdict div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.tag { font-size: 12px; font-weight: 700; padding: 2px 10px; border-radius: 99px; background: var(--accent-soft); color: var(--accent); width: fit-content; }
+
+/* 攝影棚：固定蜜桃色，3D 原型與重點數字 */
+.studio { background: #F6DCCD; color: #3A1F14; border-radius: 22px; padding: 18px; display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 16px; }
+@media (max-width: 860px) { .studio { grid-template-columns: minmax(0, 1fr); } }
+.stage { position: relative; width: 100%; aspect-ratio: 16 / 10; max-width: 100%; border-radius: 16px; overflow: hidden; background: #F6DCCD; cursor: grab; touch-action: pan-y; }
+.stage canvas { display: block; width: 100% !important; height: 100% !important; }
+.stage .nogl[hidden] { display: none; }
+.stage .nogl { position: absolute; inset: 0; display: grid; place-items: center; padding: 24px; text-align: center; font-size: 15px; }
+.stage .hud { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: #86664F; pointer-events: none; }
+.stage .sim { position: absolute; right: 12px; top: 12px; font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 99px; color: #7A5200; background-color: #FBF0D9; background-image: repeating-linear-gradient(135deg, rgba(122,82,0,.14) 0 1.5px, transparent 1.5px 6px); pointer-events: none; }
+.side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.stat { display: flex; flex-direction: column; gap: 0; }
+.stat span { font-size: 13px; color: #86664F; }
+.stat b { font: 500 34px/1.15 var(--mono); color: #8A2414; font-variant-numeric: tabular-nums; }
+.stat small { font-size: 13px; }
+.read { background: #FFF6E6; border-radius: 14px; padding: 12px 14px; font-size: 14px; min-height: 76px; }
+.read b { font-size: 16px; }
+.toggle { display: inline-flex; background: #FFF6E6; border-radius: 12px; padding: 4px; gap: 4px; width: fit-content; }
+.toggle button, .btn { font: 500 14px var(--sans); border: 0; border-radius: 9px; padding: 6px 14px; background: transparent; color: #3A1F14; cursor: pointer; }
+.toggle button[aria-pressed="true"] { background: #8A2414; color: #FFF6E6; }
+.btn { background: #8A2414; color: #FFF6E6; }
+.toggle button:focus-visible, .btn:focus-visible { outline: 3px solid #1F4E79; outline-offset: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 14px; height: 12px; border-radius: 3px; display: inline-block; }
+.slider { display: flex; flex-direction: column; gap: 4px; }
+.slider input { width: 100%; accent-color: #8A2414; }
+.slider .ticks { display: flex; justify-content: space-between; font: 500 11px var(--mono); color: #86664F; }
+.use { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 28px; font-size: 15px; }
+.use b { display: block; }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 15px; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 13px; color: var(--muted); font-weight: 700; }
+ol.rules { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 8px; max-width: 46em; }
+</style>
+
+<div class="wrap">
+
+<header class="stack">
+  <div class="eyebrow">交通捲 · 3D 熱力圖原型 · 2026-10-20</div>
+  <h1>這兩張 3D 熱力圖，可以怎麼借</h1>
+  <p class="prose" style="font-size:18px">有。兩張圖各有一個很值得學的地方，也各有一個不適合我們的地方。下面先講結論，再放兩個用交通捲風格做的 3D 原型，可以直接拖曳旋轉。</p>
+  <p class="muted">車速全部是模擬的，跟上一頁同一份資料。</p>
+</header>
+
+<section class="stack">
+  <h2>先講結論</h2>
+  <div class="verdict">
+    <div><span class="tag">最值得學</span><b>GitHub 那張的 2D／3D 切換</b><p>3D 當成可以切換的第二個視角，旁邊固定放幾個大數字。看的人先被 3D 吸引，真正要比大小時切回 2D。這解決了 3D 看不準的問題。</p></div>
+    <div><span class="tag">也值得學</span><b>台北那張的高度加顏色</b><p>柱子越高、顏色越亮代表越多，兩種方式一起表達，一眼就找得到最高的那根。我們把它換成「入口上的果醬柱」，用時間滑桿看尖峰長出來。</p></div>
+    <div><span class="tag">不適合我們</span><b>六角格要有很密的資料</b><p>六角格是把很多個點聚合起來。內湖只有 5 個入口有偵測器，鋪滿六角格會變成一大片空格，或得自己補數字，違反「缺口不補值」。深藍色的智慧城市風格也是很多隊伍都會做的樣子，跟交通捲的溫暖不合。</p></div>
+    <div><span class="tag">換題時</span><b>資料密的題目再用六角格</b><p>如果最後抽到 1999 陳情、YouBike、停車場這類點很多的題目，六角格柱狀地圖就很適合，可以改用奶油色的蛋糕風格來做。</p></div>
+  </div>
+</section>
+
+<section class="stack" id="skyline">
+  <h2>原型 1：蛋糕天際線</h2>
+  <p class="prose">學 GitHub 那張：入口 × 時段的矩陣立起來。每一根是一塊層層疊起的蛋糕，越塞層數越多、顏色越紅。高度只有 6 級，跟色階同一組門檻，不會因為 1 km/h 的差別看起來差很多。</p>
+  <div class="studio">
+    <div class="stage" id="stageA" role="img" aria-label="3D 蛋糕天際線：6 個入口乘 10 個時段，越塞的格子疊越多層、越紅">
+      <div class="nogl" hidden>這台裝置不支援 3D。2D 版本請看熱力圖樣式頁的「果醬格」。</div>
+      <span class="sim">模擬資料</span><span class="hud">拖曳旋轉 · 點兩下回到原位 · 移到柱子上看數字</span>
+    </div>
+    <div class="side">
+      <div class="toggle" role="group" aria-label="切換視角"><button type="button" id="v2d" aria-pressed="false">2D</button><button type="button" id="v3d" aria-pressed="true">3D</button></div>
+      <div class="stat"><span>最塞的一格</span><b id="sWorst"></b><small id="sWorstSub"></small></div>
+      <div class="stat"><span>尖峰時段</span><b id="sPeak"></b><small>各入口平均最慢</small></div>
+      <div class="stat"><span>偵測器覆蓋</span><b id="sCover"></b><small>個入口有資料</small></div>
+      <div class="read" id="readA" aria-live="polite"></div>
+      <div class="legend" id="legA"></div>
+    </div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>Demo 開場和簡報。拖一下就會「哇」一聲，然後按 2D 回到能比大小的矩陣，順便說明我們有多重視數字準不準。</div>
+    <div><b>注意</b>前面的高柱會擋住後面，所以把最塞的堤頂大道放在最後一排、沒有資料的國道放最前面。網站預設開 2D。</div>
+  </div>
+</section>
+
+<section class="stack" id="pillars">
+  <h2>原型 2：入口果醬柱</h2>
+  <p class="prose">學台北那張：在每個入口立一根果醬柱，越塞越高、越紅。拉時間滑桿或按播放，可以看到 08:00 之後果醬柱一根根長高，08:45 之後又降下來。中間的園區是一塊瑞士捲蛋糕。</p>
+  <div class="studio">
+    <div class="stage" id="stageB" role="img" aria-label="3D 入口果醬柱：內湖示意圖上每個入口一根柱子，越塞越高越紅">
+      <div class="nogl" hidden>這台裝置不支援 3D。2D 版本請看熱力圖樣式頁的「抹醬地圖」。</div>
+      <span class="sim">模擬資料</span><span class="hud">示意圖，不是實際位置 · 拖曳旋轉</span>
+    </div>
+    <div class="side">
+      <div class="stat"><span>時間</span><b id="tB"></b></div>
+      <div class="slider"><label for="sB" style="font-size:13px;color:#86664F">拉滑桿換時段</label><input type="range" id="sB" min="0" max="9" step="1" value="6"><div class="ticks"><span>07:00</span><span>08:00</span><span>09:00</span></div></div>
+      <button type="button" class="btn" id="playB">播放 07:00 → 09:15</button>
+      <div class="read" id="readB" aria-live="polite"></div>
+      <div class="legend" id="legB"></div>
+    </div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>Demo 講「問題在哪裡、什麼時候發生」的那 40 秒。按下播放，台下不用看懂矩陣，也看得出尖峰怎麼長出來。</div>
+    <div><b>注意</b>位置是示意，不是真的地圖，畫面上要寫明。播放動畫已經排在「比賽後再做」，網站上先只放滑桿；Demo 用的版本可以先做。</div>
+  </div>
+</section>
+
+<section class="stack">
+  <h2>兩張參考圖，逐項拆開看</h2>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>參考圖</th><th>好在哪</th><th>用在我們身上的問題</th><th>怎麼借</th></tr></thead>
+    <tbody>
+      <tr><td>台北六角格地圖</td><td>真實地圖加上柱子，一看就知道在哪裡；高度和亮色一起標出熱點</td><td>要有很密的資料點；要線上底圖，離線 Demo 會壞；深藍科技風很常見，跟交通捲不搭</td><td>原型 2：只在 6 個入口立柱，底圖換成自己畫的示意圖，配色改成奶油和果醬</td></tr>
+      <tr><td>GitHub 3D 貢獻圖</td><td>2D／3D 可以切換；旁邊固定放總數、最高的一天、連續天數；可以拖曳旋轉</td><td>前面的柱子會擋住後面；斜著看時高度不好比；單一綠色色階對色盲不友善</td><td>原型 1：保留切換與旁邊的大數字，高度改成 6 級，色階用現有的壅塞色階</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="stack">
+  <h2>做 3D 熱力圖的守則</h2>
+  <ol class="rules">
+    <li>網站預設 2D，3D 是可以切換的第二個視角，不是唯一的畫面。</li>
+    <li>高度只用分級（跟色階同一組門檻），不用連續數值，避免透視讓小差別看起來很大。</li>
+    <li>旁邊一定放大數字和移到柱子上的讀數，數字才是答案，3D 只是吸引目光。</li>
+    <li>最高的放後面、沒資料的放前面，減少遮擋；沒有偵測器的地方畫空盤子，不補數字。</li>
+    <li>「模擬資料」標籤固定在畫面角落，3D 裡不畫斜線紋路，但標籤不能省。</li>
+    <li>手機和 LINE 內建瀏覽器不載入 3D，直接顯示 2D。</li>
+    <li>離線 Demo 時，3D 函式庫要先下載到本機，不能靠 CDN。</li>
+  </ol>
+</section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  var JAM = ['#FEF3DC','#FDD9A0','#FCB46E','#F2804A','#C93A22','#7E170F'];
+  var NAMES = ['鮮奶油','卡士達','焦糖','柑橘醬','草莓醬','莓果醬'];
+  var RANGE = ['≥50','40–50','30–40','20–30','10–20','<10'];
+  var ROWS = [
+    { n: '堤頂大道北向', s: '堤頂', sev: 46 },
+    { n: '民權大橋', s: '民權', sev: 33 },
+    { n: '麥帥一橋', s: '麥帥', sev: 29 },
+    { n: '成美橋', s: '成美', sev: 21 },
+    { n: '環東大道', s: '環東', sev: 37 },
+    { n: '國道 1 號內湖交流道', s: '國1', gap: true }
+  ];
+  var T = ['07:00','07:15','07:30','07:45','08:00','08:15','08:30','08:45','09:00','09:15'];
+  function sp(r, c) { var R = ROWS[r]; if (R.gap) return null; return Math.round(56 - R.sev * Math.exp(-Math.pow(c - 6.2, 2) / (2 * 1.7 * 1.7)) - r); }
+  function bin(v) { var b = [50, 40, 30, 20, 10]; for (var i = 0; i < b.length; i++) if (v >= b[i]) return i; return 5; }
+
+  // 旁邊的大數字
+  var worst = { r: 0, c: 0, v: 99 }, colAvg = [];
+  T.forEach(function (_, c) { var s = 0, n = 0; ROWS.forEach(function (R, r) { var v = sp(r, c); if (v === null) return; s += v; n++; if (v < worst.v) worst = { r: r, c: c, v: v }; }); colAvg.push(s / n); });
+  var peakC = colAvg.indexOf(Math.min.apply(null, colAvg));
+  document.getElementById('sWorst').textContent = worst.v + ' km/h';
+  document.getElementById('sWorstSub').textContent = ROWS[worst.r].n + ' · ' + T[worst.c];
+  document.getElementById('sPeak').textContent = T[peakC];
+  document.getElementById('sCover').textContent = ROWS.filter(function (R) { return !R.gap; }).length + ' / ' + ROWS.length;
+  var leg = JAM.map(function (c, i) { return '<span><i style="background:' + c + ';box-shadow:inset 0 0 0 1px rgba(58,31,20,.12)"></i>' + NAMES[i] + ' ' + RANGE[i] + '</span>'; }).join('');
+  document.getElementById('legA').innerHTML = leg;
+  document.getElementById('legB').innerHTML = leg;
+  var readA = document.getElementById('readA');
+  function readCell(r, c) {
+    var v = sp(r, c);
+    readA.innerHTML = '<b>' + ROWS[r].n + ' · ' + T[c] + '</b><br>' + (v === null ? '沒有偵測器，不補數字' : v + ' km/h，' + NAMES[bin(v)] + '等級');
+  }
+  readCell(worst.r, worst.c);
+
+  if (!window.THREE) { document.querySelectorAll('.nogl').forEach(function (n) { n.hidden = false; }); return; }
+  var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // ---------- 共用 ----------
+  function studio(host) {
+    var renderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: true }); } catch (e) { return null; }
+    if (!renderer.getContext()) return null;
+    host.insertBefore(renderer.domElement, host.firstChild);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.setClearColor(0xF6DCCD);
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(30, 1.6, 0.1, 200);
+    scene.add(new THREE.HemisphereLight(0xFFF4EA, 0xE8B4A0, 0.95));
+    var key = new THREE.DirectionalLight(0xFFFFFF, 0.9);
+    key.position.set(-6, 12, 8); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.radius = 6; key.shadow.bias = -0.0005;
+    var sc = key.shadow.camera; sc.left = -10; sc.right = 10; sc.top = 10; sc.bottom = -10; sc.near = 0.5; sc.far = 40;
+    scene.add(key);
+    var fill = new THREE.DirectionalLight(0xFFD9C6, 0.3); fill.position.set(8, 4, -4); scene.add(fill);
+    var floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowMaterial({ opacity: 0.15 }));
+    floor.rotation.x = -Math.PI / 2; floor.position.y = -0.42; floor.receiveShadow = true; scene.add(floor);
+    function resize() { var w = host.clientWidth, h = host.clientHeight; if (!w || !h) return; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); }
+    resize();
+    return { renderer: renderer, scene: scene, camera: camera, resize: resize };
+  }
+  function orbit(host, st, target, def, onMove) {
+    var o = { az: def.az, el: def.el, r: def.r, taz: def.az, tel: def.el, dragging: false, moved: false, lx: 0, ly: 0 };
+    host.addEventListener('pointerdown', function (e) { o.dragging = true; o.moved = false; o.lx = e.clientX; o.ly = e.clientY; host.style.cursor = 'grabbing'; });
+    window.addEventListener('pointerup', function () { o.dragging = false; host.style.cursor = ''; });
+    host.addEventListener('pointermove', function (e) {
+      if (o.dragging) {
+        var dx = e.clientX - o.lx, dy = e.clientY - o.ly; if (Math.abs(dx) + Math.abs(dy) > 2) o.moved = true;
+        o.taz -= dx * 0.008; o.tel = Math.max(0.18, Math.min(1.52, o.tel + dy * 0.006)); o.lx = e.clientX; o.ly = e.clientY;
+      } else if (onMove) onMove(e);
+    });
+    host.addEventListener('dblclick', function () { o.taz = def.az; o.tel = def.el; });
+    o.apply = function (k) {
+      o.az += (o.taz - o.az) * k; o.el += (o.tel - o.el) * k;
+      st.camera.position.set(target.x + o.r * Math.cos(o.el) * Math.sin(o.az), target.y + o.r * Math.sin(o.el), target.z + o.r * Math.cos(o.el) * Math.cos(o.az));
+      st.camera.lookAt(target);
+    };
+    o.apply(1);
+    return o;
+  }
+  function label(text, size, color, bg) {
+    var c = document.createElement('canvas'), g = c.getContext('2d'), fs = 56;
+    g.font = '500 ' + fs + 'px "Noto Sans TC", sans-serif';
+    var w = Math.ceil(g.measureText(text).width) + (bg ? 44 : 12), h = fs + (bg ? 30 : 16);
+    c.width = w; c.height = h; g = c.getContext('2d');
+    if (bg) { g.fillStyle = bg; var r = h / 2; g.beginPath(); g.moveTo(r, 0); g.arcTo(w, 0, w, h, r); g.arcTo(w, h, 0, h, r); g.arcTo(0, h, 0, 0, r); g.arcTo(0, 0, w, 0, r); g.fill(); }
+    g.font = '500 ' + fs + 'px "Noto Sans TC", sans-serif'; g.fillStyle = color; g.textBaseline = 'middle'; g.textAlign = 'center'; g.fillText(text, w / 2, h / 2 + 2);
+    var tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding; tex.anisotropy = 4;
+    var s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+    s.scale.set(size * w / h, size, 1);
+    return s;
+  }
+  function lin(c) { return new THREE.Color(c).convertSRGBToLinear(); }
+  var mats = JAM.map(function (c) { return new THREE.MeshStandardMaterial({ color: lin(c), roughness: 0.55 }); });
+  var cream = new THREE.MeshStandardMaterial({ color: lin('#FFF6E6'), roughness: 0.4 });
+  var crust = new THREE.MeshStandardMaterial({ color: lin('#C07A3A'), roughness: 0.85 });
+
+  function boot() {
+    // ---------- 原型 1：蛋糕天際線 ----------
+    (function () {
+      var host = document.getElementById('stageA'), st = studio(host);
+      if (!st) { host.querySelector('.nogl').hidden = false; return; }
+      var grid = new THREE.Group(); st.scene.add(grid);
+      var bars = new THREE.Group(); grid.add(bars);
+      var LH = 0.22, CH = 0.035, layerG = new THREE.BoxGeometry(0.8, LH, 0.8), creamG = new THREE.BoxGeometry(0.8, CH, 0.8);
+      var pick = [];
+      function cx(c) { return c - 4.5; } function cz(r) { return r - 2.5; }
+      var board = new THREE.Mesh(new THREE.BoxGeometry(11.2, 0.26, 7.2), new THREE.MeshStandardMaterial({ color: lin('#EFCFAE'), roughness: 0.8 })); board.position.y = -0.13; board.receiveShadow = true; grid.add(board);
+      var rim = new THREE.Mesh(new THREE.BoxGeometry(11.5, 0.16, 7.5), crust); rim.position.y = -0.32; rim.castShadow = true; grid.add(rim);
+      ROWS.forEach(function (R, r) {
+        var lb = label(['堤頂大道','民權大橋','麥帥一橋','成美橋','環東大道','國道 1 號'][r], 0.36, '#3A1F14'); lb.position.set(-5.2 - lb.scale.x / 2, 0.25, cz(r)); grid.add(lb);
+        T.forEach(function (t, c) {
+          var v = sp(r, c), g = new THREE.Group(); g.position.set(cx(c), 0, cz(r));
+          if (v === null) {
+            var plate = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.03, 32), new THREE.MeshStandardMaterial({ color: lin('#E2C9B4'), roughness: 0.7 }));
+            plate.position.y = 0.02; g.add(plate); plate.userData = { r: r, c: c, h: 0.05 }; pick.push(plate);
+          } else {
+            var b = bin(v), n = b + 1;
+            for (var i = 0; i < n; i++) {
+              var L = new THREE.Mesh(layerG, mats[b]); L.position.y = i * (LH + CH) + LH / 2; L.castShadow = true; L.receiveShadow = true; L.userData = { r: r, c: c, h: n * (LH + CH) }; g.add(L); pick.push(L);
+              if (i < n - 1) { var C = new THREE.Mesh(creamG, cream); C.position.y = i * (LH + CH) + LH + CH / 2; C.castShadow = true; g.add(C); }
+            }
+          }
+          bars.add(g);
+        });
+      });
+      T.forEach(function (t, c) { if (c % 2) return; var lb = label(t, 0.3, '#86664F'); lb.position.set(cx(c), 0.05, 3.55); grid.add(lb); });
+      var hl = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.92, 1, 0.92)), new THREE.LineBasicMaterial({ color: 0x1F4E79 }));
+      hl.visible = false; grid.add(hl);
+      var hlH = 0.1;
+      function highlight(r, c, h) { hl.visible = true; hlH = Math.max(0.08, h) + 0.04; hl.position.x = cx(c); hl.position.z = cz(r); }
+      var ray = new THREE.Raycaster(), m = new THREE.Vector2();
+      var target = new THREE.Vector3(-0.6, 0.4, 0);
+      var o = orbit(host, st, target, { az: 0.3, el: 0.66, r: 16 }, function (e) {
+        var rc = host.getBoundingClientRect(); m.x = (e.clientX - rc.left) / rc.width * 2 - 1; m.y = -(e.clientY - rc.top) / rc.height * 2 + 1;
+        ray.setFromCamera(m, st.camera); var hit = ray.intersectObjects(pick, false)[0];
+        if (hit) { var u = hit.object.userData; readCell(u.r, u.c); highlight(u.r, u.c, u.h); }
+      });
+      highlight(worst.r, worst.c, (bin(worst.v) + 1) * (LH + CH));
+      var flat = false, sy = 1;
+      var b2 = document.getElementById('v2d'), b3 = document.getElementById('v3d');
+      function setMode(f) { flat = f; b2.setAttribute('aria-pressed', f); b3.setAttribute('aria-pressed', !f); o.tel = f ? 1.5 : 0.66; o.taz = f ? 0 : 0.3; }
+      b2.addEventListener('click', function () { setMode(true); });
+      b3.addEventListener('click', function () { setMode(false); });
+      if (window.ResizeObserver) new ResizeObserver(st.resize).observe(host);
+      (function loop() {
+        var k = still ? 1 : 0.12;
+        sy += ((flat ? 0.06 : 1) - sy) * k; bars.scale.y = sy;
+        hl.scale.y = hlH * sy; hl.position.y = hl.scale.y / 2;
+        o.apply(k); st.renderer.render(st.scene, st.camera); requestAnimationFrame(loop);
+      })();
+    })();
+
+    // ---------- 原型 2：入口果醬柱 ----------
+    (function () {
+      var host = document.getElementById('stageB'), st = studio(host);
+      if (!st) { host.querySelector('.nogl').hidden = false; return; }
+      var W = function (p) { return [(p[0] - 300) / 58, (p[1] - 230) / 58]; };
+      var roads = [[[36, 340], [222, 262]], [[150, 418], [256, 300]], [[330, 424], [314, 308]], [[560, 372], [384, 276]], [[34, 160], [206, 196]], [[560, 88], [378, 152]]];
+      // 中間的園區：一塊瑞士捲
+      var cap = (function () {
+        var s = 512, c = document.createElement('canvas'); c.width = c.height = s; var g = c.getContext('2d');
+        g.fillStyle = '#B9733A'; g.fillRect(0, 0, s, s); g.beginPath(); g.arc(s / 2, s / 2, s * 0.465, 0, 7); g.fillStyle = '#F6D49B'; g.fill();
+        var turns = 2.8, end = turns * Math.PI * 2; g.beginPath();
+        for (var t = 0.9; t <= end; t += 0.05) { var rr = s * 0.42 * t / end, x = s / 2 + rr * Math.cos(t), y = s / 2 + rr * Math.sin(t); if (t === 0.9) g.moveTo(x, y); else g.lineTo(x, y); }
+        g.lineCap = 'round'; g.strokeStyle = '#FFF4E4'; g.lineWidth = 30; g.stroke(); g.strokeStyle = '#C93A22'; g.lineWidth = 18; g.stroke();
+        var tx = new THREE.CanvasTexture(c); tx.encoding = THREE.sRGBEncoding; return new THREE.MeshStandardMaterial({ map: tx, roughness: 0.55 });
+      })();
+      var hub = new THREE.Mesh(new THREE.CylinderGeometry(1.7, 1.7, 0.7, 72), [crust, cap, cap]); hub.position.set(0, 0.35 - 0.4, -0.3); hub.castShadow = true; hub.receiveShadow = true; st.scene.add(hub);
+      var hubL = label('內湖科學園區', 0.4, '#3A1F14', 'rgba(255,246,230,.92)'); hubL.position.set(0, 0.75, -0.3); st.scene.add(hubL);
+      var ground = new THREE.Mesh(new THREE.CylinderGeometry(6.4, 6.4, 0.2, 96), cream); ground.position.y = -0.52; ground.receiveShadow = true; st.scene.add(ground);
+      var roadMat = new THREE.MeshStandardMaterial({ color: lin('#E3C3AC'), roughness: 0.8 }), dashMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.5 });
+      var cols = [], unit = new THREE.CylinderGeometry(0.36, 0.36, 1, 40); unit.translate(0, 0.5, 0);
+      var iceG = new THREE.CylinderGeometry(0.42, 0.4, 0.09, 40);
+      roads.forEach(function (rd, r) {
+        var a = W(rd[0]), b = W(rd[1]), dx = b[0] - a[0], dz = b[1] - a[1], L = Math.hypot(dx, dz), ang = Math.atan2(dz, dx);
+        var road = new THREE.Mesh(new THREE.BoxGeometry(L, 0.05, 0.42), roadMat); road.position.set((a[0] + b[0]) / 2, -0.4, (a[1] + b[1]) / 2); road.rotation.y = -ang; road.receiveShadow = true; st.scene.add(road);
+        for (var k = 0.08; k < 0.95; k += 0.12) { var d = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.06, 0.05), dashMat); d.position.set(a[0] + dx * k, -0.37, a[1] + dz * k); d.rotation.y = -ang; st.scene.add(d); }
+        var p = [a[0] + dx * 0.42, a[1] + dz * 0.42], col = { r: r, p: p, h: 0.2, th: 0.2 };
+        if (ROWS[r].gap) {
+          var ring = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.04, 8, 40), new THREE.MeshStandardMaterial({ color: lin('#B9A48E') })); ring.rotation.x = Math.PI / 2; ring.position.set(p[0], -0.36, p[1]); st.scene.add(ring);
+          var gl = label(ROWS[r].n + '　沒有偵測器', 0.3, '#86664F', 'rgba(255,246,230,.85)'); gl.position.set(p[0], 0.25, p[1]); st.scene.add(gl);
+        } else {
+          col.mesh = new THREE.Mesh(unit, mats[0]); col.mesh.position.set(p[0], -0.4, p[1]); col.mesh.castShadow = true; col.mesh.userData = { r: r }; st.scene.add(col.mesh);
+          col.ice = new THREE.Mesh(iceG, cream); col.ice.castShadow = true; st.scene.add(col.ice);
+        }
+        cols.push(col);
+      });
+      var t = 6, labels = [];
+      var tEl = document.getElementById('tB'), sEl = document.getElementById('sB'), readB = document.getElementById('readB');
+      function setT(nt) {
+        t = nt; sEl.value = t; tEl.textContent = T[t];
+        labels.forEach(function (l) { st.scene.remove(l); l.material.map.dispose(); l.material.dispose(); }); labels = [];
+        var w = null;
+        cols.forEach(function (c) {
+          if (!c.mesh) return;
+          var v = sp(c.r, t), b = bin(v); c.th = 0.25 + (b + 1) * 0.5; c.mesh.material = mats[b];
+          var l = label(ROWS[c.r].s + ' ' + v, 0.34, b >= 4 ? '#FFFFFF' : '#3A1F14', b >= 4 ? 'rgba(138,36,20,.92)' : 'rgba(255,246,230,.92)'); l.userData.col = c; labels.push(l); st.scene.add(l);
+          if (!w || v < w.v) w = { r: c.r, v: v };
+        });
+        readB.innerHTML = '<b>' + T[t] + ' 最塞：' + ROWS[w.r].n + '</b><br>' + w.v + ' km/h，' + NAMES[bin(w.v)] + '等級';
+      }
+      sEl.addEventListener('input', function () { stop(); setT(+sEl.value); });
+      var timer = null, playBtn = document.getElementById('playB');
+      function stop() { if (timer) { clearInterval(timer); timer = null; playBtn.textContent = '播放 07:00 → 09:15'; } }
+      playBtn.addEventListener('click', function () {
+        if (timer) { stop(); return; }
+        setT(0); playBtn.textContent = '停止';
+        timer = setInterval(function () { if (t >= 9) { stop(); return; } setT(t + 1); }, still ? 1400 : 900);
+      });
+      var ray = new THREE.Raycaster(), m = new THREE.Vector2();
+      var o = orbit(host, st, new THREE.Vector3(0, 0.3, 0), { az: 0.35, el: 0.72, r: 17 }, function (e) {
+        var rc = host.getBoundingClientRect(); m.x = (e.clientX - rc.left) / rc.width * 2 - 1; m.y = -(e.clientY - rc.top) / rc.height * 2 + 1;
+        ray.setFromCamera(m, st.camera);
+        var hit = ray.intersectObjects(cols.filter(function (c) { return c.mesh; }).map(function (c) { return c.mesh; }), false)[0];
+        if (hit) { var r = hit.object.userData.r, v = sp(r, t); readB.innerHTML = '<b>' + T[t] + '　' + ROWS[r].n + '</b><br>' + v + ' km/h，' + NAMES[bin(v)] + '等級'; }
+      });
+      setT(6);
+      if (window.ResizeObserver) new ResizeObserver(st.resize).observe(host);
+      (function loop() {
+        var k = still ? 1 : 0.14;
+        cols.forEach(function (c) {
+          if (!c.mesh) return; c.h += (c.th - c.h) * k;
+          c.mesh.scale.y = c.h; c.ice.position.set(c.p[0], -0.4 + c.h + 0.04, c.p[1]);
+        });
+        labels.forEach(function (l) { var c = l.userData.col; l.position.set(c.p[0], -0.4 + c.h + 0.5, c.p[1]); });
+        o.apply(k); st.renderer.render(st.scene, st.camera); requestAnimationFrame(loop);
+      })();
+    })();
+  }
+  var booted = false;
+  function go() { if (!booted) { booted = true; boot(); } }
+  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(go); setTimeout(go, 1500); } else go();
+})();
+</script>
