@@ -885,19 +885,23 @@ figcaption { font-size: 13px; color: var(--muted); }
         '<g transform="translate(' + X(air[0] - 12) + ' ' + X(air[1] - 10) + ')"><path d="M12 0 L14 8 L24 13 L24 15 L14 12 L13 19 L16 21 L16 22 L12 21 L8 22 L8 21 L11 19 L10 12 L0 15 L0 13 L10 8 Z" fill="#9C8A7A"/></g>' +
         '<text x="' + X(air[0]) + '" y="' + X(air[1] + 26) + '" text-anchor="middle" font-size="13" fill="#86664F" ' + FONT + '>松山機場</text>' +
         '<text x="28" y="94" font-size="13" fill="#86664F" ' + FONT + '>大直</text><text x="470" y="302" font-size="13" fill="#86664F" ' + FONT + '>南港</text><text x="596" y="196" text-anchor="end" font-size="13" fill="#86664F" ' + FONT + '>往汐止 →</text>';
+      // 分三層畫：先路，再臉，最後文字，臉和字才不會被別條路蓋住
+      var roads = '', pins = '', texts = '';
       ROWS.forEach(function (R, r) {
         var v = sp(r, t), a = P(R.from), q = P(R.pt), d = 'M' + X(a[0]) + ' ' + X(a[1]) + ' L' + X(q[0]) + ' ' + X(q[1]), L = R.lab;
         if (v === null) {
-          s += '<path d="' + d + '" stroke="#B9A48E" stroke-width="3" stroke-dasharray="5 5" fill="none"/><circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="11" fill="#FFF6E6" stroke="#B9A48E" stroke-width="2" stroke-dasharray="4 3"/>' +
-            '<text x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="14" fill="#86664F" ' + FONT + '>' + R.n.replace('內湖交流道', '') + '<tspan x="' + L[0] + '" dy="17" font-size="12">' + R.why + '</tspan></text>';
+          roads += '<path d="' + d + '" stroke="#B9A48E" stroke-width="3" stroke-dasharray="5 5" fill="none"/>';
+          pins += '<circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="11" fill="#FFF6E6" stroke="#B9A48E" stroke-width="2" stroke-dasharray="4 3"/>';
+          texts += '<text x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="14" fill="#86664F" ' + FONT + '>' + R.n.replace('內湖交流道', '') + '<tspan x="' + L[0] + '" dy="17" font-size="12">' + R.why + '</tspan></text>';
           return;
         }
-        if (r === sel) s += '<path d="' + d + '" stroke="#1F4E79" stroke-width="18" stroke-linecap="round" fill="none"/><circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="20" fill="#1F4E79"/>';
-        s += '<path data-r="' + r + '" d="' + d + '" stroke="' + col(v) + '" stroke-width="11" stroke-linecap="round" fill="none"/>' +
-          '<g data-r="' + r + '" transform="translate(' + X(q[0] - 16) + ' ' + X(q[1] - 16) + ') scale(.32)">' + inner(face(lvl(v))) + '</g>' +
-          '<text data-r="' + r + '" x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="15" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + R.n.replace('北向', '') +
+        if (r === sel) { roads = '<path d="' + d + '" stroke="#1F4E79" stroke-width="18" stroke-linecap="round" fill="none"/>' + roads; pins += '<circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="20" fill="#1F4E79"/>'; }
+        roads += '<path data-r="' + r + '" d="' + d + '" stroke="' + col(v) + '" stroke-width="11" stroke-linecap="round" fill="none"/>';
+        pins += '<g data-r="' + r + '" transform="translate(' + X(q[0] - 16) + ' ' + X(q[1] - 16) + ') scale(.32)">' + inner(face(lvl(v))) + '</g>';
+        texts += '<text data-r="' + r + '" x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="15" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + R.n.replace('北向', '') +
           '<tspan x="' + L[0] + '" dy="18" font-size="13" fill="' + (lvl(v) === 2 ? '#B3261E' : '#86664F') + '">' + LV[lvl(v)].n + ' · ' + v + '</tspan></text>';
       });
+      s += roads + pins + texts;
       return '<svg viewBox="0 0 600 320" role="img" aria-label="內湖地圖：依偵測器位置標出 8 個入口，表情越慌、路越紅越塞">' + s + '</svg>' +
         '<div style="display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:#86664F;margin-top:6px"><span>入口依偵測器的實際位置；河道、山區與缺口位置是手繪示意</span></div>';
     }
