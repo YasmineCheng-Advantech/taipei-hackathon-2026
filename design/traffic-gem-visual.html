@@ -1048,12 +1048,7 @@ figcaption { font-size: 13px; color: var(--muted); }
 (function () {
   var D = window.__data;
   function fallback(id, msg) { var f = document.getElementById(id); f.hidden = false; if (msg) f.textContent = msg; }
-  var small = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
-  if (!window.THREE || small) {
-    var m = small ? '手機不載入 3D（3D 守則第 6 條），請用電腦打開這一頁看。' : '這台裝置不支援 3D。';
-    fallback('fbSky', m); fallback('fbPil', m);
-    return;
-  }
+  if (!window.THREE) { fallback('fbSky', '這台裝置不支援 3D。'); fallback('fbPil', '這台裝置不支援 3D。'); return; }
   var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function lin(c) { return new THREE.Color(c).convertSRGBToLinear(); }
   var mats = D.JAM.map(function (c) { return new THREE.MeshStandardMaterial({ color: lin(c), roughness: 0.55 }); });
@@ -1276,14 +1271,25 @@ figcaption { font-size: 13px; color: var(--muted); }
     })();
   }
 
-  function whenNear(id, fn) {
-    var el = document.getElementById(id), done = false;
-    function go() { if (!done) { done = true; fn(); } }
-    if (!('IntersectionObserver' in window)) { go(); return; }
-    var io = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); go(); } }, { rootMargin: '400px' });
-    io.observe(el);
+  // 捲到附近才載入；依舞台實際寬度判斷，太窄（手機）先顯示說明，之後變寬會自動補載入
+  function start(id, fbId, fn, msg) {
+    var host = document.getElementById(id), near = false, done = false;
+    function tryInit() {
+      if (done || !near) return;
+      if (host.clientWidth < 480) { if (msg) fallback(fbId, msg); return; }
+      done = true;
+      if (msg) document.getElementById(fbId).hidden = true;
+      fn();
+    }
+    function seen() { near = true; tryInit(); }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); seen(); } }, { rootMargin: '400px' });
+      io.observe(host);
+    } else seen();
+    if (window.ResizeObserver) new ResizeObserver(tryInit).observe(host); else window.addEventListener('resize', tryInit);
   }
-  function boot() { hero(); whenNear('stageSky', skyline); whenNear('stagePil', pillars); }
+  var narrow = '畫面太窄，不載入 3D（3D 守則第 6 條）。把視窗放大，或用電腦打開就看得到。';
+  function boot() { start('stageHero', 'fbHero', hero); start('stageSky', 'fbSky', skyline, narrow); start('stagePil', 'fbPil', pillars, narrow); }
   var booted = false;
   function once() { if (!booted) { booted = true; boot(); } }
   if (document.fonts && document.fonts.ready) { document.fonts.ready.then(once); setTimeout(once, 1500); } else once();
