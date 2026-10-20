@@ -1,0 +1,386 @@
+<title>交通捲大眾版</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Huninn&display=swap">
+<style>
+/* 版面：說明文字很少、字很大；每個點子是一張淺色「圖卡」（固定淺色，像真的手機畫面或簡報），下面一句話說看的人會懂什麼。 */
+:root {
+  --bg: #FFF8EF;
+  --surface: #FFFFFF;
+  --fg: #3A1F14;
+  --muted: #86664F;
+  --line: #F0DCC6;
+  --accent: #B3261E;
+  --accent-soft: #FCE4DB;
+  --display: 'Huninn', 'Noto Sans TC', 'PingFang TC', sans-serif;
+  --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1D1411; --surface: #291D18; --fg: #F6E9DD; --muted: #C4A893; --line: #3E2D25;
+    --accent: #FF8A75; --accent-soft: #43231C; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1D1411; --surface: #291D18; --fg: #F6E9DD; --muted: #C4A893; --line: #3E2D25;
+  --accent: #FF8A75; --accent-soft: #43231C; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 18px; line-height: 1.75; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 56px 88px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 64px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 56px); color: var(--accent); }
+h2 { font-family: var(--display); font-weight: 400; font-size: clamp(26px, 3.2vw, 32px); color: var(--accent); }
+h3 { font-family: var(--display); font-weight: 400; font-size: 23px; }
+p { margin: 0; }
+.prose { max-width: 36em; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.muted { color: var(--muted); }
+.small { font-size: 15px; }
+
+.pick { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.pick div { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.pick b { font-family: var(--display); font-weight: 400; font-size: 22px; color: var(--accent); }
+
+.ideas { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 28px 22px; }
+.idea { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.idea .k { font-size: 14px; font-weight: 700; color: var(--accent); letter-spacing: .06em; }
+.idea p { font-size: 16px; }
+.idea p b { font-weight: 700; }
+
+/* 圖卡：固定淺色 */
+.card { background: #FFF6E6; color: #3A1F14; border-radius: 24px; padding: 22px; display: flex; flex-direction: column; gap: 12px; position: relative; min-height: 330px; box-shadow: 0 1px 2px rgba(90,40,20,.06), 0 10px 26px rgba(90,40,20,.09); font-family: var(--display); }
+.card svg { display: block; width: 100%; height: auto; }
+.card .q { font-size: 17px; color: #86664F; }
+.card .a { font-size: 34px; line-height: 1.25; }
+.card .a em { font-style: normal; color: #B3261E; }
+.card .demo { position: absolute; right: 14px; bottom: 12px; font: 500 12px var(--sans); color: #86664F; background: #FBE8DA; border-radius: 99px; padding: 2px 10px; }
+.card .btn { font: 400 20px var(--display); background: #8A2414; color: #FFF6E6; border-radius: 16px; padding: 12px; text-align: center; }
+.row { display: flex; align-items: center; gap: 12px; }
+.row > * { min-width: 0; }
+
+.faces { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; text-align: center; }
+.faces div { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 16px; }
+.faces svg { width: 100%; max-width: 60px; }
+.faces .t { font-size: 18px; }
+.faces .w { font-size: 14px; }
+
+.bars { display: flex; flex-direction: column; gap: 10px; }
+.bar { display: grid; grid-template-columns: 54px minmax(0, 1fr); gap: 10px; align-items: center; font-size: 18px; }
+.bar i { display: flex; align-items: center; justify-content: flex-end; height: 34px; border-radius: 12px; padding-right: 10px; font-style: normal; font-size: 17px; }
+
+.qa { display: flex; flex-direction: column; gap: 10px; }
+.qa .q2 { background: #FBE8DA; border-radius: 16px 16px 16px 4px; padding: 6px 14px; font-size: 18px; width: fit-content; }
+.qa .a2 { font-size: 30px; line-height: 1.2; padding-left: 6px; }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 17px; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 14px; color: var(--muted); font-weight: 700; }
+td:nth-child(2) { font-weight: 700; }
+ol.rules { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 10px; max-width: 36em; font-size: 19px; }
+.test { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 20px; display: flex; flex-direction: column; gap: 10px; max-width: 40em; }
+.test ol { margin: 0; padding-left: 1.4em; font-size: 19px; }
+</style>
+
+<div class="wrap">
+
+<header class="stack">
+  <h1>讓每個人一眼看懂的交通捲</h1>
+  <p class="prose" style="font-size:20px">前面的熱力圖是給懂數據的人看的。這一頁換個方向：<b>國小、國中程度的人，看 5 秒就知道「幾點最塞、我該幾點走」</b>。</p>
+  <p class="prose muted small">每張圖都只回答一個問題，用分鐘、時鐘、表情和小車子來說，不用「公里／小時」，也不用看圖例。圖上的數字都是示範用的。</p>
+</header>
+
+<section class="stack">
+  <h2>我會這樣搭配</h2>
+  <div class="pick">
+    <div><b>手機打開的第一眼</b><span>A 一句話 ＋ C 表情排排站</span></div>
+    <div><b>分享卡</b><span>E 像慢跑一樣慢，或 I 一年省下幾部電影</span></div>
+    <div><b>Demo 簡報</b><span>J 三問三答開場，G 解釋為什麼要分開走</span></div>
+    <div><b>專業版留給市府和企業</b><span>熱力圖矩陣和一頁紙不變，只是不放在民眾第一眼</span></div>
+  </div>
+</section>
+
+<section class="stack">
+  <h2>十種一眼就懂的畫法</h2>
+  <div class="ideas">
+
+    <div class="idea">
+      <div class="k">A　一句話</div>
+      <div class="card">
+        <div class="q">明天早上，堤頂大道</div>
+        <div class="a"><em>7:30</em> 經過<br>比 8:30 少塞 4 分鐘</div>
+        <div class="row" style="margin-top:auto"><span id="faceA" style="width:72px;flex:none"></span><span style="font-size:19px">這時候路上很順</span></div>
+        <div class="btn">我要這個時間</div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>幾點走、可以少塞多久</b>。只有兩個數字，一個按鈕。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">B　時鐘</div>
+      <div class="card">
+        <div class="q">堤頂大道，早上什麼時候最塞？</div>
+        <div id="clock"></div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>時鐘上紅色那一段最塞</b>。每個人都會看時鐘，不用學。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">C　表情排排站</div>
+      <div class="card">
+        <div class="q">堤頂大道，每半小時的心情</div>
+        <div class="faces" id="faces"></div>
+        <div style="font-size:21px;margin-top:auto">8:30 最塞，<em style="font-style:normal;color:#B3261E">7:30</em> 最順</div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>笑臉是順，慌張的臉是塞</b>。只分三種，看不出顏色也看得懂臉。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">D　要花幾分鐘</div>
+      <div class="card">
+        <div class="q">經過堤頂大道到公司，要花幾分鐘？</div>
+        <div class="bars" id="bars"></div>
+        <div style="font-size:19px;margin-top:auto">條越短越快</div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>7:30 只要 19 分鐘，8:30 要 23 分鐘</b>。用分鐘說，比說車速好懂。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">E　像慢跑一樣慢</div>
+      <div class="card">
+        <div class="q">8:30 的堤頂大道有多慢？</div>
+        <div class="row"><span id="iconRun" style="width:84px;flex:none"></span><div class="a" style="font-size:28px"><em>8:30</em> 開車<br>跟慢跑差不多快</div></div>
+        <div class="row"><span id="iconCar" style="width:84px;flex:none"></span><div class="a" style="font-size:28px">7:30<br>正常開車的速度</div></div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>塞到什麼程度</b>。拿走路、慢跑、騎腳踏車來比，比「時速 10 公里」好想像。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">F　車子排多長</div>
+      <div class="card">
+        <div class="q">同一條路，兩個時間</div>
+        <div id="queue"></div>
+        <div style="font-size:21px;margin-top:auto">8:30 車子排好長</div>
+        <span class="demo">示範畫面</span>
+      </div>
+      <p>看完就懂：<b>8:30 的車多到擠在一起</b>。小車子的數量就是答案，不用讀數字。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">G　大家一起換，會怎樣？</div>
+      <div class="card">
+        <div class="q">如果大家都改 7:30 走…</div>
+        <div id="crowd"></div>
+        <span class="demo">示範畫面</span>
+      </div>
+      <p>看完就懂：<b>大家擠同一個時間就會換那個時間塞，要分開走才有用</b>。這是最難講的觀念，用三張小圖講。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">H　只畫你的路</div>
+      <div class="card">
+        <div class="q">我們算的是哪一段？</div>
+        <div id="route"></div>
+        <div style="font-size:18px;margin-top:auto">從家裡出發的那段，每個人不一樣，所以我們只告訴你「幾點經過堤頂大道」。</div>
+        <span class="demo">示範畫面</span>
+      </div>
+      <p>看完就懂：<b>建議的是經過那條路的時間，不是出門時間</b>。不用畫整張地圖。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">I　一年省下幾部電影</div>
+      <div class="card">
+        <div class="q">每天少塞 3–4 分鐘，一年下來…</div>
+        <div class="a">少塞 <em>12–16</em> 小時</div>
+        <div id="movies"></div>
+        <div style="font-size:21px">差不多是 <em style="font-style:normal;color:#B3261E">6–8 部電影</em></div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>每天幾分鐘，累積起來很多</b>。算法：一年上班 250 天，每部電影 2 小時。</p>
+    </div>
+
+    <div class="idea">
+      <div class="k">J　三問三答</div>
+      <div class="card">
+        <div class="qa">
+          <div class="q2">幾點最塞？</div><div class="a2">早上 <em style="font-style:normal;color:#B3261E">8:30</em></div>
+          <div class="q2">幾點走比較好？</div><div class="a2">7:30</div>
+          <div class="q2">可以少塞多久？</div><div class="a2">3–4 分鐘</div>
+        </div>
+        <span class="demo">示範數字</span>
+      </div>
+      <p>看完就懂：<b>全部重點</b>。很適合當簡報第一頁，或網站最上面。</p>
+    </div>
+
+  </div>
+</section>
+
+<section class="stack">
+  <h2>把專業的字換成大家說的話</h2>
+  <p class="prose">民眾會看到的畫面用右邊的說法；給市府和企業的一頁紙保留原本的用詞。</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>原本的說法</th><th>大眾版</th></tr></thead>
+    <tbody>
+      <tr><td>尖峰時段</td><td>最塞的時候</td></tr>
+      <tr><td>錯峰</td><td>換個時間走</td></tr>
+      <tr><td>聯外入口</td><td>進內湖的路</td></tr>
+      <tr><td>車速 20 km/h</td><td>要花幾分鐘／像騎腳踏車一樣快</td></tr>
+      <tr><td>壅塞等級</td><td>順、有點塞、很塞</td></tr>
+      <tr><td>時段名額</td><td>這個時間還有位子</td></tr>
+      <tr><td>認領時段</td><td>我要這個時間</td></tr>
+      <tr><td>意向登記，未經驗證</td><td>說好要換時間的人（還沒確認）</td></tr>
+      <tr><td>真實觀測</td><td>實際量到的</td></tr>
+      <tr><td>程式計算</td><td>電腦算出來的</td></tr>
+      <tr><td>情境假設</td><td>假設的情況</td></tr>
+      <tr><td>AI 生成</td><td>AI 寫的</td></tr>
+      <tr><td>模擬資料</td><td>示範用的數字，不是真的</td></tr>
+      <tr><td>尚無資料</td><td>還沒有資料</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="stack">
+  <h2>寫給大眾的七條規則</h2>
+  <ol class="rules">
+    <li>一個畫面只回答一個問題。</li>
+    <li>數字最多兩個，用「分鐘」，不用「公里／小時」。</li>
+    <li>塞車只分三種：順、有點塞、很塞。</li>
+    <li>顏色一定配上表情和字，看不出顏色也懂。</li>
+    <li>字直接寫在圖旁邊，不用另外看圖例。</li>
+    <li>字至少 18 點，一句話不超過 15 個字。</li>
+    <li>拿生活裡的東西來比：時鐘、慢跑、排隊、看電影。</li>
+  </ol>
+</section>
+
+<section class="stack">
+  <h2>怎麼知道大家看得懂</h2>
+  <div class="test">
+    <b style="font-size:20px">5 秒測試</b>
+    <p>找沒看過的人，例如家裡的長輩或國中生。給他看畫面 5 秒，再問三個問題：</p>
+    <ol><li>這是在講什麼？</li><li>幾點最塞？</li><li>你會怎麼做？</li></ol>
+    <p class="muted small">三題都答得出來才算過關。答不出來的那一題，就是畫面要改的地方。這比 ROLES.md 原本寫的 30 秒測試更嚴格。</p>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var LV = [
+    { n: '順', c: '#FDE7B8', ink: '#3A1F14' },
+    { n: '有點塞', c: '#F7A35C', ink: '#3A1F14' },
+    { n: '很塞', c: '#C93A22', ink: '#FFFFFF' }
+  ];
+  function face(l) {
+    var L = LV[l], mouth = [
+      '<path d="M32 60 Q50 78 68 60" fill="none" stroke="' + L.ink + '" stroke-width="6" stroke-linecap="round"/>',
+      '<path d="M35 66 H65" stroke="' + L.ink + '" stroke-width="6" stroke-linecap="round"/>',
+      '<path d="M33 72 Q50 56 67 72" fill="none" stroke="' + L.ink + '" stroke-width="6" stroke-linecap="round"/><path d="M80 18 C 74 30, 74 35, 80 37 C 86 35, 86 30, 80 18 Z" fill="#8FC8F0"/>'
+    ][l];
+    return '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="' + L.c + '" stroke="#B9733A" stroke-width="5"/>' +
+      '<ellipse cx="36" cy="44" rx="5" ry="6.5" fill="' + L.ink + '"/><ellipse cx="64" cy="44" rx="5" ry="6.5" fill="' + L.ink + '"/>' + mouth + '</svg>';
+  }
+  function car(x, y, s, color) {
+    return '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M4 22 L4 14 Q4 10 8 10 L14 10 L20 3 Q22 1 25 1 L37 1 Q40 1 42 3 L48 10 L52 10 Q56 10 56 14 L56 22 Z" fill="' + color + '"/>' +
+      '<path d="M22 4 L36 4 L41 10 L18 10 Z" fill="#FFF6E6" opacity=".9"/><circle cx="16" cy="23" r="5.5" fill="#3A1F14"/><circle cx="44" cy="23" r="5.5" fill="#3A1F14"/></g>';
+  }
+  document.getElementById('faceA').innerHTML = face(0);
+
+  // B 時鐘
+  (function () {
+    var cx = 236, cy = 140, R = 100, s = '';
+    function ang(h) { return (h % 12) * 30 - 90; }
+    function pt(a, r) { var t = a * Math.PI / 180; return [cx + r * Math.cos(t), cy + r * Math.sin(t)]; }
+    function arc(h1, h2, r) { var a = pt(ang(h1), r), b = pt(ang(h2), r); return 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + r + ' ' + r + ' 0 0 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1); }
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (R + 14) + '" fill="#FFFFFF" stroke="#B9733A" stroke-width="5"/>';
+    var lv = [0, 0, 0, 0, 1, 1, 2, 2, 1, 0];
+    lv.forEach(function (l, i) { var h = 7 + i * 0.25; s += '<path d="' + arc(h + 0.01, h + 0.24, R) + '" fill="none" stroke="' + LV[l].c + '" stroke-width="28"/>'; });
+    for (var h = 1; h <= 12; h++) { var p = pt(ang(h), R - 28); s += '<text x="' + p[0].toFixed(1) + '" y="' + (p[1] + 7).toFixed(1) + '" text-anchor="middle" font-size="20" fill="#86664F" font-family="Huninn, sans-serif">' + h + '</text>'; }
+    var hh = pt(ang(7.5), 52), mm = pt(-90 + 180, 74);
+    s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + hh[0].toFixed(1) + '" y2="' + hh[1].toFixed(1) + '" stroke="#3A1F14" stroke-width="8" stroke-linecap="round"/>';
+    s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + mm[0].toFixed(1) + '" y2="' + mm[1].toFixed(1) + '" stroke="#3A1F14" stroke-width="5" stroke-linecap="round"/><circle cx="' + cx + '" cy="' + cy + '" r="7" fill="#3A1F14"/>';
+    var red = pt(ang(8.6), R + 30), ok = pt(ang(7.4), R + 30);
+    s += '<text x="' + (red[0] - 8).toFixed(1) + '" y="' + (red[1] + 8).toFixed(1) + '" text-anchor="end" font-size="22" fill="#B3261E" font-family="Huninn, sans-serif">8:30 最塞</text>';
+    s += '<text x="' + (ok[0] - 6).toFixed(1) + '" y="' + (ok[1] - 4).toFixed(1) + '" text-anchor="end" font-size="22" fill="#3A1F14" font-family="Huninn, sans-serif">7:30 很順</text>';
+    document.getElementById('clock').innerHTML = '<svg viewBox="0 0 380 290" role="img" aria-label="時鐘：7 點到 9 點的外圈上色，8 點半那段紅色最塞，時針指在 7 點半">' + s + '</svg>';
+  })();
+
+  // C 表情排排站
+  var half = [['7:00', 0], ['7:30', 0], ['8:00', 1], ['8:30', 2], ['9:00', 1]];
+  document.getElementById('faces').innerHTML = half.map(function (h) { return '<div>' + face(h[1]) + '<span class="t">' + h[0] + '</span><span class="w">' + LV[h[1]].n + '</span></div>'; }).join('');
+
+  // D 分鐘長條
+  var mins = [['7:00', 19, 0], ['7:30', 19, 0], ['8:00', 21, 1], ['8:30', 23, 2], ['9:00', 21, 1]];
+  document.getElementById('bars').innerHTML = mins.map(function (m) {
+    var w = (m[1] / 24 * 100).toFixed(0);
+    return '<div class="bar"><span>' + m[0] + '</span><i style="width:' + w + '%;background:' + LV[m[2]].c + ';color:' + LV[m[2]].ink + '">' + m[1] + ' 分</i></div>';
+  }).join('');
+
+  // E 圖示
+  document.getElementById('iconRun').innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#FBE8DA"/><circle cx="58" cy="22" r="8" fill="#3A1F14"/><path d="M55 32 L46 56 M46 56 L58 70 L54 86 M46 56 L34 68 L24 66 M52 38 L66 46 L74 40 M52 38 L38 42 L32 52" fill="none" stroke="#3A1F14" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  document.getElementById('iconCar').innerHTML = '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="#FBE8DA"/>' + car(18, 40, 1.1, '#F7A35C') + '<path d="M10 72 H30 M14 60 H24" stroke="#B9733A" stroke-width="4" stroke-linecap="round"/></svg>';
+
+  // F 車子排多長
+  (function () {
+    var s = '';
+    function lane(y, n, gap, label, color) {
+      s += '<text x="0" y="' + (y + 22) + '" font-size="22" fill="#3A1F14" font-family="Huninn, sans-serif">' + label + '</text>';
+      s += '<rect x="70" y="' + (y - 6) + '" width="340" height="40" rx="10" fill="#E9D3C1"/>';
+      for (var i = 0; i < n; i++) s += car(76 + i * gap, y - 1, 0.8, color);
+    }
+    lane(14, 3, 118, '7:30', '#F7A35C');
+    lane(80, 7, 47, '8:30', '#C93A22');
+    document.getElementById('queue').innerHTML = '<svg viewBox="0 0 420 130" role="img" aria-label="7:30 路上只有 3 台車，8:30 擠了 10 台車">' + s + '</svg>';
+  })();
+
+  // G 大家一起換
+  (function () {
+    var panels = [['現在', [2, 4, 8], '8:30 很塞'], ['大家都改 7:30', [9, 3, 2], '換 7:30 很塞'], ['大家分開走', [5, 5, 4], '都還好']];
+    var html = panels.map(function (p, k) {
+      var s = '';
+      ['7:30', '8:00', '8:30'].forEach(function (t, i) {
+        var y = i * 30 + 4, n = p[1][i], l = n >= 8 ? 2 : n >= 5 ? 1 : 0;
+        s += '<text x="0" y="' + (y + 17) + '" font-size="15" fill="#86664F" font-family="Huninn, sans-serif">' + t + '</text>';
+        for (var j = 0; j < n; j++) s += car(42 + j * 21, y + 2, 0.36, LV[l].c === '#FDE7B8' ? '#E9B66A' : LV[l].c);
+      });
+      return '<div style="display:grid;grid-template-columns:118px minmax(0,1fr);gap:8px;align-items:center"><div style="font-size:17px;line-height:1.3">' + p[0] + '<br><span style="color:' + (k === 2 ? '#2F6B4F' : '#B3261E') + '">' + p[2] + '</span></div><svg viewBox="0 0 240 92" aria-hidden="true">' + s + '</svg></div>';
+    }).join('<div style="border-top:1.5px dashed #E3C9B4"></div>');
+    document.getElementById('crowd').innerHTML = '<div style="display:flex;flex-direction:column;gap:8px">' + html + '</div>';
+  })();
+
+  // H 只畫你的路
+  (function () {
+    function road(y, t, color, word) {
+      return '<text x="0" y="' + (y + 8) + '" font-size="21" fill="#3A1F14" font-family="Huninn, sans-serif">' + t + '</text>' +
+        '<line x1="62" y1="' + y + '" x2="150" y2="' + y + '" stroke="#C9B4A2" stroke-width="8" stroke-dasharray="3 9" stroke-linecap="round"/>' +
+        '<line x1="160" y1="' + y + '" x2="300" y2="' + y + '" stroke="' + color + '" stroke-width="16" stroke-linecap="round"/>' +
+        '<text x="230" y="' + (y + 34) + '" text-anchor="middle" font-size="16" fill="#3A1F14" font-family="Huninn, sans-serif">' + word + '</text>' +
+        '<line x1="308" y1="' + y + '" x2="352" y2="' + y + '" stroke="#E9B66A" stroke-width="8" stroke-linecap="round"/>';
+    }
+    var house = '<path d="M50 30 L72 12 L94 30 V52 H50 Z" fill="#F7A35C"/><rect x="66" y="36" width="12" height="16" fill="#FFF6E6"/>';
+    var office = '<rect x="356" y="6" width="44" height="48" rx="4" fill="#8A2414"/>' + [0, 1, 2].map(function (r) { return [0, 1].map(function (c) { return '<rect x="' + (363 + c * 18) + '" y="' + (13 + r * 13) + '" width="11" height="8" fill="#FFF6E6"/>'; }).join(''); }).join('');
+    var s = '<text x="72" y="70" text-anchor="middle" font-size="15" fill="#86664F" font-family="Huninn, sans-serif">家</text>' + house +
+      '<text x="230" y="40" text-anchor="middle" font-size="16" fill="#3A1F14" font-family="Huninn, sans-serif">堤頂大道</text>' + office +
+      '<text x="378" y="70" text-anchor="middle" font-size="15" fill="#86664F" font-family="Huninn, sans-serif">公司</text>' +
+      '<g transform="translate(0 50)">' + road(50, '7:30', '#FDE7B8', '很順') + road(110, '8:30', '#C93A22', '很塞') + '</g>';
+    document.getElementById('route').innerHTML = '<svg viewBox="0 0 410 200" role="img" aria-label="從家到公司的路，只有堤頂大道那段上色：7:30 很順，8:30 很塞">' + s + '</svg>';
+  })();
+
+  // I 電影
+  (function () {
+    var s = '';
+    for (var i = 0; i < 8; i++) {
+      var x = i * 50, faded = i >= 6;
+      s += '<g opacity="' + (faded ? 0.45 : 1) + '"><rect x="' + x + '" y="0" width="42" height="56" rx="6" fill="#8A2414"/>' +
+        [0, 1, 2, 3].map(function (k) { return '<rect x="' + (x + 4) + '" y="' + (5 + k * 13) + '" width="5" height="7" rx="1" fill="#FFF6E6"/><rect x="' + (x + 33) + '" y="' + (5 + k * 13) + '" width="5" height="7" rx="1" fill="#FFF6E6"/>'; }).join('') +
+        '<path d="M' + (x + 16) + ' 20 L' + (x + 28) + ' 28 L' + (x + 16) + ' 36 Z" fill="#FFF6E6"/></g>';
+    }
+    document.getElementById('movies').innerHTML = '<svg viewBox="0 0 400 58" role="img" aria-label="6 到 8 部電影">' + s + '</svg>';
+  })();
+})();
+</script>
