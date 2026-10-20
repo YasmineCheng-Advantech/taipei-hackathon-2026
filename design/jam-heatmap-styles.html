@@ -1,0 +1,585 @@
+<title>交通捲熱力圖樣式</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&family=Huninn&display=swap">
+<style>
+/* 版面：一欄閱讀寬度的說明，每個樣式放在一張奶油色的「盤子」上（固定淺色，像印出來的卡片），盤子可以比文字寬。 */
+:root {
+  --bg: #FFF8EF;
+  --surface: #FFFFFF;
+  --fg: #3A1F14;
+  --muted: #86664F;
+  --line: #F0DCC6;
+  --accent: #B3261E;
+  --accent-soft: #FCE4DB;
+  --display: 'Huninn', 'Noto Sans TC', 'PingFang TC', sans-serif;
+  --sans: 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1D1411; --surface: #291D18; --fg: #F6E9DD; --muted: #C4A893; --line: #3E2D25;
+    --accent: #FF8A75; --accent-soft: #43231C; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1D1411; --surface: #291D18; --fg: #F6E9DD; --muted: #C4A893; --line: #3E2D25;
+  --accent: #FF8A75; --accent-soft: #43231C; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.75; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-block: 56px 88px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 64px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; line-height: 1.3; }
+h1 { font-family: var(--display); font-weight: 400; font-size: clamp(34px, 6vw, 56px); color: var(--accent); }
+h2 { font-family: var(--display); font-weight: 400; font-size: clamp(24px, 3vw, 30px); color: var(--accent); }
+h3 { font-size: 17px; font-weight: 700; }
+p { margin: 0; }
+.prose { max-width: 42em; }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.eyebrow { font: 500 13px/1.4 var(--mono); letter-spacing: .08em; color: var(--muted); }
+.muted { color: var(--muted); }
+code { font-family: var(--mono); font-size: .9em; }
+.head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.letter { font: 500 14px var(--mono); color: var(--fg); background: var(--accent-soft); border-radius: 8px; padding: 2px 9px; }
+.use { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px 28px; font-size: 15px; }
+.use b { display: block; }
+
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 760px; font-size: 15px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font-size: 13px; color: var(--muted); font-weight: 700; }
+td.d { font-family: var(--mono); letter-spacing: .1em; color: var(--accent); white-space: nowrap; }
+td a { white-space: nowrap; }
+a { color: var(--accent); }
+
+/* ---------- 盤子：圖表固定在淺色底上 ---------- */
+.plate { background: #FBE8DA; color: #3A1F14; border-radius: 20px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 1px 2px rgba(90,40,20,.06), 0 10px 30px rgba(90,40,20,.08); min-width: 0; }
+.plate .ttl { font-family: var(--display); font-size: 22px; line-height: 1.35; }
+.plate .sub { font-size: 14px; color: #86664F; }
+.plate .row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+.scroll { overflow-x: auto; }
+.plate svg { display: block; width: 100%; height: auto; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font-size: 12px; font-weight: 500; padding: 2px 10px; border-radius: 99px; }
+.chip.obs { background: #E3ECF5; color: #1F4E79; }
+.chip.sim { background-color: #FBF0D9; color: #7A5200; background-image: repeating-linear-gradient(135deg, rgba(122,82,0,.14) 0 1.5px, transparent 1.5px 6px); }
+.sugar { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.4) 0 1.5px, transparent 1.5px 7px); }
+
+/* A 果醬格 */
+.a-grid { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 16px; }
+@media (max-width: 860px) { .a-grid { grid-template-columns: minmax(0, 1fr); } }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.kpi { background: #FFFFFF; border-radius: 14px; padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; }
+.kpi span { font-size: 13px; color: #86664F; }
+.kpi b { font: 500 21px var(--mono); font-variant-numeric: tabular-nums; }
+.mxA { display: grid; grid-template-columns: 136px repeat(10, minmax(44px, 1fr)); gap: 5px; min-width: 640px; }
+.mxA .rl { font-size: 14px; font-weight: 500; align-self: center; line-height: 1.3; }
+.mxA .th { font: 500 12px var(--mono); text-align: center; color: #86664F; }
+.mxA .th.peak { color: #8A2414; font-weight: 700; }
+.cell { height: 46px; border: 0; border-radius: 12px; font: 500 14px var(--mono); font-variant-numeric: tabular-nums; cursor: pointer; position: relative; padding: 0; }
+.cell[aria-pressed="true"] { box-shadow: 0 0 0 3px #1F4E79; z-index: 1; }
+.cell:focus-visible { outline: 3px solid #1F4E79; outline-offset: 2px; }
+.cell.gap { background: transparent; border: 1.5px dashed #B9A48E; color: #86664F; cursor: default; }
+.det { background: #FFFFFF; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.det .big { font: 500 30px var(--mono); line-height: 1.1; }
+.days { display: flex; gap: 6px; }
+.days span { width: 34px; height: 34px; display: block; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 14px; font-size: 13px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 22px; height: 16px; border-radius: 5px; display: inline-block; box-shadow: inset 0 0 0 1px rgba(58,31,20,.08); }
+
+/* D 切片點陣 */
+.mxD { display: grid; grid-template-columns: 136px repeat(10, minmax(40px, 1fr)); gap: 6px; min-width: 600px; align-items: center; }
+.mxD .rl { font-size: 14px; font-weight: 500; line-height: 1.3; }
+.mxD .th { font: 500 12px var(--mono); text-align: center; color: #86664F; }
+.mxD svg { width: 100%; max-width: 54px; margin: 0 auto; }
+
+/* G 地圖 */
+.g-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 18px; align-items: start; }
+@media (max-width: 860px) { .g-grid { grid-template-columns: minmax(0, 1fr); } }
+.g-map path[data-r], .g-map text[data-r] { cursor: pointer; }
+.slider { display: flex; flex-direction: column; gap: 4px; }
+.slider input { width: 100%; accent-color: #B3261E; }
+.slider .ticks { display: flex; justify-content: space-between; font: 500 11px var(--mono); color: #86664F; }
+.mxG { display: grid; grid-template-columns: 52px repeat(10, minmax(0, 1fr)); gap: 3px; }
+.mxG .rl { font-size: 12px; font-weight: 500; }
+.mxG .th { font: 500 10px var(--mono); text-align: center; color: #86664F; border-radius: 4px; }
+.mxG .th.on { background: #3A1F14; color: #FFF6E6; }
+.mxG button { height: 26px; border: 0; border-radius: 6px; padding: 0; cursor: pointer; }
+.mxG button.on { box-shadow: 0 0 0 2.5px #1F4E79; z-index: 1; position: relative; }
+.mxG button.colon { outline: 2px solid #3A1F14; outline-offset: -2px; }
+.mxG button.gap { background: transparent; border: 1px dashed #B9A48E; cursor: default; }
+.mxG button:focus-visible { outline: 3px solid #1F4E79; outline-offset: 1px; }
+.readout { background: #FFFFFF; border-radius: 14px; padding: 12px 14px; font-size: 15px; }
+
+/* H 手機 */
+.h-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 28px; align-items: center; }
+@media (max-width: 760px) { .h-grid { grid-template-columns: minmax(0, 1fr); justify-items: center; } }
+.phone { width: 300px; max-width: 100%; border-radius: 38px; background: #3A1F14; padding: 10px; box-shadow: 0 16px 36px rgba(58,31,20,.25); }
+.screen { background: #FBE8DA; border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; color: #3A1F14; }
+.screen .bar { padding: 18px 16px 8px; display: flex; flex-direction: column; gap: 2px; }
+.screen .bar b { font-family: var(--display); font-weight: 400; font-size: 20px; }
+.mxH { display: grid; grid-template-columns: 44px repeat(5, minmax(0, 1fr)); gap: 3px; padding: 0 10px 10px; }
+.mxH .th { font-size: 11px; text-align: center; font-weight: 700; position: sticky; top: 0; }
+.mxH .tl { font: 500 11px var(--mono); align-self: center; color: #86664F; }
+.mxH .tl.me { color: #8A2414; font-weight: 700; }
+.mxH div.c { height: 44px; border-radius: 9px; }
+.mxH div.c.me { box-shadow: 0 0 0 2.5px #1F4E79; position: relative; }
+.sheet { background: #FFFFFF; border-radius: 22px 22px 0 0; padding: 14px 16px 18px; box-shadow: 0 -6px 18px rgba(58,31,20,.1); display: flex; flex-direction: column; gap: 2px; }
+.sheet b { font-family: var(--display); font-weight: 400; font-size: 18px; }
+
+/* 格子狀態、圖例 */
+.states { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 760px) { .states { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.states div { display: flex; flex-direction: column; gap: 6px; font-size: 14px; min-width: 0; }
+.states .c { height: 56px; border-radius: 12px; display: grid; place-items: center; font: 500 15px var(--mono); }
+.legends { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
+.legends .plate { gap: 10px; }
+.ramp { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; }
+.ramp div { display: flex; flex-direction: column; gap: 2px; font-size: 12px; min-width: 0; }
+.ramp i { height: 22px; border-radius: 6px; display: block; }
+.ramp .v { font: 400 11px var(--mono); color: #86664F; }
+.grad { height: 20px; border-radius: 99px; background: linear-gradient(90deg, #FEF3DC, #FDD9A0, #FCB46E, #F2804A, #C93A22, #7E170F); }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="sugar" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="1.6" height="7" fill="#FFFFFF" opacity=".4"/></pattern>
+    <radialGradient id="shine" cx="35%" cy="28%" r="75%"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".5"/><stop offset=".45" stop-color="#FFFFFF" stop-opacity="0"/><stop offset="1" stop-color="#5A1E0E" stop-opacity=".25"/></radialGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+
+<header class="stack">
+  <div class="eyebrow">交通捲 · 熱力圖樣式參考 · 2026-10-20</div>
+  <h1>交通捲的熱力圖，可以長這樣</h1>
+  <p class="prose" style="font-size:18px">同一份資料（內湖 6 個入口 × 07:00–09:15 每 15 分鐘的車速），畫成 8 種交通捲風格。每種都標了適合用在哪裡、有什麼要注意。色階的門檻全部跟 <code>Tokens.dc.html</code> 一樣，只換外觀。</p>
+  <p class="muted">所有車速都是模擬的，格子上的斜線就是「模擬資料」的標記，正式資料接上後會拿掉。</p>
+</header>
+
+<section class="stack">
+  <h2>先講結論</h2>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>樣式</th><th>比得準</th><th>30 秒看懂</th><th>甜點感</th><th>手機</th><th>工程成本</th><th>建議用在</th></tr></thead>
+    <tbody id="score"></tbody>
+  </table></div>
+  <p class="prose">網站的熱力儀表板用 <b>A 果醬格</b>，加上 <b>G 抹醬地圖</b>做雙向聯動；簡報的熱力圖頁用 <b>B 一條捲一個入口</b>；IG 方形圖用 <b>D 切片點陣</b>。F 只當封面背景，不當數據圖。</p>
+</section>
+
+<section class="stack" id="A">
+  <div class="head"><span class="letter">A</span><h2>果醬格</h2><span class="muted">現行矩陣換上甜點外皮，點格子看細節</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl" id="titleA"></div><div class="chips"><span class="chip obs">真實觀測</span><span class="chip sim">模擬資料</span></div></div>
+    <div class="kpis" id="kpiA"></div>
+    <div class="a-grid">
+      <div class="scroll"><div class="mxA" id="mxA" role="grid" aria-label="入口與時段的車速矩陣"></div></div>
+      <div class="det" id="detA" aria-live="polite"></div>
+    </div>
+    <div class="legend" id="legA"></div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>網站的熱力儀表板（<code>Main</code>）。數字直接寫在格子裡，最準，也最像現在的規範，工程師幾乎不用改。</div>
+    <div><b>注意</b>甜點感只來自圓角、圓體標題和色階名字。右邊細節用 4 片小捲代表 4 天，紅的那幾片就是「會塞的那幾天」。</div>
+  </div>
+</section>
+
+<section class="stack" id="B">
+  <div class="head"><span class="letter">B</span><h2>一條捲一個入口</h2><span class="muted">每個入口是一條橫躺的瑞士捲，切成 10 段</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl">每天早上，堤頂大道那條捲最紅</div><div class="chips"><span class="chip sim">模擬資料</span></div></div>
+    <div class="scroll"><div style="min-width:640px" id="svgB"></div></div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>簡報的熱力圖頁。一列就是一條捲，右端的切面跟標誌呼應，台下一眼就懂。</div>
+    <div><b>注意</b>格子裡沒有數字，要配一句結論當標題。沒有偵測器的入口畫成虛線空殼，不補數字。</div>
+  </div>
+</section>
+
+<section class="stack" id="C">
+  <div class="head"><span class="letter">C</span><h2>果醬瓶</h2><span class="muted">液面越高、顏色越深就越塞，兩種方式一起表達</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl">08:30，好幾瓶都快滿了</div><div class="chips"><span class="chip sim">模擬資料</span></div></div>
+    <div class="scroll"><div style="min-width:640px" id="svgC"></div></div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>黑白列印和色盲讀者：就算看不出顏色，液面高度還是看得出來。可以放在協商一頁紙。</div>
+    <div><b>注意</b>瓶子比格子佔空間，手機上放不下 10 欄。液面高度用「56 減車速」換算，要在圖下寫清楚。</div>
+  </div>
+</section>
+
+<section class="stack" id="D">
+  <div class="head"><span class="letter">D</span><h2>切片點陣</h2><span class="muted">每一格是一片捲，果醬越厚越紅越塞</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl">一個時段一片捲</div><div class="chips"><span class="chip sim">模擬資料</span></div></div>
+    <div class="scroll"><div class="mxD" id="mxD"></div></div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>IG 方形圖、拉票素材。最可愛，也最有交通捲的辨識度。</div>
+    <div><b>注意</b>果醬粗細只能分大概，比不出 14 和 16 km/h 的差別。正式數字請大家點網址看 A。</div>
+  </div>
+</section>
+
+<section class="stack" id="E">
+  <div class="head"><span class="letter">E</span><h2>千層蛋糕</h2><span class="muted">每個入口一層，越高越塞，看得出尖峰的形狀</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl">尖峰像一層一層疊起來的千層蛋糕</div><div class="chips"><span class="chip sim">模擬資料</span></div></div>
+    <div class="scroll"><div style="min-width:640px" id="svgE"></div></div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>簡報講「尖峰有多高、多寬」的那一頁，也適合講錯峰情境：移出一部分車之後，尖峰變矮變寬。</div>
+    <div><b>注意</b>層和層會重疊，後面那層的低處會被擋住，所以每層都畫了 20 km/h 的虛線當參考。高度用「56 減車速」，不是流量。</div>
+  </div>
+</section>
+
+<section class="stack" id="F">
+  <div class="head"><span class="letter">F</span><h2>抹醬漸層</h2><span class="muted">把 15 分鐘的格子抹開，變成一條連續的果醬</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl">把塞車抹開來看</div><div class="chips"><span class="chip sim">模擬資料</span></div></div>
+    <div class="scroll"><div style="min-width:640px" id="svgF"></div></div>
+    <div class="sub">白點才是真的資料點，中間的顏色是電腦補出來的。</div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>簡報封面、分享卡的背景，最好看。</div>
+    <div><b>注意</b>看起來比實際資料更細，會讓人以為 08:07 也有量到。不要當成數據圖，也不要放在網站上。</div>
+  </div>
+</section>
+
+<section class="stack" id="G">
+  <div class="head"><span class="letter">G</span><h2>抹醬地圖</h2><span class="muted">入口示意圖加時間滑桿，跟矩陣雙向聯動</span></div>
+  <div class="plate">
+    <div class="row"><div class="ttl">拉滑桿，看果醬什麼時候塞滿入口</div><div class="chips"><span class="chip sim">模擬資料</span></div></div>
+    <div class="g-grid">
+      <div class="stack" style="gap:10px">
+        <div class="g-map" id="mapG"></div>
+        <div class="slider"><label for="tG" class="sub" id="tGl"></label><input type="range" id="tG" min="0" max="9" step="1" value="6"><div class="ticks"><span>07:00</span><span>07:30</span><span>08:00</span><span>08:30</span><span>09:00</span></div></div>
+      </div>
+      <div class="stack" style="gap:10px">
+        <div class="readout" id="readG" aria-live="polite"></div>
+        <div class="mxG" id="mxG"></div>
+        <div class="sub">點路、點格子都可以。路越粗、越紅越塞。這是示意圖，不是實際的地理位置。</div>
+      </div>
+    </div>
+  </div>
+  <div class="use">
+    <div><b>適合</b>網站的熱力儀表板。<code>PRODUCT.md</code> 規定地圖要用路段上色、跟矩陣雙向聯動，這個樣式剛好做到，蛋糕形狀的園區也很有記憶點。</div>
+    <div><b>注意</b>工程最多。離線 Demo 要用這種 SVG 示意圖，不依賴線上底圖。滑桿自動播放已經排在「比賽後再做」。</div>
+  </div>
+</section>
+
+<section class="stack" id="H">
+  <div class="head"><span class="letter">H</span><h2>手機直式</h2><span class="muted">時間往下排、入口往右排，一手就能捲</span></div>
+  <div class="plate">
+    <div class="h-grid">
+      <div class="phone"><div class="screen">
+        <div class="bar"><span class="sub" style="font-size:12px">今天 · 各入口車速</span><b>你的時段在這裡</b></div>
+        <div class="mxH" id="mxH"></div>
+        <div class="sheet"><span class="sub" style="font-size:12px">你的時段</span><b>07:30 經過堤頂大道</b><span style="font-size:13px">路上少塞 3–4 分，會早 19 分到公司</span></div>
+      </div></div>
+      <div class="stack prose" style="color:#3A1F14">
+        <p>手機只有 390px 寬，10 個時段橫著放會擠成 30px 一格，低於規範的 44px。轉成直式後，每格維持 44px 高，往下捲就是往後的時間，剛好像在攤開一條捲。</p>
+        <p>只列有偵測器的 5 個入口；國道 1 號沒有資料，所以不列，在設定頁說明。</p>
+        <p>你的時段用深藍框標出來，跟網站其他地方的「選取」一致。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stack">
+  <h2>格子的五種狀態</h2>
+  <p class="prose">規則照 <code>Tokens.dc.html</code>，只把圓角加大、斜線改叫「糖粉」。選取框維持深藍，不改成巧克力色：巧克力色疊在最深的莓果醬格子上會看不出來。</p>
+  <div class="plate"><div class="states" id="states"></div></div>
+</section>
+
+<section class="stack">
+  <h2>圖例的三種寫法</h2>
+  <div class="legends">
+    <div class="plate"><b>色票加甜點名（建議）</b><div class="ramp" id="ramp1"></div><span class="sub">名字只是好記，旁邊一定寫 km/h。</span></div>
+    <div class="plate"><b>一句話</b><div style="font-family:var(--display);font-size:20px">越紅越塞</div><div class="grad"></div><div class="row sub" style="font-family:var(--mono);font-size:12px"><span>50 km/h 以上</span><span>10 km/h 以下</span></div><span class="sub">最快讀完，適合分享卡和 IG。</span></div>
+    <div class="plate"><b>果醬瓶</b><div id="ramp3"></div><span class="sub">配合樣式 C，液面和顏色一起看。</span></div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var JAM = ['#FEF3DC','#FDD9A0','#FCB46E','#F2804A','#C93A22','#7E170F'];
+  var NAMES = ['鮮奶油','卡士達','焦糖','柑橘醬','草莓醬','莓果醬'];
+  var RANGE = ['≥50','40–50','30–40','20–30','10–20','<10'];
+  var ROWS = [
+    { n: '堤頂大道北向', s: '堤頂', sev: 46 },
+    { n: '民權大橋', s: '民權', sev: 33 },
+    { n: '麥帥一橋', s: '麥帥', sev: 29 },
+    { n: '成美橋', s: '成美', sev: 21 },
+    { n: '環東大道', s: '環東', sev: 37 },
+    { n: '國道 1 號內湖交流道', s: '國1', gap: true }
+  ];
+  var T = ['07:00','07:15','07:30','07:45','08:00','08:15','08:30','08:45','09:00','09:15'];
+  function sp(r, c) { var R = ROWS[r]; if (R.gap) return null; return Math.round(56 - R.sev * Math.exp(-Math.pow(c - 6.2, 2) / (2 * 1.7 * 1.7)) - r); }
+  function bin(v) { var b = [50, 40, 30, 20, 10]; for (var i = 0; i < b.length; i++) if (v >= b[i]) return i; return 5; }
+  function col(v) { return JAM[bin(v)]; }
+  function ink(v) { return bin(v) >= 4 ? '#FFFFFF' : '#3A1F14'; }
+  function days(r, c) {
+    var v = sp(r, c), k = 0.6 + ((r * 7 + c * 3) % 5) / 10;
+    var d = [-7, -2, 3, 6].map(function (o) { return Math.max(4, Math.round(v + o * k)); });
+    return { d: d, lo: Math.min.apply(null, d), hi: Math.max.apply(null, d), bad: d.filter(function (x) { return x < 20; }).length };
+  }
+  function spiralD(cx, cy, maxR, turns) {
+    var d = '', end = turns * Math.PI * 2;
+    for (var t = 0.9; t <= end; t += 0.12) { var rr = maxR * t / end; d += (d ? 'L' : 'M') + (cx + rr * Math.cos(t)).toFixed(1) + ' ' + (cy + rr * Math.sin(t)).toFixed(1); }
+    return d;
+  }
+  function slice(w, c, extra) {
+    var s = spiralD(50, 50, 40, 3);
+    return '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#B9733A"/><circle cx="50" cy="50" r="44" fill="#F8DDA8"/>' +
+      '<path d="' + s + '" fill="none" stroke="#FFF6E6" stroke-width="' + (w + 3) + '" stroke-linecap="round"/><path d="' + s + '" fill="none" stroke="' + c + '" stroke-width="' + w + '" stroke-linecap="round"/>' +
+      '<circle cx="50" cy="50" r="48" fill="url(#shine)"/>' + (extra || '') + '</svg>';
+  }
+  function jamW(v) { return 2 + (56 - Math.min(56, v)) / 46 * 10; }
+  var X = function (n) { return n.toFixed(1); };
+
+  // ---------- 結論表 ----------
+  var score = [
+    ['A 果醬格', 3, 3, 2, 2, '低', '網站熱力儀表板'],
+    ['B 一條捲一個入口', 3, 3, 3, 2, '低', '簡報熱力圖頁'],
+    ['C 果醬瓶', 3, 2, 3, 1, '中', '黑白列印、一頁紙'],
+    ['D 切片點陣', 2, 3, 3, 2, '低', 'IG 方形圖、拉票'],
+    ['E 千層蛋糕', 2, 2, 3, 2, '中', '簡報講尖峰形狀'],
+    ['F 抹醬漸層', 1, 3, 3, 3, '低', '封面背景，不當數據'],
+    ['G 抹醬地圖', 3, 2, 3, 2, '高', '網站，與 A 聯動'],
+    ['H 手機直式', 3, 3, 2, 3, '中', '民眾版手機畫面']
+  ];
+  function dots(n) { return '●'.repeat(n) + '○'.repeat(3 - n); }
+  document.getElementById('score').innerHTML = score.map(function (r) {
+    return '<tr><td><a href="#' + r[0][0] + '">' + r[0] + '</a></td>' + [1, 2, 3, 4].map(function (i) { return '<td class="d" aria-label="' + r[i] + ' 分（滿分 3）">' + dots(r[i]) + '</td>'; }).join('') + '<td>' + r[5] + '</td><td>' + r[6] + '</td></tr>';
+  }).join('');
+
+  // ---------- A 果醬格 ----------
+  var worst = { r: 0, c: 0, v: 99 }, colAvg = [];
+  T.forEach(function (_, c) {
+    var sum = 0, n = 0;
+    ROWS.forEach(function (R, r) { var v = sp(r, c); if (v === null) return; sum += v; n++; if (v < worst.v) worst = { r: r, c: c, v: v }; });
+    colAvg.push(sum / n);
+  });
+  var peakC = colAvg.indexOf(Math.min.apply(null, colAvg));
+  var wd = days(worst.r, worst.c);
+  document.getElementById('titleA').textContent = T[worst.c] + ' 的' + ROWS[worst.r].s + '，4 天裡有 ' + wd.bad + ' 天塞成果醬';
+  var covered = ROWS.filter(function (R) { return !R.gap; }).length;
+  document.getElementById('kpiA').innerHTML =
+    '<div class="kpi"><span>最塞的一格</span><b>' + ROWS[worst.r].s + ' ' + T[worst.c] + '</b><span>' + worst.v + ' km/h · 程式計算</span></div>' +
+    '<div class="kpi"><span>尖峰時段</span><b>' + T[peakC] + '</b><span>各入口平均最慢 · 程式計算</span></div>' +
+    '<div class="kpi"><span>偵測器覆蓋</span><b>' + covered + ' / ' + ROWS.length + '</b><span>個入口有資料 · 真實觀測</span></div>';
+  var h = '<div></div>' + T.map(function (t, c) { return '<div class="th' + (c === peakC ? ' peak' : '') + '">' + t + '</div>'; }).join('');
+  ROWS.forEach(function (R, r) {
+    h += '<div class="rl">' + R.n + '</div>';
+    T.forEach(function (t, c) {
+      var v = sp(r, c);
+      if (v === null) { h += '<div class="cell gap" style="display:grid;place-items:center" aria-label="' + R.n + ' ' + t + '：沒有偵測器">—</div>'; return; }
+      h += '<button type="button" class="cell sugar" data-r="' + r + '" data-c="' + c + '" aria-pressed="false" aria-label="' + R.n + ' ' + t + '：' + v + ' km/h" style="background-color:' + col(v) + ';color:' + ink(v) + '">' + v + '</button>';
+    });
+  });
+  var mxA = document.getElementById('mxA'); mxA.innerHTML = h;
+  function showA(r, c) {
+    mxA.querySelectorAll('.cell[aria-pressed="true"]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    var btn = mxA.querySelector('.cell[data-r="' + r + '"][data-c="' + c + '"]'); if (btn) btn.setAttribute('aria-pressed', 'true');
+    var v = sp(r, c), d = days(r, c);
+    document.getElementById('detA').innerHTML =
+      '<span class="sub">' + ROWS[r].n + ' · ' + T[c] + '</span><div class="big">' + v + ' <span style="font-size:15px">km/h</span></div>' +
+      '<span style="font-size:14px">' + NAMES[bin(v)] + '等級 · 4 天平均</span>' +
+      '<span style="font-size:14px">每天在 <b>' + d.lo + '–' + d.hi + '</b> km/h 之間</span>' +
+      '<div class="days">' + d.d.map(function (x) { return '<span title="' + x + ' km/h">' + (x < 20 ? slice(9, '#C93A22') : slice(3, '#FCB46E')) + '</span>'; }).join('') + '</div>' +
+      '<span style="font-size:14px">4 天裡有 <b>' + d.bad + '</b> 天低於 20 km/h（紅色那幾片）</span>' +
+      '<div class="chips"><span class="chip obs">真實觀測</span><span class="chip sim">模擬資料</span></div>';
+  }
+  mxA.addEventListener('click', function (e) { var b = e.target.closest('.cell[data-r]'); if (b) showA(+b.dataset.r, +b.dataset.c); });
+  showA(worst.r, worst.c);
+  document.getElementById('legA').innerHTML = JAM.map(function (c, i) { return '<span><i style="background:' + c + '"></i>' + NAMES[i] + ' ' + RANGE[i] + '</span>'; }).join('') + '<span><i style="border:1.5px dashed #B9A48E;box-shadow:none"></i>沒有偵測器</span>';
+
+  // ---------- B 一條捲一個入口 ----------
+  (function () {
+    var W = 1000, L = 170, R = 940, rh = 62, top = 10, H = top + ROWS.length * rh + 40, seg = (R - L) / 10, s = '';
+    ROWS.forEach(function (Rw, r) {
+      var y = top + r * rh + 10, hh = 36, id = 'cb' + r;
+      s += '<text x="0" y="' + (y + 23) + '" font-size="15" font-weight="500" fill="#3A1F14">' + Rw.n + '</text>';
+      if (Rw.gap) {
+        s += '<rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="' + hh + '" rx="18" fill="none" stroke="#B9A48E" stroke-width="1.5" stroke-dasharray="6 5"/>';
+        s += '<text x="' + ((L + R) / 2) + '" y="' + (y + 23) + '" text-anchor="middle" font-size="13" fill="#86664F">沒有偵測器，不補數字</text>';
+        return;
+      }
+      s += '<clipPath id="' + id + '"><rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="' + hh + '" rx="18"/></clipPath><g clip-path="url(#' + id + ')">';
+      T.forEach(function (_, c) { s += '<rect x="' + X(L + c * seg) + '" y="' + y + '" width="' + X(seg + 0.5) + '" height="' + hh + '" fill="' + col(sp(r, c)) + '"/>'; });
+      s += '<rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="' + hh + '" fill="url(#sugar)"/>';
+      s += '<rect x="' + L + '" y="' + (y + 5) + '" width="' + (R - L) + '" height="3" fill="#FFF6E6" opacity=".75"/>';
+      for (var c = 1; c < 10; c++) s += '<line x1="' + X(L + c * seg) + '" x2="' + X(L + c * seg) + '" y1="' + y + '" y2="' + (y + hh) + '" stroke="#FFF6E6" stroke-width="1.5" opacity=".7"/>';
+      s += '</g><rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="' + hh + '" rx="18" fill="none" stroke="#B9733A" stroke-width="3"/>';
+      s += '<g transform="translate(' + (R - 4) + ' ' + (y - 3) + ') scale(.42)">' + slice(8, '#C93A22').replace('<svg viewBox="0 0 100 100" aria-hidden="true">', '').replace('</svg>', '') + '</g>';
+    });
+    var ay = top + ROWS.length * rh + 22;
+    T.forEach(function (t, c) { if (c % 2 === 0) s += '<text x="' + X(L + c * seg + seg / 2) + '" y="' + ay + '" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#86664F">' + t + '</text>'; });
+    document.getElementById('svgB').innerHTML = '<svg viewBox="0 0 ' + (W + 30) + ' ' + H + '" role="img" aria-label="每個入口一條橫躺的瑞士捲，顏色越紅越塞">' + s + '</svg>';
+  })();
+
+  // ---------- C 果醬瓶 ----------
+  (function () {
+    var L = 170, cw = 80, rh = 66, s = '', H = ROWS.length * rh + 34;
+    ROWS.forEach(function (Rw, r) {
+      var y = r * rh;
+      s += '<text x="0" y="' + (y + 38) + '" font-size="15" font-weight="500" fill="#3A1F14">' + Rw.n + '</text>';
+      T.forEach(function (_, c) {
+        var x = L + c * cw + 20, v = sp(r, c), bw = 40, bh = 42, by = y + 14, id = 'cj' + r + '_' + c;
+        s += '<rect x="' + (x + 6) + '" y="' + (by - 8) + '" width="' + (bw - 12) + '" height="8" rx="3" fill="' + (v === null ? 'none' : '#B9733A') + '" stroke="' + (v === null ? '#B9A48E' : 'none') + '" stroke-dasharray="3 3"/>';
+        if (v === null) { s += '<rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10" fill="none" stroke="#B9A48E" stroke-width="1.5" stroke-dasharray="4 4"/>'; return; }
+        var f = Math.max(0.06, Math.min(1, (56 - v) / 50)), fh = bh * f;
+        s += '<clipPath id="' + id + '"><rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10"/></clipPath>';
+        s += '<rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10" fill="#FFFFFF"/>';
+        s += '<g clip-path="url(#' + id + ')"><rect x="' + x + '" y="' + X(by + bh - fh) + '" width="' + bw + '" height="' + X(fh) + '" fill="' + col(v) + '"/><rect x="' + x + '" y="' + X(by + bh - fh) + '" width="' + bw + '" height="' + X(fh) + '" fill="url(#sugar)"/></g>';
+        s += '<rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + bh + '" rx="10" fill="none" stroke="#B9733A" stroke-width="2"/>';
+      });
+    });
+    T.forEach(function (t, c) { if (c % 2 === 0) s += '<text x="' + (L + c * cw + 40) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#86664F">' + t + '</text>'; });
+    document.getElementById('svgC').innerHTML = '<svg viewBox="0 0 ' + (L + 10 * cw + 10) + ' ' + H + '" role="img" aria-label="每格一個果醬瓶，液面越高越塞">' + s + '</svg>';
+  })();
+
+  // ---------- D 切片點陣 ----------
+  (function () {
+    var h = '<div></div>' + T.map(function (t, c) { return '<div class="th">' + (c % 2 ? '' : t) + '</div>'; }).join('');
+    ROWS.forEach(function (R, r) {
+      h += '<div class="rl">' + R.n + '</div>';
+      T.forEach(function (t, c) {
+        var v = sp(r, c);
+        h += v === null ? '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#B9A48E" stroke-width="3" stroke-dasharray="8 7"/></svg>'
+          : '<div title="' + R.n + ' ' + t + '：' + v + ' km/h">' + slice(jamW(v), JAM[Math.max(2, bin(v))]) + '</div>';
+      });
+    });
+    document.getElementById('mxD').innerHTML = h;
+  })();
+
+  // ---------- E 千層蛋糕 ----------
+  (function () {
+    var L = 170, R = 960, step = 58, amp = 120, top = 130, s = '', defs = '';
+    function px(c) { return L + c * (R - L) / 9; }
+    function smooth(p) {
+      var d = 'M' + X(p[0][0]) + ' ' + X(p[0][1]);
+      for (var i = 0; i < p.length - 1; i++) {
+        var a = p[i - 1] || p[i], b = p[i], c = p[i + 1], e = p[i + 2] || c;
+        d += ' C' + X(b[0] + (c[0] - a[0]) / 6) + ' ' + X(b[1] + (c[1] - a[1]) / 6) + ' ' + X(c[0] - (e[0] - b[0]) / 6) + ' ' + X(c[1] - (e[1] - b[1]) / 6) + ' ' + X(c[0]) + ' ' + X(c[1]);
+      }
+      return d;
+    }
+    var H = top + (ROWS.length - 1) * step + 50;
+    ROWS.forEach(function (Rw, r) {
+      var base = top + r * step;
+      s += '<text x="0" y="' + (base - 4) + '" font-size="15" font-weight="500" fill="#3A1F14">' + Rw.n + '</text>';
+      if (Rw.gap) { s += '<line x1="' + L + '" x2="' + R + '" y1="' + base + '" y2="' + base + '" stroke="#B9A48E" stroke-width="1.5" stroke-dasharray="6 5"/><text x="' + L + '" y="' + (base - 8) + '" font-size="13" fill="#86664F">沒有偵測器，不補數字</text>'; return; }
+      var pts = T.map(function (_, c) { return [px(c), base - (56 - sp(r, c)) / 50 * amp]; });
+      var top_ = smooth(pts), area = top_ + ' L' + R + ' ' + base + ' L' + L + ' ' + base + ' Z';
+      defs += '<linearGradient id="ge' + r + '" x1="' + L + '" x2="' + R + '" gradientUnits="userSpaceOnUse">' + T.map(function (_, c) { return '<stop offset="' + (c / 9).toFixed(3) + '" stop-color="' + col(sp(r, c)) + '"/>'; }).join('') + '</linearGradient>';
+      s += '<path d="' + area + '" fill="url(#ge' + r + ')"/><path d="' + area + '" fill="url(#sugar)"/>';
+      s += '<path d="' + top_ + '" fill="none" stroke="#FFF6E6" stroke-width="4" stroke-linecap="round"/>';
+      s += '<line x1="' + L + '" x2="' + R + '" y1="' + base + '" y2="' + base + '" stroke="#B9733A" stroke-width="3"/>';
+      var ty = base - 36 / 50 * amp;
+      s += '<line x1="' + L + '" x2="' + R + '" y1="' + X(ty) + '" y2="' + X(ty) + '" stroke="#3A1F14" stroke-width="1" stroke-dasharray="3 5" opacity=".45"/>';
+      if (r === 0) s += '<text x="' + (R + 6) + '" y="' + X(ty + 4) + '" font-size="11" font-family="IBM Plex Mono, monospace" fill="#3A1F14">20 km/h</text>';
+    });
+    T.forEach(function (t, c) { if (c % 2 === 0) s += '<text x="' + X(px(c)) + '" y="' + (H - 8) + '" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#86664F">' + t + '</text>'; });
+    document.getElementById('svgE').innerHTML = '<svg viewBox="0 0 1020 ' + H + '" role="img" aria-label="每個入口一層，越高越塞"><defs>' + defs + '</defs>' + s + '</svg>';
+  })();
+
+  // ---------- F 抹醬漸層 ----------
+  (function () {
+    var L = 170, R = 960, rh = 50, s = '', defs = '', H = ROWS.length * rh + 30;
+    function px(c) { return L + 14 + c * (R - L - 28) / 9; }
+    ROWS.forEach(function (Rw, r) {
+      var y = r * rh + 6;
+      s += '<text x="0" y="' + (y + 20) + '" font-size="15" font-weight="500" fill="#3A1F14">' + Rw.n + '</text>';
+      if (Rw.gap) { s += '<rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="28" rx="14" fill="none" stroke="#B9A48E" stroke-width="1.5" stroke-dasharray="6 5"/>'; return; }
+      defs += '<linearGradient id="gf' + r + '" x1="' + px(0) + '" x2="' + px(9) + '" gradientUnits="userSpaceOnUse">' + T.map(function (_, c) { return '<stop offset="' + (c / 9).toFixed(3) + '" stop-color="' + col(sp(r, c)) + '"/>'; }).join('') + '</linearGradient>';
+      s += '<rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="28" rx="14" fill="url(#gf' + r + ')"/><rect x="' + L + '" y="' + y + '" width="' + (R - L) + '" height="28" rx="14" fill="url(#sugar)"/>';
+      T.forEach(function (_, c) { s += '<circle cx="' + X(px(c)) + '" cy="' + (y + 14) + '" r="3.2" fill="#FFFFFF" stroke="#3A1F14" stroke-width="1" stroke-opacity=".35"/>'; });
+    });
+    T.forEach(function (t, c) { if (c % 2 === 0) s += '<text x="' + X(px(c)) + '" y="' + (H - 4) + '" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#86664F">' + t + '</text>'; });
+    document.getElementById('svgF').innerHTML = '<svg viewBox="0 0 980 ' + H + '" role="img" aria-label="把每 15 分鐘的顏色抹開成連續漸層"><defs>' + defs + '</defs>' + s + '</svg>';
+  })();
+
+  // ---------- G 抹醬地圖 ----------
+  (function () {
+    var roads = [
+      { a: [36, 340], b: [222, 262], lx: 30, ly: 368, an: 'start' },
+      { a: [150, 418], b: [256, 300], lx: 112, ly: 444, an: 'start' },
+      { a: [330, 424], b: [314, 308], lx: 300, ly: 448, an: 'start' },
+      { a: [560, 372], b: [384, 276], lx: 572, ly: 398, an: 'end' },
+      { a: [34, 160], b: [206, 196], lx: 30, ly: 146, an: 'start' },
+      { a: [560, 88], b: [378, 152], lx: 572, ly: 72, an: 'end' }
+    ];
+    var t = 6, sel = 0, slider = document.getElementById('tG');
+    function render() {
+      var s = '<path d="M300 112 C 372 108, 404 160, 398 214 C 394 268, 352 312, 296 312 C 236 312, 196 274, 198 214 C 200 154, 236 116, 300 112 Z" fill="#F8DDA8" stroke="#B9733A" stroke-width="5"/>' +
+        '<path d="' + spiralD(300, 212, 70, 2.6) + '" fill="none" stroke="#FFF6E6" stroke-width="7" stroke-linecap="round" opacity=".9"/>' +
+        '<text x="300" y="208" text-anchor="middle" font-size="17" font-family="Huninn, sans-serif" fill="#3A1F14">內湖科學園區</text><text x="300" y="230" text-anchor="middle" font-size="12" fill="#86664F">示意，非實際位置</text>';
+      roads.forEach(function (rd, r) {
+        var v = sp(r, t), d = 'M' + rd.a[0] + ' ' + rd.a[1] + ' L' + rd.b[0] + ' ' + rd.b[1];
+        if (v === null) {
+          s += '<path data-r="' + r + '" d="' + d + '" stroke="#B9A48E" stroke-width="10" stroke-dasharray="2 9" stroke-linecap="round" fill="none"/>';
+        } else {
+          var w = 7 + (56 - v) / 50 * 15;
+          if (r === sel) s += '<path d="' + d + '" stroke="#1F4E79" stroke-width="' + X(w + 8) + '" stroke-linecap="round" fill="none"/>';
+          s += '<path data-r="' + r + '" d="' + d + '" stroke="' + col(v) + '" stroke-width="' + X(w) + '" stroke-linecap="round" fill="none"/>';
+          s += '<path d="' + d + '" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="7 7" fill="none" pointer-events="none" opacity=".85"/>';
+        }
+        s += '<text data-r="' + r + '" x="' + rd.lx + '" y="' + rd.ly + '" text-anchor="' + rd.an + '" font-size="14" font-weight="' + (r === sel ? 700 : 500) + '" fill="#3A1F14">' + ROWS[r].n + (v === null ? '' : ' ' + v) + '</text>';
+      });
+      document.getElementById('mapG').innerHTML = '<svg viewBox="0 0 600 460" role="img" aria-label="內湖入口示意圖，路越粗越紅越塞">' + s + '</svg>';
+      var m = '<div></div>' + T.map(function (tt, c) { return '<div class="th' + (c === t ? ' on' : '') + '">' + tt.slice(1) + '</div>'; }).join('');
+      ROWS.forEach(function (R, r) {
+        m += '<div class="rl">' + R.s + '</div>';
+        T.forEach(function (tt, c) {
+          var v = sp(r, c);
+          m += v === null ? '<button type="button" class="gap" disabled aria-label="' + R.n + ' ' + tt + '：沒有偵測器"></button>'
+            : '<button type="button" class="sugar' + (r === sel && c === t ? ' on' : '') + (c === t ? ' colon' : '') + '" data-r="' + r + '" data-c="' + c + '" aria-label="' + R.n + ' ' + tt + '：' + v + ' km/h" style="background-color:' + col(v) + '"></button>';
+        });
+      });
+      document.getElementById('mxG').innerHTML = m;
+      var v = sp(sel, t);
+      document.getElementById('readG').innerHTML = '<b>' + T[t] + '　' + ROWS[sel].n + '</b><br>' + (v === null ? '沒有偵測器，不補數字' : v + ' km/h，' + NAMES[bin(v)] + '等級');
+      document.getElementById('tGl').textContent = '時間：' + T[t];
+      slider.value = t;
+    }
+    slider.addEventListener('input', function () { t = +slider.value; render(); });
+    document.getElementById('mapG').addEventListener('click', function (e) { var el = e.target.closest('[data-r]'); if (el) { sel = +el.getAttribute('data-r'); render(); } });
+    document.getElementById('mxG').addEventListener('click', function (e) { var b = e.target.closest('button[data-r]'); if (b) { sel = +b.dataset.r; t = +b.dataset.c; render(); } });
+    render();
+  })();
+
+  // ---------- H 手機直式 ----------
+  (function () {
+    var cols = [0, 1, 2, 3, 4], h = '<div></div>' + cols.map(function (r) { return '<div class="th">' + ROWS[r].s + '</div>'; }).join('');
+    T.forEach(function (t, c) {
+      h += '<div class="tl' + (c === 2 ? ' me' : '') + '">' + t + '</div>';
+      cols.forEach(function (r) { var v = sp(r, c); h += '<div class="c sugar' + (c === 2 && r === 0 ? ' me' : '') + '" title="' + ROWS[r].n + ' ' + t + '：' + v + ' km/h" style="background-color:' + col(v) + '"></div>'; });
+    });
+    document.getElementById('mxH').innerHTML = h;
+  })();
+
+  // ---------- 狀態與圖例 ----------
+  var st = [
+    ['真實觀測', 'background:#F2804A', '24'],
+    ['模擬資料（糖粉斜線）', 'background-color:#F2804A;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.45) 0 1.5px,transparent 1.5px 7px)', '24'],
+    ['缺口，不補值', 'background:transparent;border:1.5px dashed #B9A48E;color:#86664F', '—'],
+    ['選取（深藍框）', 'background:#7E170F;color:#FFFFFF;box-shadow:0 0 0 3px #1F4E79', '8'],
+    ['情境移入的時段', 'background:#F2804A;box-shadow:inset 0 0 0 2.5px #1A1D21', '24']
+  ];
+  document.getElementById('states').innerHTML = st.map(function (s) { return '<div><span class="c" style="' + s[1] + '">' + s[2] + '</span>' + s[0] + '</div>'; }).join('');
+  document.getElementById('ramp1').innerHTML = JAM.map(function (c, i) { return '<div><i style="background:' + c + '"></i><span>' + NAMES[i] + '</span><span class="v">' + RANGE[i] + '</span></div>'; }).join('');
+  (function () {
+    var s = '';
+    JAM.forEach(function (c, i) {
+      var x = 6 + i * 50, f = [0.1, 0.28, 0.46, 0.64, 0.82, 1][i], bh = 40, by = 12;
+      s += '<rect x="' + (x + 6) + '" y="4" width="22" height="7" rx="3" fill="#B9733A"/><rect x="' + x + '" y="' + by + '" width="34" height="' + bh + '" rx="9" fill="#FFFFFF" stroke="#B9733A" stroke-width="2"/>';
+      s += '<rect x="' + (x + 1) + '" y="' + X(by + bh - bh * f + 1) + '" width="32" height="' + X(bh * f - 2) + '" rx="8" fill="' + c + '"/>';
+      s += '<text x="' + (x + 17) + '" y="70" text-anchor="middle" font-size="10" font-family="IBM Plex Mono, monospace" fill="#86664F">' + RANGE[i] + '</text>';
+    });
+    document.getElementById('ramp3').innerHTML = '<svg viewBox="0 0 306 76" aria-hidden="true">' + s + '</svg>';
+  })();
+})();
+</script>
