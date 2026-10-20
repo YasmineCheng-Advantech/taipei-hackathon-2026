@@ -1,7 +1,7 @@
 <title>Traffic Gem 視覺方向</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&family=Huninn&family=LXGW+WenKai+TC:wght@400;700&family=Fraunces:ital,wght@1,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500&family=Huninn&family=LXGW+WenKai+TC:wght@400;700&family=Fraunces:ital,wght@1,600&family=Iansui&family=Press+Start+2P&family=DotGothic16&display=swap">
 <style>
 /* 版面：一欄閱讀寬度的說明，搭配每個方向一列三張縮小的簡報頁（封面／熱力圖／分享卡）。頁面本身沿用 Tokens.dc.html 的冷靜規範，四個方向只出現在簡報縮圖裡。 */
 :root {
@@ -116,6 +116,101 @@ figcaption { font-size: 13px; color: var(--muted); }
 .s-gem .c { border-radius: .4cqw; opacity: .92; }
 .s-gem .sim { background: rgba(255,255,255,.12); color: #EDE9FF; }
 
+/* 方向 5：路牌 */
+.s-sign { background: #0B6B3A; color: #FFFFFF; font-family: var(--sans); }
+.s-sign .frame { position: absolute; inset: 2.4cqw; border: .7cqw solid #FFFFFF; border-radius: 2.4cqw; pointer-events: none; }
+.s-sign .in { padding: 6.4cqw 7.4cqw; }
+.s-sign .big { font-size: 8cqw; font-weight: 900; line-height: 1.15; letter-spacing: .04em; }
+.s-sign .en { font-size: 2.6cqw; font-weight: 500; opacity: .9; }
+.s-sign .exit { background: #F5C400; color: #1A1D21; font-weight: 900; padding: .6cqw 2cqw; border-radius: 1cqw; font-size: 3cqw; width: fit-content; white-space: nowrap; }
+.s-sign .c { border-radius: .6cqw; }
+.s-sign .sim { background: #FFFFFF; color: #0B6B3A; right: 4cqw; bottom: 4cqw; }
+
+/* 方向 6：硬卡車票 */
+.s-tk { background: #26302A; color: #2C2A26; font-family: var(--sans); }
+.ticket { position: absolute; background: #ECDFC2; border-radius: 1.6cqw; display: grid; grid-template-columns: minmax(0, 1fr) auto; box-shadow: 0 1cqw 2.4cqw rgba(0,0,0,.35); }
+.ticket .main { padding: 3cqw 4cqw; display: flex; flex-direction: column; gap: .8cqw; }
+.ticket .stub { border-left: .4cqw dashed #B9A67E; padding: 3cqw; display: flex; flex-direction: column; justify-content: center; gap: 1cqw; font-size: 2.4cqw; text-align: center; }
+.ticket .no { font: 500 2.2cqw var(--mono); color: #7A6A4A; }
+.stamp { position: absolute; border: .5cqw solid #5B3A8C; color: #5B3A8C; border-radius: 50%; display: grid; place-items: center; transform: rotate(-12deg); font-weight: 900; opacity: .85; text-align: center; line-height: 1.1; }
+.s-tk .bar { background: #2C2A26; color: #ECDFC2; padding: .6cqw 2cqw; font: 500 2.4cqw var(--mono), var(--sans); width: fit-content; }
+.s-tk .c { border-radius: .3cqw; }
+.s-tk .sim { background: #2C2A26; color: #ECDFC2; }
+
+/* 方向 7：塞車預報 */
+.s-fc { background: linear-gradient(180deg, #BFE0F7 0%, #EAF5FC 72%); color: #12324F; font-family: var(--sans); }
+.sun { position: absolute; border-radius: 50%; background: #FFC93C; box-shadow: 0 0 0 1.6cqw rgba(255,201,60,.35), 0 0 0 3.4cqw rgba(255,201,60,.15); }
+.cloud { position: absolute; background: #FFFFFF; border-radius: 99px; }
+.cloud::before, .cloud::after { content: ""; position: absolute; background: #FFFFFF; border-radius: 50%; }
+.cloud::before { width: 45%; height: 150%; left: 15%; bottom: 20%; }
+.cloud::after { width: 35%; height: 120%; right: 15%; bottom: 25%; }
+.s-fc .legend { display: flex; flex-wrap: wrap; gap: .6cqw 1.6cqw; font-size: 1.9cqw; }
+.s-fc .legend i { display: inline-block; width: 2.2cqw; height: 2.2cqw; border-radius: .4cqw; vertical-align: -.3cqw; margin-right: .5cqw; box-shadow: inset 0 0 0 1px rgba(18,50,79,.2); }
+.s-fc .c { border-radius: .8cqw; }
+.s-fc .sim { background: #12324F; color: #EAF5FC; }
+
+/* 方向 8：早餐店 */
+.s-bk { background: #FFF8E1; color: #3B2414; font-family: var(--sans); }
+.s-bk .sign { background: #D7261E; color: #FFE45C; font-weight: 900; padding: 2.2cqw 5cqw; font-size: 6cqw; letter-spacing: .12em; line-height: 1.1; display: flex; justify-content: space-between; align-items: baseline; gap: 2cqw; }
+.s-bk .sign small { font-size: 2.4cqw; color: #FFF8E1; letter-spacing: .04em; font-weight: 500; white-space: nowrap; }
+.s-bk .menu { display: flex; flex-direction: column; gap: 1.4cqw; font-size: 3cqw; padding: 3cqw 5cqw 1.4cqw; font-weight: 500; }
+.s-bk .row { display: flex; gap: 1cqw; align-items: baseline; }
+.s-bk .row .dl { flex: 1; border-bottom: .35cqw dotted #B98B5A; }
+.s-bk .hot { background: #D7261E; color: #FFFFFF; font-size: 2cqw; padding: .2cqw 1cqw; border-radius: .6cqw; vertical-align: .3cqw; }
+.s-bk .c { border-radius: 1.4cqw; }
+.s-bk .sim { background: #D7261E; color: #FFE45C; }
+.slip { position: absolute; inset: 5cqw 30cqw 5cqw 6cqw; background: #FFFFFF; box-shadow: 0 .6cqw 1.6cqw rgba(59,36,20,.18); display: flex; flex-direction: column; }
+.slip .h { background: #D7261E; color: #FFFFFF; font-weight: 900; font-size: 3cqw; padding: 1cqw 3cqw; letter-spacing: .2em; }
+.slip .r { display: flex; gap: 1.6cqw; align-items: center; padding: 1.3cqw 3cqw; border-bottom: .2cqw solid #F0E3C8; font-size: 3cqw; }
+.slip .box { width: 3cqw; height: 3cqw; border: .3cqw solid #3B2414; display: grid; place-items: center; font-size: 2.6cqw; font-weight: 900; color: #D7261E; flex: none; }
+
+/* 方向 9：通勤明細（收據） */
+.s-rc { background: #D8D4CB; color: #151515; font-family: 'IBM Plex Mono', 'Noto Sans TC', monospace; }
+.receipt { position: absolute; top: 0; bottom: 3cqw; width: 42cqw; background: #FFFFFF; padding: 4cqw 3.6cqw; display: flex; flex-direction: column; gap: .7cqw; font-size: 2.2cqw; box-shadow: 0 .4cqw 1.2cqw rgba(0,0,0,.15); }
+.receipt::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1.6cqw; height: 1.6cqw; background: linear-gradient(135deg, #FFFFFF 50%, transparent 50%) 0 0 / 2cqw 100%, linear-gradient(-135deg, #FFFFFF 50%, transparent 50%) 0 0 / 2cqw 100%; }
+.receipt .hr { border-top: .3cqw dashed #151515; margin-block: .4cqw; }
+.receipt .li { display: flex; justify-content: space-between; gap: 1cqw; }
+.barcode { height: 4.4cqw; margin-top: auto; background: repeating-linear-gradient(90deg, #151515 0 .3cqw, transparent .3cqw .6cqw, #151515 .6cqw 1.2cqw, transparent 1.2cqw 1.5cqw, #151515 1.5cqw 1.7cqw, transparent 1.7cqw 2.3cqw); }
+.s-rc .c { border-radius: 0; box-shadow: inset 0 0 0 .15cqw #151515; }
+.s-rc .sim { background: #151515; color: #FFFFFF; border-radius: 0; }
+
+/* 方向 10：像素遊戲 */
+.s-px { background: #1B1F3B; color: #F4F4F4; font-family: 'Press Start 2P', 'DotGothic16', var(--sans); }
+.s-px .title { font-size: 6.4cqw; line-height: 1.3; color: #F7E35A; text-shadow: .6cqw .6cqw 0 #F0483E; }
+.s-px .small { font-size: 2cqw; line-height: 1.6; }
+.s-px .road { position: absolute; left: 0; right: 0; bottom: 0; height: 11cqw; background: #3A3F5C; }
+.s-px .road::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: .8cqw; background: repeating-linear-gradient(90deg, #F7E35A 0 4cqw, transparent 4cqw 8cqw); }
+.car { position: absolute; width: 11cqw; height: 3.6cqw; }
+.car::before { content: ""; position: absolute; left: 2.6cqw; top: -2.4cqw; width: 5.6cqw; height: 2.4cqw; background: inherit; }
+.car::after { content: ""; position: absolute; left: 1.4cqw; bottom: -1.4cqw; width: 2.2cqw; height: 2.2cqw; background: #111111; box-shadow: 6cqw 0 0 #111111; }
+.s-px .hm { gap: .3cqw; }
+.s-px .hm .t { font-size: 1.2cqw; }
+.s-px .c { border-radius: 0; }
+.s-px .sim { background: #F0483E; color: #1B1F3B; border-radius: 0; font-size: 1.6cqw; }
+@media (prefers-reduced-motion: no-preference) { .s-px .blink { animation: blink 1.2s steps(1) infinite; } }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* 方向 11：雙色孔版印刷 */
+.s-rs { background-color: #F3EEE4; background-image: radial-gradient(rgba(0,0,0,.05) 1px, transparent 1px); background-size: 4px 4px; color: #0078BF; font-family: var(--sans); }
+.mis { position: absolute; font-weight: 900; line-height: 1; color: #FF48B0; }
+.mis::after { content: attr(data-t); position: absolute; left: .9cqw; top: .6cqw; color: #0078BF; mix-blend-mode: multiply; }
+.halftone { position: absolute; border-radius: 50%; background-image: radial-gradient(#FF48B0 30%, transparent 33%); background-size: 1.4cqw 1.4cqw; mix-blend-mode: multiply; }
+.s-rs .c { border-radius: 0; mix-blend-mode: multiply; }
+.s-rs .sim { background: #FF48B0; color: #F3EEE4; }
+
+/* 方向 12：手繪筆記 */
+.s-nb { background-color: #FFFFFF; background-image: linear-gradient(#E4ECF5 1px, transparent 1px), linear-gradient(90deg, #E4ECF5 1px, transparent 1px); background-size: 3.2cqw 3.2cqw; color: #24303D; font-family: 'Iansui', 'LXGW WenKai TC', var(--sans); }
+.s-nb .hl { background: linear-gradient(transparent 58%, #FFE45C 58%, #FFE45C 92%, transparent 92%); }
+.sticky { position: absolute; background: #FFE98A; padding: 2.6cqw; box-shadow: 0 .6cqw 1.4cqw rgba(0,0,0,.12); transform: rotate(3deg); font-size: 3cqw; line-height: 1.4; color: #24303D; }
+.sticky::before { content: ""; position: absolute; top: -1.4cqw; left: 35%; width: 30%; height: 2.8cqw; background: rgba(190,214,236,.75); transform: rotate(-4deg); }
+.s-nb .c { border-radius: .8cqw; box-shadow: inset 0 0 0 .15cqw #C9D3DE; }
+.s-nb .sim { background: #FFFFFF; color: #D93838; border: .3cqw solid #D93838; }
+
+.toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px 28px; }
+.toc div { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.toc a { text-decoration: none; }
+.toc a:hover { text-decoration: underline; }
+
 /* 色階對照條 */
 .ramp { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
 .ramp div { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 0; }
@@ -133,10 +228,18 @@ a { color: var(--accent); }
 
 <header class="stack prose">
   <div class="eyebrow">設計 · 定位與視覺方向草稿 · 2026-10-20</div>
-  <h1>Traffic Gem：四種簡報視覺方向</h1>
-  <p class="lead">把「交通捲／交通卷」兩個想法，連同現在的冷靜儀表板，各做成三張簡報範本：封面、熱力圖頁、分享卡。看完再決定要往哪個方向走。</p>
+  <h1>Traffic Gem：十二種簡報視覺方向</h1>
+  <p class="lead">十二種風格差很多的方向，每種都做成三張簡報範本：封面、熱力圖頁、分享卡。內容全部一樣（內科晨峰、07:30 經過堤頂大道），只換視覺，方便直接比較。</p>
   <p class="muted">所有熱力圖數字都是模擬的，只用來看視覺效果。</p>
 </header>
+
+<nav class="toc" aria-label="方向目錄">
+  <div><span class="eyebrow">數據與冷靜</span><a href="#d1">1 冷靜儀表板（現況）</a><a href="#d9">9 通勤明細（收據）</a></div>
+  <div><span class="eyebrow">名字的諧音</span><a href="#d2">2 交通捲（甜點）</a><a href="#d4">4 寶石、琥珀糖</a><a href="#d8">8 早餐店（蛋餅捲）</a></div>
+  <div><span class="eyebrow">交通自己的語言</span><a href="#d5">5 路牌</a><a href="#d6">6 硬卡車票</a><a href="#d7">7 塞車預報</a></div>
+  <div><span class="eyebrow">古典與手作</span><a href="#d3">3 交通卷（卷軸）</a><a href="#d11">11 雙色孔版印刷</a><a href="#d12">12 手繪筆記</a></div>
+  <div><span class="eyebrow">玩心</span><a href="#d10">10 像素遊戲</a></div>
+</nav>
 
 <section class="stack">
   <h2>先講結論</h2>
@@ -294,13 +397,289 @@ a { color: var(--accent); }
   </div>
 </section>
 
+<section class="dir" id="d5">
+  <div class="dir-head"><h3>方向 5　路牌：高速公路指標</h3><span class="eyebrow">用交通本身的視覺語言 · 綠底白字、黃色出口牌</span></div>
+  <div class="slides">
+    <figure><div class="slide s-sign"><span class="frame"></span><div class="in">
+      <div class="en">TRAFFIC GEM</div>
+      <div class="big">交通捲</div>
+      <div style="display:flex;align-items:center;gap:2.6cqw;margin-top:auto">
+        <svg viewBox="0 0 40 40" style="width:9cqw;height:9cqw;flex:none" aria-hidden="true"><path d="M20 3 L35 20 H25.5 V37 H14.5 V20 H5 Z" fill="#FFFFFF"/></svg>
+        <div style="min-width:0"><div style="font-size:4cqw;font-weight:900">內科 · 堤頂大道</div><div class="en">Neihu Sci. Park · Tiding Blvd.</div></div>
+        <span class="exit" style="margin-left:auto">建議 07:30</span>
+      </div>
+    </div></div><figcaption>封面：像一面指路的綠牌</figcaption></figure>
+    <figure><div class="slide s-sign"><span class="frame"></span><div class="in">
+      <div style="font-size:3.8cqw;font-weight:900">前方 08:30 堤頂大道　壅塞</div>
+      <div class="hm" data-style="sign"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：推薦格用黃色出口牌的顏色框起來</figcaption></figure>
+    <figure><div class="slide card s-sign"><span class="frame"></span><div class="in" style="justify-content:center;gap:2.4cqw">
+      <div class="en">下一個出口 NEXT EXIT</div>
+      <div class="big" style="font-size:7cqw">07:30 經堤頂大道</div>
+      <span class="exit">少塞 3–4 分</span>
+      <svg viewBox="0 0 40 40" style="position:absolute;right:9cqw;top:11cqw;width:16cqw;height:16cqw;transform:rotate(45deg)" aria-hidden="true"><path d="M20 3 L35 20 H25.5 V37 H14.5 V20 H5 Z" fill="#FFFFFF"/></svg>
+      <span class="sim">含模擬資料</span>
+    </div></div><figcaption>分享卡</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>一看就知道在講交通，而且是在「指路」，行動力最強。</li><li>不花俏、可信，市府和企業也能接受，熱力圖頁和城市頁都能用。</li></ul></div>
+    <div><b>小心</b><ul><li>太像官方標誌會被誤會是政府作品，國道盾牌和官方字樣都不要放。</li><li>辨識度靠名字補，單看畫面不容易記住是哪一隊。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d6">
+  <div class="dir-head"><h3>方向 6　硬卡車票</h3><span class="eyebrow">認領時段名額，就是拿一張錯峰車票</span></div>
+  <div class="slides">
+    <figure><div class="slide s-tk">
+      <div class="ticket" style="inset:11cqw 9cqw">
+        <div class="main">
+          <div style="font-size:2.2cqw;color:#7A6A4A">交通捲 TRAFFIC GEM · 錯峰乘車券</div>
+          <div style="font-size:6.4cqw;font-weight:900;line-height:1.2">內湖 → 內科</div>
+          <div style="font-size:3cqw">經 堤頂大道　<b>07:30</b></div>
+          <div class="no">No. 004215　限當日有效</div>
+        </div>
+        <div class="stub"><b style="font-size:3.4cqw">07:30</b><span>1 名額</span></div>
+      </div>
+      <span class="stamp" style="right:22cqw;bottom:7cqw;width:12cqw;height:12cqw;font-size:2.4cqw">已錯峰</span>
+    </div><figcaption>封面：桌上放一張硬卡票</figcaption></figure>
+    <figure><div class="slide s-tk" style="background:#ECDFC2"><div class="in">
+      <div class="bar">時刻表 · 各入口車速 km/h</div>
+      <div style="font-size:3.6cqw;font-weight:900">08:30 這班最擠，建議改搭 07:30</div>
+      <div class="hm" data-style="tk"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：當成一張時刻表</figcaption></figure>
+    <figure><div class="slide card s-tk">
+      <div class="ticket" style="inset:8cqw 8cqw">
+        <div class="main" style="justify-content:center">
+          <div style="font-size:2.4cqw;color:#7A6A4A">我的錯峰車票</div>
+          <div style="font-size:7cqw;font-weight:900;line-height:1.15">07:30 堤頂大道</div>
+          <div style="font-size:3.2cqw">路上少塞 3–4 分</div>
+        </div>
+        <div class="stub"><span>交通捲</span><span class="no">含模擬資料</span></div>
+      </div>
+      <span class="stamp" style="right:25cqw;top:4cqw;width:11cqw;height:11cqw;font-size:2.2cqw">已錯峰</span>
+    </div><figcaption>分享卡</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>「認領名額」變成「拿一張票」，民眾不用解釋就知道要做什麼。</li><li>懷舊硬卡票很好轉傳。也剛好把「交通卷」容易看成「交通券」的問題變成梗。</li></ul></div>
+    <div><b>小心</b><ul><li>硬卡票是鐵路的經典印象，不要用任何鐵路公司的名稱或標誌。</li><li>票上不能放認領人數，這是分享卡的規則。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d7">
+  <div class="dir-head"><h3>方向 7　塞車預報</h3><span class="eyebrow">晴時多雲偶陣塞 · 大家每天都在看的格式</span></div>
+  <div class="slides">
+    <figure><div class="slide s-fc"><div class="in">
+      <div style="font-size:2.4cqw;font-weight:500;letter-spacing:.08em">交通捲 · 內科晨峰</div>
+      <div style="font-size:7.4cqw;font-weight:900;line-height:1.15">明日塞車預報</div>
+      <div style="font-size:3.4cqw">晴時多雲偶陣塞</div>
+      <div style="margin-top:auto;font-size:2.6cqw">07:30 多雲　·　08:30 雷陣雨級壅塞</div>
+    </div><span class="sun" style="right:13cqw;top:9cqw;width:14cqw;height:14cqw"></span><span class="cloud" style="right:6cqw;top:22cqw;width:24cqw;height:8cqw"></span></div><figcaption>封面</figcaption></figure>
+    <figure><div class="slide s-fc"><div class="in">
+      <div style="font-size:3.6cqw;font-weight:900">08:30 堤頂大道：雷陣雨級，4 天有 3 天</div>
+      <div class="hm" data-style="fc"></div>
+      <div class="legend"><span><i style="background:#FFE07A"></i>晴</span><span><i style="background:#F4F1E6"></i>晴時多雲</span><span><i style="background:#C9D5E0"></i>多雲</span><span><i style="background:#86A6C6"></i>陣雨</span><span><i style="background:#4E6496"></i>雷陣雨</span><span><i style="background:#2B2A5C"></i>大雷雨</span></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：車速換成天氣等級</figcaption></figure>
+    <figure><div class="slide card s-fc"><div class="in" style="justify-content:center">
+      <div style="font-size:2.8cqw">我的通勤天氣</div>
+      <div style="font:500 11cqw/1 var(--mono)">07:30</div>
+      <div style="font-size:3.6cqw;font-weight:700">晴，先過堤頂少塞 3–4 分</div>
+      <span class="sim">含模擬資料</span>
+    </div><span class="sun" style="right:12cqw;top:12cqw;width:16cqw;height:16cqw"></span></div><figcaption>分享卡</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>預報本來就用機率和區間說話，跟「4 天有 3 天會塞」「少 3–4 分」是同一套語言，好懂又可信。</li><li>每天出門前看一眼的習慣，剛好接上「今天」那一頁。</li></ul></div>
+    <div><b>小心</b><ul><li>颱風、豪雨這類字眼會像恐嚇，最深一級停在「大雷雨」。</li><li>不要模仿氣象署的版面和標誌。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d8">
+  <div class="dir-head"><h3>方向 8　早餐店：蛋餅捲</h3><span class="eyebrow">交通捲 → 蛋餅捲 · 早上通勤就是早餐時間</span></div>
+  <div class="slides">
+    <figure><div class="slide s-bk"><div class="in" style="padding:0;gap:0">
+      <div class="sign">交通捲早餐店<small>07:00 開賣</small></div>
+      <div class="menu">
+        <div class="row"><span>07:15 原味通勤捲</span><span class="dl"></span><span>少塞 2 分</span></div>
+        <div class="row"><span>07:30 招牌堤頂捲 <span class="hot">推薦</span></span><span class="dl"></span><span>少塞 3–4 分</span></div>
+        <div class="row"><span>08:30 尖峰加蛋</span><span class="dl"></span><span>多塞 12 分</span></div>
+      </div>
+      <div style="padding:0 5cqw;font-size:2.4cqw;color:#8A5A2E">不塞的時段，現點現捲</div>
+    </div><span class="sim">模擬資料</span></div><figcaption>封面：招牌加菜單，時段就是品項</figcaption></figure>
+    <figure><div class="slide s-bk"><div class="in" style="padding-top:0">
+      <div class="sign" style="font-size:3.4cqw;margin:0 -7cqw;padding:1.6cqw 7cqw">今日各入口火候<small>每 15 分鐘</small></div>
+      <div style="font-size:3.6cqw;font-weight:900">08:30 的堤頂大道煎到焦了</div>
+      <div class="hm" data-style="bk"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：蛋黃到焦褐的色階</figcaption></figure>
+    <figure><div class="slide card s-bk" style="background:#F6E7C1">
+      <div class="slip">
+        <div class="h">點單</div>
+        <div class="r"><span class="box">✓</span>07:30 招牌堤頂捲 ×1</div>
+        <div class="r"><span class="box"></span>08:30 尖峰加蛋</div>
+        <div class="r" style="border:0;font-weight:900;color:#D7261E">路上少塞 3–4 分</div>
+      </div>
+      <div style="position:absolute;right:5cqw;top:9cqw;width:22cqw;font-size:3.4cqw;font-weight:900;line-height:1.35">你今天<br>點哪一份？<div style="font-size:2.2cqw;font-weight:500;margin-top:1cqw">交通捲</div></div>
+      <span class="sim">含模擬資料</span>
+    </div><figcaption>分享卡：早餐店點單</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>「捲」、早上、台灣味三件事一次接上，分享卡最有親切感。</li><li>菜單本身就是在比較選項，剛好對應「幫你決定」。</li></ul></div>
+    <div><b>小心</b><ul><li>放在熱力圖和一頁紙會太輕鬆，只用在品牌和分享卡。</li><li>菜單比喻要讀一下才懂，標題要直接寫出時間和分鐘。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d9">
+  <div class="dir-head"><h3>方向 9　通勤明細（收據）</h3><span class="eyebrow">每一分鐘都算給你看 · 熱感應紙的黑白</span></div>
+  <div class="slides">
+    <figure><div class="slide s-rc">
+      <div style="position:absolute;left:5cqw;top:7cqw;width:22cqw;font:900 4.8cqw/1.3 var(--sans)">每一分鐘<br>都算給<br>你看</div>
+      <div class="receipt" style="right:7cqw">
+        <div style="text-align:center;font:900 3.2cqw var(--sans)">交通捲</div>
+        <div style="text-align:center">TRAFFIC GEM 通勤明細</div>
+        <div class="hr"></div>
+        <div class="li"><span>堤頂 08:30</span><span>23 分</span></div>
+        <div class="li"><span>改 07:30 經過</span><span>19–20 分</span></div>
+        <div class="li"><span>早到公司</span><span>19 分</span></div>
+        <div class="hr"></div>
+        <div class="li" style="font-weight:500"><span>今日少塞</span><span>3–4 分</span></div>
+        <div class="barcode"></div>
+        <div style="text-align:center;font-size:1.8cqw">模擬資料 · 僅供示意</div>
+      </div>
+    </div><figcaption>封面：一張通勤收據</figcaption></figure>
+    <figure><div class="slide s-rc" style="background:#FFFFFF"><div class="in">
+      <div style="font-size:3.2cqw;font-weight:500">08:30 堤頂大道 · 最低約 9 km/h</div>
+      <div style="border-top:.3cqw dashed #151515"></div>
+      <div class="hm" data-style="rc"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：只用黑白深淺</figcaption></figure>
+    <figure><div class="slide card s-rc">
+      <div class="receipt" style="left:8cqw;transform:rotate(-3deg);top:-2cqw">
+        <div style="text-align:center">交通捲 · 今日明細</div>
+        <div class="hr"></div>
+        <div class="li"><span>07:30 堤頂大道</span><span>✓</span></div>
+        <div class="hr"></div>
+        <div style="font:900 5cqw/1.2 var(--sans)">少塞<br>3–4 分</div>
+        <div class="barcode"></div>
+      </div>
+      <div style="position:absolute;right:6cqw;top:12cqw;width:34cqw;font:900 4.4cqw/1.35 var(--sans)">這是我今天的通勤明細</div>
+      <span class="sim">含模擬資料</span>
+    </div><figcaption>分享卡</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>收據就是明細，每一行都交代清楚，最接近我們每個數字都標來源的精神。</li><li>黑白印出來、色盲看都沒問題。</li></ul></div>
+    <div><b>小心</b><ul><li>不能做成像真的統一發票，字軌號碼、證明聯字樣都不放，只借熱感應紙的質感。</li><li>黑白熱力圖只能分 5–6 階，再細就看不出來。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d10">
+  <div class="dir-head"><h3>方向 10　像素遊戲</h3><span class="eyebrow">塞車是關卡，07:30 是通關路線</span></div>
+  <div class="slides">
+    <figure><div class="slide s-px"><div class="in">
+      <div class="small">STAGE 4 · 內科晨峰</div>
+      <div class="title">TRAFFIC<br>GEM</div>
+      <div class="small" style="font-size:2.6cqw">交通捲</div>
+      <div class="small blink" style="color:#3EE07F">PRESS START</div>
+    </div>
+    <div class="road"></div>
+    <span class="car" style="background:#F0483E;left:8cqw;bottom:6cqw"></span>
+    <span class="car" style="background:#3EE07F;left:24cqw;bottom:6cqw"></span>
+    <span class="car" style="background:#F7E35A;left:40cqw;bottom:6cqw"></span>
+    <span class="car" style="background:#5BC0F8;left:72cqw;bottom:6cqw"></span>
+    </div><figcaption>封面：路上排了一串小車</figcaption></figure>
+    <figure><div class="slide s-px"><div class="in">
+      <div style="font-size:2.8cqw;color:#F7E35A">BOSS：08:30 堤頂大道</div>
+      <div class="hm" data-style="px"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁</figcaption></figure>
+    <figure><div class="slide card s-px"><div class="in" style="justify-content:center">
+      <div class="small" style="color:#3EE07F">HIGH SCORE</div>
+      <div class="title" style="font-size:8cqw">07:30</div>
+      <div style="font-size:3.2cqw">通關！少塞 3–4 分</div>
+      <span class="sim">含模擬資料</span>
+    </div></div><figcaption>分享卡：像戰績截圖</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>年輕上班族最有共鳴，分享卡像在曬戰績。</li><li>「通關」把錯峰講成一件有成就感的事。</li></ul></div>
+    <div><b>小心</b><ul><li>綠到紅的色階對紅綠色盲不友善，正式版要改回現有的深淺色階。</li><li>遊戲感會讓數字看起來像分數，不適合給市府和企業看。像素字型沒有完整的繁體中文，中文會退回一般字體。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d11">
+  <div class="dir-head"><h3>方向 11　雙色孔版印刷</h3><span class="eyebrow">螢光粉加藍、網點、對不準的錯版也是風格</span></div>
+  <div class="slides">
+    <figure><div class="slide s-rs">
+      <span class="halftone" style="left:-6cqw;bottom:-12cqw;width:32cqw;height:32cqw"></span>
+      <span class="mis" data-t="塞" style="right:5cqw;top:3cqw;font-size:40cqw">塞</span>
+      <div class="in">
+        <div style="font-size:2.4cqw;letter-spacing:.1em">TRAFFIC GEM ZINE · VOL.4</div>
+        <div style="font-size:7cqw;font-weight:900;line-height:1.1">交通捲</div>
+        <div style="font-size:3cqw;max-width:40cqw">內科晨峰，一起錯開 15 分鐘</div>
+      </div>
+    </div><figcaption>封面：一個大大的「塞」字</figcaption></figure>
+    <figure><div class="slide s-rs"><div class="in">
+      <div style="font-size:3.6cqw;font-weight:900">08:30，堤頂大道最粉紅</div>
+      <div class="hm" data-style="rs"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：粉紅越深越塞，最深一階是粉藍疊印</figcaption></figure>
+    <figure><div class="slide card s-rs">
+      <span class="halftone" style="right:-4cqw;top:-8cqw;width:28cqw;height:28cqw"></span>
+      <span class="mis" data-t="07:30" style="left:6cqw;top:8cqw;font-size:17cqw;font-family:var(--mono)">07:30</span>
+      <div style="position:absolute;left:7cqw;bottom:9cqw;font-size:4cqw;font-weight:900">我先過堤頂，少塞 3–4 分</div>
+      <span class="sim">含模擬資料</span>
+    </div><figcaption>分享卡</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>最有設計感、最不像競選文宣，海報和 IG 方形圖很吸睛。</li><li>只有兩個顏色，限制反而讓整套素材很統一。</li></ul></div>
+    <div><b>小心</b><ul><li>粉紅和藍分不出資訊的輕重，30 秒看懂最難。</li><li>錯版效果放在小數字上會被當成印錯，只用在大字和插圖。</li></ul></div>
+  </div>
+</section>
+
+<section class="dir" id="d12">
+  <div class="dir-head"><h3>方向 12　手繪筆記</h3><span class="eyebrow">研究筆記本 · 方格紙、螢光筆、便利貼</span></div>
+  <div class="slides">
+    <figure><div class="slide s-nb"><div class="in">
+      <div style="font-size:2.6cqw">內科晨峰 · 第 4 題</div>
+      <div style="font-size:7cqw;line-height:1.25"><span class="hl">交通捲</span><br>研究筆記</div>
+    </div>
+    <svg viewBox="0 0 100 60" style="position:absolute;left:44cqw;top:30cqw;width:20cqw;height:12cqw" aria-hidden="true"><path d="M4 50 C 30 10, 60 6, 92 20 M80 10 L93 20 L80 30" fill="none" stroke="#D93838" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div class="sticky" style="right:7cqw;top:10cqw;width:22cqw">07:30 出發<br>看看？</div>
+    </div><figcaption>封面</figcaption></figure>
+    <figure><div class="slide s-nb"><div class="in">
+      <div style="font-size:3.6cqw"><span class="hl">08:30 堤頂大道</span>最塞，07:30 先圈起來</div>
+      <div class="hm" data-style="nb"></div>
+      <span class="sim">模擬資料</span>
+    </div></div><figcaption>熱力圖頁：螢光筆色階，推薦格用紅筆圈</figcaption></figure>
+    <figure><div class="slide card s-nb">
+      <div class="sticky" style="left:10cqw;top:7cqw;width:40cqw;font-size:4.4cqw;transform:rotate(-2deg)">給明天的自己：<br>07:30 過堤頂<br>少塞 3–4 分</div>
+      <div style="position:absolute;right:6cqw;bottom:12cqw;font-size:3cqw">— 交通捲</div>
+      <span class="sim">含模擬資料</span>
+    </div><figcaption>分享卡：一張便利貼</figcaption></figure>
+  </div>
+  <div class="pc">
+    <div><b>適合</b><ul><li>像同事分享自己的觀察，親切、不說教。</li><li>「我們可能錯在哪」那一頁用筆記風格特別合適，誠實感很強。</li></ul></div>
+    <div><b>小心</b><ul><li>手寫字在手機上不好讀，數字一律用一般字體。</li><li>整份簡報都手繪會不夠正式。</li></ul></div>
+  </div>
+</section>
+
 <section class="stack">
-  <h2>四個方向放在一起比</h2>
+  <h2>十二個方向放在一起比</h2>
   <div class="tbl-wrap"><table>
-    <thead><tr><th>標準</th><th>1 冷靜儀表板</th><th>2 交通捲（甜點）</th><th>3 交通卷（卷軸）</th><th>4 寶石</th></tr></thead>
+    <thead><tr><th>方向</th><th>可信</th><th>冷靜</th><th>有行動力</th><th>30 秒看懂</th><th>想分享</th><th>不像文宣</th><th>換題好改</th></tr></thead>
     <tbody id="cmp"></tbody>
   </table></div>
   <p class="muted">● 越多越好。這是我的判斷，不是測出來的；最後一欄「換題」指拿到新題目後 30 分鐘內改完簡報的難度。</p>
+</section>
+
+<section class="stack">
+  <h2>新加的八種裡，值得多看的幾個</h2>
+  <div class="verdict">
+    <div><span class="tag">最好懂</span><b>7 塞車預報</b><p>每個人每天都看天氣，不用學就懂。「晴時多雲偶陣塞」可以直接當標語，而且預報的機率和區間跟我們寫數字的方式一模一樣。</p></div>
+    <div><span class="tag">最有台灣味</span><b>8 早餐店</b><p>跟「捲」和早上通勤都接得上，是最想轉傳的分享卡。用在品牌外層，可以取代甜點方向。</p></div>
+    <div><span class="tag">最可信</span><b>5 路牌、9 通勤明細</b><p>一個用交通自己的語言，一個把每一分鐘列清楚。熱力圖頁和一頁紙換成這兩種，都不會掉可信度。</p></div>
+    <div><span class="tag">可以混搭</span><b>外皮和內餡分開挑</b><p>品牌與分享卡從 2、4、6、8 挑一個；數據頁從 1、5、7、9 挑一個。例如：早餐店的分享卡，加塞車預報的「今天」頁，加冷靜儀表板的熱力圖。</p></div>
+  </div>
 </section>
 
 <section class="stack">
@@ -340,7 +719,18 @@ a { color: var(--accent); }
   var jam = ['#FEF3DC','#FDD9A0','#FCB46E','#F2804A','#C93A22','#7E170F'];
   var ink = ['#EDE5D3','#CFC4AE','#A39782','#6E6556','#3D3730','#1E1A16'];
   var gem = ['#3A3566','#5B4A86','#9A5C8E','#D9733F','#D9443A','#8E1C3A'];
-  var pal = { calm: jam, jam: jam, ink: ink, gem: gem };
+  var pal = {
+    calm: jam, jam: jam, ink: ink, gem: gem,
+    sign: ['#E6F2EA','#F7E08A','#F4B04A','#E9742F','#C8281E','#6E0F0F'],
+    tk: ['#F6EEDB','#E2CFA6','#C9A66B','#A86F3C','#7F3B22','#4A1C12'],
+    fc: ['#FFE07A','#F4F1E6','#C9D5E0','#86A6C6','#4E6496','#2B2A5C'],
+    bk: ['#FFF4C2','#FFE07A','#F8B84A','#D9822B','#A3501C','#5E2A10'],
+    rc: ['#FFFFFF','#E0E0E0','#B0B0B0','#777777','#3C3C3C','#111111'],
+    px: ['#3EE07F','#B6F25A','#F7E35A','#F59B3A','#F0483E','#9B1D4A'],
+    rs: ['#FBE6F0','#F9C3DD','#F795C4','#F45FA8','#D9338A','#6E3C9E'],
+    nb: ['#FFFFFF','#FFF3A8','#FFD86B','#FFAE6B','#FF8080','#D94B6A']
+  };
+  var ring = { sign: '#F5C400', tk: '#5B3A8C', fc: '#12324F', bk: '#D7261E', rc: '#151515', px: '#FFFFFF', rs: '#0078BF' };
   var worst = { r: 0, c: 6 };
   document.querySelectorAll('.hm').forEach(function (el) {
     var style = el.dataset.style, p = pal[style], html = '';
@@ -354,6 +744,8 @@ a { color: var(--accent); }
         if (style === 'gem' && r === 0 && c === 2) { mark = '<div class="gem pulse" style="position:absolute;inset:-25% 8%"></div>'; bg = 'transparent'; hatch = ''; }
         if (style === 'calm' && r === 0 && c === 2) mark = '<span style="position:absolute;inset:0;box-shadow:0 0 0 .4cqw #1F4E79;border-radius:2px"></span>';
         if (style === 'jam' && r === 0 && c === 2) mark = '<span style="position:absolute;left:50%;top:50%;width:2cqw;height:2cqw;margin:-1cqw;border-radius:50%;background:#FFF6E6;box-shadow:0 0 0 .35cqw #8A2414"></span>';
+        if (ring[style] && r === 0 && c === 2) mark = '<span style="position:absolute;inset:0;box-shadow:0 0 0 .45cqw ' + ring[style] + ';border-radius:inherit"></span>';
+        if (style === 'nb' && r === 0 && c === 2) mark = '<span style="position:absolute;inset:-35% -22%;border:.35cqw solid #D93838;border-radius:50%;transform:rotate(-8deg)"></span>';
         html += '<div class="c" title="' + name + ' ' + times[c] + '：' + v + ' km/h（模擬）" style="background-color:' + bg + hatch + '">' + mark + '</div>';
       });
     });
@@ -375,14 +767,20 @@ a { color: var(--accent); }
     return '<div><i style="background:' + c + '"></i><span class="n">' + names[i][0] + '</span><span class="v">' + names[i][1] + ' km/h · ' + c + '</span></div>';
   }).join('');
 
+  // 每列：方向、可信、冷靜、有行動力、30 秒看懂、想分享、不像文宣、換題好改
   var crit = [
-    ['可信（市府、企業看得下去）', 3, 2, 2, 2],
-    ['冷靜（不加壓、不誇大）', 3, 3, 3, 2],
-    ['有行動力（知道自己能做什麼）', 2, 2, 1, 3],
-    ['30 秒看懂', 2, 3, 1, 2],
-    ['想分享、記得住名字', 1, 3, 2, 3],
-    ['不像競選文宣', 2, 3, 2, 3],
-    ['換題好改', 3, 3, 2, 2]
+    ['1 冷靜儀表板', 3, 3, 2, 2, 1, 2, 3],
+    ['2 交通捲（甜點）', 2, 3, 2, 3, 3, 3, 3],
+    ['3 交通卷（卷軸）', 2, 3, 1, 1, 2, 2, 2],
+    ['4 寶石、琥珀糖', 2, 2, 3, 2, 3, 3, 2],
+    ['5 路牌', 3, 3, 3, 3, 2, 3, 3],
+    ['6 硬卡車票', 2, 3, 3, 2, 3, 3, 2],
+    ['7 塞車預報', 3, 2, 3, 3, 3, 3, 2],
+    ['8 早餐店', 1, 3, 2, 2, 3, 3, 2],
+    ['9 通勤明細', 3, 3, 2, 3, 2, 3, 3],
+    ['10 像素遊戲', 1, 2, 2, 2, 3, 3, 2],
+    ['11 雙色孔版印刷', 2, 2, 1, 1, 3, 3, 2],
+    ['12 手繪筆記', 2, 3, 2, 2, 2, 3, 3]
   ];
   function dots(n) { return '●'.repeat(n) + '○'.repeat(3 - n); }
   document.getElementById('cmp').innerHTML = crit.map(function (r) {
