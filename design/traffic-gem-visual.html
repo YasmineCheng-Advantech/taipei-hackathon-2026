@@ -192,7 +192,23 @@ ol.rules { margin: 0; padding-left: 1.4em; display: flex; flex-direction: column
 .mxG button.colon { outline: 2px solid #3A1F14; outline-offset: -2px; }
 .mxG button.gap { background: transparent; border: 1px dashed #B9A48E; cursor: default; }
 .mxG button:focus-visible { outline: 3px solid #1F4E79; outline-offset: 1px; }
-.readout { background: #FFFFFF; border-radius: 14px; padding: 12px 14px; font-size: 15px; }
+.readout { background: #FFFFFF; border-radius: 14px; padding: 12px 14px; font-size: 15px; display: flex; gap: 12px; align-items: center; }
+.readout .f { width: 46px; flex: none; }
+.tabs { display: inline-flex; flex-wrap: wrap; background: #FFF6E6; border-radius: 12px; padding: 4px; gap: 4px; width: fit-content; }
+.tabs button { font: 500 15px var(--sans); border: 0; border-radius: 9px; padding: 6px 14px; background: transparent; color: #3A1F14; cursor: pointer; }
+.tabs button[aria-selected="true"] { background: #8A2414; color: #FFF6E6; }
+.tabs button:focus-visible { outline: 3px solid #1F4E79; outline-offset: 2px; }
+.rank { display: flex; flex-direction: column; gap: 8px; }
+.rank button { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: center; text-align: left; background: #FFF6E6; border: 0; border-radius: 14px; padding: 8px 12px; cursor: pointer; color: #3A1F14; font: 400 16px var(--sans); }
+.rank button.on { box-shadow: 0 0 0 2.5px #1F4E79; }
+.rank button:focus-visible { outline: 3px solid #1F4E79; outline-offset: 2px; }
+.rank button:disabled { cursor: default; background: transparent; border: 1.5px dashed #B9A48E; }
+.rank .nm { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rank .nm b { font-family: var(--display); font-weight: 400; font-size: 18px; }
+.rank .meter { height: 10px; border-radius: 99px; background: #F0DCC6; overflow: hidden; }
+.rank .meter i { display: block; height: 100%; border-radius: 99px; }
+.rank .v { font: 500 15px var(--mono); text-align: right; white-space: nowrap; }
+.g-map svg [data-r], .g-map svg [data-c] { cursor: pointer; }
 .states { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 760px) { .states { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .states div { display: flex; flex-direction: column; gap: 6px; font-size: 14px; min-width: 0; }
@@ -298,7 +314,7 @@ figcaption { font-size: 13px; color: var(--muted); }
         <tr><td>Demo 開場（約 5 秒）</td><td>3D 瑞士捲 ＋ 三問三答</td><td>頁首、<a href="#s4">4</a></td></tr>
         <tr><td>Demo 熱力圖（約 40 秒）</td><td>入口果醬柱按播放，或蛋糕天際線從 3D 切回 2D</td><td><a href="#s6">6 3D</a></td></tr>
         <tr><td>Demo 講「為什麼要分開走」</td><td>大家一起換，會怎樣？</td><td><a href="#s4">4</a></td></tr>
-        <tr><td>網站熱力儀表板</td><td>果醬格 ＋ 抹醬地圖（雙向聯動）</td><td><a href="#s5">5 熱力圖</a></td></tr>
+        <tr><td>網站熱力儀表板</td><td>果醬格 ＋ 入口地圖「河與橋」（雙向聯動）</td><td><a href="#s5">5 熱力圖</a></td></tr>
         <tr><td>簡報的熱力圖頁</td><td>一條捲一個入口</td><td><a href="#s5">5</a></td></tr>
         <tr><td>簡報章節頁</td><td>做一條捲的四步</td><td><a href="#s7">7</a></td></tr>
         <tr><td>錯峰情境、協商一頁紙</td><td>不改，沿用現在的規範</td><td>—</td></tr>
@@ -482,9 +498,10 @@ figcaption { font-size: 13px; color: var(--muted); }
   </div>
 
   <div class="stack">
-    <h3>抹醬地圖：跟果醬格雙向聯動</h3>
+    <h3>入口地圖：三種畫法，跟果醬格雙向聯動</h3>
     <div class="plate">
-      <div class="row"><div class="ttl">拉滑桿，看果醬什麼時候塞滿入口</div><span class="chip sim">模擬資料</span></div>
+      <div class="row"><div class="ttl">拉滑桿，看每個入口什麼時候塞</div><span class="chip sim">模擬資料</span></div>
+      <div class="tabs" role="tablist" aria-label="入口地圖的畫法"><button type="button" role="tab" data-v="river" aria-selected="true">河與橋</button><button type="button" role="tab" data-v="rank" aria-selected="false">入口排行</button><button type="button" role="tab" data-v="line" aria-selected="false">時間路線</button></div>
       <div class="g-grid">
         <div class="stack" style="gap:10px">
           <div class="g-map" id="mapG"></div>
@@ -493,7 +510,7 @@ figcaption { font-size: 13px; color: var(--muted); }
         <div class="stack" style="gap:10px">
           <div class="readout" id="readG" aria-live="polite"></div>
           <div class="mxG" id="mxG"></div>
-          <div class="sub">點路、點格子都可以。路越粗、越紅越塞。這是示意圖，不是實際位置，離線也能用。</div>
+          <div class="sub" id="noteG"></div>
         </div>
       </div>
     </div>
@@ -838,24 +855,76 @@ figcaption { font-size: 13px; color: var(--muted); }
     $('legA').innerHTML = JAM.map(function (c, i) { return '<span><i style="background:' + c + '"></i>' + NAMES[i] + ' ' + RANGE[i] + '</span>'; }).join('') + '<span><i style="border:1.5px dashed #B9A48E;box-shadow:none"></i>沒有偵測器</span>';
   })();
   (function () {
-    var roads = [{ a: [36, 340], b: [222, 262], lx: 30, ly: 368, an: 'start' }, { a: [150, 418], b: [256, 300], lx: 112, ly: 444, an: 'start' }, { a: [330, 424], b: [314, 308], lx: 300, ly: 448, an: 'start' },
-      { a: [560, 372], b: [384, 276], lx: 572, ly: 398, an: 'end' }, { a: [34, 160], b: [206, 196], lx: 30, ly: 146, an: 'start' }, { a: [560, 88], b: [378, 152], lx: 572, ly: 72, an: 'end' }];
-    var t = 6, sel = 0, slider = $('tG');
-    function render() {
-      var s = '<path d="M300 112 C 372 108, 404 160, 398 214 C 394 268, 352 312, 296 312 C 236 312, 196 274, 198 214 C 200 154, 236 116, 300 112 Z" fill="#F8DDA8" stroke="#B9733A" stroke-width="5"/>' +
-        '<path d="' + spiralD(300, 212, 70, 2.6) + '" fill="none" stroke="#FFF6E6" stroke-width="7" stroke-linecap="round" opacity=".9"/>' +
-        '<text x="300" y="208" text-anchor="middle" font-size="17" font-family="Huninn, sans-serif" fill="#3A1F14">內湖科學園區</text><text x="300" y="230" text-anchor="middle" font-size="12" fill="#86664F">示意，非實際位置</text>';
-      roads.forEach(function (rd, r) {
-        var v = sp(r, t), d = 'M' + rd.a[0] + ' ' + rd.a[1] + ' L' + rd.b[0] + ' ' + rd.b[1];
-        if (v === null) s += '<path data-r="' + r + '" d="' + d + '" stroke="#B9A48E" stroke-width="10" stroke-dasharray="2 9" stroke-linecap="round" fill="none"/>';
-        else {
-          var w = 7 + (56 - v) / 50 * 15;
-          if (r === sel) s += '<path d="' + d + '" stroke="#1F4E79" stroke-width="' + X(w + 8) + '" stroke-linecap="round" fill="none"/>';
-          s += '<path data-r="' + r + '" d="' + d + '" stroke="' + col(v) + '" stroke-width="' + X(w) + '" stroke-linecap="round" fill="none"/><path d="' + d + '" stroke="#FFFFFF" stroke-width="1.6" stroke-dasharray="7 7" fill="none" pointer-events="none" opacity=".85"/>';
+    // 入口地圖：河與橋、入口排行、時間路線，共用時間與選取
+    var t = 6, sel = 0, view = 'river', slider = $('tG');
+    function lvl(v) { return v >= 40 ? 0 : v >= 20 ? 1 : 2; }
+    function inner(svg) { return svg.replace(/^<svg[^>]*>/, '').replace(/<\/svg>$/, ''); }
+    var FONT = 'font-family="Huninn, Noto Sans TC, sans-serif"';
+    // 河與橋：示意位置。內湖在河的北邊，三座橋從南岸跨河進來
+    var ENT = [
+      { d: 'M24 228 C 70 224, 120 216, 168 204', f: [26, 228], l: [14, 166], an: 'start' },
+      { d: 'M196 330 L206 206', f: [196, 330], l: [196, 366], an: 'middle' },
+      { d: 'M322 340 L322 206', f: [322, 340], l: [322, 376], an: 'middle' },
+      { d: 'M448 336 L436 206', f: [448, 336], l: [448, 372], an: 'middle' },
+      { d: 'M566 352 C 556 300, 540 250, 520 206', f: [566, 352], l: [596, 392], an: 'end' },
+      { d: 'M590 20 L548 46', f: [590, 20], l: [536, 22], an: 'end' }
+    ];
+    function river() {
+      var s = '<path d="M0 270 C 120 246, 230 300, 340 298 S 520 290, 600 326" fill="none" stroke="#BFD9E8" stroke-width="46"/>' +
+        '<text x="70" y="290" font-size="15" fill="#4F7F9C" ' + FONT + '>基隆河</text>' +
+        '<rect x="40" y="34" width="520" height="172" rx="30" fill="#F8DDA8" opacity=".6"/>' +
+        '<text x="300" y="118" text-anchor="middle" font-size="24" fill="#3A1F14" ' + FONT + '>內湖科學園區</text>' +
+        '<text x="300" y="144" text-anchor="middle" font-size="13" fill="#86664F" ' + FONT + '>示意圖，不是實際位置</text>';
+      ENT.forEach(function (e, r) {
+        var v = sp(r, t), name = ROWS[r].n;
+        if (v === null) {
+          s += '<path d="' + e.d + '" stroke="#B9A48E" stroke-width="3" stroke-dasharray="6 6" fill="none"/>' +
+            '<circle cx="' + e.f[0] + '" cy="' + e.f[1] + '" r="12" fill="#FBE8DA" stroke="#B9A48E" stroke-width="2" stroke-dasharray="4 3"/>' +
+            '<text x="' + e.l[0] + '" y="' + e.l[1] + '" text-anchor="' + e.an + '" font-size="14" fill="#86664F" ' + FONT + '>' + name + '　沒有偵測器</text>';
+          return;
         }
-        s += '<text data-r="' + r + '" x="' + rd.lx + '" y="' + rd.ly + '" text-anchor="' + rd.an + '" font-size="14" font-weight="' + (r === sel ? 700 : 500) + '" fill="#3A1F14">' + ROWS[r].n + (v === null ? '' : ' ' + v) + '</text>';
+        if (r === sel) s += '<path d="' + e.d + '" stroke="#1F4E79" stroke-width="26" stroke-linecap="round" fill="none"/>';
+        s += '<path data-r="' + r + '" d="' + e.d + '" stroke="' + col(v) + '" stroke-width="16" stroke-linecap="round" fill="none"/>' +
+          '<path d="' + e.d + '" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="8 8" fill="none" pointer-events="none" opacity=".85"/>' +
+          '<g data-r="' + r + '" transform="translate(' + (e.f[0] - 19) + ' ' + (e.f[1] - 19) + ') scale(.38)">' + inner(face(lvl(v))) + '</g>' +
+          '<text data-r="' + r + '" x="' + e.l[0] + '" y="' + e.l[1] + '" text-anchor="' + e.an + '" font-size="16" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + name.replace('北向', '') +
+          '<tspan x="' + e.l[0] + '" dy="19" font-size="14" fill="' + (lvl(v) === 2 ? '#B3261E' : '#86664F') + '">' + LV[lvl(v)].n + ' · ' + v + '</tspan></text>';
       });
-      $('mapG').innerHTML = '<svg viewBox="0 0 600 460" role="img" aria-label="內湖入口示意圖，路越粗越紅越塞">' + s + '</svg>';
+      return '<svg viewBox="0 0 600 420" role="img" aria-label="基隆河與進內湖的橋，顏色越紅、表情越慌越塞">' + s + '</svg>';
+    }
+    function rank() {
+      var list = ROWS.map(function (R, r) { return { r: r, v: sp(r, t) }; }).sort(function (a, b) { if (a.v === null) return 1; if (b.v === null) return -1; return a.v - b.v; });
+      return '<div class="rank">' + list.map(function (x) {
+        var R = ROWS[x.r];
+        if (x.v === null) return '<button type="button" disabled><span style="width:40px;height:40px;border-radius:50%;border:2px dashed #B9A48E;display:block"></span><span class="nm"><b>' + R.n + '</b><span class="muted" style="font-size:14px;color:#86664F">沒有偵測器，不補數字</span></span><span></span></button>';
+        var l = lvl(x.v), w = Math.max(6, Math.min(100, (56 - x.v) / 46 * 100));
+        return '<button type="button" data-r="' + x.r + '" class="' + (x.r === sel ? 'on' : '') + '"><span>' + face(l) + '</span><span class="nm"><b>' + R.n + '　<span style="font-size:16px;color:' + (l === 2 ? '#B3261E' : '#86664F') + '">' + LV[l].n + '</span></b><span class="meter"><i style="width:' + w.toFixed(0) + '%;background:' + col(x.v) + '"></i></span></span><span class="v">' + x.v + ' km/h</span></button>';
+      }).join('') + '</div>';
+    }
+    function line() {
+      var L = 150, Rr = 580, step = (Rr - L) / 9, s = '';
+      s += '<rect x="' + (L + t * step - 16) + '" y="4" width="32" height="' + (ROWS.length * 52 + 18) + '" rx="16" fill="#FFF6E6"/>';
+      ROWS.forEach(function (R, r) {
+        var y = 32 + r * 52;
+        s += '<text data-r="' + r + '" x="0" y="' + (y + 5) + '" font-size="15" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + R.n.replace('北向', '').replace('內湖交流道', '') + '</text>';
+        if (R.gap) { s += '<line x1="' + L + '" x2="' + Rr + '" y1="' + y + '" y2="' + y + '" stroke="#B9A48E" stroke-width="3" stroke-dasharray="6 6"/><text x="' + ((L + Rr) / 2) + '" y="' + (y - 10) + '" text-anchor="middle" font-size="13" fill="#86664F" ' + FONT + '>沒有偵測器</text>'; return; }
+        s += '<line x1="' + L + '" x2="' + Rr + '" y1="' + y + '" y2="' + y + '" stroke="' + (r === sel ? '#1F4E79' : '#D9BFA8') + '" stroke-width="' + (r === sel ? 5 : 4) + '"/>';
+        T.forEach(function (_, c) {
+          var v = sp(r, c), on = c === t;
+          s += '<circle data-r="' + r + '" data-c="' + c + '" cx="' + X(L + c * step) + '" cy="' + y + '" r="' + (on ? 14 : 10) + '" fill="' + col(v) + '" stroke="' + (on ? '#3A1F14' : '#FFFFFF') + '" stroke-width="' + (on ? 3 : 2.5) + '"/>';
+        });
+      });
+      T.forEach(function (tt, c) { if (c % 2 === 0) s += '<text x="' + X(L + c * step) + '" y="' + (ROWS.length * 52 + 24) + '" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#86664F">' + tt + '</text>'; });
+      return '<svg viewBox="0 0 600 ' + (ROWS.length * 52 + 34) + '" role="img" aria-label="每個入口一條線、每個時間一站，站點越紅越塞">' + s + '</svg>';
+    }
+    var NOTE = {
+      river: '內湖的入口大多是跨過基隆河的橋。點路或表情可以選入口；路越紅、表情越慌越塞。',
+      rank: '選好時間，最塞的排最上面。不用看地圖，最快讀完。',
+      line: '像捷運路線圖：每個入口一條線，每個時間一站。點站可以換時間。'
+    };
+    function render() {
+      $('mapG').innerHTML = view === 'river' ? river() : view === 'rank' ? rank() : line();
+      $('noteG').textContent = NOTE[view] + '右邊的小矩陣跟著連動。';
       var m = '<div></div>' + T.map(function (tt, c) { return '<div class="th' + (c === t ? ' on' : '') + '">' + tt.slice(1) + '</div>'; }).join('');
       ROWS.forEach(function (R, r) {
         m += '<div class="rl">' + R.s + '</div>';
@@ -867,12 +936,21 @@ figcaption { font-size: 13px; color: var(--muted); }
       });
       $('mxG').innerHTML = m;
       var v = sp(sel, t);
-      $('readG').innerHTML = '<b>' + T[t] + '　' + ROWS[sel].n + '</b><br>' + (v === null ? '沒有偵測器，不補數字' : v + ' km/h，' + NAMES[bin(v)] + '等級');
+      $('readG').innerHTML = (v === null ? '' : '<span class="f">' + face(lvl(v)) + '</span>') + '<span><b>' + T[t] + '　' + ROWS[sel].n + '</b><br>' + (v === null ? '沒有偵測器，不補數字' : LV[lvl(v)].n + '，' + v + ' km/h') + '</span>';
       $('tGl').textContent = '時間：' + T[t]; slider.value = t;
     }
     slider.addEventListener('input', function () { t = +slider.value; render(); });
-    $('mapG').addEventListener('click', function (e) { var el = e.target.closest('[data-r]'); if (el) { sel = +el.getAttribute('data-r'); render(); } });
+    $('mapG').addEventListener('click', function (e) {
+      var el = e.target.closest('[data-r]'); if (!el || el.disabled) return;
+      sel = +el.getAttribute('data-r'); if (el.hasAttribute('data-c')) t = +el.getAttribute('data-c'); render();
+    });
     $('mxG').addEventListener('click', function (e) { var b = e.target.closest('button[data-r]'); if (b) { sel = +b.dataset.r; t = +b.dataset.c; render(); } });
+    document.querySelector('.tabs[aria-label="入口地圖的畫法"]').addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-v]'); if (!b) return;
+      view = b.dataset.v;
+      b.parentNode.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-selected', x === b); });
+      render();
+    });
     render();
   })();
   (function () {
