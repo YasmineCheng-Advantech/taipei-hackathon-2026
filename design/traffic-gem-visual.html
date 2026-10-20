@@ -695,8 +695,8 @@ figcaption { font-size: 13px; color: var(--muted); }
   // 8 個正式入口（data/processed/entrances.csv）。pt 為偵測器經緯度；缺口的 3 個是手繪的大概位置
   var ROWS = [
     { n: '內湖路一段', s: '內湖路', sev: 30, pt: [121.5586, 25.08487], from: [121.5455, 25.0855], lab: [146, 36, 'start'] },
-    { n: '堤頂大道北向', s: '堤頂', sev: 46, pt: [121.57246, 25.06689], from: [121.5712, 25.0600], lab: [200, 218, 'end'] },
-    { n: '民權大橋', s: '民權', sev: 33, pt: [121.57845, 25.06674], from: [121.5655, 25.0662], lab: [276, 174, 'start'] },
+    { n: '堤頂大道北向', s: '堤頂', sev: 46, pt: [121.57246, 25.06689], from: [121.5712, 25.0600], fp: [164, 214], lab: [142, 210, 'end'] },
+    { n: '民權大橋', s: '民權', sev: 33, pt: [121.57845, 25.06674], from: [121.5655, 25.0662], fp: [286, 146], lab: [306, 144, 'start'] },
     { n: '麥帥二橋', s: '麥帥二', gap: true, why: '只測離開內湖的方向', pt: [121.5855, 25.0575], from: [121.5838, 25.0500], lab: [286, 262, 'end'] },
     { n: '成美橋', s: '成美', sev: 21, pt: [121.59419, 25.05537], from: [121.5930, 25.0478], lab: [378, 242, 'start'] },
     { n: '環東大道', s: '環東', sev: 37, pt: [121.62187, 25.05829], from: [121.6310, 25.0600], lab: [556, 250, 'end'] },
@@ -895,9 +895,12 @@ figcaption { font-size: 13px; color: var(--muted); }
           texts += '<text x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="14" fill="#86664F" ' + FONT + '>' + R.n.replace('內湖交流道', '') + '<tspan x="' + L[0] + '" dy="17" font-size="12">' + R.why + '</tspan></text>';
           return;
         }
-        if (r === sel) { roads = '<path d="' + d + '" stroke="#1F4E79" stroke-width="18" stroke-linecap="round" fill="none"/>' + roads; pins += '<circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="20" fill="#1F4E79"/>'; }
+        // 點太密時：真實位置畫小圓點，臉移到旁邊，用短線連回去
+        var f = R.fp || q;
+        if (R.fp) pins = '<line x1="' + X(q[0]) + '" y1="' + X(q[1]) + '" x2="' + f[0] + '" y2="' + f[1] + '" stroke="#3A1F14" stroke-width="1.5"/><circle cx="' + X(q[0]) + '" cy="' + X(q[1]) + '" r="6" fill="' + col(v) + '" stroke="#FFFFFF" stroke-width="2"/>' + pins;
+        if (r === sel) { roads = '<path d="' + d + '" stroke="#1F4E79" stroke-width="18" stroke-linecap="round" fill="none"/>' + roads; pins += '<circle cx="' + X(f[0]) + '" cy="' + X(f[1]) + '" r="20" fill="#1F4E79"/>'; }
         roads += '<path data-r="' + r + '" d="' + d + '" stroke="' + col(v) + '" stroke-width="11" stroke-linecap="round" fill="none"/>';
-        pins += '<g data-r="' + r + '" transform="translate(' + X(q[0] - 16) + ' ' + X(q[1] - 16) + ') scale(.32)">' + inner(face(lvl(v))) + '</g>';
+        pins += '<g data-r="' + r + '" transform="translate(' + X(f[0] - 16) + ' ' + X(f[1] - 16) + ') scale(.32)">' + inner(face(lvl(v))) + '</g>';
         texts += '<text data-r="' + r + '" x="' + L[0] + '" y="' + L[1] + '" text-anchor="' + L[2] + '" font-size="15" font-weight="' + (r === sel ? 700 : 400) + '" fill="#3A1F14" ' + FONT + '>' + R.n.replace('北向', '') +
           '<tspan x="' + L[0] + '" dy="18" font-size="13" fill="' + (lvl(v) === 2 ? '#B3261E' : '#86664F') + '">' + LV[lvl(v)].n + ' · ' + v + '</tspan></text>';
       });
