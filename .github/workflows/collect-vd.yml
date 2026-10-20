@@ -4,13 +4,22 @@ name: collect-vd
 
 on:
   schedule:
-    - cron: '30 22 * * 0-4'  # 台北時間週一到週五 06:30 啟動，等到 07:00 開始收
+    # GitHub 排程常延遲（10/20 的 06:30 排程 09:07 才啟動），所以從 05:07 起排 4 次，
+    # 避開整點尖峰；同時只會有一個在跑，其餘排隊，等到 10:30 後啟動會直接結束。
+    - cron: '7 21 * * 0-4'   # 台北 05:07
+    - cron: '37 21 * * 0-4'  # 台北 05:37
+    - cron: '7 22 * * 0-4'   # 台北 06:07
+    - cron: '37 22 * * 0-4'  # 台北 06:37
   workflow_dispatch:
+
+concurrency:
+  group: collect-vd
+  cancel-in-progress: false
 
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 350  # 05:07 啟動到 10:30 約 325 分鐘
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
