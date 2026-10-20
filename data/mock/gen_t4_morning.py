@@ -164,6 +164,7 @@ def observed(x):
 
 
 SPEED = {}  # (row id, col index) -> km/h，給 KPI 與一頁紙用
+REAL_AT = set()  # 有真實讀數的 (row id, col index)
 BAD = {}  # (row id, col index) -> (塞的天數, 天數)
 n_real = 0
 speed_cells, flow_cells = [], []
@@ -177,6 +178,7 @@ for i, e in enumerate(ENTRANCES):
         rc = real_cell(e, t)
         if rc:
             n_real += 1
+            REAL_AT.add((e["id"], t))
             sc, fc = observed(rc["speed"]), observed(rc["flow"])
         else:
             sp, fl = speed_flow(i, e, t)
@@ -237,14 +239,20 @@ heatmap = {
 
 # ---------- 重點數字 ----------
 
-worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items())
+# 有真實讀數時只從那些格子挑，免得 Demo 指著模擬的格子說是真實資料
+worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items() if not REAL_AT or (r, t) in REAL_AT)
 n_obs = sum(e["kind"] == "observed" for e in ENTRANCES)
+# 尖峰集中時段：有資料的入口裡，半數以上低於 BAD_SPEED 的時段（第一格到最後一格）
+LIVE = [e["id"] for e in ENTRANCES if e["kind"] != "gap"]
+JAM_T = [t for t in range(len(HEAT_COLS)) if sum(SPEED[(r, t)] < BAD_SPEED for r in LIVE) * 2 >= len(LIVE)]
 kpis = [
     tag("computed", id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
         note=(f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低；{BAD[(wrow, wt)][1]} 天裡有 "
               f"{BAD[(wrow, wt)][0]} 天低於 {BAD_SPEED} km/h"),
         ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
-    tag("computed", id="peak-window", title="尖峰集中時段", value="08:30–09:15", note="半數以上入口低於 20 km/h"),
+    tag("computed", id="peak-window", title="尖峰集中時段",
+        value=f"{HEAT_TIMES[JAM_T[0]]}–{HEAT_TIMES[JAM_T[-1]]}" if JAM_T else "無",
+        note=(f"半數以上入口低於 {BAD_SPEED} km/h" if JAM_T else f"沒有一個時段半數以上入口低於 {BAD_SPEED} km/h")),
     tag("observed", id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(ENTRANCES)}", unit="個入口有真實資料",
         note="其餘為模擬或缺口，格子另有標示"),
 ]

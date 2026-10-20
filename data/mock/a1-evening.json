@@ -1663,7 +1663,7 @@
     {
       "id": "peak-window",
       "title": "尖峰集中時段",
-      "value": "18:00–18:45",
+      "value": "18:00–18:15",
       "note": "半數以上出口低於 20 km/h",
       "label": "computed",
       "sim": true

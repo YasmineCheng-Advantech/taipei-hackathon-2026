@@ -141,11 +141,15 @@ speed = next(l for l in layers if l["id"] == "speed")
 worst, wr, wc = min((c["v"], i, j) for i, line in enumerate(speed["cells"]) for j, c in enumerate(line) if not c.get("gap"))
 wcell = speed["cells"][wr][wc]
 n_obs = sum(r["kind"] == "observed" for r in rows)
+live = [i for i, r in enumerate(rows) if r["kind"] != "gap"]
+jam_t = [j for j in range(len(cols)) if sum(speed["cells"][i][j]["v"] < 20 for i in live) * 2 >= len(live)]
 kpis = [
     tag("computed", id="worst-cell", title="最塞的一格", value=worst, unit="km/h",
         note=f"{rows[wr]['name']} {cols[wc]['label']}，平均車速最低；{wcell['days']} 天裡有 {wcell['bad_days']} 天低於 20 km/h",
         ref={"row": rows[wr]["id"], "col": cols[wc]["id"]}),
-    tag("computed", id="peak-window", title="尖峰集中時段", value="18:00–18:45", note="半數以上出口低於 20 km/h"),
+    tag("computed", id="peak-window", title="尖峰集中時段",
+        value=f"{cols[jam_t[0]]['label']}–{cols[jam_t[-1]]['label']}" if jam_t else "無",
+        note="半數以上出口低於 20 km/h" if jam_t else "沒有一個時段半數以上出口低於 20 km/h"),
     tag("observed", id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(rows)}", unit="個出口有真實資料",
         note="出城方向的偵測器還沒盤點；麥帥二橋的偵測器正好是出城方向"),
 ]
