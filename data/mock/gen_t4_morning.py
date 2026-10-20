@@ -242,8 +242,8 @@ heatmap = {
 # 有真實讀數時只從那些格子挑，免得 Demo 指著模擬的格子說是真實資料
 worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items() if not REAL_AT or (r, t) in REAL_AT)
 n_obs = sum(e["kind"] == "observed" for e in ENTRANCES)
-# 尖峰集中時段：有資料的入口裡，半數以上低於 BAD_SPEED 的時段（第一格到最後一格）
-LIVE = [e["id"] for e in ENTRANCES if e["kind"] != "gap"]
+# 尖峰集中時段：有資料的入口裡，半數以上低於 BAD_SPEED 的時段（第一格到最後一格）；有真實讀數時只算有偵測器的入口
+LIVE = [e["id"] for e in ENTRANCES if (e["kind"] == "observed" if REAL_AT else e["kind"] != "gap")]
 JAM_T = [t for t in range(len(HEAT_COLS)) if sum(SPEED[(r, t)] < BAD_SPEED for r in LIVE) * 2 >= len(LIVE)]
 kpis = [
     tag("computed", id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
