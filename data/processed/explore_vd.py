@@ -9,7 +9,8 @@
  早一點經過有差嗎：每 15 分鐘的平均車速（可切換入口）
  每天都一樣嗎：每天塞了幾分鐘、最塞的 15 分鐘每天的車速
  都是什麼車：每 10 輛車的車種、機車和汽車幾點最多
-「塞」的定義：車速低於 20 km/h；塞車時刻表另要求連續至少 2 筆讀數。
+「塞」的定義：車速低於該入口平常車速的一半（平常車速＝全部讀數的第 85 百分位）；塞車時刻表另要求連續至少 2 筆讀數。
+各入口的路型不同（快速道路、路口旁、路段中間），用同一個絕對門檻會只剩路口旁的偵測器看得到塞車。
 """
 import json
 import sys
@@ -19,7 +20,8 @@ from pathlib import Path
 from preview_vd import DEFAULT_CSV, MAIN, ROOT, STYLE, VEH, load
 
 OUT = ROOT / "raw" / "explore.html"
-BAD = 20
+FREE_PCT = 85  # 平常車速：全部讀數的第 85 百分位
+RATIO = 0.5  # 低於平常車速的一半算塞
 AM, PM = (6 * 60, 11 * 60), (15 * 60, 21 * 60)
 BARS = (6 * 60, 10 * 60 + 30)  # 「早一點經過有差嗎」的時段
 
@@ -29,11 +31,18 @@ def median(xs):
     return xs[len(xs) // 2]
 
 
-def runs(points):
-    """連續低於 BAD 的時段（至少 2 筆、間隔不超過 10 分鐘）→ [[開始, 結束], ...]。"""
+def threshold(speeds):
+    """這個入口的塞車線：平常車速 × RATIO → (平常車速, 塞車線)。"""
+    xs = sorted(speeds)
+    free = xs[min(len(xs) - 1, len(xs) * FREE_PCT // 100)]
+    return round(free, 1), round(free * RATIO, 1)
+
+
+def runs(points, bad):
+    """連續低於 bad 的時段（至少 2 筆、間隔不超過 10 分鐘）→ [[開始, 結束], ...]。"""
     out, cur = [], None
     for m, s in points:
-        if s < BAD:
+        if s < bad:
             if cur and m - cur[1] <= 10:
                 cur[1], cur[2] = m, cur[2] + 1
             else:
@@ -66,6 +75,9 @@ def build(rows):
     for r in sorted(rows, key=lambda r: r["t"]):
         by[r["vdid"]][r["t"].date().isoformat()].append((r["t"].hour * 60 + r["t"].minute, r["speed"], r["cars"]))
     days = sorted({d for v in ents for d in by[v]})
+    free, bad = {}, {}
+    for v in ents:
+        free[v], bad[v] = threshold([s for pts in by[v].values() for _, s, _ in pts])
 
     # 塞車時刻表：每天第一段開始、最後一段結束取中位數；每天平均塞幾分鐘
     timetable, minutes = {}, {}
@@ -74,7 +86,7 @@ def build(rows):
         for key, (lo, hi) in (("am", AM), ("pm", PM)):
             spans = []
             for pts in by[v].values():
-                rs = runs([(m, s) for m, s, _ in pts if lo <= m < hi])
+                rs = runs([(m, s) for m, s, _ in pts if lo <= m < hi], bad[v])
                 if rs:
                     spans.append((rs[0][0], rs[-1][1], sum(b - a for a, b in rs)))
             n = len(by[v])
@@ -95,11 +107,11 @@ def build(rows):
             for b, ps in by_bin(pts, lo=BARS[0], hi=BARS[1]).items():
                 daily[v][b][d] = round(weighted(ps), 1)
 
-    worst = max(ents, key=lambda v: (minutes[v][0], -min((s for _, s in bars[v]), default=99)))
+    worst = max(ents, key=lambda v: (minutes[v][0], -min((s / free[v] for _, s in bars[v]), default=99)))
     wb = min(bars[worst], key=lambda x: x[1])[0] if bars[worst] else None
 
     # 每天塞了幾分鐘（每筆讀數算 5 分鐘），各入口分開
-    jam_by_day = {d: {v: 5 * sum(1 for _, s, _ in by[v].get(d, []) if s < BAD) for v in ents} for d in days}
+    jam_by_day = {d: {v: 5 * sum(1 for _, s, _ in by[v].get(d, []) if s < bad[v]) for v in ents} for d in days}
 
     # 每小時多少車、機車和汽車幾點最多（5 個入口合計，每天平均）
     hourly = defaultdict(lambda: [0, 0, 0])
@@ -124,7 +136,7 @@ def build(rows):
     allc = sum(tot.values()) or 1
     mix = [[label, round(tot[k] / allc * 100, 1)] for k, label in VEH]
 
-    return dict(names=names, ents=ents, worst=worst, worst_bin=wb, bad=BAD, days=days, timetable=timetable,
+    return dict(names=names, ents=ents, worst=worst, worst_bin=wb, free=free, bad=bad, days=days, timetable=timetable,
                 minutes=minutes, curve=curve, bars=bars, daily={v: dict(x) for v, x in daily.items()},
                 jam_by_day=jam_by_day, hourly=hourly, mix=mix)
 
@@ -162,7 +174,7 @@ __STYLE__
 <section class="card"><h2>每 10 輛車裡有幾輛機車？</h2><div class="pict" id="c9"></div><div class="legend" id="l9"></div><p class="say" id="s9"></p></section>
 <section class="card"><h2>機車和汽車幾點最多？</h2><div class="scroll"><svg id="c10"></svg></div><p class="say" id="s10"></p></section>
 
-<p class="note">「塞」＝車速低於 20 km/h。機車混在一般車道計數，可能漏數；環東大道禁行機車。資料來源：臺北市交工處 VDLive.xml。探索用，不是正式結果。</p>
+<p class="note"><span id="def"></span>機車混在一般車道計數，可能漏數；環東大道禁行機車。資料來源：臺北市交工處 VDLive.xml。探索用，不是正式結果。</p>
 </main><div id="tip"></div>
 <script>
 const D = __DATA__, N = D.names;
@@ -182,6 +194,8 @@ const nice = max => { const raw = Math.max(max, 1) / 4, p = 10 ** Math.floor(Mat
   const st = [1, 2, 2.5, 5, 10].map(k => k * p).find(k => k >= raw); return [st * 4, st]; };
 const fmt = v => v >= 1000 ? v.toLocaleString() : String(+v.toFixed(1));
 const minOf = (p, i = 1) => p.reduce((a, b) => b[i] < a[i] ? b : a), maxOf = (p, i = 1) => p.reduce((a, b) => b[i] > a[i] ? b : a);
+$('def').textContent = '「塞」＝車速低於該入口平常車速（第 85 百分位）的一半：' +
+  D.ents.map(v => `${N[v]} ${Math.round(D.free[v])}→${Math.round(D.bad[v])}`).join('、') + ' km/h。';
 $('sub').textContent = `${D.days.length} 天的資料（${D.days.map(md).join('、')}）· 滑過圖表看數字`;
 
 // 直條圖：items = [[標籤, 值, 顏色變數, 提示]]，labels = 要在柱上標數字的索引
@@ -217,9 +231,10 @@ function hbars(svg, rows, max) {
   D.ents.forEach((v, i) => { const y = i * rh + 4, t = D.timetable[v], txt = [];
     g += `<text class="lab" x="0" y="${y + 17}">${N[v]}</text><line x1="${L}" x2="${w - R}" y1="${y + 13}" y2="${y + 13}" stroke="var(--axis)"/>`;
     for (const k of ['am', 'pm']) { const p = t[k]; if (!p.jam_days) continue; if (k === 'am') jam++;
-      g += `<rect x="${X(p.start)}" y="${y + 3}" width="${Math.max(4, X(p.end) - X(p.start))}" height="20" rx="4" fill="var(--s2)" data-t="${N[v]}｜通常 ${hhmm(p.start)}–${hhmm(p.end)}<br>${p.days} 天裡有 ${p.jam_days} 天"/>`;
+      g += `<rect x="${X(p.start)}" y="${y + 3}" width="${Math.max(4, X(p.end) - X(p.start))}" height="20" rx="4" fill="var(--s2)" data-t="${N[v]}｜通常 ${hhmm(p.start)}–${hhmm(p.end)}<br>${p.days} 天裡有 ${p.jam_days} 天低於 ${D.bad[v]} km/h"/>`;
       txt.push(`${hhmm(p.start)}–${hhmm(p.end)}`); }
-    g += `<text class="lab" x="${w - R + 8}" y="${y + 17}">${txt.join('、') || '沒有明顯塞車'}</text>`; });
+    g += txt.length > 1 ? `<text class="lab">${txt.map((s, j) => `<tspan x="${w - R + 8}" y="${y + 10 + j * 14}">${s}</tspan>`).join('')}</text>`
+      : `<text class="lab" x="${w - R + 8}" y="${y + 17}">${txt[0] || '沒有明顯塞車'}</text>`; });
   svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg);
   const t = D.timetable[D.worst].am;
   say('s1', t.jam_days ? `${D.ents.length} 個入口裡有 ${jam} 個早上會塞，最嚴重的是「${N[D.worst]}」，通常 ${hhmm(t.start)}–${hhmm(t.end)}，${t.days} 天裡有 ${t.jam_days} 天。` : '這幾天早上沒有明顯塞車。');
@@ -230,16 +245,17 @@ function hbars(svg, rows, max) {
   const box = $('c2'); let deepest = null;
   box.innerHTML = D.ents.map((v, i) => `<div>${N[v]}<svg id="m${i}"></svg></div>`).join('');
   const all = D.ents.flatMap(v => D.curve[v]), x0 = Math.min(...all.map(p => p[0])), x1 = Math.max(...all.map(p => p[0])) + 15;
+  const top = Math.ceil(Math.max(70, ...all.map(p => p[1])) / 10) * 10;  // 環東大道是快速道路，平常比 70 快
   D.ents.forEach((v, i) => { const svg = $('m' + i), p = D.curve[v], w = Math.max(280, svg.parentElement.clientWidth), H = 120, L = 26, B = 18;
-    const X = m => L + (m - x0) / (x1 - x0) * (w - L - 4), Y = s => 4 + (1 - Math.min(s, 70) / 70) * (H - 4 - B);
+    const X = m => L + (m - x0) / (x1 - x0) * (w - L - 4), Y = s => 4 + (1 - Math.min(s, top) / top) * (H - 4 - B);
     const lo = minOf(p); if (!deepest || lo[1] < deepest[2]) deepest = [v, lo[0], lo[1]];
-    let g = `<line x1="${L}" x2="${w}" y1="${Y(D.bad)}" y2="${Y(D.bad)}" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="${L - 4}" y="${Y(D.bad) + 4}" text-anchor="end">20</text>`;
+    let g = `<line x1="${L}" x2="${w}" y1="${Y(D.bad[v])}" y2="${Y(D.bad[v])}" stroke="var(--muted)" stroke-dasharray="3 3"/><text x="${L - 4}" y="${Y(D.bad[v]) + 4}" text-anchor="end">${Math.round(D.bad[v])}</text>`;
     for (let m = Math.ceil(x0 / 240) * 240; m < x1; m += 240) g += `<text x="${X(m)}" y="${H - 4}" text-anchor="middle">${hhmm(m)}</text>`;
     g += `<polyline fill="none" stroke="var(--s1)" stroke-width="2" points="${p.map(q => X(q[0] + 7.5) + ',' + Y(q[1])).join(' ')}"/>`;
     g += `<circle cx="${X(lo[0] + 7.5)}" cy="${Y(lo[1])}" r="4" fill="var(--s2)"/><text class="lab" x="${X(lo[0] + 7.5) + 7}" y="${Y(lo[1]) + 4}">${Math.round(lo[1])}</text>`;
     for (const q of p) g += `<rect x="${X(q[0])}" y="0" width="${X(q[0] + 15) - X(q[0])}" height="${H - B}" fill="transparent" data-t="${N[v]} ${hhmm(q[0])}｜${q[1]} km/h"/>`;
     svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg); });
-  say('s2', `每個入口都在早上出現一個低谷，最深的是「${N[deepest[0]]}」${hhmm(deepest[1])}，只剩 ${Math.round(deepest[2])} km/h（虛線是 20 km/h）。`);
+  say('s2', `每個入口都在早上出現一個低谷，最深的是「${N[deepest[0]]}」${hhmm(deepest[1])}，只剩 ${Math.round(deepest[2])} km/h（虛線是各入口的塞車線，平常車速的一半）。`);
 })();
 
 // 3. 每小時有多少車
@@ -274,7 +290,7 @@ function c6() {
   if (!p.length) { $('c6').innerHTML = ''; say('s6', '還沒有這個時段的資料。'); return; }
   const lo = minOf(p), hi = maxOf(p), early = p.find(q => q[0] === lo[0] - 60);
   vbars($('c6'), p.map(([b, s]) => [b % 60 === 0 ? hhmm(b) : '', s, step(s), `${hhmm(b)}–${hhmm(b + 15)} 經過｜平均 ${s} km/h`]),
-    { unit: 'km/h', ymax: 70, ref: D.bad, labels: [p.indexOf(lo), p.indexOf(hi)].concat(early ? [p.indexOf(early)] : []) });
+    { unit: 'km/h', ymax: 70, ref: D.bad[v], labels: [p.indexOf(lo), p.indexOf(hi)].concat(early ? [p.indexOf(early)] : []) });
   say('s6', `${N[v]}在 ${hhmm(lo[0])} 最慢（${Math.round(lo[1])} km/h）` + (early ? `；提早 1 小時、${hhmm(early[0])} 經過約 ${Math.round(early[1])} km/h，快 ${(early[1] / Math.max(lo[1], 1)).toFixed(1)} 倍。` : '。'));
 }
 $('pick').onchange = c6; c6();
@@ -301,9 +317,9 @@ $('pick').onchange = c6; c6();
   const b = D.worst_bin, d = b == null ? {} : (D.daily[D.worst] || {})[b] || {}, ks = Object.keys(d).sort();
   if (!ks.length) { say('s8', '資料還不夠。'); return; }
   $('h8').textContent = `${N[D.worst]} ${hhmm(b)}–${hhmm(b + 15)}，每天的車速`;
-  vbars($('c8'), ks.map(k => [md(k), d[k], step(d[k]), `${md(k)}｜${d[k]} km/h`]), { unit: 'km/h', ymax: 70, ref: D.bad, labels: ks.map((_, i) => i), H: 200 });
-  const bad = ks.filter(k => d[k] < D.bad).length;
-  say('s8', `${ks.length} 天裡有 ${bad} 天低於 20 km/h（虛線）` + (bad >= ks.length - 1 && bad ? '，幾乎每天都塞，可以預期。' : '，不是每天都塞，比較難預期。'));
+  vbars($('c8'), ks.map(k => [md(k), d[k], step(d[k]), `${md(k)}｜${d[k]} km/h`]), { unit: 'km/h', ymax: 70, ref: D.bad[D.worst], labels: ks.map((_, i) => i), H: 200 });
+  const bad = ks.filter(k => d[k] < D.bad[D.worst]).length;
+  say('s8', `${ks.length} 天裡有 ${bad} 天低於 ${D.bad[D.worst]} km/h（虛線，平常車速的一半）` + (bad >= ks.length - 1 && bad ? '，幾乎每天都塞，可以預期。' : '，不是每天都塞，比較難預期。'));
 })();
 
 // 9. 每 10 輛車
