@@ -9,6 +9,7 @@
  早一點經過有差嗎：每 15 分鐘的平均車速（可切換入口）
  每天都一樣嗎：每天塞了幾分鐘、最塞的 15 分鐘每天的車速
  都是什麼車：每 10 輛車的車種、機車和汽車幾點最多
+ 塞住的時候路能放多少車：每天塞住時每 15 分鐘通過的汽車數，對照順的時候最多通過多少
 「塞」的定義：車速低於 20 km/h；塞車時刻表另要求連續至少 2 筆讀數。
 """
 import json
@@ -21,6 +22,8 @@ from preview_vd import DEFAULT_CSV, MAIN, ROOT, STYLE, VEH, load
 OUT = ROOT / "raw" / "explore.html"
 BAD = 20
 AM, PM = (6 * 60, 11 * 60), (15 * 60, 21 * 60)
+CARS = ("vol_S", "vol_L", "vol_T")  # 放行量只算汽車：排隊模型以汽車計，機車在混合車道可能漏數
+MODEL_VD, MODEL_CAP = "VPMSV40", 1000  # 排隊模型的瓶頸與目前假設的容量（輛／15 分鐘），見 data/mock/gen_t4_morning.py
 BARS = (6 * 60, 10 * 60 + 30)  # 「早一點經過有差嗎」的時段
 
 
@@ -124,9 +127,26 @@ def build(rows):
     allc = sum(tot.values()) or 1
     mix = [[label, round(tot[k] / allc * 100, 1)] for k, label in VEH]
 
+    # 塞住的時候路能放多少車：每天每 15 分鐘通過的汽車數（少於 2 筆讀數的格子不算，缺 1 筆時按比例補成 15 分鐘）。
+    # 順的時候最多通過多少，是這條路的上限；塞住時（車速低於 BAD）的通過量，是排隊實際消化的速度
+    flow = {}
+    for v in ents:
+        top, jam = None, {}
+        for d, pts in sorted(by[v].items()):
+            for b, ps in sorted(by_bin(pts).items()):
+                if len(ps) < 2:
+                    continue
+                n = round(sum(c[k] for _, _, c in ps for k in CARS) * 3 / len(ps))
+                if weighted(ps) < BAD:
+                    jam.setdefault(d, []).append(n)
+                elif not top or n > top[0]:
+                    top = [n, d, b]
+        flow[v] = dict(top=top, days=[[d, round(sum(ns) / len(ns)), len(ns), min(ns), max(ns)] for d, ns in jam.items()],
+                       avg=round(sum(sum(ns) for ns in jam.values()) / sum(len(ns) for ns in jam.values())) if jam else None)
+
     return dict(names=names, ents=ents, worst=worst, worst_bin=wb, bad=BAD, days=days, timetable=timetable,
                 minutes=minutes, curve=curve, bars=bars, daily={v: dict(x) for v, x in daily.items()},
-                jam_by_day=jam_by_day, hourly=hourly, mix=mix)
+                jam_by_day=jam_by_day, hourly=hourly, mix=mix, flow=flow, model_vd=MODEL_VD, model_cap=MODEL_CAP)
 
 
 PAGE = r"""<!doctype html>
@@ -162,7 +182,10 @@ __STYLE__
 <section class="card"><h2>每 10 輛車裡有幾輛機車？</h2><div class="pict" id="c9"></div><div class="legend" id="l9"></div><p class="say" id="s9"></p></section>
 <section class="card"><h2>機車和汽車幾點最多？</h2><div class="scroll"><svg id="c10"></svg></div><p class="say" id="s10"></p></section>
 
-<p class="note">「塞」＝車速低於 20 km/h。機車混在一般車道計數，可能漏數；環東大道禁行機車。資料來源：臺北市交工處 VDLive.xml。探索用，不是正式結果。</p>
+<p class="grp">塞住的時候路能放多少車</p>
+<section class="card"><h2>塞住時，每 15 分鐘放行幾台汽車？</h2><div class="ctl">入口 <select id="pick11"></select></div><div class="scroll"><svg id="c11"></svg></div><div class="legend"><span><i class="sw" style="background:var(--s2)"></i>塞住時平均每 15 分鐘通過</span><span>虛線：順的時候 15 分鐘最多通過</span></div><p class="say" id="s11"></p></section>
+
+<p class="note">「塞」＝車速低於 20 km/h。機車混在一般車道計數，可能漏數；環東大道禁行機車；放行量只算汽車。資料來源：臺北市交工處 VDLive.xml。探索用，不是正式結果。</p>
 </main><div id="tip"></div>
 <script>
 const D = __DATA__, N = D.names;
@@ -336,6 +359,21 @@ $('pick').onchange = c6; c6();
   say('s10', pm[0] === pc[0] ? `機車和小客車都在 ${hhmm(pm[0])} 那一小時最多。` :
     `機車在 ${hhmm(pm[0])} 那一小時最多，小客車在 ${hhmm(pc[0])}；機車${pm[0] < pc[0] ? '比較早' : '比較晚'}出門。`);
 })();
+
+// 11. 塞住時每 15 分鐘放行幾台汽車（一天一根），虛線是順的時候最多通過多少
+$('pick11').innerHTML = D.ents.map(v => `<option value="${v}"${v === (D.ents.includes(D.model_vd) ? D.model_vd : D.worst) ? ' selected' : ''}>${N[v]}</option>`).join('');
+function c11() {
+  const v = $('pick11').value, f = D.flow[v], top = f.top, model = v === D.model_vd ? `排隊模型目前假設這裡的容量是 ${D.model_cap.toLocaleString()} 輛／15 分鐘，可以用這兩個數字校正。` : '';
+  if (!f.days.length) { $('c11').innerHTML = '';
+    say('s11', `這幾天${N[v]}沒有塞住（低於 20 km/h）的 15 分鐘，量不到塞車時放行多少` + (top ? `；順的時候 15 分鐘最多通過 ${top[0].toLocaleString()} 輛汽車。` : '。') + model); return; }
+  vbars($('c11'), f.days.map(([d, n, k, lo, hi]) => [md(d), n, '--s2', `${md(d)}｜塞住的 ${k} 個 15 分鐘，平均 ${n.toLocaleString()} 輛（${lo.toLocaleString()}–${hi.toLocaleString()}）`]),
+    { unit: '輛／15 分鐘', labels: f.days.map((_, i) => i), ref: top ? top[0] : null, ymax: Math.max(top ? top[0] : 0, ...f.days.map(x => x[1])) * 1.15, H: 200 });
+  const ns = f.days.map(x => x[1]), lo = Math.min(...ns), hi = Math.max(...ns), drop = top ? Math.round((1 - f.avg / top[0]) * 100) : null;
+  say('s11', (top ? `${N[v]}順的時候，15 分鐘最多通過 ${top[0].toLocaleString()} 輛汽車（${md(top[1])} ${hhmm(top[2])}）；` : `${N[v]}`) +
+    `塞住時平均只放 ${f.avg.toLocaleString()} 輛` + (drop > 0 ? `，少了 ${drop}%` : '') +
+    (ns.length > 1 ? `，每天在 ${lo.toLocaleString()}–${hi.toLocaleString()} 輛之間${hi > lo * 1.1 ? '：同樣在塞，有的天放得比較慢' : ''}。` : '。') + model);
+}
+$('pick11').onchange = c11; c11();
 </script></body></html>
 """
 
