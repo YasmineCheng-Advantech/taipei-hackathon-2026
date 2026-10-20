@@ -28,7 +28,7 @@
   - 即時：`https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml`（約 1.7 MB，每分鐘更新，數值為 5 分鐘統計；分車種 M 機車／S 小車／L 大車／T 聯結車，分車道）
   - 另有舊格式 `GetVDDATA.xml.gz`（逐車道）與 `GetVD.xml.gz`（路段彙總，附路段名如「環東進城 前方」，對照位置很好用）。
 - **TDX**：連得到，但 API 回 401「Valid API Key Required」，沒有金鑰不能用。國道 VD 只能從這裡（或高公局）拿。
-- **高公局 tisvcloud.freeway.gov.tw**：從這個雲端環境連線逾時（伺服器端沒回應，不是網域白名單問題，推測只開放國內 IP）。在你自己的電腦上應該抓得到。
+- **高公局 tisvcloud.freeway.gov.tw**：從這個雲端環境連線逾時（伺服器端沒回應，不是網域白名單問題，推測只開放國內 IP）。在你自己的電腦上應該抓得到，用 `data/fetch/fetch_freeway_vd.py`（不用金鑰，有歷史檔，可以事後補抓 10/20–10/23）。
 - **地圖服務（OSM／Nominatim）** 被網路政策擋住，所以位置對應是用 VD 座標、道路名、LinkID 方向和 `GetVD` 的路段名比對，沒有疊地圖確認。
 
 ## 每個入口怎麼對應
@@ -51,7 +51,7 @@
 ## 缺口建議補法
 
 - **麥帥二橋、康寧路三段**：熱力圖用模擬資料加斜線（schema 的 `gap`），說明文字註明「無偵測器，數值為推估」；如果主辦方有交工處路口調查，可以拿來校準尖峰量。
-- **國1 內湖交流道**：TDX 金鑰下來後，用 `Road/Traffic/VD/Freeway` 找內湖交流道的匝道 VD；在那之前維持模擬。
+- **國1 內湖交流道**：不必等 TDX 金鑰。在自己的電腦跑 `python3 data/fetch/fetch_freeway_vd.py --probe`、`--list` 找出內湖交流道下匝道的 VDID，再用 `--vd <VDID> --date 2026-10-20 …` 補抓收集期間的歷史資料，輸出的 `vd_freeway_targets.csv` 和臺北市的一起給 `build_vd_15min.py`。最後把 `gen_t4_morning.py` 的 `nh1-neihu-ic` 改成 `kind="observed"`、`detector="<VDID>"`。抓不到才維持模擬。
 - **民權大橋、成美橋**：資料是真的，但位置是引道，畫面上可以加一個小註記「偵測點位於引道」。
 
 ## 檔案

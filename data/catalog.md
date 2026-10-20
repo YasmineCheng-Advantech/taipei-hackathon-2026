@@ -32,7 +32,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | 臺北市 VD 靜態資料 | [VD.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml)（[data.taipei](https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2)） | XML | 不定期 | — | VDID、座標、路段、方向、車道數 | ✅ 10/19，604 支 |
 | 臺北市 VD 路段彙總（舊格式） | [GetVD.xml.gz](https://tcgbusfs.blob.core.windows.net/blobtisv/GetVD.xml.gz) | XML（gzip） | 每分鐘 | 無 | 路段名（如「環東進城 前方」） | ✅ 10/19，用來對照位置 |
 | 國道 VD（TDX） | [TDX](https://tdx.transportdata.tw/) `Road/Traffic/Live/VD/Freeway` | JSON | 每分鐘 | 無 | VDID、車道、流量、車速 | ⏳ 要金鑰，目前回 401 |
-| 國道 VD（高公局交通資料庫） | [tisvcloud](https://tisvcloud.freeway.gov.tw/history/motc20/) | XML（gzip） | 每分鐘 | **有**，可以事後補抓 | 同上 | ⚠️ 雲端環境連線逾時，在自己電腦試 |
+| 國道 VD（高公局交通資料庫） | [tisvcloud](https://tisvcloud.freeway.gov.tw/history/motc20/) | XML（gzip） | 每分鐘 | **有**，可以事後補抓 | 同上 | ⚠️ 雲端環境連線逾時，在自己電腦用 `fetch/fetch_freeway_vd.py --probe` 試 |
 | 交工處 2025 年路口 15 分鐘流量調查 | 臺北市交工處 PDF | PDF | 單日 | — | 路口、轉向、15 分鐘流量 | ⚠️ 待取得，用來校準到達曲線 |
 | 縣市即時路況（data.gov.tw 166031） | [data.gov.tw](https://data.gov.tw/dataset/166031) | — | — | — | — | ❌ 已下架，改用上面的臺北市 VD |
 
