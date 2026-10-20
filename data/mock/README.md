@@ -7,7 +7,7 @@ python3 data/mock/gen_t4_morning.py                     # 重新產生 t4-mornin
 python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗證
 ```
 
-錯峰情境的容量與到達曲線不寫在 `gen_t4_morning.py` 裡，而是讀 [`model_input.json`](model_input.json)（假設值，由 `python3 data/processed/build_model_input.py --mock` 產生）。收集到真實資料後換成 `data/processed/model_input.json`，見最下面「換成真實資料時」。
+錯峰情境的容量與到達曲線不寫在 `gen_t4_morning.py` 裡，而是讀 [`inputs/model_input.json`](inputs/model_input.json)（假設值，由 `python3 data/processed/build_model_input.py --mock` 產生）。收集到真實資料後換成 `data/processed/model_input.json`，見最下面「換成真實資料時」。
 
 ## 先講三件事
 

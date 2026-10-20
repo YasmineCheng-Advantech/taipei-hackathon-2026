@@ -2,7 +2,7 @@
 
 用法
   python3 data/processed/build_model_input.py data/raw/vd_taipei_targets.csv [更多 csv]  # 真實 VD → data/processed/model_input.json
-  python3 data/processed/build_model_input.py --mock                                   # 目前的假設 → data/mock/model_input.json
+  python3 data/processed/build_model_input.py --mock                                   # 目前的假設 → data/mock/inputs/model_input.json
   電腦與 GitHub Actions 收到的 csv 可以一起傳入，重複的讀數會自動去掉。
 接著
   python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json --model data/processed/model_input.json
@@ -31,7 +31,7 @@ from preview_vd import load
 
 HERE = Path(__file__).resolve().parent
 OUT_REAL = HERE / "model_input.json"
-OUT_MOCK = HERE.parent / "mock" / "model_input.json"
+OUT_MOCK = HERE.parent / "mock" / "inputs" / "model_input.json"
 
 VD, PLACE = "VPMSV40", "堤頂大道北向"
 CARS = ("vol_S", "vol_L", "vol_T")

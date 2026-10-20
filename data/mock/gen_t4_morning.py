@@ -5,7 +5,7 @@
 接真實 VD：python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json --model data/processed/model_input.json
   --real：有真實資料的熱力格改成真實觀測（sim: false），其餘維持模擬
   --model：情境、城市目標、一頁紙的結論與做法比較、敏感度分析改用這份容量與到達曲線（build_model_input.py 產生）；
-           沒給就讀 data/mock/model_input.json（假設值）
+           沒給就讀 data/mock/inputs/model_input.json（假設值）
   有任一真實資料時，預設輸出到 data/processed/t4-morning.json
 
 全部數字都是模擬值（sim: true），結果固定、可重跑。方法寫在輸出 JSON 的 meta.mock_method。
@@ -20,8 +20,8 @@ from pathlib import Path
 
 ap = argparse.ArgumentParser(description="產生 #4 內科晨峰資料檔")
 ap.add_argument("--real", type=Path, help="build_vd_15min.py 的輸出；給了就用真實 VD 取代有資料的熱力格")
-ap.add_argument("--model", type=Path, default=Path(__file__).with_name("model_input.json"),
-                help="排隊模型的輸入（容量與到達曲線）；預設是假設值 data/mock/model_input.json")
+ap.add_argument("--model", type=Path, default=Path(__file__).parent / "inputs" / "model_input.json",
+                help="排隊模型的輸入（容量與到達曲線）；預設是假設值 data/mock/inputs/model_input.json")
 ap.add_argument("--out", type=Path, help="輸出路徑")
 ARGS = ap.parse_args()
 REAL = json.loads(ARGS.real.read_text(encoding="utf-8")) if ARGS.real else None
