@@ -7,6 +7,8 @@ python3 data/mock/gen_t4_morning.py                     # 重新產生 t4-mornin
 python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗證
 ```
 
+錯峰情境的容量與到達曲線不寫在 `gen_t4_morning.py` 裡，而是讀 [`model_input.json`](model_input.json)（假設值，由 `python3 data/processed/build_model_input.py --mock` 產生）。收集到真實資料後換成 `data/processed/model_input.json`，見最下面「換成真實資料時」。
+
 ## 先講三件事
 
 1. **全部是模擬的。** 檔案裡每個 `sim` 都是 `true`，網站會加上斜線紋路。`label` 標的是「正式版這個數字會是什麼性質」，例如堤頂大道的車速標 `observed`，意思是正式版會換成 VD 真實觀測，不代表現在的數字是真的。
@@ -114,7 +116,7 @@ python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗
 - **目前的結果**：移出約 20% 時排隊幾乎消失；超過之後，目標時段會形成新的尖峰，排隊又變長。
 - **檀香山參考線**：6.5%（實際參與率 6–7%），出處是 Giuliano & Golob（1990）。
 
-正式版會由網站工程師寫的排隊模型腳本，讀 `model_input.json` 的真實容量與到達曲線重新計算。
+以上容量、到達曲線與尖峰時段都來自 `model_input.json`。換成 `data/processed/model_input.json`（真實 VD 反推）後，情境、城市目標、一頁紙的結論與做法比較、敏感度分析會一起重算，提早與延後的目標時段也跟著尖峰移動（提早是尖峰開始前 1 小時起的 30 分鐘，延後是尖峰結束後的 30 分鐘）。網站工程師要另寫排隊模型時，讀同一份 `model_input.json` 就好。
 
 ### 城市行動 `city`
 
@@ -163,17 +165,19 @@ python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗
 | 區塊 | 換成什麼 |
 | --- | --- |
 | 熱力圖 observed 的 5 列 | 已經接好，見下方指令。收到資料的格子改成真實觀測（`sim: false`），沒收到的維持模擬 |
-| 情境 | 網站工程師的排隊模型輸出（容量與到達曲線改用 `model_input.json`） |
-| 城市目標區間 | 排隊模型反推的「排隊減半所需移出比例」 |
+| 情境、城市目標區間、一頁紙結論與做法比較、敏感度分析 | 已經接好：加上 `--model data/processed/model_input.json` 就改用真實 VD 反推的容量與到達曲線重算 |
 | 人數 | 後端的真實人數（JSON 裡維持 `pending`，不放模擬值） |
 | 其餘照抄設計稿的數字 | 依 `FIELDS.md` 的來源逐項替換 |
 
 **接上真實 VD（收集完後執行）：**
 
 ```
-python3 data/processed/build_vd_15min.py data/raw/vd_taipei_targets.csv   # 彙整成 15 分鐘格子
-python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json  # 輸出 data/processed/t4-morning.json
+python3 data/processed/build_vd_15min.py data/raw/vd_taipei_targets.csv     # 彙整成 15 分鐘格子
+python3 data/processed/build_model_input.py data/raw/vd_taipei_targets.csv  # 估容量與到達曲線
+python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json --model data/processed/model_input.json
 python3 data/schema/validate.py data/processed/t4-morning.json
 ```
+
+第二行會印出容量、尖峰時段與模型對得上幾格；收集期間堤頂大道都沒塞住時會警告，這時情境的數字不能拿來講。
 
 資料有兩個來源：自己電腦長時間執行的收集程式（`data/raw/vd_taipei_targets.csv`），以及 GitHub Actions 每次執行的 artifact（`vd-raw-…`，下載後各有一份 `vd_taipei_targets.csv`）。全部一起傳給第一行，重複的讀數會自動去掉。全天收集的資料也能改時段彙整，例如晚尖峰用 `--start 17:00 --end 19:30`。產生的檔案 `meta.sim` 為 `false`，熱力圖的天數說明、最塞一格的「N 天裡有 M 天」、資料來源期間都會改用真實資料。
