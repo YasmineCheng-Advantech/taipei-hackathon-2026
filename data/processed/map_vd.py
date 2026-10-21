@@ -74,15 +74,28 @@ def bearing(a, b):
     return math.degrees(math.atan2(dx, dy)) % 360
 
 
-def road_shape(lat, lng, road, deg):
-    """問 Overpass：偵測器 80 公尺內、名稱相同的道路，取偵測器前後 REACH 公尺。
-    雙向分隔的道路在 OSM 是兩條單行線，只留和偵測方向相同的那條。回傳 [[(緯度, 經度), ...], ...]。"""
-    base = road.split("段")[0][:-1] if road.endswith("段") else road  # 內湖路一段 → 內湖路
-    q = f'[out:json][timeout:25];way(around:80,{lat},{lng})[highway]["name"~"{base}"];out geom;'
+def overpass(q):
     body = urllib.request.urlopen(urllib.request.Request(
         OVERPASS, data=urllib.parse.urlencode({"data": q}).encode(), headers={"User-Agent": "taipei-hackathon-2026"}), timeout=60).read()
+    return json.loads(body).get("elements", [])
+
+
+def road_shape(lat, lng, road, deg):
+    """問 Overpass：偵測器 80 公尺內、名稱相同的道路，取偵測器前後 REACH 公尺。
+    名稱對不上時（例如偵測器在橋的引道，OSM 上叫「民權大橋」），改找 40 公尺內的主要道路。
+    雙向分隔的道路在 OSM 是兩條單行線，只留和偵測方向相同的那條。回傳 [[(緯度, 經度), ...], ...]。"""
+    base = road.split("段")[0][:-1] if road.endswith("段") else road  # 內湖路一段 → 內湖路
+    lines = clip(overpass(f'[out:json][timeout:25];way(around:80,{lat},{lng})[highway]["name"~"{base}"];out geom;'), lat, lng, deg)
+    if not lines:
+        time.sleep(1)
+        lines = clip(overpass(f'[out:json][timeout:25];way(around:40,{lat},{lng})'
+                              f'[highway~"^(motorway|trunk|primary|secondary|tertiary)(_link)?$"];out geom;'), lat, lng, deg)
+    return lines
+
+
+def clip(ways, lat, lng, deg):
     lines = []
-    for w in json.loads(body).get("elements", []):
+    for w in ways:
         pts = [(g["lat"], g["lon"]) for g in w.get("geometry", [])]
         if len(pts) < 2:
             continue
@@ -106,7 +119,7 @@ def road_shape(lat, lng, road, deg):
 def road_shapes(vds):
     """{VDID: 路段}，存在 ROADS；只問還沒抓過的偵測器，每次間隔 1 秒，不對 Overpass 造成負擔。"""
     cache = json.loads(ROADS.read_text(encoding="utf-8")) if ROADS.exists() else {}
-    todo = [v for v in vds if v["id"] not in cache]
+    todo = [v for v in vds if not cache.get(v["id"])]  # 沒抓過或上次沒抓到的
     for i, v in enumerate(todo):
         try:
             cache[v["id"]] = road_shape(v["lat"], v["lng"], v["road"], v["deg"])
