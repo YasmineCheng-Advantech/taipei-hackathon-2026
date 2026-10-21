@@ -1,0 +1,148 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:transparent}</style>
+<script type="importmap">{"imports":{"three":"./node_modules/three/build/three.module.js","three/addons/":"./node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// 插畫裡的玩具機車。算繪方式見 render.js；改顏色改 C，改角度用網址參數 yaw、elev。
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const q = new URLSearchParams(location.search);
+const W = +(q.get('w') || 800), H = +(q.get('h') || 700);
+const yaw = +(q.get('yaw') || 0.42);
+const elev = +(q.get('elev') || 0.52);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.setSize(W, H);
+renderer.setClearColor(0x000000, 0);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.35;
+
+// 光：左上方的柔光＋地面橘色反光（插畫裡車子底部都偏橘）
+scene.add(new THREE.HemisphereLight(0xfff4ea, 0xf0883e, 0.75));
+const key = new THREE.DirectionalLight(0xfff1e2, 2.5);
+key.position.set(-2, 9, 3.5);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = -3; key.shadow.camera.right = 3;
+key.shadow.camera.top = 3; key.shadow.camera.bottom = -3;
+key.shadow.radius = 14;
+key.shadow.bias = -0.0006;
+scene.add(key);
+const rim = new THREE.DirectionalLight(0xffd9b8, 0.6);
+rim.position.set(4, 3, -4);
+scene.add(rim);
+
+function felt(hex, opts = {}) {
+  const c = new THREE.Color(hex);
+  return new THREE.MeshPhysicalMaterial({
+    color: c, roughness: 0.78, metalness: 0,
+    sheen: 0.35, sheenRoughness: 0.6, sheenColor: c.clone().lerp(new THREE.Color(0xffffff), 0.55),
+    ...opts,
+  });
+}
+const C = {
+  body: '#79CFAD', stitch: '#438F70',
+  cream: '#F4E2C4', seat: '#4A3C5C', tire: '#43394A', hub: '#CDEBDD',
+  lamp: '#FFF3D2', tail: '#D9555B',
+};
+
+const scooter = new THREE.Group();
+scene.add(scooter);
+function add(geo, mat, pos, rot = [0, 0, 0], scale) {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(...pos); m.rotation.set(...rot);
+  if (scale) m.scale.set(...scale);
+  m.castShadow = true; m.receiveShadow = true;
+  scooter.add(m); return m;
+}
+const rbox = (w, h, d, r) => new RoundedBoxGeometry(w, h, d, 8, r);
+
+// 輪子：深紫藍輪胎＋淺色輪轂（和插畫裡的車一樣）
+function wheel(x) {
+  add(new THREE.TorusGeometry(0.235, 0.135, 32, 64), felt(C.tire, { roughness: 0.9 }), [x, 0.37, 0]);
+  add(new THREE.CylinderGeometry(0.15, 0.15, 0.25, 48), felt(C.hub), [x, 0.37, 0], [Math.PI / 2, 0, 0]);
+  add(new THREE.SphereGeometry(0.055, 24, 16), felt(C.tire), [x, 0.37, 0.13]);
+}
+wheel(-1.05);
+wheel(0.98);
+
+// 車身
+add(rbox(1.15, 0.22, 0.62, 0.1), felt(C.cream), [-0.12, 0.56, 0]);                       // 踏板
+const rear = add(rbox(1.3, 0.66, 0.7, 0.3), felt(C.body), [0.78, 0.86, 0]);              // 後車身
+const seat = add(rbox(1.04, 0.2, 0.58, 0.1), felt(C.seat, { roughness: 0.85 }), [0.72, 1.27, 0], [0, 0, -0.04]); // 坐墊
+const shield = add(rbox(0.36, 1.08, 0.74, 0.17), felt(C.body), [-0.74, 1.0, 0], [0, 0, -0.27]); // 前擋板
+add(new THREE.TorusGeometry(0.44, 0.068, 20, 64, Math.PI * 0.6), felt(C.body), [-1.05, 0.37, 0], [0, 0, Math.PI * 0.38], [1, 1, 2.0]); // 前土除：包住前輪的弧
+add(rbox(0.46, 0.28, 0.76, 0.12), felt(C.body), [-0.52, 1.62, 0]);                         // 龍頭
+add(new THREE.CylinderGeometry(0.12, 0.12, 0.08, 48), felt(C.lamp, { emissive: new THREE.Color(C.lamp), emissiveIntensity: 0.35 }),
+  [-0.77, 1.62, 0], [0, 0, Math.PI / 2]);                                                  // 大燈
+for (const z of [-0.45, 0.45]) {
+  add(new THREE.CapsuleGeometry(0.07, 0.16, 8, 24), felt(C.seat), [-0.46, 1.66, z], [Math.PI / 2, 0, 0]); // 握把
+  add(new THREE.CapsuleGeometry(0.025, 0.2, 6, 12), felt(C.seat), [-0.46, 1.86, z * 0.82], [z > 0 ? 0.35 : -0.35, 0, 0.1]); // 後照鏡桿
+  add(new THREE.SphereGeometry(0.1, 24, 16), felt(C.body), [-0.48, 1.99, z * 0.92], [0, 0, 0], [0.45, 0.75, 1.15]); // 後照鏡
+}
+add(rbox(0.08, 0.15, 0.4, 0.04), felt(C.tail, { emissive: new THREE.Color(C.tail), emissiveIntensity: 0.15 }), [1.43, 0.92, 0]); // 尾燈
+
+// 縫線：沿著車身表面排一串小短線，模仿插畫裡的布偶車縫線；用射線找表面，縫線才不會浮在圓角外面
+scooter.updateMatrixWorld(true);
+const ray = new THREE.Raycaster();
+function stitchesOn(mesh, path, dir, color = C.stitch) {
+  // path：在投影平面上的折線（2D），dir：射線方向（從車外往車內）
+  const d = new THREE.Vector3(...dir).normalize();
+  const flat = new THREE.CatmullRomCurve3(path.map(p => new THREE.Vector3(...p)));
+  const len = flat.getLength(), step = 0.072, n = Math.max(2, Math.floor(len / step));
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const o = flat.getPointAt(i / n).clone().addScaledVector(d, -2);
+    ray.set(o, d);
+    const hit = ray.intersectObject(mesh, false)[0];
+    if (!hit) continue;
+    const nrm = hit.face.normal.clone().transformDirection(mesh.matrixWorld);
+    pts.push(hit.point.clone().addScaledVector(nrm, 0.012));
+  }
+  const geo = new THREE.CapsuleGeometry(0.012, 0.03, 4, 8);
+  const mat = felt(color, { sheen: 0 });
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1];
+    const m = new THREE.Mesh(geo, mat);
+    m.position.copy(a).lerp(b, 0.5);
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize());
+    scooter.add(m);
+  }
+}
+for (const z of [1, -1]) {
+  stitchesOn(rear, [[0.3, 0.86, 0], [0.78, 0.84, 0], [1.28, 0.86, 0]], [0, 0, -z]);   // 後車身側邊
+  stitchesOn(shield, [[-0.95, 0.55, 0], [-0.82, 1.0, 0], [-0.69, 1.42, 0]], [0, 0, -z]); // 前擋板側邊
+}
+stitchesOn(seat, [[0.3, 2, 0.18], [0.72, 2, 0.18], [1.14, 2, 0.18]], [0, -1, 0], '#2F2740');  // 坐墊
+stitchesOn(seat, [[0.3, 2, -0.18], [0.72, 2, -0.18], [1.14, 2, -0.18]], [0, -1, 0], '#2F2740');
+
+// 影子只接在地面上
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.ShadowMaterial({ color: 0xb8460f, opacity: 0.42 }));
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+scooter.rotation.y = yaw;
+
+const cam = new THREE.PerspectiveCamera(18, W / H, 0.1, 100);
+const dist = 13;
+cam.position.set(-dist * Math.cos(elev) * 0.32, 0.9 + dist * Math.sin(elev), dist * Math.cos(elev) * 0.95);
+cam.lookAt(0.1, 0.9, 0);
+
+renderer.render(scene, cam);
+window.__done = true;
+</script>
+</body></html>
