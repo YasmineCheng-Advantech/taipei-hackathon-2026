@@ -34,7 +34,8 @@ RATIO = 0.4  # 低於平常車速的 40% 算塞：HCM 市區道路 E 級以下�
 LIMIT = {"VTXQJ20": 50, "VPMSV40": 50, "VQBUL20": 50, "VMLXB00": 50, "V6310G0": None}  # 速限，暫定；None＝快速道路
 CARS = ("vol_S", "vol_L", "vol_T")  # 車速與流量圖只算汽車，和排隊模型相同
 AM, PM = (6 * 60, 11 * 60), (15 * 60, 21 * 60)
-CORE = (7 * 60, 10 * 60 + 30)  # 晨峰的收集時段（與 collect_vd.py、GitHub Actions 相同）：比較每天時只看這一段
+CORE = (7 * 60, 10 * 60 + 30)
+MIN_CARS = 15  # 15 分鐘少於這麼多車（約每分鐘 1 輛）就不判斷等級：幾台車剛好停紅燈，平均車速就會很低  # 晨峰的收集時段（與 collect_vd.py、GitHub Actions 相同）：比較每天時只看這一段
 BARS = (6 * 60, 10 * 60 + 30)  # 「早一點經過有差嗎」的時段
 
 
@@ -123,16 +124,27 @@ def build(rows):
     # 一天裡每個入口在哪一級：每 15 分鐘各天的車速與中位數；早上、傍晚最慢的 1 小時（一般的一天與最慢的一天）
     strip, slow = {}, {}
     for v in ents:
-        cells = defaultdict(dict)
+        cells, cars = defaultdict(dict), defaultdict(dict)
         for d, pts in by[v].items():
             for b, ps in by_bin(pts).items():
                 cells[b][d] = round(weighted(ps), 1)
-        strip[v] = [[b, median(list(x.values())), x] for b, x in sorted(cells.items())]
+                cars[b][d] = sum(sum(c.values()) for _, _, c in ps)
+        # [格, 車速中位數, {日期: 車速}, 車輛數中位數]；車太少的格子不拿來找最慢的 1 小時
+        strip[v] = [[b, median(list(x.values())), x, median(list(cars[b].values()))] for b, x in sorted(cells.items())]
+        enough = [c for c in strip[v] if c[3] >= MIN_CARS]
         slow[v] = {}
         for key, (lo, hi) in (("am", AM), ("pm", PM)):
-            typ = slowest_hour({b: m for b, m, _ in strip[v]}, lo, hi)
-            days_ = [[d] + h for d in by[v] if (h := slowest_hour({b: x[d] for b, _, x in strip[v] if d in x}, lo, hi))]
+            typ = slowest_hour({b: m for b, m, _, _ in enough}, lo, hi)
+            days_ = [[d] + h for d in by[v] if (h := slowest_hour({b: x[d] for b, _, x, _ in enough if d in x}, lo, hi))]
             slow[v][key] = typ and dict(start=typ[0], speed=typ[1], worst=min(days_, key=lambda x: x[2]) if days_ else None)
+
+    # 放大看：每支偵測器每天每 5 分鐘的車速、車輛（機車、小客車、大車）、佔有率
+    detail = defaultdict(lambda: defaultdict(list))
+    for r in sorted(rows, key=lambda r: r["t"]):
+        if r["vdid"] in ents:
+            c = r["cars"]
+            detail[r["vdid"]][r["t"].date().isoformat()].append(
+                [r["t"].hour * 60 + r["t"].minute, r["speed"], c["vol_M"], c["vol_S"], c["vol_L"] + c["vol_T"], r.get("occ")])
 
     # 車速和流量：每筆讀數（5 分鐘）的汽車數換算成每小時
     scatter = {v: [[m, s, sum(c[k] for k in CARS) * 12] for pts in by[v].values() for m, s, c in pts] for v in ents}
@@ -181,7 +193,8 @@ def build(rows):
     mix = [[label, round(tot[k] / allc * 100, 1)] for k, label in VEH]
 
     return dict(names=names, ents=ents, worst=worst, worst_bin=wb, free=free, bad=bad, days=days, am=AM,
-                limit={v: LIMIT.get(v) for v in ents}, strip=strip, slow=slow, scatter=scatter, cover=cover, am_cover=am_cover, core=CORE,
+                limit={v: LIMIT.get(v) for v in ents}, strip=strip, slow=slow, scatter=scatter, cover=cover, am_cover=am_cover, core=CORE, min_cars=MIN_CARS,
+                detail={v: dict(x) for v, x in detail.items()},
                 curve=curve, bars=bars, daily={v: dict(x) for v, x in daily.items()},
                 jam_by_day=jam_by_day, hourly=hourly, mix=mix)
 
@@ -216,6 +229,7 @@ __STYLE__
 
 <p class="grp">什麼時候塞</p>
 <section class="card"><h2>一天裡，每個入口在哪一級？</h2><div class="ctl">尺 <select id="ruler"><option value="hcm">跟平常比（HCM）</option><option value="tw">依速限（臺灣公路容量手冊）</option></select></div><div class="scroll"><svg id="c1"></svg></div><div class="legend" id="l1"></div><p class="say" id="s1"></p></section>
+<section class="card"><h2>放大看：某一天、每 5 分鐘發生什麼事</h2><div class="ctl">入口 <select id="zv"></select> 日期 <select id="zd"></select></div><div class="scroll"><svg id="cz"></svg></div><div class="legend"><span><i class="sw" style="background:var(--s1)"></i>車速</span><span><i class="sw" style="background:var(--s3)"></i>小客車</span><span><i class="sw" style="background:var(--s4)"></i>機車</span><span><i class="sw" style="background:var(--s5)"></i>大車</span><span><i class="sw" style="background:var(--s2)"></i>佔有率（偵測器被車壓住的時間 %）</span></div><p class="say" id="sz"></p></section>
 <section class="card"><h2>一整天的車速</h2><div class="multi" id="c2"></div><p class="say" id="s2"></p></section>
 <section class="card"><h2>每小時有多少車經過？</h2><div class="scroll"><svg id="c3"></svg></div><p class="say" id="s3"></p></section>
 
@@ -340,7 +354,7 @@ function hbars(svg, rows, max) {
 
 // 1. 一天裡每個入口在哪一級（每 15 分鐘取各天的中位數，可切換兩把尺）
 $('l1').innerHTML = 'ABCDEF'.split('').map(k => `<span><i class="sw" style="background:var(${GCOL[k]})"></i>${k}${jammed(k) ? '（塞）' : ''}</span>`).join('') +
-  '<span><i class="sw" style="background:var(--empty)"></i>這把尺不適用</span>';
+  '<span><i class="sw" style="background:var(--empty)"></i>這把尺不適用</span><span><i class="sw" style="border:1px solid var(--axis)"></i>車太少，不判斷</span>';
 function c1() {
   const rule = $('ruler').value, svg = $('c1'), all = D.ents.flatMap(v => D.strip[v].map(c => c[0]));
   const x0 = Math.min(...all), x1 = Math.max(...all) + 15, L = 140, R = 8, rh = 28, H = D.ents.length * rh + 22;
@@ -351,8 +365,10 @@ function c1() {
   D.ents.forEach((v, i) => { const y = i * rh, tbl = rule === 'tw' ? TW[D.limit[v]] : HCM, am = [];
     const val = s => rule === 'tw' ? s : pctOf(v, s), why = D.limit[v] ? `速限 ${D.limit[v]} 的分級表待補` : '快速道路，市區道路的表不適用';
     g += `<text class="lab" x="0" y="${y + 17}">${N[v]}</text>`;
-    for (const [b, s, days] of D.strip[v]) {
-      const k = tbl && gradeOf(val(s), tbl), ds = Object.entries(days).sort();
+    for (const [b, s, days, n] of D.strip[v]) {
+      const few = n < D.min_cars, k = !few && tbl && gradeOf(val(s), tbl), ds = Object.entries(days).sort();
+      if (few) { g += `<rect x="${X(b) + .5}" y="${y + 3}" width="${Math.max(1, X(b + 15) - X(b) - 1)}" height="${rh - 8}" rx="2" fill="none" stroke="var(--axis)" ` +
+        `data-t="${N[v]} ${hhmm(b)}–${hhmm(b + 15)}｜${s} km/h，但 15 分鐘只有 ${n} 輛車<br>車太少時，幾台車剛好停紅燈車速就會很低，不判斷等級"/>`; continue; }
       const bad = tbl ? ds.filter(([, d]) => jammed(gradeOf(val(d), tbl))).length : 0;
       if (k && jammed(k) && b >= D.am[0] && b < D.am[1]) am.push(b);
       g += `<rect x="${X(b) + .5}" y="${y + 3}" width="${Math.max(1, X(b + 15) - X(b) - 1)}" height="${rh - 8}" rx="2" fill="var(${k ? GCOL[k] : '--empty'})" ` +
@@ -365,6 +381,52 @@ function c1() {
     : `用「${name}」這把尺，這幾天早上沒有入口落到 E 級以下。換另一把尺看看，或看下面的車速和流量圖。`);
 }
 $('ruler').onchange = c1; c1();
+
+// Z. 放大看：某個入口某一天每 5 分鐘的車速、車輛、佔有率，找出「什麼時候開始塞、那時候變了什麼」
+$('zv').innerHTML = D.ents.map(v => `<option value="${v}"${v === D.worst ? ' selected' : ''}>${N[v]}</option>`).join('');
+function zdays() { const v = $('zv').value, ds = Object.keys(D.detail[v] || {}).sort();
+  $('zd').innerHTML = ds.map((d, i) => `<option value="${d}"${i === ds.length - 1 ? ' selected' : ''}>${md(d)}</option>`).join(''); cz(); }
+function cz() {
+  const v = $('zv').value, d = $('zd').value, p = (D.detail[v] || {})[d] || [], svg = $('cz');
+  if (!p.length) { svg.innerHTML = ''; say('sz', '這一天沒有這個入口的資料。'); return; }
+  const x0 = p[0][0] - p[0][0] % 60, x1 = p[p.length - 1][0] + 5 + (60 - (p[p.length - 1][0] + 5) % 60) % 60;
+  const L = 48, R = 40, w = Math.max(W(svg), L + R + (x1 - x0) / 5 * 6), X = m => L + (m - x0) / (x1 - x0) * (w - L - R);
+  const P = [[8, 130], [150, 110], [272, 70]], H = 366;  // 三個小圖：車速、車輛、佔有率（上緣、高度）
+  const smax = Math.ceil(Math.max(60, ...p.map(q => q[1])) / 10) * 10, nmax = Math.max(10, ...p.map(q => q[2] + q[3] + q[4]));
+  const omax = Math.max(10, ...p.map(q => q[5] || 0));
+  let g = '';
+  for (let m = x0; m <= x1; m += 60) g += `<line x1="${X(m)}" x2="${X(m)}" y1="0" y2="${H - 18}" stroke="var(--grid)"/><text x="${X(m)}" y="${H - 4}" text-anchor="middle">${hhmm(m)}</text>`;
+  const [sy, sh] = P[0], Ys = s => sy + (1 - s / smax) * sh;
+  g += `<text x="${L - 6}" y="${sy + 10}" text-anchor="end">km/h</text><text x="${L - 6}" y="${Ys(D.bad[v]) + 4}" text-anchor="end">${Math.round(D.bad[v])}</text>`;
+  g += `<line x1="${L}" x2="${w - R}" y1="${Ys(D.bad[v])}" y2="${Ys(D.bad[v])}" stroke="var(--muted)" stroke-dasharray="4 4"/>`;
+  g += `<polyline fill="none" stroke="var(--s1)" stroke-width="2" points="${p.map(q => X(q[0] + 2.5) + ',' + Ys(q[1])).join(' ')}"/>`;
+  const [ny, nh] = P[1], Yn = n => ny + (1 - n / nmax) * nh, bw = Math.max(2, X(5) - X(0) - 1);
+  g += `<text x="${L - 6}" y="${ny + 10}" text-anchor="end">輛</text>`;
+  const [oy, oh] = P[2], Yo = o => oy + (1 - o / omax) * oh;
+  g += `<text x="${L - 6}" y="${oy + 10}" text-anchor="end">%</text>`;
+  for (const [m, s, mo, car, big, occ] of p) { let acc = 0;
+    for (const [n, col] of [[car, '--s3'], [mo, '--s4'], [big, '--s5']]) { if (!n) continue;
+      g += `<rect x="${X(m)}" y="${Yn(acc + n)}" width="${bw}" height="${Yn(acc) - Yn(acc + n)}" fill="var(${col})"/>`; acc += n; }
+    if (occ != null) g += `<rect x="${X(m)}" y="${Yo(occ)}" width="${bw}" height="${Yo(0) - Yo(occ)}" fill="var(--s2)" opacity=".8"/>`;
+    g += `<rect x="${X(m)}" y="0" width="${bw}" height="${H - 18}" fill="transparent" data-t="${md(d)} ${hhmm(m)}–${hhmm(m + 5)}｜${s} km/h<br>小客車 ${car}、機車 ${mo}、大車 ${big}（共 ${car + mo + big} 輛）` +
+      (occ != null ? `<br>佔有率 ${occ}%` : '') + `${car + mo + big < D.min_cars / 3 ? '<br>車很少，車速不可靠' : ''}"/>`; }
+  svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg);
+  // 第一次連續 2 筆低於塞車線、而且車不算少的時間；比較它前 30 分鐘和再前 30 分鐘
+  const tot = q => q[2] + q[3] + q[4], okq = q => tot(q) >= D.min_cars / 3;
+  const i = p.findIndex((q, j) => j > 0 && okq(q) && okq(p[j - 1]) && q[1] < D.bad[v] && p[j - 1][1] < D.bad[v]);
+  if (i < 0) { const lo = p.filter(okq).reduce((a, q) => q[1] < a[1] ? q : a, p.find(okq) || p[0]);
+    say('sz', `${md(d)}「${N[v]}」沒有連續低於塞車線（${Math.round(D.bad[v])} km/h）。車不算少的時段裡最慢是 ${hhmm(lo[0])}，${lo[1]} km/h、${tot(lo)} 輛。`); return; }
+  const t0 = p[i - 1][0], win = (a, b) => p.filter(q => q[0] >= a && q[0] < b);
+  const avg = (xs, f) => xs.length ? xs.reduce((s, q) => s + f(q), 0) / xs.length : null;
+  const before = win(t0 - 30, t0), earlier = win(t0 - 60, t0 - 30);
+  const nb = avg(before, tot), ne = avg(earlier, tot), ob = avg(before.filter(q => q[5] != null), q => q[5]), oe = avg(earlier.filter(q => q[5] != null), q => q[5]);
+  let why = '';
+  if (nb != null && ne) why += `開始塞之前 30 分鐘，每 5 分鐘平均 ${Math.round(nb)} 輛，比再前 30 分鐘（${Math.round(ne)} 輛）${nb >= ne ? '多' : '少'} ${Math.abs(Math.round((nb / ne - 1) * 100))}%`;
+  if (ob != null && oe != null) why += `；佔有率從 ${Math.round(oe)}% 變成 ${Math.round(ob)}%`;
+  say('sz', `${md(d)}「${N[v]}」從 ${hhmm(t0)} 開始連續低於塞車線（${Math.round(D.bad[v])} km/h）。` + (why ? why + '。' : '') +
+    '車變多、佔有率升高，通常是車流湧進來；車沒變多、車速卻掉下去，比較可能是下游塞回來（例如路口、匯入點），要看前後路段。');
+}
+$('zv').onchange = zdays; $('zd').onchange = cz; zdays();
 
 // 2. 一整天的車速（每個入口一張小圖，同一個刻度）
 (function () {
