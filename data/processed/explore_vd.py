@@ -4,12 +4,13 @@
 輸出：data/raw/explore.html（含真實資料，不進 git），接著執行 open data/raw/explore.html
 
 圖表
+ 手上有哪些資料：每天收到哪些時段（資料不完整時，看哪些分析能做）
  先看尺：怎麼判斷塞不塞（兩把尺）、最慢的時候剩平常車速的幾 %
  什麼時候塞：一天裡每個入口在哪一級（可切換尺）、一整天的車速、每小時多少車
  哪裡最塞：各入口最慢時的車速
  車多還是塞住了：車速和流量放在一起看
  早一點經過有差嗎：每 15 分鐘的平均車速（可切換入口）
- 每天都一樣嗎：每天塞了幾分鐘、最塞的 15 分鐘每天的車速
+ 每天都一樣嗎：每天早上塞了幾分鐘（只比早上資料完整的天）、最塞的 15 分鐘每天的車速
  都是什麼車：每 10 輛車的車種、機車和汽車幾點最多
 
 兩把尺（服務水準 A–F，E、F 級算「塞」）
@@ -33,6 +34,7 @@ RATIO = 0.4  # 低於平常車速的 40% 算塞：HCM 市區道路 E 級以下�
 LIMIT = {"VTXQJ20": 50, "VPMSV40": 50, "VQBUL20": 50, "VMLXB00": 50, "V6310G0": None}  # 速限，暫定；None＝快速道路
 CARS = ("vol_S", "vol_L", "vol_T")  # 車速與流量圖只算汽車，和排隊模型相同
 AM, PM = (6 * 60, 11 * 60), (15 * 60, 21 * 60)
+CORE = (7 * 60, 10 * 60 + 30)  # 晨峰的收集時段（與 collect_vd.py、GitHub Actions 相同）：比較每天時只看這一段
 BARS = (6 * 60, 10 * 60 + 30)  # 「早一點經過有差嗎」的時段
 
 
@@ -138,20 +140,34 @@ def build(rows):
     worst = max(ents, key=lambda v: (minutes[v], -min((s / free[v] for _, s in bars[v]), default=99)))
     wb = min(bars[worst], key=lambda x: x[1])[0] if bars[worst] else None
 
-    # 每天塞了幾分鐘（每筆讀數算 5 分鐘），各入口分開
-    jam_by_day = {d: {v: 5 * sum(1 for _, s, _ in by[v].get(d, []) if s < bad[v]) for v in ents} for d in days}
-
-    # 每小時多少車、機車和汽車幾點最多（5 個入口合計，每天平均）
-    hourly = defaultdict(lambda: [0, 0, 0])
+    # 資料涵蓋：每天每小時，5 個入口收到的讀數佔應有讀數（每支每小時 12 筆）的 %
+    cover = defaultdict(lambda: defaultdict(int))
     for v in ents:
-        for pts in by[v].values():
+        for d, pts in by[v].items():
+            for m, _, _ in pts:
+                cover[d][m // 60] += 1
+    cover = {d: {h: min(100, round(n / (len(ents) * 12) * 100)) for h, n in sorted(hs.items())} for d, hs in sorted(cover.items())}
+    # 晨峰時段（CORE）收到幾 %：每天只比這一段，免得收比較久的那天看起來比較塞
+    need = len(ents) * (CORE[1] - CORE[0]) // 5
+    am_cover = {d: min(100, round(sum(1 for v in ents for m, _, _ in by[v].get(d, []) if CORE[0] <= m < CORE[1]) / need * 100))
+                for d in days}
+
+    # 每天早上（CORE）塞了幾分鐘（每筆讀數算 5 分鐘），各入口分開
+    jam_by_day = {d: {v: 5 * sum(1 for m, s, _ in by[v].get(d, []) if s < bad[v] and CORE[0] <= m < CORE[1]) for v in ents}
+                  for d in days}
+
+    # 每小時多少車、機車和汽車幾點最多（5 個入口合計）：每小時除以那個小時有資料的天數，不是全部天數
+    hourly, hdays = defaultdict(lambda: [0, 0, 0]), defaultdict(set)
+    for v in ents:
+        for d, pts in by[v].items():
             for m, _, c in pts:
                 h = hourly[m // 60]
                 h[0] += sum(c.values())
                 h[1] += c["vol_M"]
                 h[2] += c["vol_S"]
-    nd = len(days) or 1
-    hourly = [[h * 60, round(t / nd), round(mo / nd), round(car / nd)] for h, (t, mo, car) in sorted(hourly.items())]
+                hdays[m // 60].add(d)
+    hourly = [[h * 60, round(t / len(hdays[h])), round(mo / len(hdays[h])), round(car / len(hdays[h]))]
+              for h, (t, mo, car) in sorted(hourly.items())]
 
     # 車種組成：有機車的偵測器合計（快速道路禁行機車，排除）
     tot = {k: 0 for k, _ in VEH}
@@ -165,7 +181,7 @@ def build(rows):
     mix = [[label, round(tot[k] / allc * 100, 1)] for k, label in VEH]
 
     return dict(names=names, ents=ents, worst=worst, worst_bin=wb, free=free, bad=bad, days=days, am=AM,
-                limit={v: LIMIT.get(v) for v in ents}, strip=strip, slow=slow, scatter=scatter,
+                limit={v: LIMIT.get(v) for v in ents}, strip=strip, slow=slow, scatter=scatter, cover=cover, am_cover=am_cover, core=CORE,
                 curve=curve, bars=bars, daily={v: dict(x) for v, x in daily.items()},
                 jam_by_day=jam_by_day, hourly=hourly, mix=mix)
 
@@ -184,6 +200,9 @@ __STYLE__
 .rule{border-collapse:collapse;font-size:13px;margin:6px 0 12px;width:100%}.rule th,.rule td{border:1px solid var(--grid);padding:4px 6px;text-align:center}
 .rule th{color:var(--ink2);font-weight:500}.rule td:first-child{text-align:left;color:var(--ink2)}.card p{font-size:14px;line-height:1.6;margin:6px 0}</style></head><body><main>
 <h1>這幾天的路況</h1><p class="sub" id="sub"></p>
+
+<p class="grp">手上有哪些資料</p>
+<section class="card"><h2>每天收到哪些時段？</h2><div class="scroll"><svg id="cv"></svg></div><div class="legend"><span>顏色越深，那一小時收到的讀數越完整（5 個入口、每 5 分鐘一筆）</span></div><p class="say" id="sv"></p></section>
 
 <p class="grp">先看尺</p>
 <section class="card"><h2>怎麼判斷塞不塞？</h2>
@@ -210,7 +229,7 @@ __STYLE__
 <section class="card"><h2>每 15 分鐘的平均車速</h2><div class="ctl">入口 <select id="pick"></select></div><div class="scroll"><svg id="c6"></svg></div><p class="say" id="s6"></p></section>
 
 <p class="grp">每天都一樣嗎</p>
-<section class="card"><h2>每天塞了幾分鐘？</h2><div class="scroll"><svg id="c7"></svg></div><div class="legend" id="l7"></div><p class="say" id="s7"></p></section>
+<section class="card"><h2>每天早上（07:00–10:30）塞了幾分鐘？</h2><div class="scroll"><svg id="c7"></svg></div><div class="legend" id="l7"></div><p class="say" id="s7"></p></section>
 <section class="card"><h2 id="h8">最塞的 15 分鐘，每天的車速</h2><div class="scroll"><svg id="c8"></svg></div><p class="say" id="s8"></p></section>
 
 <p class="grp">都是什麼車</p>
@@ -273,6 +292,26 @@ function hbars(svg, rows, max) {
     g += `<text class="lab" x="${L + Math.max(2, v / max * (w - L - R)) + 8}" y="${y + 15}">${txt}</text>`; });
   svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg);
 }
+
+// V. 每天收到哪些時段（資料不完整時，哪些比較能做、哪些要小心）
+(function () {
+  const svg = $('cv'), ds = Object.keys(D.cover), L = 70, R = 8, rh = 24, H = ds.length * rh + 22, w = Math.max(W(svg), L + R + 24 * 22);
+  const X = h => L + h / 24 * (w - L - R);
+  let g = '';
+  for (let h = 0; h <= 24; h += 3) g += `<text x="${X(h)}" y="${H - 4}" text-anchor="${h === 24 ? 'end' : 'middle'}">${hhmm(h * 60)}</text>`;
+  ds.forEach((d, i) => { const y = i * rh;
+    g += `<text class="lab" x="0" y="${y + 16}">${md(d)}</text>`;
+    for (let h = 0; h < 24; h++) { const c = D.cover[d][h] || 0;
+      g += `<rect x="${X(h) + .5}" y="${y + 3}" width="${X(h + 1) - X(h) - 1}" height="${rh - 7}" rx="2" fill="var(${c ? '--s1' : '--empty'})" opacity="${c ? .25 + .75 * c / 100 : 1}" data-t="${md(d)} ${hhmm(h * 60)}–${hhmm(h * 60 + 60)}｜收到 ${c}%"/>`; } });
+  svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg);
+  const full = (d, a, b) => [...Array(b - a).keys()].every(k => (D.cover[d][a + k] || 0) >= 80), core = `${hhmm(D.core[0])}–${hhmm(D.core[1])}`;
+  const mornings = ds.filter(d => (D.am_cover[d] || 0) >= 80), evenings = ds.filter(d => full(d, 17, 19));
+  const offpeak = ds.some(d => Object.entries(D.cover[d]).some(([h, c]) => c >= 50 && (h < 6 || (h >= 11 && h < 15) || h >= 21)));
+  say('sv', `早上 ${core} 收完整的有 ${mornings.length} 天（${mornings.map(md).join('、') || '無'}），` +
+    `傍晚 17:00–19:00 收完整的有 ${evenings.length} 天（${evenings.map(md).join('、') || '無'}）。` +
+    (mornings.length ? '晨峰的熱力圖、排隊模型和每天的比較，靠的就是這幾個早上。' : '還沒有完整的早上，晨峰的分析先不要下結論。') +
+    (offpeak ? '' : '<br>沒有深夜、清晨或中午的資料：「平常車速」只能從早上車少的時候估，可能偏低，所以「剩平常的幾 %」會看起來比實際順。補收一個晚上（例如 23:00–06:00）就能改善。'));
+})();
 
 // R. 最慢的時候剩平常車速的幾 %（所有入口用同一把尺，底色是 HCM 的 A–F）
 (function () {
@@ -409,12 +448,16 @@ $('pick').onchange = c6; c6();
   for (let v = 0; v <= top + 1e-9; v += st) g += `<line x1="${L}" x2="${w}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${L - 6}" y="${Y(v) + 4}" text-anchor="end">${fmt(v)}</text>`;
   ds.forEach((d, i) => { const x = L + i * bw + 8; let acc = 0;
     D.ents.forEach((v, j) => { const m = D.jam_by_day[d][v]; if (!m) return;
-      g += `<rect x="${x}" y="${Y(acc + m)}" width="${bw - 16}" height="${Y(acc) - Y(acc + m) - 2}" fill="var(${SER[j]})" data-t="${md(d)}｜${N[v]} 塞 ${m} 分鐘"/>`; acc += m; });
-    g += `<text class="lab" x="${x + (bw - 16) / 2}" y="${Y(acc) - 5}" text-anchor="middle">${acc}</text><text x="${x + (bw - 16) / 2}" y="${H - 6}" text-anchor="middle">${md(d)}</text>`; });
+      g += `<rect x="${x}" y="${Y(acc + m)}" width="${bw - 16}" height="${Y(acc) - Y(acc + m) - 2}" fill="var(${SER[j]})" opacity="${D.am_cover[d] < 80 ? .4 : 1}" data-t="${md(d)}｜${N[v]} 早上塞 ${m} 分鐘（早上資料收到 ${D.am_cover[d]}%）"/>`; acc += m; });
+    g += `<text class="lab" x="${x + (bw - 16) / 2}" y="${Y(acc) - 5}" text-anchor="middle">${acc}</text><text x="${x + (bw - 16) / 2}" y="${H - 6}" text-anchor="middle">${md(d)}${D.am_cover[d] < 80 ? '*' : ''}</text>`; });
   svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg);
   $('l7').innerHTML = D.ents.map((v, j) => `<span><i class="sw" style="background:var(${SER[j]})"></i>${N[v]}</span>`).join('');
-  const hi = tot.indexOf(Math.max(...tot)), lo = tot.indexOf(Math.min(...tot));
-  say('s7', ds.length < 2 ? '目前只有 1 天，多收幾天才能比較。' : `${md(ds[hi])} 最塞（5 個入口合計 ${tot[hi]} 分鐘），${md(ds[lo])} 最順（${tot[lo]} 分鐘），差 ${tot[hi] - tot[lo]} 分鐘。`);
+  // 只比早上資料收到 80% 以上的天；不完整的天顏色變淡、日期加 *
+  const ok = ds.map((d, i) => i).filter(i => D.am_cover[ds[i]] >= 80), part = ds.filter(d => D.am_cover[d] < 80).map(md);
+  const hi = ok.reduce((a, i) => tot[i] > tot[a] ? i : a, ok[0]), lo = ok.reduce((a, i) => tot[i] < tot[a] ? i : a, ok[0]);
+  say('s7', (ok.length < 2 ? '早上資料完整的天還不到 2 天，先不比較。' :
+    `只比早上資料完整的天：${md(ds[hi])} 最塞（5 個入口合計 ${tot[hi]} 分鐘），${md(ds[lo])} 最順（${tot[lo]} 分鐘），差 ${tot[hi] - tot[lo]} 分鐘。`) +
+    (part.length ? `${part.join('、')} 早上的資料不完整（*），只供參考。` : ''));
 })();
 
 // 8. 最塞的 15 分鐘，每天的車速
