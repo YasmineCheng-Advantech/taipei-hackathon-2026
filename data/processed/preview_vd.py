@@ -38,7 +38,8 @@ def load(paths):
                     continue
                 t = dt.datetime.fromisoformat(r["collect_time"])
                 rows.append(dict(vdid=r["vdid"], name=r["entrance"], t=t, speed=float(r["speed"]),
-                                 cars={k: int(r[k] or 0) for k, _ in VEH}))
+                                 cars={k: int(r[k] or 0) for k, _ in VEH},
+                                 occ=float(r["occupancy"]) if r.get("occupancy") not in (None, "") else None))
     return rows, skipped
 
 
