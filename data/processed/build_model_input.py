@@ -10,7 +10,8 @@
 
 方法（只算汽車：小客車＋大車＋聯結車。機車混在一般車道常漏數，排隊模型以汽車計）
 - 每天每 15 分鐘：汽車數加總（讀數少於 2 筆的格子不用，缺 1 筆時按比例補成 15 分鐘）；車速依車輛數加權。
-- 塞住：車速低於 20 km/h（和熱力圖的「塞」相同）。
+- 塞住：車速低於這支偵測器的塞車線＝平常車速（全部讀數的第 85 百分位）的一半，和 explore_vd.py 相同。
+  不用固定的 20 km/h：路段中間的偵測器在塞車時車速常常不會低於 20，會誤判成沒塞。--jam 可以指定固定值。
 - 容量：塞住的格子裡，偵測器數到的是排隊實際放行的速度，所以取這些格子汽車數的中位數；上下限取四分位數。
   收集期間都沒塞住時，只知道容量至少是最大的 15 分鐘汽車數，改標「情境假設」並警告。
 - 到達曲線：塞住時偵測器只數得到放行的車，數不到還在排隊的車，所以不能直接拿流量當到達。
@@ -27,6 +28,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from explore_vd import threshold
 from preview_vd import load
 
 HERE = Path(__file__).resolve().parent
@@ -35,7 +37,7 @@ OUT_MOCK = HERE.parent / "mock" / "inputs" / "model_input.json"
 
 VD, PLACE = "VPMSV40", "堤頂大道北向"
 CARS = ("vol_S", "vol_L", "vol_T")
-JAM = 20  # km/h，與 build_vd_15min.py 的 BAD_SPEED 相同
+JAM = None  # 塞車線（km/h），build_real 依資料設定：預設是平常車速的一半，或 --jam 指定的固定值
 MIN_READS = 2
 MIN_JAM = 3  # 塞住的格子少於這麼多，就不從資料估容量
 TIMES = [f"{(7 * 60 + 15 * i) // 60:02d}:{(7 * 60 + 15 * i) % 60:02d}" for i in range(14)]  # 07:00–10:15
@@ -77,9 +79,10 @@ def pct(xs, p):
 
 
 def read_bins(paths):
-    """回傳 {日期: {格: (汽車數/15 分鐘, 車速)}}，只取 VD、平日、07:00–10:30。"""
+    """回傳 ({日期: {格: (汽車數/15 分鐘, 車速)}}, 略過的讀數, 這支偵測器全部讀數的車速)；格子只取平日 07:00–10:30。"""
     rows, skipped = load(paths)
     reads = defaultdict(list)
+    speeds = [r["speed"] for r in rows if r["vdid"] == VD]
     for r in rows:
         t = r["t"]
         if r["vdid"] != VD or t.weekday() >= 5:
@@ -95,7 +98,7 @@ def read_bins(paths):
         n = sum(sum(r["cars"].values()) for r in rs)
         speed = sum(r["speed"] * sum(r["cars"].values()) for r in rs) / n if n else sum(r["speed"] for r in rs) / len(rs)
         days[d][i] = (cars * 3 / min(len(rs), 3), speed)
-    return dict(sorted(days.items())), skipped
+    return dict(sorted(days.items())), skipped, speeds
 
 
 def capacity(days):
@@ -184,10 +187,15 @@ def curve(p):
     return arrivals(p["base"], p["amp"], p["peak"], p["width"])
 
 
-def build_real(paths):
-    days, skipped = read_bins(paths)
+def build_real(paths, jam=None):
+    global JAM
+    days, skipped, speeds = read_bins(paths)
     if not days:
         sys.exit(f"沒有 {VD} 在平日 07:00–10:30 的讀數，請確認 csv 路徑")
+    free_speed, line = threshold(speeds)
+    JAM = jam or line
+    jam_why = "指定的固定值" if jam else f"平常車速 {free_speed} km/h（全部 {len(speeds):,} 筆讀數的第 85 百分位）的一半"
+    print(f"{VD} 的塞車線：{JAM} km/h（{jam_why}）")
     cap = capacity(days)
     fits = {k: params(*f) for k, f in fit(days, cap["value"]).items()}
     main = fits.pop("all")
@@ -204,6 +212,7 @@ def build_real(paths):
         built_at=dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(timespec="seconds"),
         days=list(days), bin_minutes=15, cols=TIMES,
         unit="輛/15 分鐘（汽車：小客車＋大車＋聯結車，不含機車）",
+        jam_line=dict(value=JAM, free_speed=free_speed, unit="km/h", note=f"車速低於這個值算塞住：{jam_why}"),
         capacity=cap,
         arrival=dict(
             values=arr,
@@ -224,7 +233,7 @@ def build_real(paths):
         skipped_reads=skipped,
         assumptions=[
             "瓶頸只有一個：堤頂大道北向，以 VPMSV40（民權東路–舊宗路）代表；下游 VRPSV00、VRHT600 未納入。",
-            f"塞住＝車速低於 {JAM} km/h；塞住時偵測器數到的就是瓶頸的放行速度。",
+            f"塞住＝車速低於 {JAM} km/h（{jam_why}）；塞住時偵測器數到的就是瓶頸的放行速度。",
             "到達曲線是一條鐘形曲線；塞住那段的形狀資料看不出來，寬度分不出來時偏向 2015 年調查推出的 1.8 格。",
             "只算汽車，不含機車；排隊模型的結果只適合解讀汽車。",
             f"資料只有 {len(days)} 個平日早上，不代表長期的平常日。",
@@ -253,12 +262,13 @@ def main(argv):
     ap = argparse.ArgumentParser(description="產生排隊模型的輸入 model_input.json")
     ap.add_argument("csv", nargs="*", help="收集程式的 vd_taipei_targets.csv")
     ap.add_argument("--mock", action="store_true", help="不讀資料，輸出目前的假設值")
+    ap.add_argument("--jam", type=float, help="塞車線改用固定值（km/h），預設是平常車速的一半")
     ap.add_argument("--out", type=Path)
     args = ap.parse_args(argv)
     if not args.mock and not args.csv:
         print(__doc__.strip())
         return 2
-    doc = build_mock() if args.mock else build_real(args.csv)
+    doc = build_mock() if args.mock else build_real(args.csv, args.jam)
     out = args.out or (OUT_MOCK if args.mock else OUT_REAL)
     out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     c, a = doc["capacity"], doc["arrival"]
