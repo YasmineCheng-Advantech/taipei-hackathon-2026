@@ -6,36 +6,33 @@
 <title>Traffic Gem｜內科晨峰</title>
 <meta name="description" content="告訴我們你從哪裡來、幾點要到，幫你挑一個比較不塞的時段經過內湖入口。">
 <meta property="og:title" content="Traffic Gem｜把塞車捲起來">
-<meta property="og:description" content="每 15 分鐘一格，找出你經過堤頂大道、成美橋時比較順的那一格。">
+<meta property="og:description" content="每 15 分鐘一格，挑出你經過堤頂大道、成美橋時比較順的那一格。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&amp;family=Noto+Sans+TC:wght@400;500;700&amp;family=IBM+Plex+Mono:wght@500;600&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
 <style>
-/* 色碼沿用 Tokens.dc.html；品牌只新增銅色，且只用在字標與裝飾，不用在按鈕 */
+/* 橘色代表塞車（插畫與字標），青色代表行動（按鈕、建議時段），和錯峰情境「藍＝改善」的色階一致 */
 :root {
   color-scheme: light;
-  --bg: #F5F4EF;
-  --sky-top: #FBF7F0;
-  --sky-low: #F8E7D3;
-  --ink: #1A1D21;
-  --ink-2: #4A4F56;
-  --line: #E6DACB;
-  --navy: #1F4E79;
-  --navy-hover: #123150;
-  --copper: #B5652F;
-  --copper-text: #9A4F1F;
-  --card: rgba(255, 255, 255, 0.94);
+  --orange: #D9522A;
+  --orange-text: #A63C16;
+  --brown: #3A2418;
+  --brown-2: #6B4A3A;
+  --tagline: #5A2410;
+  --cyan: #40CBE2;
+  --cyan-ink: #0B3A4A;
+  --cyan-deep: #0E6F84;
+  --cream: #FDF1E8;
   --c1: #FEF3DC; --c2: #FDD9A0; --c3: #FCB46E; --c4: #F2804A; --c5: #C93A22; --c6: #7E170F;
   --hatch: repeating-linear-gradient(135deg, rgba(255,255,255,0.55) 0 1.5px, transparent 1.5px 5px);
+  --display: 'Grandstander', 'Noto Sans TC', system-ui, sans-serif;
   --sans: 'Noto Sans TC', system-ui, sans-serif;
-  --serif: 'Playfair Display', 'Noto Serif TC', Georgia, serif;
-  --mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
-  background: var(--bg);
-  color: var(--ink);
+  background: #FFF8F2;
+  color: var(--brown);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
 }
@@ -44,86 +41,81 @@ body {
   max-width: 480px;
   min-height: 100svh;
   margin: 0 auto;
-  background: linear-gradient(180deg, var(--sky-top) 0%, #FAF0E4 34%, var(--sky-low) 52%, var(--bg) 100%);
+  /* 插畫上下緣淡出到這層底色；橘色光暈對齊插畫底部的陰影 */
+  background:
+    radial-gradient(75% 300px at 50% 640px, rgba(242, 150, 85, 0.42), rgba(242, 150, 85, 0) 70%),
+    linear-gradient(180deg, #FFFFFF 0px, var(--cream) 200px, #FBE3D2 420px, #F9D5BA 600px, #FADCC6 760px, var(--cream) 1000px, #FFF8F2 100%);
 }
 
 /* 頁首 */
 .top {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 20px 0;
-  height: 60px;
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; padding: 14px 20px 0;
 }
-.logo { display: flex; align-items: center; gap: 8px; color: var(--copper); text-decoration: none; }
+.logo { display: flex; color: var(--orange); }
 .menu {
-  width: 44px; height: 44px; margin-right: -10px;
+  width: 44px; height: 44px; margin-right: -8px;
   display: grid; place-items: center;
-  border: 0; background: none; color: var(--ink); cursor: pointer;
+  border: 0; background: none; color: #C2481E; cursor: pointer;
 }
 
-/* 標題區 */
-.intro { position: relative; z-index: 2; padding: 14px 24px 0; }
+/* 標題 */
+.intro { position: relative; z-index: 2; padding: 8px 24px 0; }
 .eyebrow {
-  margin: 0 0 10px;
-  font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
-  color: var(--copper-text);
+  margin: 0 0 6px;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.1em;
+  color: var(--orange-text);
 }
 .wordmark {
   margin: 0;
-  font-family: var(--serif); font-weight: 500;
-  font-size: clamp(50px, 15vw, 68px);
-  line-height: 0.98; letter-spacing: -0.01em;
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(54px, 16vw, 70px);
+  line-height: 1; letter-spacing: 0.01em;
+  color: var(--orange);
 }
 .wordmark span { display: block; }
-.wordmark .gem { color: var(--copper); }
-.rule { width: 36px; height: 2px; margin: 20px 0 18px; background: var(--copper); border: 0; }
-.lead {
-  margin: 0;
-  font-size: 19px; font-weight: 500; line-height: 1.6; letter-spacing: 0.04em;
-}
-.sub {
-  margin: 10px 0 0;
-  max-width: 21em;
-  font-size: 14.5px; line-height: 1.7; letter-spacing: 0.03em;
-  color: var(--ink-2);
-}
 
-/* 右上角的弧線：沿用原稿，但不壓到任何文字 */
-.arc {
-  position: absolute; z-index: 0;
-  top: 40px; right: 0;
-  width: 170px; height: 260px;
-  -webkit-mask-image: linear-gradient(180deg, #000 55%, transparent);
-  mask-image: linear-gradient(180deg, #000 55%, transparent);
-  pointer-events: none;
+/* 插畫：取自設計稿，已去掉原本畫在圖上的字，副標改用網頁文字疊上去 */
+.hero {
+  position: relative; z-index: 1;
+  margin-top: -18px;
+  aspect-ratio: 781 / 765;
 }
-
-/* 插畫：裝飾用，不是實景，所以不用照片；接在文字後面，天際線不會壓到字 */
-.scene-wrap { position: relative; z-index: 1; height: 152px; pointer-events: none; }
-.scene {
+.hero img {
+  display: block; width: 100%; height: 100%;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 5%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 5%, #000 80%, transparent 100%);
+}
+.slogan {
   position: absolute;
-  left: 0; top: -90px;
-  width: 100%; height: 330px;
+  left: 24px; top: 14%;
+  margin: 0;
+  font-size: clamp(14px, 3.9vw, 16px); font-weight: 500;
+  line-height: 1.65; letter-spacing: 0.16em;
+  color: var(--orange-text);
 }
 
-/* 結果預覽卡：取代原稿的「15 min」圓盤 */
+.tagline {
+  position: relative; z-index: 2;
+  margin: -46px 0 0; padding: 0 20px;
+  text-align: center;
+  font-size: clamp(17px, 5vw, 22px); font-weight: 900;
+  line-height: 1.6; letter-spacing: 0.06em;
+  color: var(--tagline);
+}
+
+/* 結果預覽卡 */
 .preview {
-  position: relative;
-  z-index: 2;
-  margin: 0 16px;
+  position: relative; z-index: 2;
+  margin: 20px 16px 0;
   padding: 16px 16px 14px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  box-shadow: 0 14px 34px rgba(110, 72, 36, 0.13);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  background: #FFFFFF;
+  border-radius: 26px;
+  box-shadow: 0 16px 36px rgba(214, 100, 40, 0.18), inset 0 -3px 0 rgba(214, 100, 40, 0.08);
 }
 .preview-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.preview-kicker { font-size: 13px; color: var(--ink-2); }
+.preview-kicker { font-size: 13px; color: var(--brown-2); }
 .sim-badge {
   padding: 3px 9px;
   border-radius: 999px;
@@ -133,39 +125,40 @@ body {
   background-image: repeating-linear-gradient(135deg, rgba(122,82,0,0.12) 0 1.5px, transparent 1.5px 5px);
   box-shadow: inset 0 0 0 1px #EBD9AE;
 }
-.preview-main { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
-.preview-time { font-family: var(--mono); font-weight: 600; font-size: 38px; line-height: 1.1; color: var(--navy); }
+.preview-main { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.preview-time { font-family: var(--display); font-weight: 800; font-size: 42px; line-height: 1.1; color: var(--cyan-deep); }
 .preview-where { font-size: 16px; font-weight: 700; }
-.preview-where small { font-size: 13px; font-weight: 400; color: var(--ink-2); margin-left: 2px; }
-.preview-gain { margin: 4px 0 0; font-size: 14.5px; line-height: 1.6; }
-.preview-gain b { font-family: var(--mono); font-weight: 600; }
-.preview-gain .dot { color: #B9AE9F; margin: 0 6px; }
+.preview-where small { font-size: 13px; font-weight: 400; color: var(--brown-2); margin-left: 2px; }
+.preview-gain { margin: 2px 0 0; font-size: 14.5px; line-height: 1.6; }
+.preview-gain b { font-weight: 900; }
+.preview-gain .dot { color: #D9B8A2; margin: 0 6px; }
 
-.strip-wrap { margin-top: 26px; }
-.strip { position: relative; display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px; }
+.strip-wrap { margin-top: 28px; }
+.strip { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
 .cell {
   position: relative;
-  height: 26px; border-radius: 4px;
+  height: 28px; border-radius: 8px;
   background-image: var(--hatch);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08), inset 0 2px 0 rgba(255, 255, 255, 0.45);
 }
-.cell.l1 { background-color: var(--c1); box-shadow: inset 0 0 0 1px #E6DFCB; }
+.cell.l1 { background-color: var(--c1); box-shadow: inset 0 0 0 1px #EEDFC6, inset 0 -3px 0 rgba(0,0,0,0.05); }
 .cell.l2 { background-color: var(--c2); }
 .cell.l3 { background-color: var(--c3); }
 .cell.l4 { background-color: var(--c4); }
 .cell.l5 { background-color: var(--c5); }
 .cell.l6 { background-color: var(--c6); }
-.cell.pick { box-shadow: 0 0 0 2.5px var(--navy); }
+.cell.pick { box-shadow: 0 0 0 3px var(--cyan-deep), inset 0 -3px 0 rgba(0,0,0,0.05); }
 .tag {
-  position: absolute; bottom: calc(100% + 6px);
-  padding: 1px 7px; border-radius: 999px;
-  font-size: 11.5px; font-weight: 500; white-space: nowrap; line-height: 1.5;
+  position: absolute; bottom: calc(100% + 7px);
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; white-space: nowrap; line-height: 1.5;
 }
-.tag.pick { right: -2px; background: var(--navy); color: #fff; }
-.tag.usual { left: 2px; background: #fff; color: var(--ink-2); box-shadow: inset 0 0 0 1px #CFC6B8; }
+.tag.pick { right: -3px; background: var(--cyan); color: var(--cyan-ink); }
+.tag.usual { left: 3px; background: #FFFFFF; color: var(--brown-2); font-weight: 500; box-shadow: inset 0 0 0 1px #E2CDBE; }
 .axis {
-  display: grid; grid-template-columns: repeat(10, 1fr); gap: 3px;
+  display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px;
   margin-top: 5px;
-  font-family: var(--mono); font-size: 11px; color: var(--ink-2);
+  font-size: 11.5px; color: var(--brown-2); font-variant-numeric: tabular-nums;
 }
 .axis span:nth-child(1) { grid-column: 1; }
 .axis span:nth-child(2) { grid-column: 5; }
@@ -173,49 +166,54 @@ body {
 .legend {
   display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
   margin-top: 10px;
-  font-size: 12px; color: var(--ink-2);
+  font-size: 12px; color: var(--brown-2);
 }
 .legend .scale { display: inline-flex; gap: 2px; }
-.legend .scale i { width: 12px; height: 8px; border-radius: 2px; display: block; }
+.legend .scale i { width: 12px; height: 8px; border-radius: 3px; display: block; }
 .legend .sep { flex: 1; }
 .honest {
   margin: 12px 0 0; padding-top: 10px;
-  border-top: 1px dashed var(--line);
-  font-size: 12.5px; line-height: 1.6; color: var(--ink-2);
+  border-top: 2px dotted #F1DCCD;
+  font-size: 12.5px; line-height: 1.6; color: var(--brown-2);
 }
 
 .pro-link {
   display: block;
   margin: 18px 24px 0;
-  font-size: 14px; color: var(--navy); text-decoration: none;
+  font-size: 14px; color: var(--cyan-deep); text-decoration: none;
 }
-.pro-link:hover { color: var(--navy-hover); text-decoration: underline; }
+.pro-link:hover { text-decoration: underline; }
 
 /* 主要按鈕固定在底部：LINE 內建瀏覽器的可視高度較矮，按鈕不能被擠到第一屏外 */
 .cta-bar {
   position: sticky; bottom: 0; z-index: 3;
   margin-top: 22px;
   padding: 26px 20px calc(14px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(245,244,239,0) 0%, var(--bg) 34%);
+  background: linear-gradient(180deg, rgba(253, 241, 232, 0) 0%, var(--cream) 34%);
   text-align: center;
 }
 .cta {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  height: 60px;
   border-radius: 999px;
-  background: var(--navy);
-  color: #fff;
-  font-size: 17px; font-weight: 700; letter-spacing: 0.08em;
+  background: var(--cyan);
+  color: var(--cyan-ink);
+  font-size: 19px; font-weight: 900; letter-spacing: 0.14em;
   text-decoration: none;
-  box-shadow: 0 10px 24px rgba(31, 78, 121, 0.28);
+  /* 和插畫一樣的「膨膨」質感 */
+  box-shadow:
+    inset 0 -5px 0 rgba(0, 70, 90, 0.16),
+    inset 0 4px 0 rgba(255, 255, 255, 0.45),
+    0 10px 22px rgba(30, 170, 200, 0.35);
 }
-.cta:hover { background: var(--navy-hover); }
-.cta:focus-visible, .pro-link:focus-visible, .menu:focus-visible { outline: 3px solid var(--copper); outline-offset: 3px; }
-.cta-note { margin: 9px 0 0; font-size: 12.5px; color: var(--ink-2); }
+.cta:hover { background: #5AD3E7; }
+.cta:active { transform: translateY(1px); }
+.cta:focus-visible, .pro-link:focus-visible, .menu:focus-visible { outline: 3px solid var(--cyan-deep); outline-offset: 3px; }
+.cta-note { margin: 9px 0 0; font-size: 12.5px; color: var(--brown-2); }
 
 .foot {
   padding: 4px 24px 28px;
-  font-size: 11.5px; line-height: 1.7; color: var(--ink-2);
+  font-size: 11.5px; line-height: 1.7; color: var(--brown-2);
 }
 </style>
 </head>
@@ -225,100 +223,27 @@ body {
   <header class="top">
     <a class="logo" href="#" aria-label="Traffic Gem 首頁">
       <!-- 字標：一條被捲起來的路，對應「把塞車捲起來」 -->
-      <svg width="34" height="34" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true">
+      <svg width="36" height="36" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true">
         <path d="M14 3 A11 11 0 0 1 14 25 A9 9 0 0 1 14 7 A7 7 0 0 1 14 21 A5 5 0 0 1 14 11"/>
       </svg>
     </a>
     <button class="menu" type="button" aria-label="開啟選單">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
   </header>
-
-  <svg class="arc" viewBox="0 0 170 260" aria-hidden="true">
-    <circle cx="212" cy="150" r="130" fill="none" stroke="#B5652F" stroke-opacity="0.28"/>
-    <circle cx="212" cy="150" r="100" fill="none" stroke="#B5652F" stroke-opacity="0.16"/>
-  </svg>
-
 
   <main>
     <section class="intro">
       <p class="eyebrow">內科晨峰・平日 07:00–09:30</p>
-      <h1 class="wordmark"><span>Traffic</span><span class="gem">Gem</span></h1>
-      <hr class="rule">
-      <p class="lead">告訴我們你從哪裡來、幾點要到，<br>幫你挑一個比較不塞的時段。</p>
-      <p class="sub">把塞車捲起來：每 15 分鐘一格，找出你經過堤頂大道、成美橋時比較順的那一格。</p>
+      <h1 class="wordmark"><span>Traffic</span><span>Gem</span></h1>
     </section>
 
-    <div class="scene-wrap" aria-hidden="true">
-    <!-- 晨光、山、天際線與橋：插畫風格，明顯不是實景照片 -->
-    <svg class="scene" viewBox="0 0 390 330" preserveAspectRatio="xMidYMin slice">
-      <defs>
-        <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
-          <stop offset="0" stop-color="#FFF5E3" stop-opacity="1"/>
-          <stop offset="0.35" stop-color="#FCE6C8" stop-opacity="0.85"/>
-          <stop offset="1" stop-color="#F8E7D3" stop-opacity="0"/>
-        </radialGradient>
-        <linearGradient id="river" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#F1DCC5"/>
-          <stop offset="1" stop-color="#F3E6D6"/>
-        </linearGradient>
-        <linearGradient id="tower" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0" stop-color="#C29E82"/>
-          <stop offset="0.55" stop-color="#D6B89C"/>
-          <stop offset="1" stop-color="#B79378"/>
-        </linearGradient>
-      </defs>
-
-      <circle cx="300" cy="150" r="150" fill="url(#sun)"/>
-      <circle cx="300" cy="158" r="20" fill="#FFF7EA"/>
-
-      <path d="M0 176 C40 150 80 132 128 146 S212 118 258 140 S340 146 390 128 L390 330 L0 330 Z" fill="#EBD4BC"/>
-      <path d="M0 196 C42 182 84 176 124 186 S206 178 246 188 S330 178 390 186 L390 330 L0 330 Z" fill="#E3C6A9"/>
-
-      <g fill="#CFAD90">
-        <rect x="6" y="186" width="16" height="44"/><rect x="24" y="172" width="12" height="58"/>
-        <rect x="40" y="194" width="20" height="36"/><rect x="64" y="180" width="10" height="50"/>
-        <rect x="78" y="198" width="22" height="32"/><rect x="104" y="188" width="14" height="42"/>
-        <rect x="150" y="196" width="18" height="34"/><rect x="172" y="184" width="12" height="46"/>
-        <rect x="188" y="200" width="24" height="30"/><rect x="226" y="190" width="14" height="40"/>
-        <rect x="244" y="176" width="16" height="54"/>
-      </g>
-      <g>
-        <rect x="268" y="132" width="26" height="98" fill="url(#tower)"/>
-        <rect x="298" y="104" width="34" height="126" fill="url(#tower)"/>
-        <rect x="336" y="146" width="22" height="84" fill="url(#tower)"/>
-        <rect x="360" y="92" width="34" height="138" fill="url(#tower)"/>
-        <rect x="305" y="104" width="5" height="126" fill="#F2DFC9" opacity="0.55"/>
-        <rect x="368" y="92" width="5" height="138" fill="#F6E6D2" opacity="0.6"/>
-      </g>
-
-      <rect x="0" y="230" width="390" height="100" fill="url(#river)"/>
-      <g stroke="#FBF1E4" stroke-width="1.5" stroke-linecap="round" opacity="0.9">
-        <path d="M262 252h40M286 262h28M250 274h22M300 280h36M40 266h26M90 288h30"/>
-      </g>
-
-      <!-- 聯外橋樑 -->
-      <g fill="#8E7A6A">
-        <rect x="37" y="232" width="6" height="40"/><rect x="102" y="225" width="6" height="47"/>
-        <rect x="167" y="221" width="6" height="51"/><rect x="232" y="220" width="6" height="52"/>
-        <rect x="297" y="223" width="6" height="49"/><rect x="362" y="229" width="6" height="43"/>
-      </g>
-      <path d="M-10 238 Q195 202 400 232" fill="none" stroke="#6F5E52" stroke-width="8"/>
-      <path d="M-10 233 Q195 197 400 227" fill="none" stroke="#F3E3D0" stroke-width="1.2"/>
-
-      <!-- 車：左邊擠成一串，右邊散開 -->
-      <g>
-        <g transform="translate(22.8 228.2) rotate(-8.5)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#F8F1E6"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(37.5 226) rotate(-8)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#1F4E79"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(52.4 223.8) rotate(-7.2)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#3F4A55"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(67.3 222) rotate(-6.6)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#F8F1E6"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(82.3 220.3) rotate(-6)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#B5652F"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(182.7 214.2) rotate(-1.4)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#F8F1E6"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(277 215.4) rotate(2.8)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#3F4A55"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-        <g transform="translate(342.6 220.4) rotate(5.8)"><rect x="-6" y="-3" width="12" height="6" rx="2" fill="#1F4E79"/><circle cx="5" cy="0" r="1.1" fill="#FFE7B0"/></g>
-      </g>
-    </svg>
+    <div class="hero">
+      <img src="hero-toy-road.webp" width="781" height="765" alt="">
+      <p class="slogan">把塞車捲起來，<br>每 15 分鐘一格，<br>挑出比較順的那格。</p>
     </div>
+
+    <p class="tagline">告訴我們你從哪裡來、幾點要到，<br>幫你挑一個比較不塞的時段。</p>
 
     <!-- 數字取自 data/mock/t4-morning.json：堤頂大道北向、08:30 前到公司 -->
     <article class="preview" aria-label="結果範例">
@@ -352,7 +277,7 @@ body {
         <span>每格 15 分鐘</span>
         <span class="sep"></span>
         <span>順</span>
-        <span class="scale" aria-hidden="true"><i style="background:var(--c1);box-shadow:inset 0 0 0 1px #E6DFCB"></i><i style="background:var(--c2)"></i><i style="background:var(--c3)"></i><i style="background:var(--c4)"></i><i style="background:var(--c5)"></i><i style="background:var(--c6)"></i></span>
+        <span class="scale" aria-hidden="true"><i style="background:var(--c1);box-shadow:inset 0 0 0 1px #EEDFC6"></i><i style="background:var(--c2)"></i><i style="background:var(--c3)"></i><i style="background:var(--c4)"></i><i style="background:var(--c5)"></i><i style="background:var(--c6)"></i></span>
         <span>塞</span>
       </div>
 
@@ -362,8 +287,8 @@ body {
     <a class="pro-link" href="#">市府與企業：看熱力圖與協商一頁紙 →</a>
 
     <div class="cta-bar">
-      <a class="cta" href="#">開始設定，約 30 秒</a>
-      <p class="cta-note">不用註冊・設定只存在你的手機</p>
+      <a class="cta" href="#">點我挑時段！</a>
+      <p class="cta-note">約 30 秒・不用註冊・設定只存在你的手機</p>
     </div>
 
     <footer class="foot">本頁數字為模擬範例。正式版使用臺北市交工處 VD 實測車速，沒有偵測器的入口不補數字。</footer>

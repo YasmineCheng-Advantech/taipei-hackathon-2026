@@ -12,7 +12,7 @@
 | [`ROLES.md`](ROLES.md) | 賽前分工：網站、資料、設計三人的交付物、完成標準與交接時程 |
 | [`HANDOVER.md`](HANDOVER.md) | 交接文件：競賽規則、議題 #4 對齊分析、紅隊審查、題目推測與賽前準備、資料清單 |
 | [`design/heatmap-canvas/`](design/heatmap-canvas/) | 設計範本：熱力儀表板、錯峰情境、視覺規範、結果導向的手機畫面流程，以及交通類 6 個推測題目的熱力圖、民眾與城市畫面 |
-| [`design/landing/`](design/landing/) | 首頁改稿：依視覺提案第二張修改的手機首頁，附修改理由與對比數字 |
+| [`design/landing/`](design/landing/) | 首頁改稿：依視覺提案第一張（3D 玩具車）修改的手機首頁，附修改理由與對比數字 |
 | [`docs/vd-explore/`](docs/vd-explore/) | 探索紀錄：用收集到的 VD 資料畫的 10 張圖與說明（找靈感用，待看） |
 
 ## 產品結構
