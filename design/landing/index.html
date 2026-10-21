@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Traffic Gem｜內科晨峰</title>
+<meta name="description" content="告訴我們你從哪裡來、幾點要到，幫你挑一個比較不塞的時段經過內湖入口。">
+<meta property="og:title" content="Traffic Gem｜把塞車捲起來">
+<meta property="og:description" content="每 15 分鐘一格，挑出你經過堤頂大道、成美橋時比較順的那一格。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap" rel="stylesheet">
+<style>
+/* 橘色代表塞車（插畫與字標），青色代表行動（按鈕、建議時段），和錯峰情境「藍＝改善」的色階一致 */
+:root {
+  color-scheme: light;
+  --orange: #D9522A;
+  --orange-text: #A63C16;
+  --brown: #3A2418;
+  --brown-2: #6B4A3A;
+  --tagline: #5A2410;
+  --cyan: #40CBE2;
+  --cyan-ink: #0B3A4A;
+  --cyan-deep: #0E6F84;
+  --cream: #FDF1E8;
+  --c1: #FEF3DC; --c2: #FDD9A0; --c3: #FCB46E; --c4: #F2804A; --c5: #C93A22; --c6: #7E170F;
+  --hatch: repeating-linear-gradient(135deg, rgba(255,255,255,0.55) 0 1.5px, transparent 1.5px 5px);
+  --display: 'Grandstander', 'Noto Sans TC', system-ui, sans-serif;
+  --sans: 'Noto Sans TC', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: #FFF8F2;
+  color: var(--brown);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+.page {
+  position: relative;
+  max-width: 480px;
+  min-height: 100svh;
+  margin: 0 auto;
+  /* 插畫上下緣淡出到這層底色；橘色光暈對齊插畫底部的陰影 */
+  background:
+    radial-gradient(75% 300px at 50% 640px, rgba(242, 150, 85, 0.42), rgba(242, 150, 85, 0) 70%),
+    linear-gradient(180deg, #FFFFFF 0px, var(--cream) 200px, #FBE3D2 420px, #F9D5BA 600px, #FADCC6 760px, var(--cream) 1000px, #FFF8F2 100%);
+}
+
+/* 頁首 */
+.top {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 60px; padding: 14px 20px 0;
+}
+.logo { display: flex; color: var(--orange); }
+.menu {
+  width: 44px; height: 44px; margin-right: -8px;
+  display: grid; place-items: center;
+  border: 0; background: none; color: #C2481E; cursor: pointer;
+}
+
+/* 標題 */
+.intro { position: relative; z-index: 2; padding: 8px 24px 0; }
+.eyebrow {
+  margin: 0 0 6px;
+  font-size: 13px; font-weight: 500; letter-spacing: 0.1em;
+  color: var(--orange-text);
+}
+.wordmark {
+  margin: 0;
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(54px, 16vw, 70px);
+  line-height: 1; letter-spacing: 0.01em;
+  color: var(--orange);
+}
+.wordmark span { display: block; }
+
+/* 插畫：取自設計稿，已去掉原本畫在圖上的字，副標改用網頁文字疊上去 */
+.hero {
+  position: relative; z-index: 1;
+  margin-top: -18px;
+  aspect-ratio: 781 / 765;
+}
+.hero img {
+  display: block; width: 100%; height: 100%;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 5%, #000 80%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 5%, #000 80%, transparent 100%);
+}
+.slogan {
+  position: absolute;
+  left: 24px; top: 14%;
+  margin: 0;
+  font-size: clamp(14px, 3.9vw, 16px); font-weight: 500;
+  line-height: 1.65; letter-spacing: 0.16em;
+  color: var(--orange-text);
+}
+
+.tagline {
+  position: relative; z-index: 2;
+  margin: -46px 0 0; padding: 0 20px;
+  text-align: center;
+  font-size: clamp(17px, 5vw, 22px); font-weight: 900;
+  line-height: 1.6; letter-spacing: 0.06em;
+  color: var(--tagline);
+}
+
+/* 結果預覽卡 */
+.preview {
+  position: relative; z-index: 2;
+  margin: 20px 16px 0;
+  padding: 16px 16px 14px;
+  background: #FFFFFF;
+  border-radius: 26px;
+  box-shadow: 0 16px 36px rgba(214, 100, 40, 0.18), inset 0 -3px 0 rgba(214, 100, 40, 0.08);
+}
+.preview-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.preview-kicker { font-size: 13px; color: var(--brown-2); }
+.sim-badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px; font-weight: 500;
+  color: #7A5200;
+  background-color: #FBF0D9;
+  background-image: repeating-linear-gradient(135deg, rgba(122,82,0,0.12) 0 1.5px, transparent 1.5px 5px);
+  box-shadow: inset 0 0 0 1px #EBD9AE;
+}
+.preview-main { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+.preview-time { font-family: var(--display); font-weight: 800; font-size: 42px; line-height: 1.1; color: var(--cyan-deep); }
+.preview-where { font-size: 16px; font-weight: 700; }
+.preview-where small { font-size: 13px; font-weight: 400; color: var(--brown-2); margin-left: 2px; }
+.preview-gain { margin: 2px 0 0; font-size: 14.5px; line-height: 1.6; }
+.preview-gain b { font-weight: 900; }
+.preview-gain .dot { color: #D9B8A2; margin: 0 6px; }
+
+.strip-wrap { margin-top: 28px; }
+.strip { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+.cell {
+  position: relative;
+  height: 28px; border-radius: 8px;
+  background-image: var(--hatch);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.08), inset 0 2px 0 rgba(255, 255, 255, 0.45);
+}
+.cell.l1 { background-color: var(--c1); box-shadow: inset 0 0 0 1px #EEDFC6, inset 0 -3px 0 rgba(0,0,0,0.05); }
+.cell.l2 { background-color: var(--c2); }
+.cell.l3 { background-color: var(--c3); }
+.cell.l4 { background-color: var(--c4); }
+.cell.l5 { background-color: var(--c5); }
+.cell.l6 { background-color: var(--c6); }
+.cell.pick { box-shadow: 0 0 0 3px var(--cyan-deep), inset 0 -3px 0 rgba(0,0,0,0.05); }
+.tag {
+  position: absolute; bottom: calc(100% + 7px);
+  padding: 1px 8px; border-radius: 999px;
+  font-size: 12px; font-weight: 700; white-space: nowrap; line-height: 1.5;
+}
+.tag.pick { right: -3px; background: var(--cyan); color: var(--cyan-ink); }
+.tag.usual { left: 3px; background: #FFFFFF; color: var(--brown-2); font-weight: 500; box-shadow: inset 0 0 0 1px #E2CDBE; }
+.axis {
+  display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px;
+  margin-top: 5px;
+  font-size: 11.5px; color: var(--brown-2); font-variant-numeric: tabular-nums;
+}
+.axis span:nth-child(1) { grid-column: 1; }
+.axis span:nth-child(2) { grid-column: 5; }
+.axis span:nth-child(3) { grid-column: 9; }
+.legend {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  margin-top: 10px;
+  font-size: 12px; color: var(--brown-2);
+}
+.legend .scale { display: inline-flex; gap: 2px; }
+.legend .scale i { width: 12px; height: 8px; border-radius: 3px; display: block; }
+.legend .sep { flex: 1; }
+.honest {
+  margin: 12px 0 0; padding-top: 10px;
+  border-top: 2px dotted #F1DCCD;
+  font-size: 12.5px; line-height: 1.6; color: var(--brown-2);
+}
+
+.pro-link {
+  display: block;
+  margin: 18px 24px 0;
+  font-size: 14px; color: var(--cyan-deep); text-decoration: none;
+}
+.pro-link:hover { text-decoration: underline; }
+
+/* 主要按鈕固定在底部：LINE 內建瀏覽器的可視高度較矮，按鈕不能被擠到第一屏外 */
+.cta-bar {
+  position: sticky; bottom: 0; z-index: 3;
+  margin-top: 22px;
+  padding: 26px 20px calc(14px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(253, 241, 232, 0) 0%, var(--cream) 34%);
+  text-align: center;
+}
+.cta {
+  display: flex; align-items: center; justify-content: center;
+  height: 60px;
+  border-radius: 999px;
+  background: var(--cyan);
+  color: var(--cyan-ink);
+  font-size: 19px; font-weight: 900; letter-spacing: 0.14em;
+  text-decoration: none;
+  /* 和插畫一樣的「膨膨」質感 */
+  box-shadow:
+    inset 0 -5px 0 rgba(0, 70, 90, 0.16),
+    inset 0 4px 0 rgba(255, 255, 255, 0.45),
+    0 10px 22px rgba(30, 170, 200, 0.35);
+}
+.cta:hover { background: #5AD3E7; }
+.cta:active { transform: translateY(1px); }
+.cta:focus-visible, .pro-link:focus-visible, .menu:focus-visible { outline: 3px solid var(--cyan-deep); outline-offset: 3px; }
+.cta-note { margin: 9px 0 0; font-size: 12.5px; color: var(--brown-2); }
+
+.foot {
+  padding: 4px 24px 28px;
+  font-size: 11.5px; line-height: 1.7; color: var(--brown-2);
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="top">
+    <a class="logo" href="#" aria-label="Traffic Gem 首頁">
+      <!-- 字標：一條被捲起來的路，對應「把塞車捲起來」 -->
+      <svg width="36" height="36" viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" aria-hidden="true">
+        <path d="M14 3 A11 11 0 0 1 14 25 A9 9 0 0 1 14 7 A7 7 0 0 1 14 21 A5 5 0 0 1 14 11"/>
+      </svg>
+    </a>
+    <button class="menu" type="button" aria-label="開啟選單">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p class="eyebrow">內科晨峰・平日 07:00–09:30</p>
+      <h1 class="wordmark"><span>Traffic</span><span>Gem</span></h1>
+    </section>
+
+    <div class="hero">
+      <img src="hero-toy-road.webp" width="781" height="765" alt="">
+      <p class="slogan">把塞車捲起來，<br>每 15 分鐘一格，<br>挑出比較順的那格。</p>
+    </div>
+
+    <p class="tagline">告訴我們你從哪裡來、幾點要到，<br>幫你挑一個比較不塞的時段。</p>
+
+    <!-- 數字取自 data/mock/t4-morning.json：堤頂大道北向、08:30 前到公司 -->
+    <article class="preview" aria-label="結果範例">
+      <div class="preview-head">
+        <span class="preview-kicker">今天的建議・範例</span>
+        <span class="sim-badge">含模擬資料</span>
+      </div>
+      <div class="preview-main">
+        <span class="preview-time">07:30</span>
+        <span class="preview-where">經過堤頂大道<small>北向</small></span>
+      </div>
+      <p class="preview-gain">路上少 <b>3–4</b> 分<span class="dot">・</span>比平常早 <b>19</b> 分到公司</p>
+
+      <div class="strip-wrap">
+        <div class="strip" role="img" aria-label="堤頂大道北向 07:00 到 09:30 每 15 分鐘的平均車速，08:30 到 09:00 最塞">
+          <div class="cell l1" title="07:00 平均 58 km/h"></div>
+          <div class="cell l1" title="07:15 平均 59 km/h"></div>
+          <div class="cell l1 pick" title="07:30 平均 59 km/h"><span class="tag pick">建議</span></div>
+          <div class="cell l1" title="07:45 平均 52 km/h"><span class="tag usual">平常</span></div>
+          <div class="cell l2" title="08:00 平均 44 km/h"></div>
+          <div class="cell l4" title="08:15 平均 29 km/h"></div>
+          <div class="cell l5" title="08:30 平均 14 km/h"></div>
+          <div class="cell l5" title="08:45 平均 10 km/h"></div>
+          <div class="cell l5" title="09:00 平均 17 km/h"></div>
+          <div class="cell l3" title="09:15 平均 35 km/h"></div>
+        </div>
+        <div class="axis" aria-hidden="true"><span>07:00</span><span>08:00</span><span>09:00</span></div>
+      </div>
+
+      <div class="legend">
+        <span>每格 15 分鐘</span>
+        <span class="sep"></span>
+        <span>順</span>
+        <span class="scale" aria-hidden="true"><i style="background:var(--c1);box-shadow:inset 0 0 0 1px #EEDFC6"></i><i style="background:var(--c2)"></i><i style="background:var(--c3)"></i><i style="background:var(--c4)"></i><i style="background:var(--c5)"></i><i style="background:var(--c6)"></i></span>
+        <span>塞</span>
+      </div>
+
+      <p class="honest">沒有划算的時段時，會直接說「照平常時間走就好」。</p>
+    </article>
+
+    <a class="pro-link" href="#">市府與企業：看熱力圖與協商一頁紙 →</a>
+
+    <div class="cta-bar">
+      <a class="cta" href="#">點我挑時段！</a>
+      <p class="cta-note">約 30 秒・不用註冊・設定只存在你的手機</p>
+    </div>
+
+    <footer class="foot">本頁數字為模擬範例。正式版使用臺北市交工處 VD 實測車速，沒有偵測器的入口不補數字。</footer>
+  </main>
+</div>
+</body>
+</html>
