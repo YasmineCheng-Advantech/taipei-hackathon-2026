@@ -13,6 +13,8 @@
 | [`HANDOVER.md`](HANDOVER.md) | 交接文件：競賽規則、議題 #4 對齊分析、紅隊審查、題目推測與賽前準備、資料清單 |
 | [`design/heatmap-canvas/`](design/heatmap-canvas/) | 設計範本：熱力儀表板、錯峰情境、視覺規範、結果導向的手機畫面流程，以及交通類 6 個推測題目的熱力圖、民眾與城市畫面 |
 | [`docs/vd-explore/`](docs/vd-explore/) | 探索紀錄：用收集到的 VD 資料畫的 10 張圖與說明（找靈感用，待看） |
+| [`data/`](data/) | 資料：契約（`schema/`）、三份模擬資料（`mock/`）、VD 收集與處理腳本、[資料來源清單](data/SOURCES.md)、[資料目錄](data/catalog.md)、[換題 SOP](data/SOP.md) |
+| [`docs/100-days.md`](docs/100-days.md) | 市府上任 100 天落地方案（草稿） |
 
 ## 產品結構
 
@@ -36,7 +38,7 @@
 
 ## 交件前待補（依競賽規則）
 
-- [ ] 資料來源清單：分別列出真實開放資料與模擬資料
-- [ ] 使用的 AI 工具與開源套件
-- [ ] 市府上任 100 天內落地方案：負責局處、所需資料、成本
+- [ ] 資料來源清單：分別列出真實開放資料與模擬資料（初稿：[`data/SOURCES.md`](data/SOURCES.md)）
+- [ ] 使用的 AI 工具與開源套件（初稿：[`data/SOURCES.md`](data/SOURCES.md#五ai-工具與開源套件)，網站的部分待補）
+- [ ] 市府上任 100 天內落地方案：負責局處、所需資料、成本（草稿：[`docs/100-days.md`](docs/100-days.md)）
 - [ ] 作品網址與 Demo 操作說明

@@ -28,7 +28,7 @@
   - 即時：`https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml`（約 1.7 MB，每分鐘更新，數值為 5 分鐘統計；分車種 M 機車／S 小車／L 大車／T 聯結車，分車道）
   - 另有舊格式 `GetVDDATA.xml.gz`（逐車道）與 `GetVD.xml.gz`（路段彙總，附路段名如「環東進城 前方」，對照位置很好用）。
 - **TDX**：連得到，但 API 回 401「Valid API Key Required」，沒有金鑰不能用。國道 VD 只能從這裡（或高公局）拿。
-- **高公局 tisvcloud.freeway.gov.tw**：從這個雲端環境連線逾時（伺服器端沒回應，不是網域白名單問題，推測只開放國內 IP）。在你自己的電腦上應該抓得到。
+- **高公局 tisvcloud.freeway.gov.tw**：從這個雲端環境連線逾時（伺服器端沒回應，不是網域白名單問題，推測只開放國內 IP）。在你自己的電腦上應該抓得到，用 `data/fetch/fetch_freeway_vd.py`（不用金鑰，有歷史檔，可以事後補抓 10/20–10/23）。
 - **地圖服務（OSM／Nominatim）** 被網路政策擋住，所以位置對應是用 VD 座標、道路名、LinkID 方向和 `GetVD` 的路段名比對，沒有疊地圖確認。
 
 ## 每個入口怎麼對應
@@ -51,7 +51,7 @@
 ## 缺口建議補法
 
 - **麥帥二橋、康寧路三段**：熱力圖用模擬資料加斜線（schema 的 `gap`），說明文字註明「無偵測器，數值為推估」；如果主辦方有交工處路口調查，可以拿來校準尖峰量。
-- **國1 內湖交流道**：TDX 金鑰下來後，用 `Road/Traffic/VD/Freeway` 找內湖交流道的匝道 VD；在那之前維持模擬。
+- **國1 內湖交流道**：不必等 TDX 金鑰。在自己的電腦跑 `python3 data/fetch/fetch_freeway_vd.py --probe`、`--list` 找出內湖交流道下匝道的 VDID，再用 `--vd <VDID> --date 2026-10-20 …` 補抓收集期間的歷史資料，輸出的 `vd_freeway_targets.csv` 和臺北市的一起給 `build_vd_15min.py`。最後把 `gen_t4_morning.py` 的 `nh1-neihu-ic` 改成 `kind="observed"`、`detector="<VDID>"`。抓不到才維持模擬。
 - **民權大橋、成美橋**：資料是真的，但位置是引道，畫面上可以加一個小註記「偵測點位於引道」。
 
 ## 檔案
@@ -59,6 +59,8 @@
 - `entrances.csv`：工項 4 規定的 6 個欄位（入口, 方向, VD編號, 是否涵蓋機車, 缺口標記, 資料來源）。
 - `entrances_detail.csv`：每個入口的 LinkID、座標、偵測方向、偵測車道數、3 次即時抽樣結果、對應依據與信心。
 - `build_vd_15min.py`：把收集程式的讀數（`vd_taipei_targets.csv`）彙整成熱力圖的 15 分鐘格子，輸出 `vd_15min.json`：每支偵測器 × 每格的多天平均、最小、最大、天數、低於 20 km/h 的天數。只用狀態正常的讀數，同一筆不重複計算，車速依車輛數加權。接著用 `gen_t4_morning.py --real` 產生正式資料檔，見 `data/mock/README.md`。
+- `build_model_input.py`：排隊模型的輸入 `model_input.json`（交接物 2）：堤頂大道北向 VPMSV40 的容量（含上下限）與 07:00–10:30 每 15 分鐘的到達曲線，每個數字附來源與方法。只算汽車。容量取塞住時每 15 分鐘實際放行的汽車數（塞住＝車速低於這支偵測器平常車速的 40%，也就是服務水準 E 級以下，和探索圖表的塞車線相同；固定 20 km/h 會把路段中間的偵測器誤判成沒塞）；到達曲線不能直接用流量（塞住時只數得到放行的車），改成找一條鐘形曲線，讓排隊模型跑出來的放行車數與塞住的時段最接近實測。檔案裡另有每天各自反推的範圍、模型對得上幾格，以及尖峰時段。`--mock` 輸出目前的假設值到 `data/mock/inputs/model_input.json`（不放在 `data/mock/` 底下，免得被當成題目檔驗證）。用法見 `data/mock/README.md`「換成真實資料時」。
+- `check_demo.py`：比對 `PRODUCT.md`「兩分鐘 Demo」台詞裡的數字和資料檔算出來的是否一致，對不上的印出照資料改寫的台詞。預設讀 `data/processed/t4-morning.json`（真實資料版）。
 - `preview_vd.py`：收集期間隨時可以跑的預覽。讀 `data/raw/vd_taipei_targets.csv`，產生 `data/raw/preview.html`（含真實資料，不進 git），用瀏覽器打開就能看熱力圖、各入口車速折線、車種比例與最新讀數，不需要網路。
 - `explore_vd.py`：探索用的圖表（找靈感，不是作品畫面），產生 `data/raw/explore.html`。10 張圖分成什麼時候塞、哪裡最塞、早一點經過有差嗎、每天都一樣嗎、都是什麼車，每張圖下附一句從資料算出的結論。
 - `build_entrances.py`：重跑腳本。先下載 `VD.xml` 與 `VDLive.xml`，再執行 `python3 data/processed/build_entrances.py <下載資料夾> data/processed VDLive.xml [更多 VDLive 檔]`。

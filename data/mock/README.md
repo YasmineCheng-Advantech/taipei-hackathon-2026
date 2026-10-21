@@ -1,11 +1,30 @@
 # 模擬資料怎麼產生
 
+三份模擬資料，網站用 `?topic=<檔名>` 切換，用來測試「換題只換 JSON」：
+
+| 檔案 | 題目 | 產生方式 | 用來測什麼 |
+| --- | --- | --- | --- |
+| `t4-morning.json` | #4 內科晨峰車流 | [`gen_t4_morning.py`](gen_t4_morning.py) | 主要題目，說明見下面各段 |
+| `a1-evening.json` | A1 內科晚尖峰（下班） | [`gen_a1_evening.py`](gen_a1_evening.py)，以 t4 為底 | 同一類題目換時段與方向：時間不是早上、入口變出口、「幫你決定」改成幾點下班。見[最下面](#a1-evening晚尖峰) |
+| `b1-1999.json` | B1 1999 陳情熱區與處理效率 | [`gen_b1_1999.py`](gen_b1_1999.py) | 非交通題：熱力圖的欄是類別不是時段、情境的欄是週、沒有分享卡。見[最下面](#b1-19991999-陳情) |
+
+```
+python3 data/mock/gen_t4_morning.py && python3 data/mock/gen_a1_evening.py && python3 data/mock/gen_b1_1999.py
+python3 data/schema/validate.py data/mock/*.json
+```
+
+演練時找到資料契約裝不太下的地方，記在[最下面](#演練找到的契約問題待網站工程師確認)，週三一起確認。
+
+## t4-morning（晨峰）
+
 `t4-morning.json` 全部由 [`gen_t4_morning.py`](gen_t4_morning.py) 產生，沒有手填的數字。腳本沒有用亂數，參數不變的話，每次重跑結果都完全相同。
 
 ```
 python3 data/mock/gen_t4_morning.py                     # 重新產生 t4-morning.json
 python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗證
 ```
+
+錯峰情境的容量與到達曲線不寫在 `gen_t4_morning.py` 裡，而是讀 [`inputs/model_input.json`](inputs/model_input.json)（假設值，由 `python3 data/processed/build_model_input.py --mock` 產生）。收集到真實資料後換成 `data/processed/model_input.json`，見最下面「換成真實資料時」。
 
 ## 先講三件事
 
@@ -49,8 +68,8 @@ python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗
 
 ### 重點數字 `kpis`
 
-- 最塞的一格：從上面算出的車速中找最小值（目前是堤頂大道 08:45、10 km/h），說明寫出 4 天裡有幾天低於 20 km/h。
-- 尖峰集中時段：照抄設計稿的「08:30–09:15」。
+- 最塞的一格：從上面算出的車速中找最小值（目前是堤頂大道 08:45、10 km/h），說明寫出 4 天裡有幾天低於 20 km/h。有真實讀數時只從那些格子挑，不會挑到模擬的格子。
+- 尖峰集中時段：從熱力圖算，有資料的入口裡半數以上低於 20 km/h 的時段（第一格到最後一格）。目前是 08:30–08:45。設計稿原本寫「08:30–09:15」，但熱力圖在 09:00 只有 1 個入口低於 20 km/h，和說明對不上，已經不用。
 - 偵測器覆蓋：數 `kind = observed` 的入口，目前是 5 / 8。
 
 ### 幫你決定 `decide`
@@ -114,7 +133,7 @@ python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗
 - **目前的結果**：移出約 20% 時排隊幾乎消失；超過之後，目標時段會形成新的尖峰，排隊又變長。
 - **檀香山參考線**：6.5%（實際參與率 6–7%），出處是 Giuliano & Golob（1990）。
 
-正式版會由網站工程師寫的排隊模型腳本，讀 `model_input.json` 的真實容量與到達曲線重新計算。
+以上容量、到達曲線與尖峰時段都來自 `model_input.json`。換成 `data/processed/model_input.json`（真實 VD 反推）後，情境、城市目標、一頁紙的結論與做法比較、敏感度分析會一起重算，提早與延後的目標時段也跟著尖峰移動（提早是尖峰開始前 1 小時起的 30 分鐘，延後是尖峰結束後的 30 分鐘）。網站工程師要另寫排隊模型時，讀同一份 `model_input.json` 就好。
 
 ### 城市行動 `city`
 
@@ -163,17 +182,59 @@ python3 data/schema/validate.py data/mock/t4-morning.json   # 用資料契約驗
 | 區塊 | 換成什麼 |
 | --- | --- |
 | 熱力圖 observed 的 5 列 | 已經接好，見下方指令。收到資料的格子改成真實觀測（`sim: false`），沒收到的維持模擬 |
-| 情境 | 網站工程師的排隊模型輸出（容量與到達曲線改用 `model_input.json`） |
-| 城市目標區間 | 排隊模型反推的「排隊減半所需移出比例」 |
+| 情境、城市目標區間、一頁紙結論與做法比較、敏感度分析 | 已經接好：加上 `--model data/processed/model_input.json` 就改用真實 VD 反推的容量與到達曲線重算 |
 | 人數 | 後端的真實人數（JSON 裡維持 `pending`，不放模擬值） |
 | 其餘照抄設計稿的數字 | 依 `FIELDS.md` 的來源逐項替換 |
 
 **接上真實 VD（收集完後執行）：**
 
 ```
-python3 data/processed/build_vd_15min.py data/raw/vd_taipei_targets.csv   # 彙整成 15 分鐘格子
-python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json  # 輸出 data/processed/t4-morning.json
+python3 data/processed/build_vd_15min.py data/raw/vd_taipei_targets.csv     # 彙整成 15 分鐘格子
+python3 data/processed/build_model_input.py data/raw/vd_taipei_targets.csv  # 估容量與到達曲線
+python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json --model data/processed/model_input.json
 python3 data/schema/validate.py data/processed/t4-morning.json
 ```
 
+第二行會印出容量、尖峰時段與模型對得上幾格；收集期間堤頂大道都沒塞住時會警告，這時情境的數字不能拿來講。
+
+最後檢查 Demo 台詞：`python3 data/processed/check_demo.py` 會逐項比對 `PRODUCT.md`「兩分鐘 Demo」用到的數字（最塞的一格、幾天會塞、要移出幾 %、哪個時段、最影響的假設），對不上的會印出照資料改寫的台詞。
+
 資料有兩個來源：自己電腦長時間執行的收集程式（`data/raw/vd_taipei_targets.csv`），以及 GitHub Actions 每次執行的 artifact（`vd-raw-…`，下載後各有一份 `vd_taipei_targets.csv`）。全部一起傳給第一行，重複的讀數會自動去掉。全天收集的資料也能改時段彙整，例如晚尖峰用 `--start 17:00 --end 19:30`。產生的檔案 `meta.sim` 為 `false`，熱力圖的天數說明、最塞一格的「N 天裡有 M 天」、資料來源期間都會改用真實資料。
+
+## a1-evening（晚尖峰）
+
+換題演練用：如果題目變成下班車流，版面不變，網站只要讀這份檔案。全部是模擬值。
+
+- **怎麼產生**：讀 `t4-morning.json`，時間全部往後移 9 小時 30 分（08:30 → 18:00），讓尖峰落在交通局 2015 年調查的下午壅塞時段 18:00–19:00；熱力圖、情境、一頁紙的數字沿用早上的模擬值。所以要先跑 `gen_t4_morning.py`。
+- **入口改成出口**：方向全部改成離開內湖。出城方向的偵測器還沒盤點，所以只有麥帥二橋標「有偵測器」（它唯一的 VD V7230E0 正好測出城方向，早上是缺口，晚上反而有資料；數字先借成美橋的模擬值），康寧路三段仍是缺口，其餘標模擬。
+- **幫你決定**：改成「幾點離開公司最好」。`deadlines` 放的是平常下班時間（17:00、17:30、18:00、18:30），選項是前後各 1 小時；路上時間是公司到出口，公式和早上一樣，尖峰在 18:10。比平常早或晚超過 30 分鐘經過出口就不推薦。結果：平常 18:00 下班的人「照平常走就好」，其他時間的人會被推薦早走或晚走 15 分鐘。
+- **城市行動**：換成下班的版本，例如幼兒園延長收托到 19:00、接駁車延長到 20:00。
+- **正式版要做**：盤點出城方向的偵測器（同 `entrances.csv` 的做法），收集程式要收到傍晚（`--end 21:00`，GitHub Actions 只收早上），再用 `build_vd_15min.py --start 16:30 --end 19:30` 彙整。
+
+## b1-1999（1999 陳情）
+
+換題演練用：確認非交通題也能用同一份契約。全部是模擬值，正式版要用臺北市 1999 派工資料（需要案件類別、行政區、受理與結案時間）。
+
+| 區塊 | 這題放什麼 |
+| --- | --- |
+| 熱力圖 | 12 個行政區 × 8 類陳情（違規停車、道路與人行道、噪音、環境髒亂、路燈、病媒蚊蟲、行道樹、公園與綠地）。兩個圖層：每月件數、平均結案天數。**欄是類別，不是時段**，所以 `cols` 沒有 `start`／`end` |
+| 重點數字 | 陳情最多的一格、最慢結案的類別、資料涵蓋 12 區 |
+| 幫你決定 | 「想反映問題，用哪個管道最快有回覆」：每區一份，選項是 4 種管道（1999 電話、臺北通 APP、市長信箱、區公所臨櫃），代價是預估回覆天數。少不到半天就不推薦換管道（大安區會說「用你習慣的方式就好」） |
+| 如果大家都這樣 | 大家都改用 APP，APP 的承辦量暴增。`claims.slots` 的 key 是管道名稱，不是時間 |
+| 情境 | 環境髒亂類的積案，14 週（欄是「第 N 週」）。旺季第 7–10 週的案件提前到旺季前主動巡查（第 3–4 週），或非緊急案件延後（第 11–12 週）。用和 #4 同一個排隊模型 |
+| 城市行動 | 主動巡查、處理進度公開、自動分類派案、行道樹修剪排程公開、臺北新北交界共同處理（跨機關） |
+| 一頁紙 | 給局處（不是企業）：旺季前主動巡查可以改善什麼 |
+| 我們可能錯在哪 | 件數多不等於問題多、結案不等於解決、重複陳情、類別分錯、個資 |
+| 分享卡 | **故意不放**，用來測試網站在選填區塊不存在時不會壞掉 |
+
+## 演練找到的契約問題（待網站工程師確認）
+
+做 a1 和 b1 時，契約有幾個地方裝不太下。依契約規則「只能新增欄位，要改須兩人同意」，下面都是提案，還沒改 `topic.schema.json`。
+
+| # | 問題 | 這次怎麼處理 | 提案 |
+| --- | --- | --- | --- |
+| 1 | `meta.time_range` 和 `bin_minutes` 必填，而且要是時刻（HH:MM）與分鐘。b1 是月資料、欄是類別，沒有時刻 | b1 硬填 `00:00`–`23:59`、`1440` | 兩個欄位改成選填；或新增 `meta.period`（文字，例如「2025 年 1–12 月」），網站優先顯示它 |
+| 2 | `scenario.results[].clear_time`（排隊消散時間）只能寫時刻，而且 `null` 代表「不排隊」。b1 的欄是週，寫不出「第 11 週消化完」，填 `null` 又會被網站當成沒有積案 | b1 填 `null`，另外多放 `clear_col`（欄 id，例如 `w11`） | 新增 `clear_col`；網站有 `clear_col` 時優先顯示那一欄的 label |
+| 3 | `decide.setup.deadlines` 沒有顯示用的名稱，網站很可能直接寫死「最晚到達」。a1 放的是「平常下班時間」 | a1 照放，意思寫在 README | 新增 `decide.setup.deadline_label`（例如「最晚到達」「平常下班時間」） |
+| 4 | `decide.options[].arrive_early` 的說明是「早到公司幾分鐘」。a1 用來表示「早或晚經過出口幾分鐘」 | 每個數字的 `note` 寫清楚意思 | 網站顯示 `note`，不要寫死「早到公司」 |
+| 5 | 熱力圖的欄不一定是時段（b1 是類別），`claims.slots` 的 key 不一定是時間（b1 是管道） | 契約本來就允許 | 網站不要假設欄有 `start`／`end`，也不要把 key 當時間排序 |

@@ -2,8 +2,11 @@
 
 用法：python3 data/mock/gen_t4_morning.py
 驗證：python3 data/schema/validate.py data/mock/t4-morning.json
-接真實 VD：python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json
-  有真實資料的格子改成真實觀測（sim: false），其餘維持模擬；預設輸出到 data/processed/t4-morning.json
+接真實 VD：python3 data/mock/gen_t4_morning.py --real data/processed/vd_15min.json --model data/processed/model_input.json
+  --real：有真實資料的熱力格改成真實觀測（sim: false），其餘維持模擬
+  --model：情境、城市目標、一頁紙的結論與做法比較、敏感度分析改用這份容量與到達曲線（build_model_input.py 產生）；
+           沒給就讀 data/mock/inputs/model_input.json（假設值）
+  有任一真實資料時，預設輸出到 data/processed/t4-morning.json
 
 全部數字都是模擬值（sim: true），結果固定、可重跑。方法寫在輸出 JSON 的 meta.mock_method。
 入口、數字與文字沿用 design/heatmap-canvas 的 Main、V2Setup、V2Today、V2City、Scenario、V2Brief 畫板，
@@ -17,10 +20,15 @@ from pathlib import Path
 
 ap = argparse.ArgumentParser(description="產生 #4 內科晨峰資料檔")
 ap.add_argument("--real", type=Path, help="build_vd_15min.py 的輸出；給了就用真實 VD 取代有資料的熱力格")
+ap.add_argument("--model", type=Path, default=Path(__file__).parent / "inputs" / "model_input.json",
+                help="排隊模型的輸入（容量與到達曲線）；預設是假設值 data/mock/inputs/model_input.json")
 ap.add_argument("--out", type=Path, help="輸出路徑")
 ARGS = ap.parse_args()
 REAL = json.loads(ARGS.real.read_text(encoding="utf-8")) if ARGS.real else None
-OUT = ARGS.out or (Path(__file__).parents[1] / "processed" / "t4-morning.json" if REAL else Path(__file__).with_name("t4-morning.json"))
+MODEL = json.loads(ARGS.model.read_text(encoding="utf-8"))
+QSIM = MODEL["sim"]  # 排隊模型算出的數字是不是模擬：取決於容量與到達曲線是不是假設值
+OUT = ARGS.out or (Path(__file__).parents[1] / "processed" / "t4-morning.json" if REAL or not QSIM
+                   else Path(__file__).with_name("t4-morning.json"))
 SIM = True  # 模擬數字的 sim；真實觀測的格子另外標 sim: false
 
 MOCK_METHOD = (
@@ -28,7 +36,7 @@ MOCK_METHOD = (
     "熱力圖：每個入口以高斯曲線組出車速與流量，尖峰設在 08:30–08:45（依交通局 2015 年「82% 集中在 9 時」、壅塞 8:30–9:30），再加固定擾動，重跑結果相同。"
     "入口標示依 entrances.csv 盤點：有 VD 的入口（內湖路一段、堤頂大道、民權大橋、成美橋、環東大道）標 observed，其中民權大橋、成美橋用引道 VD 代替；國1 內湖交流道待 TDX，標 assumed；麥帥二橋（只有出城方向 VD）與康寧路三段（無 VD）為缺口，不補值。"
     "幫你決定：選項是經過入口的時間（不是出門時間，因為不知道使用者從哪裡出發）；入口到公司的路上時間 = 自由車流分鐘 ×（1 + 壅塞係數 × 高斯曲線），尖峰 08:40，壅塞係數 ±20% 當作每天路況差異的區間；同時算出比平常早到公司幾分鐘；名額比例為假設值。"
-    "情境：堤頂大道北向單一瓶頸，容量 1,000 輛/15 分鐘（±10%）為假設；把 08:30–09:15 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。"
+    "{scenario}"
     "城市目標（排隊減半要移出幾 %）與一頁紙的結論、做法比較，由同一個排隊模型反推。"
     "熱力圖每格另有 4 個平日的最小值、最大值與低於 20 km/h 的天數（模擬的每天偏移）。"
     "設定的出發地區與入口的對應是依路網推測的假設。"
@@ -36,12 +44,12 @@ MOCK_METHOD = (
 )
 
 
-def tag(label, **fields):
-    """帶數字的最小物件都附 label 與 sim。"""
-    return {**fields, "label": label, "sim": SIM}
+def tag(label, sim=None, **fields):
+    """帶數字的最小物件都附 label 與 sim；sim 沒給就是模擬。"""
+    return {**fields, "label": label, "sim": SIM if sim is None else sim}
 
 
-def num(label, value=None, lo=None, hi=None, unit=None, note=None, src=None):
+def num(label, value=None, lo=None, hi=None, unit=None, note=None, src=None, sim=None):
     o = {}
     if value is not None:
         o["value"] = value
@@ -53,7 +61,7 @@ def num(label, value=None, lo=None, hi=None, unit=None, note=None, src=None):
         o["note"] = note
     if src is not None:
         o["src"] = src
-    return tag(label, **o)
+    return tag(label, sim, **o)
 
 
 def cell(label, v, **extra):
@@ -156,6 +164,7 @@ def observed(x):
 
 
 SPEED = {}  # (row id, col index) -> km/h，給 KPI 與一頁紙用
+REAL_AT = set()  # 有真實讀數的 (row id, col index)
 BAD = {}  # (row id, col index) -> (塞的天數, 天數)
 n_real = 0
 speed_cells, flow_cells = [], []
@@ -169,6 +178,7 @@ for i, e in enumerate(ENTRANCES):
         rc = real_cell(e, t)
         if rc:
             n_real += 1
+            REAL_AT.add((e["id"], t))
             sc, fc = observed(rc["speed"]), observed(rc["flow"])
         else:
             sp, fl = speed_flow(i, e, t)
@@ -229,14 +239,20 @@ heatmap = {
 
 # ---------- 重點數字 ----------
 
-worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items())
+# 有真實讀數時只從那些格子挑，免得 Demo 指著模擬的格子說是真實資料
+worst_speed, wrow, wt = min((v, r, t) for (r, t), v in SPEED.items() if not REAL_AT or (r, t) in REAL_AT)
 n_obs = sum(e["kind"] == "observed" for e in ENTRANCES)
+# 尖峰集中時段：有資料的入口裡，半數以上低於 BAD_SPEED 的時段（第一格到最後一格）；有真實讀數時只算有偵測器的入口
+LIVE = [e["id"] for e in ENTRANCES if (e["kind"] == "observed" if REAL_AT else e["kind"] != "gap")]
+JAM_T = [t for t in range(len(HEAT_COLS)) if sum(SPEED[(r, t)] < BAD_SPEED for r in LIVE) * 2 >= len(LIVE)]
 kpis = [
     tag("computed", id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
         note=(f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低；{BAD[(wrow, wt)][1]} 天裡有 "
               f"{BAD[(wrow, wt)][0]} 天低於 {BAD_SPEED} km/h"),
         ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
-    tag("computed", id="peak-window", title="尖峰集中時段", value="08:30–09:15", note="半數以上入口低於 20 km/h"),
+    tag("computed", id="peak-window", title="尖峰集中時段",
+        value=f"{HEAT_TIMES[JAM_T[0]]}–{HEAT_TIMES[JAM_T[-1]]}" if JAM_T else "無",
+        note=(f"半數以上入口低於 {BAD_SPEED} km/h" if JAM_T else f"沒有一個時段半數以上入口低於 {BAD_SPEED} km/h")),
     tag("observed", id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(ENTRANCES)}", unit="個入口有真實資料",
         note="其餘為模擬或缺口，格子另有標示"),
 ]
@@ -382,17 +398,28 @@ collective = {
 
 SC_TIMES = [hhmm(7 * 60 + 15 * i) for i in range(14)]  # 07:00–10:15，涵蓋 07:00–10:30
 SC_COLS = [col("s", t) for t in SC_TIMES]
-CAP = 1000
-PEAK_IDX = [6, 7, 8, 9]  # 08:30–09:15
-TARGETS = [("early", "提早到 07:30–08:00", [2, 3]), ("late", "延後到 09:30–10:00", [10, 11])]
-PEAK_AMP, PEAK_WIDTH = 0.78, 1.8  # 到達曲線：尖峰高度與寬度（假設）
+assert MODEL["cols"] == SC_TIMES, f"{ARGS.model} 的時段要是 {SC_TIMES[0]}–{SC_TIMES[-1]} 每 15 分鐘"
+CAP, CAP_LO, CAP_HI = (MODEL["capacity"][k] for k in ("value", "lo", "hi"))
+CAP_RANGE = "±10%" if (CAP_LO, CAP_HI) == (round(CAP * 0.9), round(CAP * 1.1)) else f"{CAP_LO:,}–{CAP_HI:,} 輛"
+FIT = MODEL["arrival"]["fit"]  # 到達曲線：離峰量 + 尖峰高度 × 鐘形曲線
+PEAK_IDX = [SC_TIMES.index(t) for t in MODEL["peak_window"]["cols"]]
+EARLY_IDX, LATE_IDX = [PEAK_IDX[0] - 4, PEAK_IDX[0] - 3], [PEAK_IDX[-1] + 1, PEAK_IDX[-1] + 2]
 
 
-def demand(amp=PEAK_AMP, width=PEAK_WIDTH):
-    return [round(CAP * (0.5 + amp * g(t, 7, width))) for t in range(len(SC_TIMES))]
+def span(idx):
+    return f"{SC_TIMES[idx[0]]}–{SC_COLS[idx[-1]]['end']}"
+
+
+PEAK_TEXT = f"{SC_TIMES[PEAK_IDX[0]]}–{SC_TIMES[PEAK_IDX[-1]]}"  # 寫法沿用設計稿：尖峰各格的開始時間，例如 08:30–09:15
+TARGETS = [("early", f"提早到 {span(EARLY_IDX)}", EARLY_IDX), ("late", f"延後到 {span(LATE_IDX)}", LATE_IDX)]
+
+
+def demand(amp=FIT["amp"], width=FIT["width"]):
+    return [max(0, round(FIT["base"] + amp * g(t, FIT["peak"], width))) for t in range(len(SC_TIMES))]
 
 
 base_demand = demand()
+assert base_demand == MODEL["arrival"]["values"], f"{ARGS.model} 的 arrival.values 和 fit 參數對不上"
 
 
 def run_queue(arr, cap):
@@ -421,14 +448,15 @@ BASE = run_queue(base_demand, CAP)
 
 
 def result(arr, extra=None, new_peak=None):
-    mid, lo, hi = run_queue(arr, CAP), run_queue(arr, CAP * 1.1), run_queue(arr, CAP * 0.9)
+    mid, lo, hi = run_queue(arr, CAP), run_queue(arr, CAP_HI), run_queue(arr, CAP_LO)
     delay = 0 if BASE["sum"] == 0 else round((mid["sum"] - BASE["sum"]) / BASE["sum"] * 100)
     r = tag(
-        "computed",
+        "computed", QSIM,
         **(extra or {}),
-        queue_max=num("computed", mid["max"], lo=lo["max"], hi=hi["max"], unit="輛", note="lo／hi 對應容量 +10%／−10%"),
+        queue_max=num("computed", mid["max"], lo=lo["max"], hi=hi["max"], unit="輛", sim=QSIM,
+                      note="lo／hi 對應容量 +10%／−10%" if CAP_RANGE == "±10%" else f"lo／hi 對應容量 {CAP_HI:,}／{CAP_LO:,} 輛"),
         clear_time=clear_time(mid["last"]),
-        delay_change=num("computed", delay, unit="%"),
+        delay_change=num("computed", delay, unit="%", sim=QSIM),
         new_peak=new_peak,
         cum_arrive=mid["cum_arrive"],
         cum_depart=mid["cum_depart"],
@@ -461,21 +489,22 @@ for tid, _, idx in TARGETS:
 
 scenario = {
     "title": "要多少人換時段，才不會塞？",
-    "intro": "拉動滑桿，把 08:30–09:15 的一部分車流移到其他時段。結果用區間表示（容量 ±10%），也會標出移過去之後是否形成新的尖峰。",
+    "intro": f"拉動滑桿，把 {PEAK_TEXT} 的一部分車流移到其他時段。結果用區間表示（容量 {CAP_RANGE}），也會標出移過去之後是否形成新的尖峰。",
     "place": "堤頂大道北向",
     "cols": SC_COLS,
     "slider": {"name": "移出尖峰的比例", "unit": "%", "min": 0, "max": 50, "step": 5, "default": 5},
     "references": [{"value": 6.5, "text": "檀香山 1988 實際參與 6–7%", "src": "honolulu-1988"}],
     "peak_cols": [SC_COLS[i]["id"] for i in PEAK_IDX],
     "targets": [{"id": tid, "label": lab, "cols": [SC_COLS[i]["id"] for i in idx]} for tid, lab, idx in TARGETS],
-    "capacity": num("assumed", CAP, lo=round(CAP * 0.9), hi=round(CAP * 1.1), unit="輛/15 分鐘"),
+    "capacity": num(MODEL["capacity"]["label"], CAP, lo=CAP_LO, hi=CAP_HI, unit="輛/15 分鐘", sim=QSIM,
+                    **({} if QSIM else {"src": "vd-live", "note": MODEL["capacity"]["note"]})),
     "baseline": result(base_demand),
     "results": results,
 }
 
 # ---------- 從排隊模型反推：城市目標與一頁紙共用 ----------
 
-CAPS = (CAP * 1.1, CAP, CAP * 0.9)  # 容量高→低，結果由小到大
+CAPS = (CAP_HI, CAP, CAP_LO)  # 容量高→低，結果由小到大
 EARLY = TARGETS[0][2]
 SPLIT = TARGETS[0][2] + TARGETS[1][2]  # 一半提早、一半延後
 PEAK_TOTAL = sum(base_demand[i] for i in PEAK_IDX)
@@ -505,21 +534,21 @@ REBOUND = 30  # 回流：移走的車有 30% 被「路變順了」吸引回尖�
 
 def sens(id_, name, low_text, high_text, low, high, needs):
     lo, hi = sorted((low, high))
-    return tag("computed", id=id_, name=name, low_text=low_text, high_text=high_text,
-               low=num("computed", round(low, 1), unit="%"), high=num("computed", round(high, 1), unit="%"),
+    return tag("computed", QSIM, id=id_, name=name, low_text=low_text, high_text=high_text,
+               low=num("computed", round(low, 1), unit="%", sim=QSIM), high=num("computed", round(high, 1), unit="%", sim=QSIM),
                spread=round(hi - lo, 1), needs=needs)
 
 
 SENSITIVITY = sorted([
-    sens("capacity", "道路容量（一次能過多少車）", "容量 1,100 輛", "容量 900 輛", HALF[0], HALF[2],
+    sens("capacity", "道路容量（一次能過多少車）", f"容量 {CAP_HI:,} 輛", f"容量 {CAP_LO:,} 輛", HALF[0], HALF[2],
          "VPMSV40 在塞車時段的最大通過量"),
     sens("peak-height", "尖峰有多高", "尖峰低 20%", "尖峰高 20%",
-         half_share(base=demand(amp=PEAK_AMP * 0.8)), half_share(base=demand(amp=PEAK_AMP * 1.2)),
-         "收集期間 08:30–09:15 的實際流量"),
+         half_share(base=demand(amp=FIT["amp"] * 0.8)), half_share(base=demand(amp=FIT["amp"] * 1.2)),
+         f"收集期間 {PEAK_TEXT} 的實際流量"),
     sens("rebound", "回流（路變順後有人搬回尖峰）", "沒有回流", f"回流 {REBOUND}%",
          HALF[1], HALF[1] / (1 - REBOUND / 100), "試辦前後的尖峰車流比較"),
     sens("peak-width", "尖峰有多寬", "尖峰窄 20%", "尖峰寬 20%",
-         half_share(base=demand(width=PEAK_WIDTH * 0.8)), half_share(base=demand(width=PEAK_WIDTH * 1.2)),
+         half_share(base=demand(width=FIT["width"] * 0.8)), half_share(base=demand(width=FIT["width"] * 1.2)),
          "收集期間各 15 分鐘的流量曲線"),
 ], key=lambda x: -x["spread"])
 
@@ -530,12 +559,12 @@ def avg_delay(arr, cap):
 
 
 def effect(share, idx):
-    """移出 share% 後：平均每輛少排幾分鐘、最長排隊變化 %，區間對應容量 ±10%。"""
+    """移出 share% 後：平均每輛少排幾分鐘、最長排隊變化 %，區間對應容量的上下限。"""
     after = shifted(share, idx)
     save = [avg_delay(base_demand, c) - avg_delay(after, c) for c in CAPS]
     change = [(run_queue(after, c)["max"] / run_queue(base_demand, c)["max"] - 1) * 100 for c in CAPS]
-    return (num("computed", lo=round(min(save), 1), hi=round(max(save), 1), unit="分", note="經過瓶頸的車平均每輛少排的分鐘"),
-            num("computed", lo=round(min(change)), hi=round(max(change)), unit="%", note="最長排隊的變化"))
+    return (num("computed", lo=round(min(save), 1), hi=round(max(save), 1), unit="分", note="經過瓶頸的車平均每輛少排的分鐘", sim=QSIM),
+            num("computed", lo=round(min(change)), hi=round(max(change)), unit="%", note="最長排隊的變化", sim=QSIM))
 
 
 def veh(p):
@@ -544,8 +573,8 @@ def veh(p):
 
 scenario["sensitivity"] = {
     "title": "哪個假設最影響結論？",
-    "question": "最長排隊減半，08:30–09:15 經過的車要移出幾 %",
-    "base": num("computed", round(HALF[1], 1), unit="%", note="容量 1,000 輛、沒有回流時"),
+    "question": f"最長排隊減半，{PEAK_TEXT} 經過的車要移出幾 %",
+    "base": num("computed", round(HALF[1], 1), unit="%", note=f"容量 {CAP:,} 輛、沒有回流時", sim=QSIM),
     "items": SENSITIVITY,
     "note": f"由影響大到小排列。目前最影響的是「{SENSITIVITY[0]['name']}」，最需要補的資料是：{SENSITIVITY[0]['needs']}。",
 }
@@ -554,9 +583,9 @@ scenario["sensitivity"] = {
 
 city = {
     "title": "大家的選擇，變成改善的證據",
-    "goal": {"text": "要讓堤頂大道早上最長排隊減半，08:30–09:15 經過的車大約要移出",
+    "goal": {"text": f"要讓堤頂大道早上最長排隊減半，{PEAK_TEXT} 經過的車大約要移出",
              "need": num("computed", value=round(HALF[1]), lo=round(HALF[0]), hi=round(HALF[2]), unit="% 改時段",
-                         note=f"約 {veh(HALF[0]):,.0f}–{veh(HALF[2]):,.0f} 輛車；區間對應容量 ±10%；由排隊模型反推，不換算成人數")},
+                         note=f"約 {veh(HALF[0]):,.0f}–{veh(HALF[2]):,.0f} 輛車；區間對應容量 {CAP_RANGE}；由排隊模型反推，不換算成人數", sim=QSIM)},
     "claimed": headcount(),
     "claimed_since": CLAIMS_SINCE,
     "claimed_caption": "意向登記，未經驗證：同一支手機每天每個入口只算一次，但同一人仍可能重複登記，也不代表全體通勤者。",
@@ -614,18 +643,18 @@ brief = {
         "note": "百分比為員工經過各入口的比例（假設，正式版用員工通勤調查或認領資料）。顏色越深車速越慢。",
     },
     "conclusion": tag(
-        "computed",
-        text=(f"內科整體若讓 08:30–09:15 經過堤頂大道的車移出約 {round(HALF[0])}–{round(HALF[2])}% 改時段，"
-              f"最長排隊可縮短一半；但如果全部改到 07:30–08:00，移出超過約 {round(NEW_PEAK[2])}–{round(NEW_PEAK[0])}% "
+        "computed", QSIM,
+        text=(f"內科整體若讓 {PEAK_TEXT} 經過堤頂大道的車移出約 {round(HALF[0])}–{round(HALF[2])}% 改時段，"
+              f"最長排隊可縮短一半；但如果全部改到 {span(EARLY_IDX)}，移出超過約 {round(NEW_PEAK[2])}–{round(NEW_PEAK[0])}% "
               "就會在那裡形成新尖峰，所以要分散到提早與延後。貴公司員工約佔這段車流的 [待填]%。"),
-        note="情境假設 · 程式計算 · 區間反映容量估計 ±10%",
+        note=f"情境假設 · 程式計算 · 區間反映容量估計 {CAP_RANGE}",
     ),
     "options": [
-        {"id": "a", "name": "維持現況", "saving": num("computed", 0, unit="分"),
-         "queue_change": num("computed", 0, unit="%", note="基準"), "cost_text": "無"},
-        {"id": "b", "name": "尖峰車流移出 10%，改到 07:30–08:00", **dict(zip(("saving", "queue_change"), effect(10, EARLY))),
+        {"id": "a", "name": "維持現況", "saving": num("computed", 0, unit="分", sim=QSIM),
+         "queue_change": num("computed", 0, unit="%", note="基準", sim=QSIM), "cost_text": "無"},
+        {"id": "b", "name": f"尖峰車流移出 10%，改到 {span(EARLY_IDX)}", **dict(zip(("saving", "queue_change"), effect(10, EARLY))),
          "cost_text": "改時段的員工共同會議時段縮短（例如 09:30–17:00）"},
-        {"id": "c", "name": "尖峰車流移出 20%，一半提早到 07:30–08:00、一半延後到 09:30–10:00",
+        {"id": "c", "name": f"尖峰車流移出 20%，一半提早到 {span(EARLY_IDX)}、一半延後到 {span(LATE_IDX)}",
          **dict(zip(("saving", "queue_change"), effect(20, SPLIT))),
          "cost_text": "共同會議時段 10:00–16:30；對外客服需排班"},
     ],
@@ -681,12 +710,15 @@ limits = {
     "items": [
         {"id": "demand", "title": "偵測器量到的是「通過量」，不是「想進來的車」",
          "why": "塞車時偵測器只數得到放行的車，最塞的時段流量反而可能顯得比較低；到達曲線也就無法直接從資料讀出。",
-         "handling": "情境結果用容量 ±10% 的區間呈現，並用敏感度分析列出影響最大的假設。",
+         "handling": ("情境結果用容量 ±10% 的區間呈現，並用敏感度分析列出影響最大的假設。" if QSIM else
+                     "到達曲線用排隊模型反推（讓模型跑出的放行車數與塞車時段和 VD 一致），不直接拿流量當需求；"
+                     f"結果用容量 {CAP_RANGE} 的區間呈現，並用敏感度分析列出影響最大的假設。"),
          "status": "partial"},
         {"id": "assumptions", "title": "結論對「尖峰有多高」「道路容量」很敏感",
          "why": f"這兩個假設各調 10–20%，「排隊減半要移出幾 %」就從約 {round(min(HALF[0], SENSITIVITY[0]['low']['value']))}% 變成約 "
                 f"{round(max(HALF[2], SENSITIVITY[0]['high']['value']))}%。",
-         "handling": "結論一律寫成區間；用 10/20–10/23 收集的實際流量校正尖峰高度與容量。",
+         "handling": ("結論一律寫成區間；用 10/20–10/23 收集的實際流量校正尖峰高度與容量。" if QSIM else
+                     f"結論一律寫成區間；容量與尖峰高度已用 {len(MODEL['days'])} 個平日的 VD 校正，但仍只是這幾天看到的。"),
          "status": "partial"},
         {"id": "days", "title": "真實資料只有 4 個早上",
          "why": "4 天可能剛好遇到下雨、事故或施工，不足以代表平常。",
@@ -747,6 +779,15 @@ share = {
 
 # ---------- 組合 ----------
 
+ANY_REAL = REAL is not None or not QSIM
+REAL_DAYS = REAL["days"] if REAL else MODEL["days"]
+SCENARIO_METHOD = (
+    f"情境：堤頂大道北向單一瓶頸，容量 {CAP:,} 輛/15 分鐘（{CAP_RANGE}）為假設；把 {PEAK_TEXT} 的需求按比例移到提早或延後時段，"
+    "用確定性排隊模型算排隊長度、消散時間與總延誤。正式版由排隊模型腳本以 model_input.json 重算。" if QSIM else
+    f"情境：堤頂大道北向單一瓶頸，容量 {CAP:,} 輛/15 分鐘（{CAP_LO:,}–{CAP_HI:,}）與到達曲線由 {len(MODEL['days'])} 個平日的臺北市 VD 反推"
+    f"（data/processed/model_input.json，只算汽車）；把 {PEAK_TEXT} 的需求按比例移到提早或延後時段，用確定性排隊模型算排隊長度、消散時間與總延誤。"
+)
+
 doc = {
     "meta": {
         "contract_version": "1.0",
@@ -759,7 +800,7 @@ doc = {
         "bin_minutes": 15,
         "sources": [
             {"id": "vd-live", "name": "臺北市交工處 VD 即時資料（VDLive.xml）", "kind": "real",
-             "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml", "period": (f"{REAL['days'][0]}～{REAL['days'][-1]} 平日 07:00–10:30，共 {len(REAL['days'])} 天" if REAL
+             "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml", "period": (f"{REAL_DAYS[0]}～{REAL_DAYS[-1]} 平日 07:00–10:30，共 {len(REAL_DAYS)} 天" if ANY_REAL
                         else "2026-10-20～10-23 07:00–10:30（收集中，本檔未使用）")},
             {"id": "vd-static", "name": "臺北市交工處 VD 靜態資料（VD.xml）", "kind": "real",
              "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml", "note": "入口與 VD 對照見 entrances.csv"},
@@ -771,10 +812,12 @@ doc = {
             {"id": "mock", "name": "本作品模擬資料（data/mock/gen_t4_morning.py）", "kind": "mock"},
         ],
         "updated_at": "2026-10-19T12:00:00+08:00",
-        "sim": REAL is None,
-        "mock_method": MOCK_METHOD,
-        "disclaimer": ("熱力圖中標「真實觀測」的格子來自臺北市 VD，其餘數字為模擬資料；入口位置為示意。本作品之建議不代表市府立場。"
-                       if REAL else "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"),
+        "sim": not ANY_REAL,
+        "mock_method": MOCK_METHOD.format(scenario=SCENARIO_METHOD),
+        "disclaimer": (("熱力圖中標「真實觀測」的格子來自臺北市 VD，" if REAL else "")
+                       + ("錯峰情境的容量與到達曲線由臺北市 VD 反推，" if not QSIM else "")
+                       + "其餘數字為模擬資料；入口位置為示意。本作品之建議不代表市府立場。"
+                       if ANY_REAL else "本頁所有數字皆為模擬資料，入口位置為示意。本作品之建議不代表市府立場。"),
     },
     "heatmap": heatmap,
     "kpis": kpis,

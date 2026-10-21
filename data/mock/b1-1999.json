@@ -1,0 +1,5343 @@
+{
+  "meta": {
+    "contract_version": "1.0",
+    "id": "b1-1999",
+    "title": "1999 陳情熱區與處理效率",
+    "subtitle": "12 個行政區 × 8 類陳情 · 每月平均",
+    "region": "臺北市 12 個行政區",
+    "days": "每月平均",
+    "time_range": {
+      "start": "00:00",
+      "end": "23:59"
+    },
+    "bin_minutes": 1440,
+    "sources": [
+      {
+        "id": "tp-1999",
+        "name": "臺北市 1999 派工資料（資料集待確認）",
+        "kind": "real",
+        "note": "本檔未使用；正式版需要案件類別、行政區、受理與結案時間"
+      },
+      {
+        "id": "mock",
+        "name": "本作品模擬資料（data/mock/gen_b1_1999.py）",
+        "kind": "mock"
+      }
+    ],
+    "updated_at": "2026-10-20T12:00:00+08:00",
+    "sim": true,
+    "mock_method": "全部數字為模擬。熱力圖：12 個行政區 × 8 類陳情，每月件數 = 1,800 × 行政區權重 × 類別比例 × (1 + 固定擾動)；平均結案天數 = 類別基準天數 × (0.8 + 0.4 × 該格件數 ÷ 同類別平均件數)，件數越多越慢。行政區權重與類別比例為假設值，正式版改用臺北市 1999 派工資料（案件類別、行政區、受理與結案時間）計算。幫你決定：4 種陳情管道的預估回覆天數 = 管道基準 × 行政區負荷係數，區間 ±25%，全部是假設。情境：環境髒亂類 14 週的到達件數為鐘形曲線（第 8–9 週最高，平常每週約 550 件），每週可結案 1,000 件（±10%）為假設；把旺季 4 週的案件按比例提前到旺季前（主動巡查）或延後（非緊急案件），用確定性排隊模型算積案與消化時間。人數類欄位一律 pending，由認領後端提供。",
+    "disclaimer": "本頁所有數字皆為模擬資料，行政區位置為示意。本作品之建議不代表市府立場。"
+  },
+  "heatmap": {
+    "title": "哪一區、哪一類陳情最多？",
+    "subtitle": "12 個行政區 × 8 類陳情 · 每月平均",
+    "days_label": "模擬的每月平均（正式版用 1999 派工資料的最近 12 個月）",
+    "rows": [
+      {
+        "id": "zhongzheng",
+        "name": "中正區",
+        "kind": "observed",
+        "lat": 25.0324,
+        "lng": 121.5199,
+        "x": 23,
+        "y": 67
+      },
+      {
+        "id": "datong",
+        "name": "大同區",
+        "kind": "observed",
+        "lat": 25.0633,
+        "lng": 121.513,
+        "x": 18,
+        "y": 48
+      },
+      {
+        "id": "zhongshan",
+        "name": "中山區",
+        "kind": "observed",
+        "lat": 25.0685,
+        "lng": 121.5333,
+        "x": 33,
+        "y": 45
+      },
+      {
+        "id": "songshan",
+        "name": "松山區",
+        "kind": "observed",
+        "lat": 25.0497,
+        "lng": 121.5578,
+        "x": 52,
+        "y": 56
+      },
+      {
+        "id": "daan",
+        "name": "大安區",
+        "kind": "observed",
+        "lat": 25.0264,
+        "lng": 121.5436,
+        "x": 41,
+        "y": 71
+      },
+      {
+        "id": "wanhua",
+        "name": "萬華區",
+        "kind": "observed",
+        "lat": 25.0285,
+        "lng": 121.4979,
+        "x": 6,
+        "y": 70
+      },
+      {
+        "id": "xinyi",
+        "name": "信義區",
+        "kind": "observed",
+        "lat": 25.033,
+        "lng": 121.5654,
+        "x": 58,
+        "y": 67
+      },
+      {
+        "id": "shilin",
+        "name": "士林區",
+        "kind": "observed",
+        "lat": 25.0928,
+        "lng": 121.5246,
+        "x": 27,
+        "y": 30
+      },
+      {
+        "id": "beitou",
+        "name": "北投區",
+        "kind": "observed",
+        "lat": 25.1321,
+        "lng": 121.4987,
+        "x": 7,
+        "y": 5
+      },
+      {
+        "id": "neihu",
+        "name": "內湖區",
+        "kind": "observed",
+        "lat": 25.0695,
+        "lng": 121.5888,
+        "x": 76,
+        "y": 44
+      },
+      {
+        "id": "nangang",
+        "name": "南港區",
+        "kind": "observed",
+        "lat": 25.0383,
+        "lng": 121.607,
+        "x": 90,
+        "y": 64
+      },
+      {
+        "id": "wenshan",
+        "name": "文山區",
+        "kind": "observed",
+        "lat": 24.9897,
+        "lng": 121.5701,
+        "x": 62,
+        "y": 94
+      }
+    ],
+    "cols": [
+      {
+        "id": "parking",
+        "label": "違規停車"
+      },
+      {
+        "id": "road",
+        "label": "道路與人行道"
+      },
+      {
+        "id": "noise",
+        "label": "噪音"
+      },
+      {
+        "id": "litter",
+        "label": "環境髒亂"
+      },
+      {
+        "id": "light",
+        "label": "路燈"
+      },
+      {
+        "id": "pests",
+        "label": "病媒蚊蟲"
+      },
+      {
+        "id": "trees",
+        "label": "行道樹"
+      },
+      {
+        "id": "parks",
+        "label": "公園與綠地"
+      }
+    ],
+    "layers": [
+      {
+        "id": "count",
+        "name": "陳情件數",
+        "unit": "件／月",
+        "direction": "high_is_bad",
+        "thresholds": [
+          100,
+          200,
+          300,
+          400,
+          500
+        ],
+        "legend": [
+          "<100",
+          "100–200",
+          "200–300",
+          "300–400",
+          "400–500",
+          "500+"
+        ],
+        "legend_ends": [
+          "少",
+          "多 件"
+        ],
+        "level_text": [
+          "很少。",
+          "偏少。",
+          "中等。",
+          "偏多。",
+          "很多。",
+          "最多的一群。"
+        ],
+        "cells": [
+          [
+            {
+              "v": 303,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 240,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 194,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 261,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 149,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 83,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 105,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 81,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 317,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 248,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 199,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 184,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 107,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 86,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 108,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 83,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 592,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 318,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 260,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 351,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 201,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 161,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 139,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 108,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 366,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 288,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 232,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 310,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 122,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 100,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 126,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 97,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 639,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 497,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 275,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 375,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 216,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 174,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 217,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 115,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 370,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 293,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 238,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 319,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 182,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 101,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 128,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 99,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 475,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 372,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 298,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 275,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 160,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 130,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 163,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 124,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 592,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 318,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 260,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 351,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 201,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 161,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 139,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 108,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 403,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 317,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 255,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 342,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 135,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 110,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 139,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 106,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 596,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 464,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 257,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 350,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 202,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 163,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 203,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 107,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 236,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 186,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 151,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 203,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 116,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 64,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 82,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 63,
+              "label": "observed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 475,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 372,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 298,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 275,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 160,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 130,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 163,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 124,
+              "label": "observed",
+              "sim": true
+            }
+          ]
+        ]
+      },
+      {
+        "id": "days",
+        "name": "平均結案天數",
+        "unit": "天",
+        "direction": "high_is_bad",
+        "thresholds": [
+          2,
+          4,
+          6,
+          8,
+          10
+        ],
+        "bad_at": 8,
+        "legend": [
+          "<2",
+          "2–4",
+          "4–6",
+          "6–8",
+          "8–10",
+          "10+"
+        ],
+        "legend_ends": [
+          "快",
+          "慢 天"
+        ],
+        "level_text": [
+          "很快結案。",
+          "幾天內結案。",
+          "要等快一週。",
+          "要等一週以上。",
+          "要等很久。",
+          "最慢的一群。"
+        ],
+        "cells": [
+          [
+            {
+              "v": 1.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.1,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.3,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.1,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.3,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.1,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 8.7,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 11.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.7,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.1,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.5,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 3.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 8.3,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.9,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.9,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 12.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.2,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.9,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.8,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.3,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 11.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.0,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 11.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.7,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 5.3,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.8,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 3.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 8.1,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.8,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 12.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.9,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 1.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.4,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.1,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.9,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 9.3,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 8.7,
+              "label": "computed",
+              "sim": true
+            }
+          ],
+          [
+            {
+              "v": 2.3,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.7,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 4.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.0,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 11.5,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 10.0,
+              "label": "computed",
+              "sim": true
+            }
+          ]
+        ]
+      }
+    ],
+    "default_layer": "count",
+    "landmarks": [
+      {
+        "name": "基隆河",
+        "x": 55,
+        "y": 45
+      },
+      {
+        "name": "淡水河",
+        "x": 5,
+        "y": 60
+      }
+    ]
+  },
+  "kpis": [
+    {
+      "id": "top-cell",
+      "title": "陳情最多的一格",
+      "value": 639,
+      "unit": "件／月",
+      "note": "大安區的違規停車",
+      "ref": {
+        "row": "daan",
+        "col": "parking"
+      },
+      "label": "computed",
+      "sim": true
+    },
+    {
+      "id": "slowest",
+      "title": "最慢結案的類別",
+      "value": 10.8,
+      "unit": "天",
+      "note": "行道樹，12 區平均",
+      "label": "computed",
+      "sim": true
+    },
+    {
+      "id": "coverage",
+      "title": "資料涵蓋",
+      "value": "12 / 12",
+      "unit": "個行政區",
+      "note": "正式版為 1999 派工資料的最近 12 個月",
+      "label": "observed",
+      "sim": true
+    }
+  ],
+  "decide": {
+    "title": "想反映問題，用哪個管道最快有回覆",
+    "metric": {
+      "name": "預估回覆天數",
+      "unit": "天"
+    },
+    "setup": {
+      "rows": [
+        "zhongzheng",
+        "datong",
+        "zhongshan",
+        "songshan",
+        "daan",
+        "wanhua",
+        "xinyi",
+        "shilin",
+        "beitou",
+        "neihu",
+        "nangang",
+        "wenshan"
+      ]
+    },
+    "plans": [
+      {
+        "row": "zhongzheng",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在中正區用臺北通 APP，大約比打 1999 早 1.0 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.2,
+              "hi": 3.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 1.9,
+              "lo": 1.4,
+              "hi": 2.3,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1.0,
+              "lo": 0.8,
+              "hi": 1.3,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 3.9,
+              "lo": 2.9,
+              "hi": 4.8,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.0,
+              "lo": -1.2,
+              "hi": -0.7,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.2,
+              "lo": 2.4,
+              "hi": 4.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.3,
+              "lo": -0.4,
+              "hi": -0.2,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "datong",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在大同區用臺北通 APP，大約比打 1999 早 1.1 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.1,
+              "hi": 3.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 1.8,
+              "lo": 1.3,
+              "hi": 2.2,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1.1,
+              "lo": 0.8,
+              "hi": 1.4,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 3.8,
+              "lo": 2.9,
+              "hi": 4.8,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.9,
+              "lo": -1.2,
+              "hi": -0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.1,
+              "lo": 2.3,
+              "hi": 3.9,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.2,
+              "lo": -0.3,
+              "hi": -0.2,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "zhongshan",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在中山區用臺北通 APP，大約比打 1999 早 0.6 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 3.0,
+              "lo": 2.2,
+              "hi": 3.7,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.4,
+              "lo": 1.8,
+              "hi": 2.9,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.6,
+              "lo": 0.4,
+              "hi": 0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.1,
+              "lo": 3.1,
+              "hi": 5.1,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.4,
+              "hi": -0.9,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.5,
+              "lo": 2.6,
+              "hi": 4.3,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.5,
+              "lo": -0.6,
+              "hi": -0.4,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "songshan",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在松山區用臺北通 APP，大約比打 1999 早 0.9 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.2,
+              "hi": 3.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.0,
+              "lo": 1.5,
+              "hi": 2.5,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.9,
+              "lo": 0.7,
+              "hi": 1.1,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 3.9,
+              "lo": 2.9,
+              "hi": 4.9,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.0,
+              "lo": -1.3,
+              "hi": -0.7,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.2,
+              "lo": 2.4,
+              "hi": 4.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.3,
+              "lo": -0.4,
+              "hi": -0.2,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "daan",
+        "recommended": "phone",
+        "baseline": "phone",
+        "reason": "在大安區，各管道的回覆時間差不到半天，用你習慣的方式反映就好。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 3.0,
+              "lo": 2.2,
+              "hi": 3.8,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.6,
+              "lo": 1.9,
+              "hi": 3.2,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.4,
+              "lo": 0.3,
+              "hi": 0.6,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.2,
+              "lo": 3.2,
+              "hi": 5.2,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.2,
+              "lo": -1.4,
+              "hi": -1.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.6,
+              "lo": 2.7,
+              "hi": 4.5,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.6,
+              "lo": -0.7,
+              "hi": -0.5,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "wanhua",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在萬華區用臺北通 APP，大約比打 1999 早 0.8 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.2,
+              "hi": 3.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.1,
+              "lo": 1.6,
+              "hi": 2.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.8,
+              "lo": 0.6,
+              "hi": 1.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.0,
+              "lo": 3.0,
+              "hi": 5.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.4,
+              "hi": -0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.3,
+              "lo": 2.5,
+              "hi": 4.1,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.4,
+              "lo": -0.5,
+              "hi": -0.3,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "xinyi",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在信義區用臺北通 APP，大約比打 1999 早 0.7 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.2,
+              "hi": 3.7,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.2,
+              "lo": 1.7,
+              "hi": 2.8,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.7,
+              "lo": 0.5,
+              "hi": 0.9,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.0,
+              "lo": 3.0,
+              "hi": 5.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.3,
+              "hi": -0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.4,
+              "lo": 2.5,
+              "hi": 4.2,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.5,
+              "lo": -0.5,
+              "hi": -0.3,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "shilin",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在士林區用臺北通 APP，大約比打 1999 早 0.6 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 3.0,
+              "lo": 2.2,
+              "hi": 3.7,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.4,
+              "lo": 1.8,
+              "hi": 2.9,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.6,
+              "lo": 0.4,
+              "hi": 0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.1,
+              "lo": 3.1,
+              "hi": 5.1,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.4,
+              "hi": -0.9,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.5,
+              "lo": 2.6,
+              "hi": 4.3,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.5,
+              "lo": -0.6,
+              "hi": -0.4,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "beitou",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在北投區用臺北通 APP，大約比打 1999 早 0.8 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.2,
+              "hi": 3.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.1,
+              "lo": 1.6,
+              "hi": 2.6,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.8,
+              "lo": 0.6,
+              "hi": 1.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.0,
+              "lo": 3.0,
+              "hi": 5.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.4,
+              "hi": -0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.3,
+              "lo": 2.5,
+              "hi": 4.1,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.4,
+              "lo": -0.5,
+              "hi": -0.3,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "neihu",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在內湖區用臺北通 APP，大約比打 1999 早 0.5 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 3.0,
+              "lo": 2.2,
+              "hi": 3.7,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.5,
+              "lo": 1.9,
+              "hi": 3.1,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.5,
+              "lo": 0.3,
+              "hi": 0.6,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.1,
+              "lo": 3.1,
+              "hi": 5.2,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.5,
+              "hi": -0.9,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.5,
+              "lo": 2.6,
+              "hi": 4.4,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.5,
+              "lo": -0.7,
+              "hi": -0.4,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "nangang",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在南港區用臺北通 APP，大約比打 1999 早 1.2 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.8,
+              "lo": 2.1,
+              "hi": 3.5,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 1.6,
+              "lo": 1.2,
+              "hi": 2.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 1.2,
+              "lo": 0.9,
+              "hi": 1.5,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 3.8,
+              "lo": 2.8,
+              "hi": 4.7,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.0,
+              "lo": -1.2,
+              "hi": -0.7,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.0,
+              "lo": 2.3,
+              "hi": 3.8,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.2,
+              "lo": -0.3,
+              "hi": -0.2,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      },
+      {
+        "row": "wenshan",
+        "recommended": "app",
+        "baseline": "phone",
+        "reason": "在文山區用臺北通 APP，大約比打 1999 早 0.7 天收到回覆：可附照片與定位，系統直接分類。",
+        "options": [
+          {
+            "id": "phone",
+            "key": "1999 電話",
+            "detail": "24 小時有人接，但要口述地點",
+            "cost": {
+              "value": 2.9,
+              "lo": 2.2,
+              "hi": 3.7,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.0,
+              "lo": 0.0,
+              "hi": 0.0,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "app",
+            "key": "臺北通 APP",
+            "detail": "可附照片與定位，系統直接分類",
+            "cost": {
+              "value": 2.2,
+              "lo": 1.7,
+              "hi": 2.8,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": 0.7,
+              "lo": 0.5,
+              "hi": 0.9,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "mail",
+            "key": "市長信箱",
+            "detail": "適合需要說明背景的問題",
+            "cost": {
+              "value": 4.0,
+              "lo": 3.0,
+              "hi": 5.0,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -1.1,
+              "lo": -1.3,
+              "hi": -0.8,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          },
+          {
+            "id": "office",
+            "key": "區公所臨櫃",
+            "detail": "上班時間才有人",
+            "cost": {
+              "value": 3.4,
+              "lo": 2.5,
+              "hi": 4.2,
+              "unit": "天",
+              "note": "從送出到第一次回覆；區間是不同類別的差異",
+              "label": "assumed",
+              "sim": true
+            },
+            "saved": {
+              "value": -0.5,
+              "lo": -0.5,
+              "hi": -0.3,
+              "unit": "天",
+              "note": "和打 1999 相比；假設只有你換管道",
+              "label": "assumed",
+              "sim": true
+            },
+            "status": "open"
+          }
+        ]
+      }
+    ]
+  },
+  "collective": {
+    "title": "如果大家都改用同一個管道呢？",
+    "place": "全市",
+    "cols": [
+      "parking",
+      "road",
+      "noise",
+      "litter",
+      "light",
+      "pests",
+      "trees",
+      "parks"
+    ],
+    "layer": "days",
+    "modes": [
+      {
+        "id": "solo",
+        "title": "只有你換管道",
+        "delta": {
+          "value": -0.6,
+          "unit": "天",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "你早一點收到回覆，其他人不受影響。",
+        "curve": [
+          {
+            "v": 2.4,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 7.2,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 3.6,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 4.8,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 4.2,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 6.0,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 10.8,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 9.6,
+            "label": "assumed",
+            "sim": true
+          }
+        ]
+      },
+      {
+        "id": "same",
+        "title": "大家都改用 APP",
+        "delta": {
+          "value": -0.1,
+          "unit": "天",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "APP 的案件暴增，承辦人一樣多，大家只快一點點。",
+        "curve": [
+          {
+            "v": 2.6,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 7.9,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 4.0,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 5.3,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 4.6,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 6.6,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 11.9,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 10.6,
+            "label": "assumed",
+            "sim": true
+          }
+        ],
+        "highlight": [
+          "litter",
+          "parking"
+        ]
+      },
+      {
+        "id": "split",
+        "title": "依各管道負荷分流",
+        "delta": {
+          "value": -0.4,
+          "unit": "天",
+          "label": "assumed",
+          "sim": true
+        },
+        "text": "案件平均分散到各管道，每件都快一點。",
+        "curve": [
+          {
+            "v": 2.2,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 6.7,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 3.3,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 4.5,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 3.9,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 5.6,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 10.1,
+            "label": "assumed",
+            "sim": true
+          },
+          {
+            "v": 8.9,
+            "label": "assumed",
+            "sim": true
+          }
+        ]
+      }
+    ],
+    "claims": {
+      "total": {
+        "pending": true,
+        "unit": "人",
+        "note": "意向登記，未經驗證",
+        "label": "observed",
+        "sim": true
+      },
+      "note": "APP 已滿載，系統開始建議改用市長信箱或臨櫃。",
+      "slots": [
+        {
+          "key": "1999 電話",
+          "filled": {
+            "value": 72,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": false
+        },
+        {
+          "key": "臺北通 APP",
+          "filled": {
+            "value": 100,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": true
+        },
+        {
+          "key": "市長信箱",
+          "filled": {
+            "value": 45,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": false
+        },
+        {
+          "key": "區公所臨櫃",
+          "filled": {
+            "value": 60,
+            "unit": "%",
+            "label": "assumed",
+            "sim": true
+          },
+          "full": false
+        }
+      ]
+    }
+  },
+  "scenario": {
+    "title": "旺季前先處理，積案會少多少？",
+    "intro": "拉動滑桿，把旺季（第 7–10 週）的一部分環境髒亂案件，提前到旺季前主動巡查，或把非緊急案件延後。結果用區間表示（每週結案量 ±10%）。",
+    "place": "環境髒亂（全市）",
+    "cols": [
+      {
+        "id": "w01",
+        "label": "第 1 週"
+      },
+      {
+        "id": "w02",
+        "label": "第 2 週"
+      },
+      {
+        "id": "w03",
+        "label": "第 3 週"
+      },
+      {
+        "id": "w04",
+        "label": "第 4 週"
+      },
+      {
+        "id": "w05",
+        "label": "第 5 週"
+      },
+      {
+        "id": "w06",
+        "label": "第 6 週"
+      },
+      {
+        "id": "w07",
+        "label": "第 7 週"
+      },
+      {
+        "id": "w08",
+        "label": "第 8 週"
+      },
+      {
+        "id": "w09",
+        "label": "第 9 週"
+      },
+      {
+        "id": "w10",
+        "label": "第 10 週"
+      },
+      {
+        "id": "w11",
+        "label": "第 11 週"
+      },
+      {
+        "id": "w12",
+        "label": "第 12 週"
+      },
+      {
+        "id": "w13",
+        "label": "第 13 週"
+      },
+      {
+        "id": "w14",
+        "label": "第 14 週"
+      }
+    ],
+    "slider": {
+      "name": "旺季案件提前或延後處理的比例",
+      "unit": "%",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "default": 10
+    },
+    "peak_cols": [
+      "w07",
+      "w08",
+      "w09",
+      "w10"
+    ],
+    "targets": [
+      {
+        "id": "early",
+        "label": "旺季前主動巡查（第 3–4 週）",
+        "cols": [
+          "w03",
+          "w04"
+        ]
+      },
+      {
+        "id": "late",
+        "label": "非緊急案件延後（第 11–12 週）",
+        "cols": [
+          "w11",
+          "w12"
+        ]
+      }
+    ],
+    "capacity": {
+      "value": 1000,
+      "lo": 900,
+      "hi": 1100,
+      "unit": "件／週",
+      "label": "assumed",
+      "sim": true
+    },
+    "baseline": {
+      "queue_max": {
+        "value": 384,
+        "lo": 184,
+        "hi": 584,
+        "unit": "件",
+        "note": "lo／hi 對應每週結案量 +10%／−10%",
+        "label": "computed",
+        "sim": true
+      },
+      "clear_time": null,
+      "clear_col": "w11",
+      "delay_change": {
+        "value": 0,
+        "unit": "%",
+        "label": "computed",
+        "sim": true
+      },
+      "new_peak": null,
+      "cum_arrive": [
+        550,
+        1100,
+        1650,
+        2201,
+        2761,
+        3391,
+        4261,
+        5453,
+        6645,
+        7515,
+        8145,
+        8705,
+        9256,
+        9806
+      ],
+      "cum_depart": [
+        550,
+        1100,
+        1650,
+        2201,
+        2761,
+        3391,
+        4261,
+        5261,
+        6261,
+        7261,
+        8145,
+        8705,
+        9256,
+        9806
+      ],
+      "queue": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        192,
+        384,
+        254,
+        0,
+        0,
+        0,
+        0
+      ],
+      "label": "computed",
+      "sim": true
+    },
+    "results": [
+      {
+        "target": "early",
+        "shift": 0,
+        "queue_max": {
+          "value": 384,
+          "lo": 184,
+          "hi": 584,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w11",
+        "delay_change": {
+          "value": 0,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4261,
+          5453,
+          6645,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4261,
+          5261,
+          6261,
+          7261,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          192,
+          384,
+          254,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 5,
+        "queue_max": {
+          "value": 265,
+          "lo": 65,
+          "hi": 465,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w11",
+        "delay_change": {
+          "value": -41,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1753,
+          2407,
+          2967,
+          3597,
+          4424,
+          5556,
+          6688,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1753,
+          2407,
+          2967,
+          3597,
+          4424,
+          5424,
+          6424,
+          7424,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          132,
+          265,
+          91,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -60,
+          -119,
+          -163,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 10,
+        "queue_max": {
+          "value": 146,
+          "lo": 0,
+          "hi": 346,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w10",
+        "delay_change": {
+          "value": -74,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1856,
+          2613,
+          3173,
+          3803,
+          4586,
+          5659,
+          6732,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1856,
+          2613,
+          3173,
+          3803,
+          4586,
+          5586,
+          6586,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          73,
+          146,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -119,
+          -238,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 15,
+        "queue_max": {
+          "value": 26,
+          "lo": 0,
+          "hi": 226,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w10",
+        "delay_change": {
+          "value": -95,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1959,
+          2820,
+          3380,
+          4010,
+          4749,
+          5762,
+          6776,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1959,
+          2820,
+          3380,
+          4010,
+          4749,
+          5749,
+          6749,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          13,
+          26,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -179,
+          -358,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 20,
+        "queue_max": {
+          "value": 0,
+          "lo": 0,
+          "hi": 126,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": null,
+        "delay_change": {
+          "value": -100,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          2062,
+          3026,
+          3586,
+          4216,
+          4912,
+          5865,
+          6819,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2062,
+          3026,
+          3586,
+          4216,
+          4912,
+          5865,
+          6819,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 25,
+        "queue_max": {
+          "value": 132,
+          "lo": 0,
+          "hi": 332,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w05",
+        "delay_change": {
+          "value": -76,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w03",
+        "cum_arrive": [
+          550,
+          1100,
+          2166,
+          3232,
+          3792,
+          4422,
+          5074,
+          5968,
+          6862,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2100,
+          3100,
+          3792,
+          4422,
+          5074,
+          5968,
+          6862,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          66,
+          132,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          66,
+          132,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 30,
+        "queue_max": {
+          "value": 338,
+          "lo": 138,
+          "hi": 538,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w05",
+        "delay_change": {
+          "value": -39,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w03",
+        "cum_arrive": [
+          550,
+          1100,
+          2269,
+          3438,
+          3998,
+          4628,
+          5237,
+          6072,
+          6906,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2100,
+          3100,
+          3998,
+          4628,
+          5237,
+          6072,
+          6906,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          169,
+          338,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          169,
+          338,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 35,
+        "queue_max": {
+          "value": 544,
+          "lo": 344,
+          "hi": 744,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w06",
+        "delay_change": {
+          "value": 11,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w03",
+        "cum_arrive": [
+          550,
+          1100,
+          2372,
+          3644,
+          4204,
+          4834,
+          5400,
+          6175,
+          6950,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2100,
+          3100,
+          4100,
+          4834,
+          5400,
+          6175,
+          6950,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          272,
+          544,
+          104,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          272,
+          544,
+          104,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 40,
+        "queue_max": {
+          "value": 751,
+          "lo": 551,
+          "hi": 951,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w06",
+        "delay_change": {
+          "value": 73,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w03",
+        "cum_arrive": [
+          550,
+          1100,
+          2475,
+          3851,
+          4411,
+          5041,
+          5563,
+          6278,
+          6993,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2100,
+          3100,
+          4100,
+          5041,
+          5563,
+          6278,
+          6993,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          375,
+          751,
+          311,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          375,
+          751,
+          311,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 45,
+        "queue_max": {
+          "value": 957,
+          "lo": 757,
+          "hi": 1157,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w07",
+        "delay_change": {
+          "value": 153,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w03",
+        "cum_arrive": [
+          550,
+          1100,
+          2578,
+          4057,
+          4617,
+          5247,
+          5725,
+          6381,
+          7037,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2100,
+          3100,
+          4100,
+          5100,
+          5725,
+          6381,
+          7037,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          478,
+          957,
+          517,
+          147,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          478,
+          957,
+          517,
+          147,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "early",
+        "shift": 50,
+        "queue_max": {
+          "value": 1163,
+          "lo": 963,
+          "hi": 1363,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w07",
+        "delay_change": {
+          "value": 240,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w03",
+        "cum_arrive": [
+          550,
+          1100,
+          2681,
+          4263,
+          4823,
+          5453,
+          5888,
+          6484,
+          7080,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          2100,
+          3100,
+          4100,
+          5100,
+          5888,
+          6484,
+          7080,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          581,
+          1163,
+          723,
+          353,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          581,
+          1163,
+          723,
+          353,
+          0,
+          -192,
+          -384,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 0,
+        "queue_max": {
+          "value": 384,
+          "lo": 184,
+          "hi": 584,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w11",
+        "delay_change": {
+          "value": 0,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4261,
+          5453,
+          6645,
+          7515,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4261,
+          5261,
+          6261,
+          7261,
+          8145,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          192,
+          384,
+          254,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 5,
+        "queue_max": {
+          "value": 265,
+          "lo": 65,
+          "hi": 465,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w11",
+        "delay_change": {
+          "value": -41,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4218,
+          5350,
+          6482,
+          7309,
+          8042,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4218,
+          5218,
+          6217,
+          7217,
+          8042,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          132,
+          265,
+          91,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -60,
+          -119,
+          -163,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 10,
+        "queue_max": {
+          "value": 146,
+          "lo": 0,
+          "hi": 346,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w10",
+        "delay_change": {
+          "value": -74,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4174,
+          5247,
+          6320,
+          7103,
+          7939,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4174,
+          5174,
+          6174,
+          7103,
+          7939,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          73,
+          146,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -119,
+          -238,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 15,
+        "queue_max": {
+          "value": 26,
+          "lo": 0,
+          "hi": 226,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w10",
+        "delay_change": {
+          "value": -95,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": null,
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4130,
+          5144,
+          6157,
+          6896,
+          7836,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4130,
+          5130,
+          6130,
+          6896,
+          7836,
+          8705,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          13,
+          26,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -179,
+          -358,
+          -254,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 20,
+        "queue_max": {
+          "value": 42,
+          "lo": 0,
+          "hi": 215,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w13",
+        "delay_change": {
+          "value": -93,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4087,
+          5041,
+          5994,
+          6690,
+          7733,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4087,
+          5041,
+          5994,
+          6690,
+          7690,
+          8690,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          42,
+          15,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          42,
+          15,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 25,
+        "queue_max": {
+          "value": 221,
+          "lo": 46,
+          "hi": 421,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w13",
+        "delay_change": {
+          "value": -56,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4044,
+          4938,
+          5832,
+          6484,
+          7630,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4044,
+          4938,
+          5832,
+          6484,
+          7484,
+          8484,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          146,
+          221,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          146,
+          221,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 30,
+        "queue_max": {
+          "value": 427,
+          "lo": 227,
+          "hi": 627,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w13",
+        "delay_change": {
+          "value": -19,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4000,
+          4834,
+          5669,
+          6278,
+          7526,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          4000,
+          4834,
+          5669,
+          6278,
+          7278,
+          8278,
+          9256,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          249,
+          427,
+          0,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          249,
+          427,
+          0,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 35,
+        "queue_max": {
+          "value": 633,
+          "lo": 433,
+          "hi": 833,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w14",
+        "delay_change": {
+          "value": 41,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3956,
+          4731,
+          5506,
+          6072,
+          7423,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3956,
+          4731,
+          5506,
+          6072,
+          7072,
+          8072,
+          9072,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          352,
+          633,
+          184,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          352,
+          633,
+          184,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 40,
+        "queue_max": {
+          "value": 840,
+          "lo": 640,
+          "hi": 1040,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w14",
+        "delay_change": {
+          "value": 103,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3913,
+          4628,
+          5343,
+          5865,
+          7320,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3913,
+          4628,
+          5343,
+          5865,
+          6865,
+          7865,
+          8865,
+          9806
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          455,
+          840,
+          391,
+          0
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          455,
+          840,
+          391,
+          0
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 45,
+        "queue_max": {
+          "value": 1046,
+          "lo": 846,
+          "hi": 1246,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w14",
+        "delay_change": {
+          "value": 183,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3870,
+          4525,
+          5181,
+          5659,
+          7217,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3870,
+          4525,
+          5181,
+          5659,
+          6659,
+          7659,
+          8659,
+          9659
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          558,
+          1046,
+          597,
+          147
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          558,
+          1046,
+          597,
+          147
+        ]
+      },
+      {
+        "target": "late",
+        "shift": 50,
+        "queue_max": {
+          "value": 1252,
+          "lo": 1052,
+          "hi": 1452,
+          "unit": "件",
+          "note": "lo／hi 對應每週結案量 +10%／−10%",
+          "label": "computed",
+          "sim": true
+        },
+        "clear_time": null,
+        "clear_col": "w14",
+        "delay_change": {
+          "value": 270,
+          "unit": "%",
+          "label": "computed",
+          "sim": true
+        },
+        "new_peak": "w11",
+        "cum_arrive": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3826,
+          4422,
+          5018,
+          5453,
+          7114,
+          8705,
+          9256,
+          9806
+        ],
+        "cum_depart": [
+          550,
+          1100,
+          1650,
+          2201,
+          2761,
+          3391,
+          3826,
+          4422,
+          5018,
+          5453,
+          6453,
+          7453,
+          8453,
+          9453
+        ],
+        "queue": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          661,
+          1252,
+          803,
+          353
+        ],
+        "label": "computed",
+        "sim": true,
+        "queue_diff": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          -192,
+          -384,
+          -254,
+          661,
+          1252,
+          803,
+          353
+        ]
+      }
+    ],
+    "sensitivity": {
+      "title": "哪個假設最影響結論？",
+      "question": "旺季最高積案減半，要提前處理幾 % 的旺季案件",
+      "base": {
+        "value": 8.1,
+        "unit": "%",
+        "note": "每週結案 1,000 件時",
+        "label": "computed",
+        "sim": true
+      },
+      "items": [
+        {
+          "id": "peak-height",
+          "name": "旺季有多高",
+          "low_text": "旺季低 20%",
+          "high_text": "旺季高 20%",
+          "low": {
+            "value": 3.0,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "high": {
+            "value": 12.2,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "spread": 9.2,
+          "needs": "過去 3 年同期的每週案件數",
+          "label": "computed",
+          "sim": true
+        },
+        {
+          "id": "capacity",
+          "name": "每週能結案多少件",
+          "low_text": "每週 1,100 件",
+          "high_text": "每週 900 件",
+          "low": {
+            "value": 3.9,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "high": {
+            "value": 12.3,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "spread": 8.4,
+          "needs": "環保局各區清潔隊的每週結案量",
+          "label": "computed",
+          "sim": true
+        }
+      ],
+      "note": "目前最影響的是「旺季有多高」，最需要補的資料是：過去 3 年同期的每週案件數。"
+    }
+  },
+  "city": {
+    "title": "大家的陳情，變成改善的證據",
+    "goal": {
+      "text": "要讓環境髒亂的旺季積案減半，旺季的案件大約要提前處理",
+      "need": {
+        "value": 8,
+        "lo": 4,
+        "hi": 12,
+        "unit": "% 提前處理",
+        "note": "區間對應每週結案量 ±10%；由排隊模型反推",
+        "label": "computed",
+        "sim": true
+      }
+    },
+    "claimed": {
+      "pending": true,
+      "unit": "人",
+      "note": "意向登記，未經驗證",
+      "label": "observed",
+      "sim": true
+    },
+    "claimed_since": "2026-10-24",
+    "claimed_caption": "意向登記，未經驗證：同一支手機每天只算一次，但同一人仍可能重複登記，也不代表全體市民。",
+    "note": "目標比例由排隊模型反推（程式計算），不是保證值；人數只計真實登記，沒有資料時顯示「尚無資料」。",
+    "actions": [
+      {
+        "id": "patrol",
+        "title": "旺季前主動巡查髒亂熱點",
+        "depts": [
+          "環保局"
+        ],
+        "why": "熱力圖上件數最多的格子集中在少數行政區，旺季前先清，可以少接很多陳情。",
+        "you": "你家附近的髒亂點在被投訴前就先處理。",
+        "cost": "清潔隊加班費，待推估",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      },
+      {
+        "id": "progress",
+        "title": "陳情處理進度公開查詢",
+        "depts": [
+          "研考會"
+        ],
+        "why": "很多重複陳情是因為不知道案子處理到哪裡。",
+        "you": "送出後可以查到現在由誰處理、預計幾天。",
+        "cost": "系統擴充，待推估",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      },
+      {
+        "id": "routing",
+        "title": "陳情自動分類，直接派到承辦單位",
+        "depts": [
+          "研考會",
+          "資訊局"
+        ],
+        "why": "類別分錯會轉來轉去，拉長結案天數。",
+        "you": "案子少轉一手，早一點有人處理。",
+        "cost": "低（既有分類規則調整）",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      },
+      {
+        "id": "trees",
+        "title": "行道樹修剪排程公開",
+        "depts": [
+          "工務局公園處"
+        ],
+        "why": "行道樹是平均結案最久的類別之一（約 10.8 天，模擬值）。",
+        "you": "知道你家門口的樹什麼時候會修。",
+        "cost": "低（公開既有排程）",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      },
+      {
+        "id": "border",
+        "title": "臺北新北交界的髒亂點共同處理",
+        "depts": [
+          "臺北市環保局",
+          "新北市環保局"
+        ],
+        "cross_agency": true,
+        "why": "交界處常互相認為是對方的轄區，案子容易卡住。",
+        "you": "住在交界的人反映一次就有人處理。",
+        "cost": "協調成本，待推估",
+        "support": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        }
+      }
+    ],
+    "disclaimer": "以上是本作品依資料提出的建議，不代表市府已經承諾。人數只計真實登記，未經驗證；成本欄位待填。"
+  },
+  "brief": {
+    "title": "[局處名稱]：旺季前主動巡查可以改善什麼",
+    "org": "[局處名稱]",
+    "date": "[產出日期]",
+    "exposure": {
+      "title": "貴局負責的類別，哪幾區最慢結案",
+      "cols": [
+        "litter",
+        "pests",
+        "noise"
+      ],
+      "layer": "days",
+      "rows": [
+        {
+          "row": "daan",
+          "share": {
+            "value": 10,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "cells": [
+            {
+              "v": 4.9,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 7.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.9,
+              "label": "computed",
+              "sim": true
+            }
+          ]
+        },
+        {
+          "row": "zhongshan",
+          "share": {
+            "value": 10,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "cells": [
+            {
+              "v": 5.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.5,
+              "label": "computed",
+              "sim": true
+            }
+          ]
+        },
+        {
+          "row": "shilin",
+          "share": {
+            "value": 10,
+            "unit": "%",
+            "label": "computed",
+            "sim": true
+          },
+          "cells": [
+            {
+              "v": 5.2,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 6.6,
+              "label": "computed",
+              "sim": true
+            },
+            {
+              "v": 3.5,
+              "label": "computed",
+              "sim": true
+            }
+          ]
+        }
+      ],
+      "note": "百分比為該區佔全市環境髒亂陳情的比例。顏色越深結案越慢。"
+    },
+    "conclusion": {
+      "text": "環境髒亂旺季的案件若有約 4–12% 改在旺季前主動處理，旺季最高積案可減半；但全部擠到旺季前也會形成新的積案高峰，所以要搭配非緊急案件延後。",
+      "note": "情境假設 · 程式計算 · 區間反映每週結案量 ±10%",
+      "label": "computed",
+      "sim": true
+    },
+    "options": [
+      {
+        "id": "a",
+        "name": "維持現況",
+        "saving": {
+          "value": 0,
+          "unit": "天",
+          "label": "computed",
+          "sim": true
+        },
+        "queue_change": {
+          "value": 0,
+          "unit": "%",
+          "note": "基準",
+          "label": "computed",
+          "sim": true
+        },
+        "cost_text": "無"
+      },
+      {
+        "id": "b",
+        "name": "旺季案件 10% 改在旺季前主動巡查",
+        "saving": {
+          "lo": 0.2,
+          "hi": 0.7,
+          "unit": "天",
+          "note": "每件案子平均少等的天數",
+          "label": "computed",
+          "sim": true
+        },
+        "queue_change": {
+          "lo": -100,
+          "hi": -41,
+          "unit": "%",
+          "note": "旺季最高積案的變化",
+          "label": "computed",
+          "sim": true
+        },
+        "cost_text": "旺季前 2 週清潔隊加班"
+      },
+      {
+        "id": "c",
+        "name": "旺季案件 20%：一半主動巡查、一半非緊急延後",
+        "saving": {
+          "lo": 0.2,
+          "hi": 1.1,
+          "unit": "天",
+          "note": "每件案子平均少等的天數",
+          "label": "computed",
+          "sim": true
+        },
+        "queue_change": {
+          "lo": -100,
+          "hi": -82,
+          "unit": "%",
+          "note": "旺季最高積案的變化",
+          "label": "computed",
+          "sim": true
+        },
+        "cost_text": "需訂出「非緊急」的分類標準，並告知陳情人預計處理時間"
+      }
+    ],
+    "support": [
+      {
+        "dept": "研考會",
+        "text": "提供各類別每週案件數與結案時間，作為排班依據"
+      },
+      {
+        "dept": "民政局",
+        "text": "區公所協助回報轄區內的髒亂熱點"
+      }
+    ],
+    "pilot": [
+      {
+        "key": "對照",
+        "text": "主動巡查的行政區 vs. 未巡查的行政區；試辦前 4 週為基準期"
+      },
+      {
+        "key": "指標",
+        "text": "每週新案件數、平均結案天數、重複陳情比例"
+      },
+      {
+        "key": "干擾",
+        "text": "記錄颱風、連假、大型活動，分析時排除"
+      },
+      {
+        "key": "停止條件",
+        "text": "第 4 週新案件數沒有下降，或其他類別結案明顯變慢"
+      }
+    ],
+    "public": [
+      {
+        "value": {
+          "pending": true,
+          "unit": "人",
+          "note": "意向登記，未經驗證",
+          "label": "observed",
+          "sim": true
+        },
+        "text": "表示需要「陳情處理進度公開查詢」的人數（未經驗證）"
+      }
+    ],
+    "sources_text": "資料來源：[1999 派工資料，期間待填]。標示：真實觀測／程式計算／情境假設／AI 生成。本文件為黑客松作品之建議，不代表市府立場。"
+  },
+  "limits": {
+    "title": "我們可能錯在哪",
+    "intro": "陳情資料反映的是「有人反映」，不一定等於「問題最嚴重」。以下是最可能推翻結論的地方。",
+    "items": [
+      {
+        "id": "reporting",
+        "title": "件數多不等於問題多",
+        "why": "人口多、通勤人口多、習慣用 APP 的區，件數自然比較多；有些區的人不習慣反映。",
+        "handling": "正式版同時顯示每萬人件數，並標出人口與通勤人口的差異。",
+        "status": "partial"
+      },
+      {
+        "id": "closed",
+        "title": "結案不等於解決",
+        "why": "結案可能只是回覆「已轉知」或「非本局權責」。",
+        "handling": "需要結案方式欄位；目前沒有，尚未處理。",
+        "status": "open"
+      },
+      {
+        "id": "duplicates",
+        "title": "同一個問題被很多人反映",
+        "why": "熱門地點會被重複陳情，件數看起來很多，但其實是同一件事。",
+        "handling": "正式版依地點與時間合併重複案件後再算。",
+        "status": "partial"
+      },
+      {
+        "id": "category",
+        "title": "類別可能分錯",
+        "why": "受理人員依描述分類，同一件事可能被分到不同類別。",
+        "handling": "只用大類，不用細類。",
+        "status": "partial"
+      },
+      {
+        "id": "privacy",
+        "title": "陳情內容可能含個資",
+        "why": "原文可能有姓名、住址或可辨識的描述。",
+        "handling": "只用類別、行政區、時間做彙總，原文不進 repo、不上網站。",
+        "status": "handled"
+      }
+    ]
+  }
+}
