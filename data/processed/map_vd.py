@@ -1,7 +1,5 @@
-"""把收集到的 VD 讀數畫在真實地圖上，用時間捲軸看每個偵測器一整天的變化。
-
-用法：python3 data/processed/map_vd.py [data/raw/vd_taipei_targets.csv ...]
-輸出：data/raw/map.html（含真實資料，不進 git），接著執行 open data/raw/map.html
+"""路況地圖：把 VD 讀數畫在真實地圖上，用時間捲軸看每個偵測器一整天的變化。
+explore_vd.py 會把這張地圖放進 data/raw/explore.html（最上面的「在地圖上看」），不另外產生檔案。
 打開時需要網路：地圖底圖（OpenStreetMap、Esri 衛星）與 Leaflet 套件從網路載入。
 
 - 位置：5 個入口用 entrances_detail.csv 的座標；其他偵測器（堤頂大道下游等）從臺北市 VD 靜態資料 VD.xml 找，
@@ -22,9 +20,8 @@ from collections import defaultdict
 from pathlib import Path
 
 from explore_vd import LIMIT, MIN_CARS, threshold
-from preview_vd import DEFAULT_CSV, MAIN, ROOT, load
+from preview_vd import MAIN, ROOT
 
-OUT = ROOT / "raw" / "map.html"
 STATIC = ROOT / "raw" / "VD.xml"
 STATIC_URL = "https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml"
 NS = "{http://traffic.transportdata.tw/standard/traffic/schema/}"
@@ -169,8 +166,8 @@ PAGE = r"""<!doctype html>
 --A:#2e9e57;--B:#8cc63f;--C:#f2c12e;--D:#f28c28;--E:#e0452b;--F:#8e1b1b;--none:#9a9a94}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--muted:#8f8e86;--grid:#2c2c2a;--axis:#3a3a37}}
 *{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 -apple-system,"Noto Sans TC","PingFang TC",sans-serif}
-main{max-width:1200px;margin:0 auto;padding:16px}h1{font-size:20px;margin:0 0 4px}.sub{color:var(--ink2);margin:0 0 12px;font-size:14px}
-#map{height:62vh;min-height:380px;border-radius:12px;border:1px solid var(--grid)}
+main{max-width:1200px;margin:0 auto;padding:4px}h1{font-size:20px;margin:0 0 4px}.sub{color:var(--ink2);margin:0 0 12px;font-size:14px}
+#map{height:520px;border-radius:12px;border:1px solid var(--grid)}
 .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;font-size:14px;color:var(--ink2)}
 .bar select,.bar button{font:inherit;padding:5px 10px;border-radius:8px;border:1px solid var(--axis);background:var(--surface);color:var(--ink);cursor:pointer}
 #t{flex:1;min-width:200px}#clock{font-variant-numeric:tabular-nums;font-size:22px;font-weight:600;color:var(--ink);min-width:64px}
@@ -182,7 +179,7 @@ main{max-width:1200px;margin:0 auto;padding:16px}h1{font-size:20px;margin:0 0 4p
 .dot.small{width:14px;height:14px;border-width:2px;font-size:0}.nolab .lab,.nolab .arrow{display:none}.dot.sel{outline:3px solid #2a78d6;outline-offset:2px}.arrow{position:absolute;top:-13px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid #fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.8));margin-bottom:-2px}
 .vd.left .lab{transform:translateX(-58%)}.vd.right .lab{transform:translateX(58%)}.lab{margin-top:3px;background:rgba(20,20,20,.78);color:#fff;font:600 12px sans-serif;padding:2px 6px;border-radius:6px;white-space:nowrap}
 </style></head><body><main>
-<h1>入口路況地圖</h1><p class="sub" id="sub"></p>
+<p class="sub" id="sub"></p>
 <div id="map"></div>
 <div class="bar"><span id="clock">--:--</span><button id="play">▶ 播放</button><input type="range" id="t" min="0" max="0" step="1">
 日期 <select id="day"></select> 尺 <select id="ruler"><option value="hcm">跟平常比（HCM）</option><option value="tw">依速限（臺灣公路容量手冊）</option></select>
@@ -278,28 +275,22 @@ $('play').onclick = () => { if (timer) { clearInterval(timer); timer = null; $('
   $('play').textContent = '❚❚ 暫停'; timer = setInterval(() => { const t = $('t'); t.value = (+t.value + 1) % (+t.max + 1); draw(); }, +$('spd').value); };
 $('spd').onchange = () => { if (timer) { $('play').click(); $('play').click(); } };
 addEventListener('resize', chart);
+// 放在 explore.html 的 iframe 裡時，告訴外層要多高
+const tell = () => parent !== window && parent.postMessage({ mapHeight: document.documentElement.scrollHeight }, '*');
+new ResizeObserver(tell).observe(document.body);
 setDay();
 </script></body></html>
 """
 
 
-def main(argv):
-    paths = argv or [DEFAULT_CSV]
-    missing = [p for p in paths if not Path(p).exists()]
-    if missing:
-        print(f"找不到 {', '.join(map(str, missing))}；收集程式至少要成功抓過一次")
-        return 1
-    rows, _ = load(paths)
+def render(rows):
+    """地圖頁的完整 HTML；沒有找得到位置的偵測器時回傳 None。"""
     doc = build(rows)
     if not doc["vds"]:
-        print("檔案裡沒有找得到位置的偵測器")
-        return 1
-    OUT.parent.mkdir(parents=True, exist_ok=True)
+        return None
     data = json.dumps(doc, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
-    OUT.write_text(PAGE.replace("__DATA__", data).replace("__MIN__", str(doc["min_cars"])), encoding="utf-8")
-    print(f"wrote {OUT}（{len(doc['vds'])} 支偵測器、{len(doc['days'])} 天）。執行 open {OUT.relative_to(ROOT.parent)} 用瀏覽器打開（需要網路載入地圖）")
-    return 0
+    return PAGE.replace("__DATA__", data).replace("__MIN__", str(doc["min_cars"]))
 
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv[1:]))
+    print("地圖已經放進探索圖表：python3 data/processed/explore_vd.py && open data/raw/explore.html")

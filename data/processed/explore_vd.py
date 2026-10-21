@@ -5,6 +5,7 @@
 
 圖表
  手上有哪些資料：每天收到哪些時段（資料不完整時，看哪些分析能做）
+ 在地圖上看：路況地圖（真實底圖、時間捲軸、路段跟著變色，見 map_vd.py）
  先看尺：怎麼判斷塞不塞（兩把尺）、最慢的時候剩平常車速的幾 %
  什麼時候塞：一天裡每個入口在哪一級（可切換尺）、一整天的車速、每小時多少車
  哪裡最塞：各入口最慢時的車速
@@ -217,6 +218,9 @@ __STYLE__
 <p class="grp">手上有哪些資料</p>
 <section class="card"><h2>每天收到哪些時段？</h2><div class="scroll"><svg id="cv"></svg></div><div class="legend"><span>顏色越深，那一小時收到的讀數越完整（5 個入口、每 5 分鐘一筆）</span></div><p class="say" id="sv"></p></section>
 
+<p class="grp">在地圖上看</p>
+<section class="card"><h2>路況地圖：拖動時間，看每條路的等級怎麼變</h2><iframe id="mapframe" title="路況地圖" style="width:100%;height:1000px;border:0;display:block"></iframe><p class="note" id="mapnote"></p></section>
+
 <p class="grp">先看尺</p>
 <section class="card"><h2>怎麼判斷塞不塞？</h2>
 <p>用服務水準 A–F 分級（A 最順、F 最塞），<b>E、F 級算「塞」</b>。這一頁有兩把尺：</p>
@@ -253,7 +257,11 @@ __STYLE__
 <p class="note"><span id="def"></span>機車混在一般車道計數，可能漏數；環東大道禁行機車。資料來源：臺北市交工處 VDLive.xml。探索用，不是正式結果。</p>
 </main><div id="tip"></div>
 <script>
-const D = __DATA__, N = D.names;
+const D = __DATA__, N = D.names, MAP = __MAP__;
+// 地圖是獨立的一頁，放在 iframe 裡，樣式和程式不會互相影響
+if (MAP) { const mf = document.getElementById('mapframe'); mf.srcdoc = MAP;
+  addEventListener('message', e => { if (e.data && e.data.mapHeight) mf.style.height = e.data.mapHeight + 'px'; }); }
+else { document.getElementById('mapframe').remove(); document.getElementById('mapnote').textContent = '找不到偵測器的位置，地圖沒有產生。'; }
 const $ = id => document.getElementById(id), tip = $('tip');
 const hhmm = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).padStart(2,'0');
 const md = d => d.slice(5).replace('-', '/');
@@ -577,8 +585,11 @@ def main(argv):
         print("檔案裡還沒有 5 個入口的有效讀數")
         return 1
     data = json.dumps(build(rows), ensure_ascii=False)
+    from map_vd import render  # map_vd 也會用到這個檔的定義，放在這裡才不會互相載入
+    page_map = render(rows)
+    MAP = json.dumps(page_map, ensure_ascii=False).replace("</", "<\\/")
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(PAGE.replace("__STYLE__", STYLE).replace("__DATA__", data.replace("</", "<\\/")), encoding="utf-8")
+    OUT.write_text(PAGE.replace("__STYLE__", STYLE).replace("__MAP__", MAP).replace("__DATA__", data.replace("</", "<\\/")), encoding="utf-8")
     print(f"wrote {OUT}（{len(rows):,} 筆讀數）。執行 open {OUT.relative_to(ROOT.parent)} 用瀏覽器打開")
     return 0
 
