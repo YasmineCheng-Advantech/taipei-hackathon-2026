@@ -5,7 +5,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 **驗證狀態**
 
 - ✅ 已下載驗證：實際抓過，欄位確認過。
-- ⚠️ 待驗證：連結或關鍵字還沒實際下載。10/20 這份目錄是在雲端環境整理的，那裡連不到 data.taipei 與 tcgbusfs，所以大多還沒驗證。有直接網址或 data.gov.tw 編號的（共 11 個），在自己電腦跑 `python3 data/fetch/check_catalog.py`（Windows 用 `py`，見 [`WINDOWS.md`](WINDOWS.md)）會逐一下載樣本到 `data/raw/catalog/`（不進 git）並印出欄位，跑完把這裡改成 ✅。
+- ⚠️ 待驗證：連結或關鍵字還沒實際下載。10/20 這份目錄是在雲端環境整理的，那裡連不到 data.taipei 與 tcgbusfs，所以大多還沒驗證。有直接網址或 data.gov.tw 編號的（共 11 個），在自己電腦跑 `python3 data/fetch/check_catalog.py`（步驟見 [`LOCAL.md`](LOCAL.md)）會逐一下載樣本到 `data/raw/catalog/`（不進 git）並印出欄位，跑完把這裡改成 ✅。
 - ⏳ 卡住：需要金鑰或主辦方提供。
 - ❌ 不能用。
 

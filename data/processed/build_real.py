@@ -1,9 +1,9 @@
 """一行把收集到的 VD 接進熱力圖與錯峰情境：解壓 GitHub Actions 的 artifact、找出所有 csv、依序跑 4 個步驟。
 
-用法（Windows 用 py，Mac／Linux 用 python3）
-    py data/processed/build_real.py                       # 讀 data/raw/ 底下所有 vd_taipei_targets.csv 與 vd-raw-*.zip
-    py data/processed/build_real.py C:/Users/me/Downloads  # 另外再找這個資料夾（例如瀏覽器下載的 artifact zip）
-    py data/processed/build_real.py --dry-run              # 只列出找到哪些檔、幾天，不產生檔案
+用法（Mac／Linux 用 python3，Windows 用 py）
+    python3 data/processed/build_real.py               # 讀 data/raw/ 底下所有 vd_taipei_targets.csv 與 vd-raw-*.zip
+    python3 data/processed/build_real.py ~/Downloads   # 另外再找這個資料夾（例如瀏覽器下載的 artifact zip）
+    python3 data/processed/build_real.py --dry-run     # 只列出找到哪些檔、幾天，不產生檔案
 
 做的事（和 data/mock/README.md「換成真實資料時」的 4 行指令相同，外加 Demo 台詞檢查）
     0. 把 vd-raw-*.zip 解壓到 data/raw/actions/<zip 名稱>/（已解壓過就跳過）
@@ -89,7 +89,7 @@ def main(argv):
         unzip_all(dirs)
     csvs = find_csvs(dirs)
     if not csvs and not args.dry_run:
-        sys.exit(f"找不到 {NAME}。先從 GitHub Actions 下載 vd-raw-*.zip 放進 data/raw/，步驟見 data/WINDOWS.md")
+        sys.exit(f"找不到 {NAME}。先從 GitHub Actions 下載 vd-raw-*.zip 放進 data/raw/，步驟見 data/LOCAL.md")
     if not csvs:
         print(f"還沒有解壓好的 {NAME}")
         return 0
