@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>今天照平常走就好</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.cell{position:relative;height:30px;border-radius:9px;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.5) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 -3px 0 rgba(0,0,0,.08),inset 0 2px 0 rgba(255,255,255,.45)}
+.cell.usual{box-shadow:0 0 0 3px #3A2418,inset 0 -3px 0 rgba(0,0,0,.06)}
+.go{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 20px;background:#FFFFFF;border-radius:22px;box-shadow:0 10px 26px rgba(214,100,40,.12);text-decoration:none;color:#3A2418}
+.go:hover{color:#3A2418}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+.tab.on{color:#C8481F;font-weight:500}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 640px, rgba(240,130,60,.3), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 680px, #FFF8F3 844px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 30px">
+    <p style="margin: 0; font-size: 14px; letter-spacing: 0.12em; color: #8A3A18">今日・環東大道・10:00 前到</p>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
+      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    </a>
+  </div>
+  <div style="padding: 8px 16px 0; display: flex; flex-direction: column; gap: 14px">
+    <section aria-label="今天的建議" style="background: #FFFFFF; border-radius: 28px; box-shadow: 0 14px 34px rgba(214,100,40,.16); padding: 20px; display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <p style="margin: 0; font-size: 15px; letter-spacing: 0.12em; color: #6B4A3A">今天照平常走就好</p>
+        <span class="sim">含模擬資料</span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+        <p style="margin: 0; font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 56px; line-height: 1.05; color: #5A2410">09:15</p>
+        <p style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: 0.06em">經過環東大道</p>
+      </div>
+      <p style="margin: 0; font-size: 15px; line-height: 1.6">09:32 到公司<span style="color: #D9B8A2; margin: 0 8px">•</span>路上約 17 分</p>
+      <div aria-hidden="true" style="margin-top: 30px; display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px">
+        <sc-for list="{{strip}}" as="c" hint-placeholder-count="8">
+          <div class="cell {{c.cls}}" style="background-color: {{c.bg}}">
+            <sc-if value="{{c.isUsual}}" hint-placeholder-val="{{ false }}">
+              <span style="position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%); padding: 1px 8px; border-radius: 999px; font-size: 12px; white-space: nowrap; background: #FFFFFF; color: #4A4440; box-shadow: inset 0 0 0 1px #E2CDBE">平常</span>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6B4A3A; font-variant-numeric: tabular-nums"><span>08:00</span><span>09:00</span><span>09:45</span></div>
+      <p style="margin: 6px 0 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 13.5px; line-height: 1.7; color: #5A3A2A">你選了「不能調整」，所以我們不會叫你改時間。今天 09:15 這格還算順，照平常走就好。</p>
+    </section>
+    <a class="go" href="Setup.dc.html">
+      <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px; letter-spacing: 0.08em">其實可以晚一點？</b><span style="font-size: 13px; color: #6B4A3A">改成「只能延後」：09:30 經過，路上少 3–5 分</span></span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C8481F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"></path></svg>
+    </a>
+    <a class="go" href="City.dc.html">
+      <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px; letter-spacing: 0.08em">改不了時間，城市可以做什麼</b><span style="font-size: 13px; color: #6B4A3A">例如路口號誌、接駁車</span></span>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C8481F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"></path></svg>
+    </a>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab on" href="Today.dc.html" aria-current="page">今日</a>
+    <a class="tab" href="City.dc.html">城市</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const costs = [16, 20, 23, 24, 21, 17, 13, 10];
+    const color = (m) => (m < 12 ? '#FDD9A0' : m < 16 ? '#FCB46E' : m < 20 ? '#F2804A' : m < 24 ? '#C93A22' : '#7E170F');
+    return {
+      strip: costs.map((m, i) => ({ bg: color(m), cls: i === 5 ? 'usual' : '', isUsual: i === 5 }))
+    };
+  }
+}
+</script>
+</body>
+</html>

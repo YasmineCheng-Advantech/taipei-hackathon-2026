@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>認領成功</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+.pop{animation:pop .5s ease-out both}
+@media (prefers-reduced-motion: reduce){.pop{animation:none}}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 21px/1 'Noto Sans TC',sans-serif;letter-spacing:.14em;text-decoration:none}
+.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+.tab.on{color:#C8481F;font-weight:500}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 260px at 50% 200px, rgba(64,203,226,.22), rgba(64,203,226,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 200px, #FBE4D3 520px, #F8D6BD 700px, #FFF8F3 844px)">
+  <div style="display: flex; justify-content: flex-end; padding: 14px 18px 0">
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
+      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    </a>
+  </div>
+  <div style="padding: 8px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px">
+    <div class="pop" aria-hidden="true" style="width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg, #6BEBFA 0%, #2AD4F0 45%, #14B8E2 100%); box-shadow: inset 0 8px 0 rgba(255,255,255,.32), 0 6px 0 #1C8DB3, 0 16px 26px rgba(20,140,180,.25); color: #FFFFFF">
+      <svg width="46" height="46" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg>
+    </div>
+    <h1 style="margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.14em; color: #5A2410">認領好了！</h1>
+    <section aria-label="你認領的時段" style="align-self: stretch; background: #FFFFFF; border-radius: 28px; box-shadow: 0 14px 34px rgba(214,100,40,.16); padding: 20px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <p style="margin: 0; font-size: 15px; letter-spacing: 0.12em; color: #6B4A3A">今天，請在這個時間</p>
+        <span class="sim">含模擬資料</span>
+      </div>
+      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
+        <p style="margin: 0; font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 56px; line-height: 1.05; color: #0E6F84">07:30</p>
+        <p style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: 0.06em">經過堤頂大道</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding-top: 12px; border-top: 2px dotted #F1DCCD">
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B4A3A">到公司</span><b style="font-size: 18px">07:41</b></div>
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B4A3A">路上少</span><b style="font-size: 18px">3–4 分</b></div>
+        <div style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 12px; color: #6B4A3A">比平常</span><b style="font-size: 18px">早 19 分</b></div>
+      </div>
+    </section>
+    <p style="margin: 0 10px; font-size: 14px; line-height: 1.75; letter-spacing: 0.04em; text-align: center; color: #5A3A2A">這個時段的名額少了一個，下一個人會被推薦到別的時段，不會大家擠在一起。</p>
+    <p style="margin: 0 10px; font-size: 12.5px; line-height: 1.6; text-align: center; color: #6B4A3A">今天的建議已固定，同一天再打開也會看到同一個時段。</p>
+  </div>
+  <a class="cta" href="Share.dc.html" style="position: absolute; top: 650px; left: 40px; right: 40px">邀同事一起錯峰</a>
+  <a href="Today.dc.html" style="position: absolute; top: 724px; left: 0; right: 0; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 15px; letter-spacing: 0.12em; color: #8A3A18">取消認領，換一個時段</a>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab on" href="Today.dc.html" aria-current="page">今日</a>
+    <a class="tab" href="City.dc.html">城市</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>

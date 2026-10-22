@@ -1,0 +1,33 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-10-22T09:00:00Z" },
+  "title": "Traffic Gem 手機畫面延伸",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 390, "h": 844, "title": "01 首頁", "is_interactive": true },
+    "Origin.dc.html": { "x": 470, "y": 0, "w": 390, "h": 844, "title": "02 從哪裡出發", "is_interactive": true },
+    "Setup.dc.html": { "x": 940, "y": 0, "w": 390, "h": 844, "title": "03 入口・最晚到・彈性", "is_interactive": true },
+    "Reasons.dc.html": { "x": 1410, "y": 0, "w": 390, "h": 844, "title": "04 為什麼沒辦法錯峰（可跳過）", "is_interactive": true },
+    "Loading.dc.html": { "x": 1880, "y": 0, "w": 390, "h": 844, "title": "05 產生中", "is_interactive": true },
+    "Today.dc.html": { "x": 2350, "y": 0, "w": 390, "h": 1480, "title": "06 今日推薦・自己挑時段", "is_interactive": true },
+    "Claimed.dc.html": { "x": 2820, "y": 0, "w": 390, "h": 844, "title": "07 認領成功", "is_interactive": true },
+    "Collective.dc.html": { "x": 3290, "y": 0, "w": 390, "h": 844, "title": "08 如果大家都這樣", "is_interactive": true },
+    "City.dc.html": { "x": 0, "y": 1900, "w": 390, "h": 1560, "title": "09 城市", "is_interactive": true },
+    "Share.dc.html": { "x": 470, "y": 1900, "w": 390, "h": 844, "title": "10 邀同事一起錯峰（分享卡）", "is_interactive": true },
+    "Settings.dc.html": { "x": 940, "y": 1900, "w": 390, "h": 844, "title": "11 設定分頁", "is_interactive": true },
+    "Menu.dc.html": { "x": 1410, "y": 1900, "w": 390, "h": 844, "title": "12 選單展開", "is_interactive": true },
+    "NoPlan.dc.html": { "x": 1880, "y": 1900, "w": 390, "h": 844, "title": "13 今天照平常走就好", "is_interactive": true },
+    "NoData.dc.html": { "x": 2350, "y": 1900, "w": 390, "h": 844, "title": "14 這個地區還沒有資料", "is_interactive": true }
+  },
+  "order": [
+    "Main.dc.html", "Origin.dc.html", "Setup.dc.html", "Reasons.dc.html", "Loading.dc.html",
+    "Today.dc.html", "Claimed.dc.html", "Collective.dc.html",
+    "City.dc.html", "Share.dc.html", "Settings.dc.html", "Menu.dc.html", "NoPlan.dc.html", "NoData.dc.html"
+  ],
+  "notes": {
+    "row1": { "x": 0, "y": -300, "text": "主流程：首頁 → 設定 → 今日推薦 → 認領", "kind": "title1", "maxW": 3680 },
+    "row2": { "x": 0, "y": 1600, "text": "其他分頁與特殊狀態", "kind": "title1", "maxW": 2740 }
+  },
+  "designSystems": []
+}
