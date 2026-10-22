@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>城市</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.need{appearance:none;border:0;border-radius:999px;min-height:44px;padding:0 18px;font:700 15px/1 'Noto Sans TC',sans-serif;letter-spacing:.1em;cursor:pointer;background:#DDF4F8;color:#0B4F60;box-shadow:inset 0 -2px 0 rgba(14,111,132,.15);white-space:nowrap}
+.need.on{background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 45%,#14B8E2 100%);color:#0B3A4A;box-shadow:inset 0 4px 0 rgba(255,255,255,.32),0 3px 0 #1C8DB3}
+.cross{padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#FCE4D8;color:#8A2E0B;white-space:nowrap}
+.go{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:12px 20px;background:#FFFFFF;border-radius:22px;box-shadow:0 10px 26px rgba(214,100,40,.12);text-decoration:none;color:#3A2418}
+.go:hover{color:#3A2418}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+.tab.on{color:#C8481F;font-weight:500}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1560px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 260px at 50% 520px, rgba(240,130,60,.26), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 520px, #F8D6BD 900px, #FBE6D6 1260px, #FFF8F3 1560px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 30px">
+    <p style="margin: 0; font-size: 14px; letter-spacing: 0.12em; color: #8A3A18">城市・本週內科晨峰</p>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
+      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    </a>
+  </div>
+  <div style="padding: 4px 16px 0; display: flex; flex-direction: column; gap: 12px">
+    <h1 style="margin: 0 0 4px 14px; font-size: 24px; font-weight: 900; line-height: 1.5; letter-spacing: 0.1em; color: #5A2410">大家的選擇，<br>變成改善的證據</h1>
+
+    <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 500; letter-spacing: 0.1em; color: #6B4A3A">目標</h2>
+        <span class="sim">程式計算・含模擬資料</span>
+      </div>
+      <p style="margin: 0; font-size: 15px; line-height: 1.65">要讓堤頂大道早上最長排隊減半，08:30–09:15 經過的車大約要移出</p>
+      <p style="margin: 0; display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 48px; line-height: 1.1; color: #0E6F84">4–13%</span><span style="font-size: 15px; font-weight: 700">改時段</span></p>
+      <p style="margin: 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 13px; line-height: 1.65; color: #6B4A3A">區間對應道路容量 ±10%，由排隊模型反推，不是保證值。</p>
+    </section>
+
+    <section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 500; letter-spacing: 0.1em; color: #6B4A3A">本週意向登記</h2>
+      <p style="margin: 0; font-size: 26px; font-weight: 900; letter-spacing: 0.08em; color: #5E5650">尚無資料</p>
+      <p style="margin: 0; font-size: 12.5px; line-height: 1.6; color: #6B4A3A">意向登記，未經驗證：同一支手機每天每個入口只算一次，但同一人仍可能重複登記，也不代表全體通勤者。10/24 起算。</p>
+    </section>
+
+    <section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 500; letter-spacing: 0.1em; color: #6B4A3A">大家認領到哪些時段</h2>
+        <span class="sim">情境假設</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <sc-for list="{{slots}}" as="s" hint-placeholder-count="4">
+          <div style="display: grid; grid-template-columns: 52px 1fr 52px; align-items: center; gap: 10px; font-variant-numeric: tabular-nums">
+            <span style="font-size: 15px; font-weight: 700">{{s.key}}</span>
+            <span aria-hidden="true" style="height: 16px; border-radius: 8px; background: #F2EBE6; overflow: hidden"><span style="display: block; height: 16px; width: {{s.pct}}%; border-radius: 8px; background: {{s.color}}"></span></span>
+            <span style="font-size: 13px; text-align: right; color: {{s.fg}}; font-weight: 700">{{s.label}}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="margin: 0; font-size: 13px; line-height: 1.65; color: #6B4A3A">08:00 已滿，系統開始把人推薦到 07:15 和 07:30，避免形成新尖峰。</p>
+    </section>
+
+    <h2 style="margin: 10px 0 0 14px; font-size: 18px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">要讓更多人做得到，城市需要</h2>
+    <sc-for list="{{actions}}" as="a" hint-placeholder-count="7">
+      <article class="card" style="padding: 16px 18px; display: flex; flex-direction: column; gap: 6px">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 10px">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 700; line-height: 1.45; letter-spacing: 0.04em">{{a.title}}</h3>
+          <sc-if value="{{a.cross}}" hint-placeholder-val="{{ false }}"><span class="cross">需跨機關協調</span></sc-if>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #6B4A3A">{{a.depts}}</p>
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+          <p style="margin: 0; font-size: 13.5px; line-height: 1.55">{{a.you}}</p>
+          <button type="button" class="need {{a.cls}}" aria-pressed="{{a.on}}" onClick="{{a.toggle}}">{{a.btn}}</button>
+        </div>
+      </article>
+    </sc-for>
+    <p style="margin: 4px 14px 0; font-size: 12.5px; line-height: 1.65; color: #6B4A3A">以上是本作品依資料提出的建議，不代表市府已經承諾。「我也需要」人數只計真實登記，未經驗證。</p>
+    <a class="go" href="Today.dc.html">
+      <b style="font-size: 16px; letter-spacing: 0.08em">給市府與企業：協商一頁紙</b>
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C8481F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"></path></svg>
+    </a>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab on" href="City.dc.html" aria-current="page">城市</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1560}}'>
+class Component extends DCLogic {
+  state = { on: {} };
+  renderVals() {
+    const slots = [
+      { key: '07:15', pct: 30, full: false },
+      { key: '07:30', pct: 65, full: false },
+      { key: '07:45', pct: 88, full: false },
+      { key: '08:00', pct: 100, full: true }
+    ];
+    const actions = [
+      { id: 'flex', title: '企業彈性上班誘因', depts: '交通局・產發局', you: '你的公司加入，你才真的能每天錯峰。' },
+      { id: 'care', title: '幼兒園提早到 07:30 收托', depts: '教育局', you: '要接送小孩的家長也能提早出門。' },
+      { id: 'shuttle', title: '捷運站接駁車 07:15 起加班', depts: '公運處', you: '提早出門也有車可以搭。' },
+      { id: 'signal', title: '堤頂大道路口早上號誌調整', depts: '交工處', you: '就算不能改時間，也少塞一點。' },
+      { id: 'care-ntpc', title: '新北的幼兒園早上提早收托', depts: '新北市教育局', you: '住新北、要先送小孩的人也能錯峰。', cross: true },
+      { id: 'ntpc-bus', title: '新店／文山直達內科的通勤車', depts: '新北市交通局・臺北市公運處', you: '不開車也能在差不多的時間到內科。', cross: true },
+      { id: 'freeway', title: '國 3 往內湖路段與市區入口的路況放在同一張圖', depts: '高速公路局・臺北市交工處', you: '出門前能一起看到國道和入口的路況。', cross: true }
+    ];
+    const on = this.state.on;
+    return {
+      slots: slots.map((s) => ({ ...s, color: s.full ? '#8A8480' : '#2AC3DE', fg: s.full ? '#4A4440' : '#0B4F60', label: s.full ? '已滿' : s.pct + '%' })),
+      actions: actions.map((a) => ({
+        ...a, cross: !!a.cross,
+        cls: on[a.id] ? 'on' : '', on: on[a.id] ? 'true' : 'false',
+        btn: on[a.id] ? '已登記' : '我也需要',
+        toggle: () => this.setState({ on: { ...on, [a.id]: !on[a.id] } })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>
