@@ -519,13 +519,25 @@ def half_share(cap=CAP, base=None):
     """最長排隊減半要移出幾 %：和同一組假設下的現況比。提早或延後算出來一樣，因為排隊只發生在尖峰。"""
     base = base or base_demand
     target = run_queue(base, cap)["max"] / 2
-    return first_share(lambda p: run_queue(shifted(p, EARLY, base), cap)["max"] <= target)
+    p = first_share(lambda p: run_queue(shifted(p, EARLY, base), cap)["max"] <= target)
+    if p is None:
+        raise SystemExit(f"排隊模型在移出 50% 以內都沒辦法讓最長排隊減半（容量 {cap:,} 輛/15 分鐘）。"
+                         "先看 build_model_input.py 印出的容量、到達曲線與「對上幾格」是否合理，再決定情境要不要用真實資料。")
+    return p
 
 
 HALF = [half_share(c) for c in CAPS]
 # 新尖峰：移入的時段需求超過容量
 NEW_PEAK = [first_share(lambda p, c=c: any(v > c for i, v in enumerate(shifted(p, EARLY)) if i in EARLY))
             for c in CAPS]
+
+
+def new_peak_text():
+    """NEW_PEAK 由容量高到低排列，數字由大到小；移出 50% 都不會形成新尖峰時是 None。"""
+    lo, hi = NEW_PEAK[2], NEW_PEAK[0]
+    if lo is None:
+        return "50% 以上"
+    return f"約 {round(lo)}–{round(hi)}%" if hi is not None else f"約 {round(lo)}% 以上"
 
 
 # 敏感度：每個假設調高、調低，看「排隊減半要移出幾 %」差多少。差最多的就是最需要補資料的假設
@@ -645,7 +657,7 @@ brief = {
     "conclusion": tag(
         "computed", QSIM,
         text=(f"內科整體若讓 {PEAK_TEXT} 經過堤頂大道的車移出約 {round(HALF[0])}–{round(HALF[2])}% 改時段，"
-              f"最長排隊可縮短一半；但如果全部改到 {span(EARLY_IDX)}，移出超過約 {round(NEW_PEAK[2])}–{round(NEW_PEAK[0])}% "
+              f"最長排隊可縮短一半；但如果全部改到 {span(EARLY_IDX)}，移出超過{new_peak_text()} "
               "就會在那裡形成新尖峰，所以要分散到提早與延後。貴公司員工約佔這段車流的 [待填]%。"),
         note=f"情境假設 · 程式計算 · 區間反映容量估計 {CAP_RANGE}",
     ),
