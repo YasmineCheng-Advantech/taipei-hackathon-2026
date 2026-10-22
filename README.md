@@ -16,7 +16,7 @@
 | [`design/landing/`](design/landing/) | 首頁改稿：依視覺提案第一張（3D 玩具車）修改的手機首頁，附修改理由與對比數字 |
 | [`docs/vd-explore/`](docs/vd-explore/) | 探索紀錄：用收集到的 VD 資料畫的探索圖表與說明：資料涵蓋、路況地圖、兩把尺與各張圖怎麼看（找靈感用） |
 | [`docs/phone-distraction/`](docs/phone-distraction/) | 點子紀錄：紅燈滑手機會不會讓塞車更嚴重，研究整理、我們的資料能看出什麼、情境試算（比賽後再做） |
-| [`data/`](data/) | 資料：契約（`schema/`）、三份模擬資料（`mock/`）、VD 收集與處理腳本、[資料來源清單](data/SOURCES.md)、[資料目錄](data/catalog.md)、[換題 SOP](data/SOP.md) |
+| [`data/`](data/) | 資料：契約（`schema/`）、三份模擬資料（`mock/`）、VD 收集與處理腳本、[資料來源清單](data/SOURCES.md)、[資料目錄](data/catalog.md)、[欄位規劃表](data/FIELDS.md)、[換題 SOP](data/SOP.md)與[演練](data/DRILL.md)、[AI 風險語料](data/RISK_CORPUS.md)、[本機操作（Mac／Windows）](data/LOCAL.md) |
 | [`docs/100-days.md`](docs/100-days.md) | 市府上任 100 天落地方案（草稿） |
 
 ## 產品結構
