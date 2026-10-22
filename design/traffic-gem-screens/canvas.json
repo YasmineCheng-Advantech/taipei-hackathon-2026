@@ -18,16 +18,21 @@
     "Settings.dc.html": { "x": 940, "y": 1900, "w": 390, "h": 844, "title": "11 設定分頁", "is_interactive": true },
     "Menu.dc.html": { "x": 1410, "y": 1900, "w": 390, "h": 844, "title": "12 選單展開", "is_interactive": true },
     "NoPlan.dc.html": { "x": 1880, "y": 1900, "w": 390, "h": 844, "title": "13 今天照平常走就好", "is_interactive": true },
-    "NoData.dc.html": { "x": 2350, "y": 1900, "w": 390, "h": 844, "title": "14 這個地區還沒有資料", "is_interactive": true }
+    "NoData.dc.html": { "x": 2350, "y": 1900, "w": 390, "h": 844, "title": "14 這個地區還沒有資料", "is_interactive": true },
+    "Heatmap.dc.html": { "x": 0, "y": 3900, "w": 390, "h": 1300, "title": "15 熱力圖（點格子看詳情）", "is_interactive": true },
+    "Scenario.dc.html": { "x": 470, "y": 3900, "w": 390, "h": 1180, "title": "16 錯峰情境（拉滑桿）", "is_interactive": true },
+    "Sensitivity.dc.html": { "x": 940, "y": 3900, "w": 390, "h": 960, "title": "17 哪個假設最影響結論", "is_interactive": true }
   },
   "order": [
     "Main.dc.html", "Origin.dc.html", "Setup.dc.html", "Reasons.dc.html", "Loading.dc.html",
     "Today.dc.html", "Claimed.dc.html", "Collective.dc.html",
-    "City.dc.html", "Share.dc.html", "Settings.dc.html", "Menu.dc.html", "NoPlan.dc.html", "NoData.dc.html"
+    "City.dc.html", "Share.dc.html", "Settings.dc.html", "Menu.dc.html", "NoPlan.dc.html", "NoData.dc.html",
+    "Heatmap.dc.html", "Scenario.dc.html", "Sensitivity.dc.html"
   ],
   "notes": {
     "row1": { "x": 0, "y": -300, "text": "主流程：首頁 → 設定 → 今日推薦 → 認領", "kind": "title1", "maxW": 3680 },
-    "row2": { "x": 0, "y": 1600, "text": "其他分頁與特殊狀態", "kind": "title1", "maxW": 2740 }
+    "row2": { "x": 0, "y": 1600, "text": "其他分頁與特殊狀態", "kind": "title1", "maxW": 2740 },
+    "row3": { "x": 0, "y": 3600, "text": "圖表分析（手機版）", "kind": "title1", "maxW": 1330 }
   },
   "designSystems": []
 }
