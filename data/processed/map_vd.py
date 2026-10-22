@@ -178,6 +178,7 @@ main{max-width:1200px;margin:0 auto;padding:4px}h1{font-size:20px;margin:0 0 4px
 .dot{width:26px;height:26px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;color:#fff;font:700 12px sans-serif}
 .dot.small{width:14px;height:14px;border-width:2px;font-size:0}.nolab .lab,.nolab .arrow{display:none}.dot.sel{outline:3px solid #2a78d6;outline-offset:2px}.arrow{position:absolute;top:-13px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-bottom:12px solid #fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.8));margin-bottom:-2px}
 .vd.left .lab{transform:translateX(-58%)}.vd.right .lab{transform:translateX(58%)}.lab{margin-top:3px;background:rgba(20,20,20,.78);color:#fff;font:600 12px sans-serif;padding:2px 6px;border-radius:6px;white-space:nowrap}
+@media (max-width:600px){#map{height:430px}#t{flex-basis:100%;order:9}.bar{gap:8px}.lab{font-size:11px}}
 </style></head><body><main>
 <p class="sub" id="sub"></p>
 <div id="map"></div>
@@ -269,6 +270,8 @@ function setDay() {
 }
 $('day').innerHTML = D.days.map((d, i) => `<option value="${d}"${i === D.days.length - 1 ? ' selected' : ''}>${d.slice(5).replace('-', '/')}</option>`).join('');
 $('labels').onchange = () => $('map').classList.toggle('nolab', !$('labels').checked);
+// 手機畫面小，標籤會疊在一起：預設關掉，只看路段顏色
+if (innerWidth < 600) { $('labels').checked = false; $('labels').onchange(); }
 $('day').onchange = setDay; $('t').oninput = draw; $('ruler').onchange = chart;
 let timer = null;
 $('play').onclick = () => { if (timer) { clearInterval(timer); timer = null; $('play').textContent = '▶ 播放'; return; }
