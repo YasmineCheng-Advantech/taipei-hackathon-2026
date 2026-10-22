@@ -267,7 +267,9 @@ const hhmm = m => String(Math.floor(m/60)).padStart(2,'0') + ':' + String(m%60).
 const md = d => d.slice(5).replace('-', '/');
 const show = (e, html) => { tip.innerHTML = html; tip.style.display = 'block';
   tip.style.left = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8) + 'px'; tip.style.top = (e.clientY + 14) + 'px'; };
-const hover = el => { el.onmousemove = e => e.target.dataset.t ? show(e, e.target.dataset.t) : (tip.style.display = 'none'); el.onmouseleave = () => tip.style.display = 'none'; };
+// 手機（沒有滑鼠）：點一下看數字；寬的圖縮到螢幕寬，不用左右滑
+const PHONE = matchMedia('(hover: none)').matches || innerWidth < 600, LW = PHONE ? 100 : 140, ACT = PHONE ? '點' : '滑過';
+const hover = el => { el.onmousemove = el.onclick = e => e.target.dataset.t ? show(e, e.target.dataset.t) : (tip.style.display = 'none'); el.onmouseleave = () => tip.style.display = 'none'; };
 const STEPS = [[50,'--q0'],[40,'--q1'],[30,'--q2'],[20,'--q3'],[10,'--q4'],[-1,'--q5']];
 const step = v => STEPS.find(s => v >= s[0])[1];
 const SER = ['--s1','--s2','--s3','--s4','--s5'];
@@ -289,7 +291,7 @@ const jammed = k => k === 'E' || k === 'F';
 const pctOf = (v, s) => s / D.free[v] * 100;
 const twNote = (v, s) => TW[D.limit[v]] ? `<br>依速限（${D.limit[v]}）：${gradeOf(s, TW[D.limit[v]])} 級` : '';
 const med = xs => { const a = [...xs].sort((x, y) => x - y); return a[Math.floor(a.length / 2)]; };
-$('sub').textContent = `${D.days.length} 天的資料（${D.days.map(md).join('、')}）· 滑過圖表看數字`;
+$('sub').textContent = `${D.days.length} 天的資料（${D.days.map(md).join('、')}）· ${ACT}圖表看數字`;
 
 // 直條圖：items = [[標籤, 值, 顏色變數, 提示]]，labels = 要在柱上標數字的索引
 function vbars(svg, items, { ymax, unit = '', every = 1, labels = [], ref = null, H = 220, pair = false } = {}) {
@@ -307,7 +309,7 @@ function vbars(svg, items, { ymax, unit = '', every = 1, labels = [], ref = null
 }
 // 橫條圖：rows = [[名稱, 值, 顏色變數, 右側文字, 提示]]
 function hbars(svg, rows, max) {
-  const w = W(svg), L = 140, R = 120, rh = 30, H = rows.length * rh + 4;
+  const w = W(svg), L = LW, R = 120, rh = 30, H = rows.length * rh + 4;
   let g = '';
   rows.forEach(([n, v, col, txt, t], i) => { const y = i * rh + 4;
     g += `<text class="lab" x="0" y="${y + 15}">${n}</text><rect x="${L}" y="${y + 2}" width="${Math.max(2, v / max * (w - L - R))}" height="18" rx="3" fill="var(${col})" data-t="${t}"/>`;
@@ -317,7 +319,7 @@ function hbars(svg, rows, max) {
 
 // V. 每天收到哪些時段（資料不完整時，哪些比較能做、哪些要小心）
 (function () {
-  const svg = $('cv'), ds = Object.keys(D.cover), L = 70, R = 8, rh = 24, H = ds.length * rh + 22, w = Math.max(W(svg), L + R + 24 * 22);
+  const svg = $('cv'), ds = Object.keys(D.cover), L = PHONE ? 46 : 70, R = 8, rh = 24, H = ds.length * rh + 22, w = PHONE ? W(svg) : Math.max(W(svg), L + R + 24 * 22);
   const X = h => L + h / 24 * (w - L - R);
   let g = '';
   for (let h = 0; h <= 24; h += 3) g += `<text x="${X(h)}" y="${H - 4}" text-anchor="${h === 24 ? 'end' : 'middle'}">${hhmm(h * 60)}</text>`;
@@ -337,7 +339,7 @@ function hbars(svg, rows, max) {
 
 // R. 最慢的時候剩平常車速的幾 %（所有入口用同一把尺，底色是 HCM 的 A–F）
 (function () {
-  const svg = $('cr'), w = W(svg), L = 140, R = 16, rh = 40, T = 22, B = 22, H = T + D.ents.length * rh + B;
+  const svg = $('cr'), w = W(svg), L = LW, R = 16, rh = 40, T = 22, B = 22, H = T + D.ents.length * rh + B;
   const X = p => L + Math.min(Math.max(p, 0), 110) / 110 * (w - L - R);
   let g = '';
   for (const [a, b, k] of [[0, 30, 'F'], [30, 40, 'E'], [40, 50, 'D'], [50, 67, 'C'], [67, 85, 'B'], [85, 110, 'A']])
@@ -365,10 +367,12 @@ $('l1').innerHTML = 'ABCDEF'.split('').map(k => `<span><i class="sw" style="back
   '<span><i class="sw" style="background:var(--empty)"></i>這把尺不適用</span><span><i class="sw" style="border:1px solid var(--axis)"></i>車太少，不判斷</span>';
 function c1() {
   const rule = $('ruler').value, svg = $('c1'), all = D.ents.flatMap(v => D.strip[v].map(c => c[0]));
-  const x0 = Math.min(...all), x1 = Math.max(...all) + 15, L = 140, R = 8, rh = 28, H = D.ents.length * rh + 22;
-  const w = Math.max(W(svg), L + R + (x1 - x0) / 15 * 10), X = m => L + (m - x0) / (x1 - x0) * (w - L - R);
+  const x0 = Math.min(...all), x1 = Math.max(...all) + 15, L = LW, R = 8, rh = 28, H = D.ents.length * rh + 22;
+  const w = PHONE ? W(svg) : Math.max(W(svg), L + R + (x1 - x0) / 15 * 10), X = m => L + (m - x0) / (x1 - x0) * (w - L - R);
   let g = '';
-  for (let m = Math.ceil(x0 / 60) * 60; m <= x1; m += 60) g += `<text x="${X(m)}" y="${H - 4}" text-anchor="${m + 60 > x1 ? 'end' : 'middle'}">${hhmm(m)}</text>`;
+  const tick = PHONE ? 180 : 60;
+  for (let m = Math.ceil(x0 / tick) * tick; m <= x1; m += tick) if (m + tick > x1 || X(x1) - X(m) > 44)  // 最後一個刻度太靠近結尾就不畫，免得疊字
+    g += `<text x="${X(m)}" y="${H - 4}" text-anchor="${m + tick > x1 ? 'end' : 'middle'}">${hhmm(m)}</text>`;
   const found = [];
   D.ents.forEach((v, i) => { const y = i * rh, tbl = rule === 'tw' ? TW[D.limit[v]] : HCM, am = [];
     const val = s => rule === 'tw' ? s : pctOf(v, s), why = D.limit[v] ? `速限 ${D.limit[v]} 的分級表待補` : '快速道路，市區道路的表不適用';
@@ -385,7 +389,7 @@ function c1() {
     if (am.length) found.push(`「${N[v]}」${hhmm(am[0])}–${hhmm(am[am.length - 1] + 15)}`); });
   svg.setAttribute('width', w); svg.setAttribute('height', H); svg.innerHTML = g; hover(svg);
   const name = rule === 'tw' ? '依速限（臺灣公路容量手冊）' : '跟平常比（HCM）';
-  say('s1', found.length ? `用「${name}」這把尺，早上落到 E 級以下的有：${found.join('、')}。滑過格子看每天的車速。`
+  say('s1', found.length ? `用「${name}」這把尺，早上落到 E 級以下的有：${found.join('、')}。${ACT}格子看每天的車速。`
     : `用「${name}」這把尺，這幾天早上沒有入口落到 E 級以下。換另一把尺看看，或看下面的車速和流量圖。`);
 }
 $('ruler').onchange = c1; c1();
@@ -398,20 +402,20 @@ function cz() {
   const v = $('zv').value, d = $('zd').value, p = (D.detail[v] || {})[d] || [], svg = $('cz');
   if (!p.length) { svg.innerHTML = ''; say('sz', '這一天沒有這個入口的資料。'); return; }
   const x0 = p[0][0] - p[0][0] % 60, x1 = p[p.length - 1][0] + 5 + (60 - (p[p.length - 1][0] + 5) % 60) % 60;
-  const L = 48, R = 40, w = Math.max(W(svg), L + R + (x1 - x0) / 5 * 6), X = m => L + (m - x0) / (x1 - x0) * (w - L - R);
+  const L = PHONE ? 30 : 48, R = PHONE ? 8 : 40, w = PHONE ? W(svg) : Math.max(W(svg), L + R + (x1 - x0) / 5 * 6), X = m => L + (m - x0) / (x1 - x0) * (w - L - R);
   const P = [[8, 130], [150, 110], [272, 70]], H = 366;  // 三個小圖：車速、車輛、佔有率（上緣、高度）
   const smax = Math.ceil(Math.max(60, ...p.map(q => q[1])) / 10) * 10, nmax = Math.max(10, ...p.map(q => q[2] + q[3] + q[4]));
   const omax = Math.max(10, ...p.map(q => q[5] || 0));
   let g = '';
-  for (let m = x0; m <= x1; m += 60) g += `<line x1="${X(m)}" x2="${X(m)}" y1="0" y2="${H - 18}" stroke="var(--grid)"/><text x="${X(m)}" y="${H - 4}" text-anchor="middle">${hhmm(m)}</text>`;
+  for (let m = x0; m <= x1; m += 60) g += `<line x1="${X(m)}" x2="${X(m)}" y1="0" y2="${H - 18}" stroke="var(--grid)"/>` + ((m - x0) % (PHONE ? 180 : 60) ? "" : `<text x="${X(m)}" y="${H - 4}" text-anchor="${m === x0 ? "start" : "middle"}">${hhmm(m)}</text>`);
   const [sy, sh] = P[0], Ys = s => sy + (1 - s / smax) * sh;
-  g += `<text x="${L - 6}" y="${sy + 10}" text-anchor="end">km/h</text><text x="${L - 6}" y="${Ys(D.bad[v]) + 4}" text-anchor="end">${Math.round(D.bad[v])}</text>`;
+  g += `<text x="0" y="${sy + 10}">km/h</text><text x="${L - 6}" y="${Ys(D.bad[v]) + 4}" text-anchor="end">${Math.round(D.bad[v])}</text>`;
   g += `<line x1="${L}" x2="${w - R}" y1="${Ys(D.bad[v])}" y2="${Ys(D.bad[v])}" stroke="var(--muted)" stroke-dasharray="4 4"/>`;
   g += `<polyline fill="none" stroke="var(--s1)" stroke-width="2" points="${p.map(q => X(q[0] + 2.5) + ',' + Ys(q[1])).join(' ')}"/>`;
   const [ny, nh] = P[1], Yn = n => ny + (1 - n / nmax) * nh, bw = Math.max(2, X(5) - X(0) - 1);
-  g += `<text x="${L - 6}" y="${ny + 10}" text-anchor="end">輛</text>`;
+  g += `<text x="0" y="${ny + 10}">輛</text>`;
   const [oy, oh] = P[2], Yo = o => oy + (1 - o / omax) * oh;
-  g += `<text x="${L - 6}" y="${oy + 10}" text-anchor="end">%</text>`;
+  g += `<text x="0" y="${oy + 10}">%</text>`;
   for (const [m, s, mo, car, big, occ] of p) { let acc = 0;
     for (const [n, col] of [[car, '--s3'], [mo, '--s4'], [big, '--s5']]) { if (!n) continue;
       g += `<rect x="${X(m)}" y="${Yn(acc + n)}" width="${bw}" height="${Yn(acc) - Yn(acc + n)}" fill="var(${col})"/>`; acc += n; }
