@@ -79,18 +79,18 @@ Oct 23, 2026 · 狀態：**預想，未經全隊討論**。題目公布後依原
 
 | 資料 | 來源 | 關鍵欄位 | 用途 | 狀態 |
 | --- | --- | --- | --- | --- |
-| 臺北市公車站牌 | `https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz`（跟 VD 同一個主機，自己電腦應該抓得到） | 站牌 id、路線、站序、座標 | 覆蓋率、選址 | ⚠️ 網址出自 2018 年的 data.taipei API 文件，要試 |
-| 臺北市公車站位 | `…/blobbus/GetStopLocation.gz` | 站位 id、座標、地址 | 把同一站位的多個站牌合併 | ⚠️ |
-| 臺北市公車路線 | `…/blobbus/GetRoute.gz` | 路線、起訖、首末班；可能有尖峰、離峰班距 | 等車時間 | ⚠️ 班距欄位要確認 |
+| 臺北市公車站牌 | `https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz`（跟 VD 同一個主機） | `Id`、`routeId`、`nameZh`、`seqNo`（站序）、`goBack`（去返程）、`longitude`、`latitude`、`stopLocationId`、`address` | 覆蓋率、選址 | ✅ 10/23，9 MB，免金鑰 |
+| 臺北市公車站位 | `…/blobbus/GetStopLocation.gz` | `id`、`name`、`address`、`lon`、`lat`、`bearing` | 站牌的 `stopLocationId` 對到這裡，把同一站位的多個站牌合併 | ✅ 10/23 |
+| 臺北市公車路線 | `…/blobbus/GetRoute.gz` | `nameZh`、`providerName`、`departureZh`、`destinationZh`、`distance`、`goFirstBusTime`；第 20 欄之後還有 | 等車時間 | ✅ 10/23；班距欄位還要確認 |
 | 公車班表、路線線形 | TDX `Bus`（市區公車） | 班表、站序、路線線形 | 里 × 時段熱力圖、選址的候選點 | ⏳ 要金鑰 |
-| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896) | 年月、區、里、性別、各歲人數 | 需求、高齡比例 | ⚠️ |
+| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei，Big5） | `年份`、`月份`、`區域代碼`、`區域別`、`性別`、`總計`、`0歲數量`…（逐歲） | 需求、高齡比例 | ✅ 10/23；「區域別」是不是里名要確認 |
 | 村里界圖 | 關鍵字「村里界」（內政部國土測繪中心或 data.taipei） | 里的範圍（多邊形） | 把人口放到地圖上 | ⚠️ |
 | 捷運出入口、YouBike | 已在 `catalog.md`（A3） | 座標 | 捷運、YouBike 也算進覆蓋 | ⚠️ |
 | 候車亭位置 | 關鍵字「候車亭」 | | 候車亭題 | ⚠️ 不確定有公開；沒有就讓民眾回報 |
 | 公車各站上下車人次 | 關鍵字「公車 上下車」「旅運量」 | | 站的使用量、車上人數 | ⚠️ 不確定有公開 |
 | 陳情資料 | 主辦方 | 公車、站牌、候車亭類 | 補需求 | ⏳ |
 
-`python3 data/fetch/check_catalog.py bus population` 會試著下載站牌、站位、路線與里人口的樣本。
+`python3 data/fetch/check_catalog.py bus population` 會下載站牌、站位、路線與里人口的樣本到 `data/raw/catalog/`（10/23 已跑過，4 個都抓得到）。
 
 ### 背景數字
 
