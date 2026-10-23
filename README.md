@@ -18,6 +18,7 @@
 | [`docs/phone-distraction/`](docs/phone-distraction/) | 點子紀錄：紅燈滑手機會不會讓塞車更嚴重，研究整理、我們的資料能看出什麼、情境試算（比賽後再做） |
 | [`data/`](data/) | 資料：契約（`schema/`）、三份模擬資料（`mock/`）、VD 收集與處理腳本、[資料來源清單](data/SOURCES.md)、[資料目錄](data/catalog.md)、[欄位規劃表](data/FIELDS.md)、[換題 SOP](data/SOP.md)與[演練](data/DRILL.md)、[AI 風險語料](data/RISK_CORPUS.md)、[本機操作（Mac／Windows）](data/LOCAL.md) |
 | [`docs/100-days.md`](docs/100-days.md) | 市府上任 100 天落地方案（草稿） |
+| [`docs/proposal.md`](docs/proposal.md) | 提案（暫定版）：題目、要解決的問題、怎麼解決、核心創意、預期成果 |
 | [`docs/constraints-plan.md`](docs/constraints-plan.md) | 民眾版改版計畫：拿掉認領，改成「你為什麼只能這個時間走 → 誰能調 → 進度」（待全隊確認） |
 
 ## 產品結構
