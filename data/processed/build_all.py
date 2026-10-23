@@ -26,6 +26,8 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
+from calendar_tw import HOLIDAYS, is_workday
+
 HERE = Path(__file__).resolve().parent
 DATA = HERE.parent
 REPO = DATA.parent
@@ -123,13 +125,14 @@ def summary(rows, contrib):
         span = f"{mins[0] // 60:02d}:{mins[0] % 60:02d}–{(mins[-1] + 5) // 60:02d}:{(mins[-1] + 5) % 60:02d}" if mins else "—"
         n = sum(len(v) for v in per_day[day].values())
         mark = lambda c: f"{'✅' if c >= 80 else '⚠️' if c else '—'} {c}%"
-        lines.append(f"| {day:%m/%d}（{WEEK[day.weekday()]}） | {mark(a)} | {mark(b)} | {span} | {n:,} |")
-        if a >= 80 and day.weekday() < 5:
+        off = HOLIDAYS.get(day, "")
+        lines.append(f"| {day:%m/%d}（{WEEK[day.weekday()]}{'，' + off if off else ''}） | {mark(a)} | {mark(b)} | {span} | {n:,} |")
+        if a >= 80 and is_workday(day):
             full_am.append(f"{day:%m/%d}")
-        if b >= 80 and day.weekday() < 5:
+        if b >= 80 and is_workday(day):
             full_pm.append(f"{day:%m/%d}")
-    lines += ["", f"**平日早上收完整：{len(full_am)} 天**（{'、'.join(full_am) or '無'}）；"
-                  f"**平日傍晚收完整：{len(full_pm)} 天**（{'、'.join(full_pm) or '無'}）。", "",
+    lines += ["", f"**上班日早上收完整：{len(full_am)} 天**（{'、'.join(full_am) or '無'}）；"
+                  f"**上班日傍晚收完整：{len(full_pm)} 天**（{'、'.join(full_pm) or '無'}）。", "",
               "## 各偵測器的讀數", "", "| 偵測器 | 名稱 | 筆數 |", "| --- | --- | --- |"]
     for v in sorted(names, key=lambda v: (v not in main, main.index(v) if v in main else 0, v)):
         lines.append(f"| {v} | {names[v]} | {sum(len(per_day[d].get(v, ())) for d in per_day):,} |")
@@ -158,7 +161,7 @@ def main(argv):
     rows, contrib = merge(paths)
     am, pm = summary(rows, contrib)
     print(f"合併 {len(paths)} 個檔案，共 {len(rows):,} 筆讀數 → {OUT.relative_to(REPO)}")
-    print(f"平日早上收完整 {len(am)} 天（{'、'.join(am) or '無'}），傍晚 {len(pm)} 天（{'、'.join(pm) or '無'}）；細節見 {SUMMARY.relative_to(REPO)}")
+    print(f"上班日早上收完整 {len(am)} 天（{'、'.join(am) or '無'}），傍晚 {len(pm)} 天（{'、'.join(pm) or '無'}）；細節見 {SUMMARY.relative_to(REPO)}")
     run("熱力圖格子", HERE / "build_vd_15min.py", OUT)
     ok = run("排隊模型輸入（容量與到達曲線）", HERE / "build_model_input.py", OUT)
     model = ["--model", HERE / "model_input.json"] if ok else []
