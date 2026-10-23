@@ -25,6 +25,7 @@ import csv
 import datetime as dt
 import gzip
 import math
+import ssl
 import sys
 import time
 import urllib.request
@@ -45,10 +46,15 @@ CSV_FIELDS = ['poll_time', 'entrance', 'vdid', 'link_id', 'status', 'collect_tim
 NEIHU = (25.0735, 121.5960)  # 內湖交流道的大略位置（與 gen_t4_morning.py 相同），只用來排序候選
 START, END = dt.time(7, 0), dt.time(10, 30)
 
+# Python 3.13 起預設多一項嚴格憑證檢查，data.gov.tw、freeway.gov.tw 的憑證缺 Subject Key Identifier 會被擋
+# （CERTIFICATE_VERIFY_FAILED: Missing Subject Key Identifier）。只關掉這一項，憑證鏈與網域照樣驗證。
+SSL_CTX = ssl.create_default_context()
+SSL_CTX.verify_flags &= ~getattr(ssl, "VERIFY_X509_STRICT", 0)
+
 
 def get(url, timeout=60):
     req = urllib.request.Request(url, headers={"Accept-Encoding": "gzip", "User-Agent": "taipei-hackathon-2026"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
+    with urllib.request.urlopen(req, timeout=timeout, context=SSL_CTX) as r:
         body = r.read()
     return gzip.decompress(body) if body[:2] == b"\x1f\x8b" else body
 

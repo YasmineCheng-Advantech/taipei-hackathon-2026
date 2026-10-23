@@ -15,6 +15,7 @@ import csv
 import gzip
 import io
 import json
+import ssl
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -48,11 +49,17 @@ GOV_TW = [
 ]
 GOV_TW_API = "https://data.gov.tw/api/v2/rest/dataset/{}"
 MAX_BYTES = 2 * 1024 * 1024
+MAX_FIELDS = 20
+
+# Python 3.13 起預設多一項嚴格憑證檢查，data.gov.tw、freeway.gov.tw 的憑證缺 Subject Key Identifier 會被擋
+# （CERTIFICATE_VERIFY_FAILED: Missing Subject Key Identifier）。只關掉這一項，憑證鏈與網域照樣驗證。
+SSL_CTX = ssl.create_default_context()
+SSL_CTX.verify_flags &= ~getattr(ssl, "VERIFY_X509_STRICT", 0)
 
 
 def fetch(url, limit=None):
     req = urllib.request.Request(url, headers={"Accept-Encoding": "gzip", "User-Agent": "taipei-hackathon-2026 catalog check"})
-    with urllib.request.urlopen(req, timeout=60) as r:
+    with urllib.request.urlopen(req, timeout=60, context=SSL_CTX) as r:
         body = r.read(limit) if limit else r.read()
         ctype = r.headers.get("Content-Type", "")
     if body[:2] == b"\x1f\x8b":
@@ -81,22 +88,32 @@ def gov_tw_urls(dataset_id):
     return [u for _, u in found]
 
 
+def first_record(d, depth=0):
+    """找出 JSON 裡第一個由物件組成的陣列，回傳第一筆；停車資料包在 data.park 底下，要往下找。"""
+    if isinstance(d, list):
+        return d[0] if d and isinstance(d[0], dict) else None
+    if isinstance(d, dict) and depth < 3:
+        for v in d.values():
+            r = first_record(v, depth + 1)
+            if r:
+                return r
+    return None
+
+
 def describe(body):
     """回傳格式與前幾個欄位名稱。"""
     body = body.removeprefix(b"\xef\xbb\xbf").lstrip()
     head = body[:1]
     if head in (b"[", b"{"):
         d = json.loads(body.decode("utf-8"))
-        if isinstance(d, dict):
-            inner = next((v for v in d.values() if isinstance(v, list) and v and isinstance(v[0], dict)), None)
-            return "json", list((inner[0] if inner else d).keys())[:12]
-        return "json", list(d[0].keys())[:12] if d and isinstance(d[0], dict) else []
+        rec = first_record(d) or (d if isinstance(d, dict) else {})
+        return "json", list(rec.keys())[:MAX_FIELDS]
     if head == b"<":
         try:
             root = ET.fromstring(body)
         except ET.ParseError:
             return "html", []
-        return "xml", [e.tag.split("}")[-1] for e in root.iter() if len(e) == 0][:12]
+        return "xml", [e.tag.split("}")[-1] for e in root.iter() if len(e) == 0][:MAX_FIELDS]
     for enc in ("utf-8", "cp950"):  # 市府的 CSV 常是 Big5
         try:
             first = body.decode(enc, errors="strict" if enc == "utf-8" else "replace").splitlines()[0]
@@ -104,7 +121,7 @@ def describe(body):
             continue
         row = next(csv.reader([first]))
         if len(row) > 1:
-            return "csv", row[:12]
+            return "csv", row[:MAX_FIELDS]
     return "other", []
 
 
