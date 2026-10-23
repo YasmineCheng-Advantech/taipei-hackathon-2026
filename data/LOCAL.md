@@ -78,7 +78,7 @@ python3 data/fetch/check_catalog.py
 
 只想跑其中幾個，在後面加名稱裡的字，例如 `python3 data/fetch/check_catalog.py accident bus population`（車禍、公車設點用的，見 [`docs/topics/`](../docs/topics/README.md)）。
 
-傷亡事故逐案資料是全國的 zip，這支只抓開頭打不開。要看欄位、篩出臺北市，改跑 `python3 data/fetch/fetch_accidents.py 177136`（檔案可能上百 MB，要等幾分鐘；結果在 `data/raw/accident/`，不進 git）。
+傷亡事故逐案資料是全國的 zip，這支只抓開頭打不開。要看欄位、篩出臺北市，改跑 `python3 data/fetch/fetch_accidents.py 177136`（114 年約 41 MB；結果在 `data/raw/accident/`，不進 git），再跑 `python3 data/processed/build_crash.py` 彙整成路口 × 時段。
 
 抓得到的，把 [`catalog.md`](catalog.md) 該列的「⚠️」改成「✅ 10/2x」，欄位不對就順手改。抓不到的，程式會印出資料集頁面，用瀏覽器手動下載一個檔案看欄位。
 

@@ -47,7 +47,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | 臺北市 VD（機車車種） | 同上 VDLive.xml，`VehicleType=M` | XML | 每分鐘 | 自己收 | 機車流量 | ✅ 機車混在一般車道計數，可能漏數 |
 | 臺北市交通事故統計 | [data.gov.tw 135546](https://data.gov.tw/dataset/135546)（檔案在 data.taipei） | CSV（Big5） | 每年 | 有 | 西元年、民國年、數量（件數）、死亡人數、受傷人數 | ✅ 10/23；只有全市每年的總數，當背景數字用 |
 | 交通事故件數（含 A3） | [data.gov.tw 135091](https://data.gov.tw/dataset/135091)（檔案在 data.taipei） | CSV（Big5） | 每年 | 有 | 年度、縣市、縣市代碼、交通事故類別、筆數 | ✅ 10/23；**是彙總，不是逐筆**，沒有地點與時間 |
-| 傷亡道路交通事故逐案資料（全國） | [114 年 177136](https://data.gov.tw/dataset/177136)；歷年：[112 年 167905](https://data.gov.tw/dataset/167905)、[111 年 161199](https://data.gov.tw/dataset/161199)、[110 年 158865](https://data.gov.tw/dataset/158865)、[109 年 158864](https://data.gov.tw/dataset/158864) | zip（下載點在內政部 opdadm.moi.gov.tw） | 每年 | 有，107 年起 | 發生時間、地點、經緯度、事故類型、肇因、當事者車種、年齡、性別（A1、A2；網路搜尋得知，待核對） | ✅ 10/23 114、112 年下載得到；`check_catalog.py` 只抓開頭打不開 zip，用 `python3 data/fetch/fetch_accidents.py 177136` 抓完整檔、篩出臺北市 |
+| 傷亡道路交通事故逐案資料（全國） | [114 年 177136](https://data.gov.tw/dataset/177136)；歷年：[112 年 167905](https://data.gov.tw/dataset/167905)、[111 年 161199](https://data.gov.tw/dataset/161199)、[110 年 158865](https://data.gov.tw/dataset/158865)、[109 年 158864](https://data.gov.tw/dataset/158864) | zip（下載點在內政部 opdadm.moi.gov.tw），裡面是 UTF-8 CSV：A1 一個檔、A2 每月一個檔 | 每年 | 有，107 年起 | 52 欄：發生日期、發生時間、事故類別名稱（A1／A2）、發生地點、經度、緯度、天候、光線、速限、道路型態、事故位置、號誌、事故類型及型態、肇因研判、死亡受傷人數、當事者順位、當事者車種（大類別、子類別）、性別、年齡、保護裝備、行動電話、肇事逃逸、外送平台。**沒有案件編號**，一列是一個當事者 | ✅ 10/23 114 年完整下載（41 MB），臺北市 A1 137 列、A2 約 52,900 列；112 年只確認抓得到。用 `fetch/fetch_accidents.py` 下載、`processed/build_crash.py` 彙整 |
 
 ### A3 最後一哩路（公車、接駁、YouBike）
 
@@ -55,8 +55,9 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | --- | --- | --- | --- | --- | --- | --- |
 | YouBike 2.0 即時車位 | [youbike_immediate.json](https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json) | JSON | 每分鐘 | 無，要自己收 | 站號、站名、總車位、可借、可還、座標 | ✅ 10/23 下載得到（930 KB）；確認有 `sno` 站號、`sna` 站名、`sarea` 行政區、`mday` 更新時間；車位與座標在第 12 欄之後，重跑會印出來 |
 | 公車路線與站位 | TDX `Bus` | JSON | 不定期 | — | 路線、站序、座標 | ⏳ 要金鑰 |
-| 臺北市公車站牌、站位、路線 | [GetStop.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz)、[GetStopLocation.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStopLocation.gz)、[GetRoute.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetRoute.gz) | JSON（gzip） | 不定期 | — | 站牌：`Id`、`routeId`、`nameZh`、`seqNo`、`goBack`、`longitude`、`latitude`、`stopLocationId`、`address`。站位：`id`、`name`、`lon`、`lat`、`address`、`bearing`。路線：`nameZh`、`providerName`、`departureZh`、`destinationZh`、`distance`、`goFirstBusTime`；第 20 欄之後還有，班距待確認 | ✅ 10/23，免金鑰（站牌 9 MB、站位 0.9 MB、路線 0.9 MB） |
-| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei） | CSV（Big5） | 每月 | 有 | 年份、月份、區域代碼、區域別、性別、總計、0歲數量…（逐歲） | ✅ 10/23；「區域別」是不是里名要打開確認 |
+| 臺北市公車站牌、站位、路線 | [GetStop.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz)、[GetStopLocation.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStopLocation.gz)、[GetRoute.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetRoute.gz) | JSON（gzip） | 不定期 | — | 站牌：`Id`、`routeId`、`nameZh`、`seqNo`、`goBack`、`longitude`、`latitude`、`stopLocationId`、`address`。站位：`id`、`name`、`lon`、`lat`、`address`、`bearing`。路線：`nameZh`、`providerName`、`departureZh`、`destinationZh`、`distance`、首末班（`goFirstBusTime` 等）、班距 `peakHeadway`、`offPeakHeadway`、`headwayDesc`，假日另有一組 | ✅ 10/23，免金鑰（站牌 9 MB、站位 0.9 MB、路線 0.9 MB） |
+| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei） | CSV（Big5） | 每月 | 有 | 年份、月份、區域代碼、區域別、性別、總計、0歲數量…（逐歲） | ✅ 10/23；從 110 年 1 月起逐月，第一列是全市（`區域代碼` 63000000）；後面有沒有里的列、要最新月份都得下載完整檔 |
+| 村里界圖 | [data.gov.tw 7438](https://data.gov.tw/dataset/7438)（內政部國土測繪中心） | SHP（推測） | 不定期 | — | `VILLCODE`、`COUNTYNAME`、`TOWNNAME`、`VILLNAME`、里的範圍 | ⚠️ 網路搜尋得知，公車設點算覆蓋率要用 |
 | 捷運車站出入口 | [data.gov.tw 128428](https://data.gov.tw/dataset/128428) | CSV | 不定期 | — | 站名、出口、座標 | ⚠️ |
 
 ### A4 人行空間與行人安全

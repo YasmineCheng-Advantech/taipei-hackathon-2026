@@ -98,6 +98,9 @@ def scan(name, opener, out):
         print(f"    臺北市存在：{out}")
         for e in examples:
             print(f"    範例：{e}")
+    elif not any("地點" in h for h in header):
+        out.unlink()
+        print("    不是事故資料（zip 裡的說明檔），略過")
     else:
         out.unlink()
         print("    沒有任何一欄以「臺北市」開頭：縣市可能是代碼，看上面的欄位找出縣市欄，再告訴 Claude 怎麼篩")
@@ -131,7 +134,7 @@ def main():
                 scan(name, opener, OUT / f"taipei_{path.stem}_{k}.csv")
             except Exception as e:
                 print(f"✗ {name}：{e}")
-    print("\n把上面的輸出（欄位與範例）貼給 Claude，下一步是彙總成路口 × 時段。")
+    print("\n下一步：python3 data/processed/build_crash.py，彙總成路口 × 時段。")
     return 0 if files else 1
 
 
