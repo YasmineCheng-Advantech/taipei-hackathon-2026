@@ -5,7 +5,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 **驗證狀態**
 
 - ✅ 已下載驗證：實際抓過，欄位確認過。
-- ⚠️ 待驗證：連結或關鍵字還沒實際下載。10/20 這份目錄是在雲端環境整理的，那裡連不到 data.taipei 與 tcgbusfs，所以大多還沒驗證。有直接網址或 data.gov.tw 編號的（共 11 個），在自己電腦跑 `python3 data/fetch/check_catalog.py`（步驟見 [`LOCAL.md`](LOCAL.md)）會逐一下載樣本到 `data/raw/catalog/`（不進 git）並印出欄位，跑完把這裡改成 ✅。
+- ⚠️ 待驗證：連結或關鍵字還沒實際下載。10/20 這份目錄是在雲端環境整理的，那裡連不到 data.taipei 與 tcgbusfs，所以大多還沒驗證。有直接網址或 data.gov.tw 編號的（共 17 個），在自己電腦跑 `python3 data/fetch/check_catalog.py`（步驟見 [`LOCAL.md`](LOCAL.md)）會逐一下載樣本到 `data/raw/catalog/`（不進 git）並印出欄位，跑完把這裡改成 ✅。
 - ⏳ 卡住：需要金鑰或主辦方提供。
 - ❌ 不能用。
 
@@ -17,7 +17,9 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | --- | --- | --- |
 | #4 內科晨峰、A1 晚尖峰 | 臺北市 VD（即時、靜態） | **有**，而且已經在收 |
 | A2 機車通勤 | 臺北市 VD 有分車種 | 有一部分；事故資料待驗證 |
+| 車禍／交通安全（A2、A4 共用） | 無 | 交通部傷亡事故逐案資料有經緯度，網路搜尋確認存在，待下載驗證；做法見 [`docs/topics/crash.md`](../docs/topics/crash.md) |
 | A3 最後一哩路 | 無 | YouBike 即時資料應該拿得到，待驗證 |
+| 公車設點（A3 延伸） | 無 | 公車站牌（與 VD 同主機）、里人口應該拿得到，待驗證；做法見 [`docs/topics/transit.md`](../docs/topics/transit.md) |
 | A5 停車 | 無 | 停車場即時車位應該拿得到，待驗證 |
 | A6 文湖線 | 無 | 捷運分時進出量是月檔，待驗證 |
 | A4 人行、B 類其他題 | 無 | 都待驗證；B1 陳情要看主辦方 Day 1 提供什麼 |
@@ -44,6 +46,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | --- | --- | --- | --- | --- | --- | --- |
 | 臺北市 VD（機車車種） | 同上 VDLive.xml，`VehicleType=M` | XML | 每分鐘 | 自己收 | 機車流量 | ✅ 機車混在一般車道計數，可能漏數 |
 | 交通事故資料 | [交通局統計 135546](https://data.gov.tw/dataset/135546)、[警察局 A3 135091](https://data.gov.tw/dataset/135091)；逐筆資料用關鍵字「交通事故」 | CSV | 月或年 | 有 | 時間、地點、車種、傷亡 | ⚠️ |
+| 傷亡道路交通事故逐案資料（交通部，全國） | [114 年 177136](https://data.gov.tw/dataset/177136)；歷年：[112 年 167905](https://data.gov.tw/dataset/167905)、[111 年 161199](https://data.gov.tw/dataset/161199)、[110 年 158865](https://data.gov.tw/dataset/158865)、[109 年 158864](https://data.gov.tw/dataset/158864) | CSV（可能壓縮） | 每年 | 有，107 年起 | 發生時間、地點、經緯度、事故類型、肇因、當事者車種、年齡、性別（A1、A2） | ⚠️ 10/23 網路搜尋確認存在與欄位；全國檔要篩臺北市 |
 
 ### A3 最後一哩路（公車、接駁、YouBike）
 
@@ -51,6 +54,8 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | --- | --- | --- | --- | --- | --- | --- |
 | YouBike 2.0 即時車位 | [youbike_immediate.json](https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json) | JSON | 每分鐘 | 無，要自己收 | 站號、站名、總車位、可借、可還、座標 | ⚠️ |
 | 公車路線與站位 | TDX `Bus` | JSON | 不定期 | — | 路線、站序、座標 | ⏳ 要金鑰 |
+| 臺北市公車站牌、站位、路線 | [GetStop.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz)、[GetStopLocation.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStopLocation.gz)、[GetRoute.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetRoute.gz) | JSON（gzip） | 不定期 | — | 站牌 id、路線、站序、座標；路線的首末班、班距（待確認） | ⚠️ 網址出自 2018 年 API 文件，免金鑰 |
+| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896) | CSV | 每月 | 有 | 年月、區、里、性別、各歲人數 | ⚠️ |
 | 捷運車站出入口 | [data.gov.tw 128428](https://data.gov.tw/dataset/128428) | CSV | 不定期 | — | 站名、出口、座標 | ⚠️ |
 
 ### A4 人行空間與行人安全

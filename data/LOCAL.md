@@ -74,7 +74,9 @@ python3 -m pip install jsonschema
 python3 data/fetch/check_catalog.py
 ```
 
-會逐一下載 11 個資料集的樣本到 `data/raw/catalog/`，印出欄位。目錄的完成標準是 **8 個已驗證**；目前 VD 即時、VD 靜態、VD 路段彙總 3 個已驗證，這次再多 8 個機會（YouBike、停車即時、停車基本資料、國道歷史、捷運分時進出量、捷運出入口、交通事故統計、A3 事故）。
+會逐一下載 17 個資料集的樣本到 `data/raw/catalog/`，印出欄位。目錄的完成標準是 **8 個已驗證**；目前 VD 即時、VD 靜態、VD 路段彙總 3 個已驗證，這次再多 14 個機會（YouBike、停車即時、停車基本資料、國道歷史、捷運分時進出量、捷運出入口、交通事故統計、A3 事故，以及換題預想用的傷亡事故逐案 2 年份、公車站牌、站位、路線、里人口）。
+
+只想跑其中幾個，在後面加名稱裡的字，例如 `python3 data/fetch/check_catalog.py accident bus population`（車禍、公車設點用的，見 [`docs/topics/`](../docs/topics/README.md)）。
 
 抓得到的，把 [`catalog.md`](catalog.md) 該列的「⚠️」改成「✅ 10/2x」，欄位不對就順手改。抓不到的，程式會印出資料集頁面，用瀏覽器手動下載一個檔案看欄位。
 
