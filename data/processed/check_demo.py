@@ -37,6 +37,8 @@ def main(argv):
     top2 = {i["name"] for i in sc["sensitivity"]["items"][:2]}
     new_peak = [r["shift"] for r in sc["results"] if r["target"] == "early" and r.get("new_peak")]
     name = rows[wr]["name"]
+    qsim = need.get("sim") is not False  # 排隊模型的數字是不是模擬
+    tag = "（模擬）" if qsim else ""
 
     checks = [
         ("最塞的一格", f"{rows[SCRIPT['worst_row']]['name']} {SCRIPT['worst_col']}", f"{name} {wc}（{worst['value']} km/h）",
@@ -44,7 +46,7 @@ def main(argv):
         ("那一格幾天會塞", f"{SCRIPT['days']} 天裡有 {SCRIPT['bad_days']} 天", f"{wcell.get('days', '?')} 天裡有 {wcell.get('bad_days', '?')} 天",
          (wcell.get("days"), wcell.get("bad_days")) == (SCRIPT["days"], SCRIPT["bad_days"])),
         ("那一格是真實資料", "是", "是" if wcell.get("sim") is False else "否（模擬）", wcell.get("sim") is False),
-        ("排隊減半要移出", f"{SCRIPT['need'][0]}–{SCRIPT['need'][1]}%", f"{need.get('lo')}–{need.get('hi')}%",
+        ("排隊減半要移出", f"{SCRIPT['need'][0]}–{SCRIPT['need'][1]}%", f"{need.get('lo')}–{need.get('hi')}%{tag}",
          (need.get("lo"), need.get("hi")) == SCRIPT["need"]),
         ("移出哪個時段的車", SCRIPT["shift_window"], shift, shift == SCRIPT["shift_window"]),
         ("最影響結論的兩個假設", "、".join(sorted(SCRIPT["top_assumptions"])), "、".join(sorted(top2)), top2 == SCRIPT["top_assumptions"]),
@@ -56,13 +58,16 @@ def main(argv):
         print(f"{'✓' if ok else '✗'} {title:{w}}  台詞：{said}　資料：{got}")
     bad = sum(not c[3] for c in checks)
     print(f"\n{len(checks) - bad}/{len(checks)} 項對得上。" + ("台詞照資料改成：" if bad else "台詞不用改。"))
+    if qsim and not d["meta"]["sim"]:
+        print("\n注意：排隊減半、移出時段、最影響的假設、新尖峰這 4 項的數字來自模擬的排隊模型（真實資料算不出排隊，"
+              "見 build_model_input.py 的警告）。對得上只代表台詞和模擬一致，不代表真實數據支持；Demo 講到時要說是模擬。")
     if bad:
         src = "這些格子是臺北市偵測器的真實資料" if wcell.get("sim") is False else "這一格目前還是模擬資料"
         print(f"\n1. 熱力圖：「早上 {wc}，{name} {wcell.get('days')} 天裡有 {wcell.get('bad_days')} 天低於 20 km/h。"
               f"{src}；沒有偵測器的地方我們留白，不補數字。」")
         tops = "』和『".join(i["name"].split("（")[0] for i in sc["sensitivity"]["items"][:2])
         why = "區間這麼寬，是因為結論" if need.get("hi", 0) - need.get("lo", 0) >= 5 else "這個數字"
-        print(f"2. 錯峰情境：「要讓排隊減半，{shift} 經過的車要移出約 {need.get('lo')}–{need.get('hi')}%。"
+        print(f"2. 錯峰情境：「{'（以下是模擬）' if qsim else ''}要讓排隊減半，{shift} 經過的車要移出約 {need.get('lo')}–{need.get('hi')}%。"
               f"{why}最受『{tops}』影響，這張圖把它攤開來。"
               + ("如果大家全擠到同一個時段，那裡就會變成新尖峰。」" if new_peak else "」"))
     return 0
