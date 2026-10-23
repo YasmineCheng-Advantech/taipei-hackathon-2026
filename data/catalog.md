@@ -30,7 +30,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 
 | 資料集 | 連結 | 格式 | 更新 | 歷史 | 關鍵欄位 | 驗證 |
 | --- | --- | --- | --- | --- | --- | --- |
-| 臺北市 VD 即時資料 | [VDLive.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml) | XML，約 1.7 MB | 每分鐘，值為 5 分鐘統計 | 這個網址沒有，要自己收（`data/fetch/collect_vd.py`）；歷史資料見下一列 TDX | VDID、LinkID、車道、車種（M／S／L／T）、流量、車速、佔有率 | ✅ 10/19 抓 3 次，見 `processed/entrances_detail.csv` |
+| 臺北市 VD 即時資料 | [VDLive.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml) | XML，約 1.7 MB | 每分鐘，車數是最近 1 分鐘的車數 | 這個網址沒有，要自己收（`data/fetch/collect_vd.py`）；歷史資料見下一列 TDX | VDID、LinkID、車道、車種（M／S／L／T）、流量、車速、佔有率 | ✅ 10/19 抓 3 次，見 `processed/entrances_detail.csv` |
 | 臺北市 VD 歷史資料（TDX） | [TDX](https://tdx.transportdata.tw/) `historical/v2/Historical/Road/Traffic/Live/VD/City/Taipei?Dates=YYYY-MM-DD` | NDJSON，每天約 1.1 GB | 前一天的資料隔天清晨發布 | **有**，最早到哪天待確認 | 同 VDLive，每 1 分鐘一筆 | ⏳ 要 TDX 金鑰；`fetch/fetch_tdx_vd_hist.py` 補抓一整個月，只留目標偵測器 |
 | 臺北市 VD 靜態資料 | [VD.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml)（[data.taipei](https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2)） | XML | 不定期 | — | VDID、座標、路段、方向、車道數 | ✅ 10/19，604 支 |
 | 臺北市 VD 路段彙總（舊格式） | [GetVD.xml.gz](https://tcgbusfs.blob.core.windows.net/blobtisv/GetVD.xml.gz) | XML（gzip） | 每分鐘 | 無 | 路段名（如「環東進城 前方」） | ✅ 10/19，用來對照位置 |
