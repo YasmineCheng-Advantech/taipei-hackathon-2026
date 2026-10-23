@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>哪個入口最塞</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.seg{appearance:none;border:0;border-radius:14px;min-height:44px;background:#DEDCDA;color:#3F3935;font:500 15px/1 'Noto Sans TC',sans-serif;letter-spacing:.04em;cursor:pointer;font-variant-numeric:tabular-nums;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.seg.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+.bar{height:22px;border-radius:2px 6px 6px 2px;transition:width .35s ease;box-shadow:inset 0 -2px 0 rgba(0,0,0,.07)}
+.bar.hatch{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 1.5px,transparent 1.5px 5px)}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 880px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 560px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 700px, #FFF8F3 880px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Heatmap.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>熱力圖
+    </a>
+    <span class="sim">含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">這個時段，哪個入口最塞？</h1>
+      <p style="margin: 0; font-size: 13.5px; color: #6B4A3A">平均車速，越慢排越前面</p>
+    </div>
+    <div role="group" aria-label="選時段" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+      <sc-for list="{{times}}" as="t" hint-placeholder-count="4">
+        <button type="button" class="seg {{t.cls}}" aria-pressed="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+    <section class="card" aria-label="入口車速排名" style="padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 12px">
+      <sc-for list="{{rank}}" as="r" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 22px 84px 1fr; align-items: center; gap: 8px">
+          <span style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 18px; color: #8A3A18">{{r.n}}</span>
+          <span style="font-size: 14px; font-weight: 700; line-height: 1.25">{{r.name}}</span>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0">
+            <span class="bar {{r.cls}}" style="width: {{r.w}}%; background-color: {{r.bg}}"></span>
+            <span style="font-size: 13px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums">{{r.v}}</span>
+          </span>
+        </div>
+      </sc-for>
+      <div style="display: grid; grid-template-columns: 22px 84px 1fr; align-items: center; gap: 8px; padding-top: 10px; border-top: 2px dotted #F1DCCD; color: #6B4A3A">
+        <span></span><span style="font-size: 13px; line-height: 1.35">麥帥二橋<br>康寧路三段</span><span style="font-size: 13px">沒有偵測器，無法排名</span>
+      </div>
+    </section>
+    <section class="card" aria-live="polite" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.06em">{{headline}}</h2>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.7; color: #5A3A2A">{{sub}}</p>
+    </section>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":880}}'>
+class Component extends DCLogic {
+  state = { t: 2 };
+  renderVals() {
+    const T = ['08:15', '08:30', '08:45', '09:00'];
+    const E = [
+      { name: '內湖路一段', s: [30, 22, 24, 36] },
+      { name: '堤頂大道', s: [29, 14, 10, 17] },
+      { name: '民權大橋', s: [26, 12, 18, 33] },
+      { name: '成美橋', s: [27, 15, 11, 25] },
+      { name: '環東大道', s: [20, 16, 25, 40] },
+      { name: '國1（模擬）', s: [15, 16, 30, 41], sim: true }
+    ];
+    const ramp = ['#FEF3DC', '#FDD9A0', '#FCB46E', '#F2804A', '#C93A22', '#7E170F'];
+    const lv = (v) => (v >= 50 ? 0 : v >= 40 ? 1 : v >= 30 ? 2 : v >= 20 ? 3 : v >= 10 ? 4 : 5);
+    const t = this.state.t;
+    const sorted = E.map((e) => ({ ...e, v: e.s[t] })).sort((a, b) => a.v - b.v);
+    const slow = sorted.filter((e) => e.v < 20).length;
+    return {
+      times: T.map((x, i) => ({ label: x, cls: i === t ? 'on' : '', on: i === t ? 'true' : 'false', pick: () => this.setState({ t: i }) })),
+      rank: sorted.map((e, i) => ({
+        n: i + 1, name: e.name, v: e.v + ' km/h',
+        w: Math.max(6, Math.round((e.v / 60) * 82)),
+        bg: ramp[lv(e.v)], cls: e.sim ? 'hatch' : ''
+      })),
+      headline: T[t] + ' 最塞的是' + sorted[0].name.replace('（模擬）', '') + '（' + sorted[0].v + ' km/h）',
+      sub: '這個時段有 ' + slow + ' 個入口低於 20 km/h。換時段的效果，要看你常經過的那一個入口，不只看最塞的。'
+    };
+  }
+}
+</script>
+</body>
+</html>
