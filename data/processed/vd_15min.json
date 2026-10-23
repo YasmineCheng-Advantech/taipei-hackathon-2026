@@ -1,207 +1,209 @@
 {
   "source": "臺北市交工處 VDLive.xml，經 data/fetch/collect_vd.py 收集",
-  "built_at": "2026-10-23T10:03:40+08:00",
+  "built_at": "2026-10-23T18:04:22+08:00",
   "window": "平日 07:00–10:30",
   "days": [
     "2026-10-20",
     "2026-10-21",
-    "2026-10-22",
-    "2026-10-23"
+    "2026-10-22"
   ],
+  "skipped_days": {
+    "2026-10-23": "颱風假"
+  },
   "bad_speed": 20,
-  "skipped_reads": 259,
+  "skipped_reads": 261,
   "detectors": {
     "V6120C0": {
       "cells": {
         "07:00": {
           "speed": {
-            "v": 65,
+            "v": 63,
             "lo": 61,
-            "hi": 68,
-            "days": 3,
+            "hi": 66,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 58,
-            "lo": 23,
+            "v": 75,
+            "lo": 68,
             "hi": 82,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "07:15": {
           "speed": {
-            "v": 65,
+            "v": 62,
             "lo": 59,
-            "hi": 75,
-            "days": 4,
+            "hi": 67,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 63,
-            "lo": 24,
+            "v": 76,
+            "lo": 74,
             "hi": 78,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:30": {
           "speed": {
-            "v": 62,
+            "v": 60,
             "lo": 57,
-            "hi": 66,
-            "days": 4,
+            "hi": 63,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 64,
-            "lo": 36,
+            "v": 74,
+            "lo": 67,
             "hi": 85,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 59,
+            "v": 55,
             "lo": 52,
-            "hi": 72,
-            "days": 4,
+            "hi": 58,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 72,
-            "lo": 26,
+            "v": 88,
+            "lo": 76,
             "hi": 102,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 57,
+            "v": 53,
             "lo": 51,
-            "hi": 70,
-            "days": 4,
+            "hi": 55,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 61,
-            "lo": 22,
+            "v": 74,
+            "lo": 64,
             "hi": 86,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:15": {
           "speed": {
-            "v": 59,
+            "v": 55,
             "lo": 49,
-            "hi": 71,
-            "days": 4,
+            "hi": 59,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 66,
-            "lo": 25,
+            "v": 80,
+            "lo": 75,
             "hi": 87,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:30": {
           "speed": {
-            "v": 60,
+            "v": 56,
             "lo": 51,
-            "hi": 72,
-            "days": 4,
+            "hi": 62,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 67,
-            "lo": 21,
+            "v": 82,
+            "lo": 77,
             "hi": 92,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:45": {
           "speed": {
-            "v": 60,
+            "v": 58,
             "lo": 57,
-            "hi": 66,
-            "days": 4,
+            "hi": 61,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 58,
-            "lo": 22,
+            "v": 70,
+            "lo": 67,
             "hi": 72,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 59,
+            "v": 56,
             "lo": 55,
-            "hi": 69,
-            "days": 4,
+            "hi": 57,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 66,
-            "lo": 34,
+            "v": 77,
+            "lo": 63,
             "hi": 86,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 57,
+            "v": 55,
             "lo": 53,
-            "hi": 61,
-            "days": 4,
+            "hi": 59,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 74,
-            "lo": 40,
+            "v": 85,
+            "lo": 67,
             "hi": 109,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:30": {
           "speed": {
-            "v": 54,
+            "v": 52,
             "lo": 40,
             "hi": 61,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 70,
-            "lo": 21,
+            "v": 86,
+            "lo": 86,
             "hi": 87,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:45": {
           "speed": {
-            "v": 59,
+            "v": 56,
             "lo": 44,
-            "hi": 68,
-            "days": 4,
+            "hi": 63,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 76,
-            "lo": 42,
+            "v": 87,
+            "lo": 83,
             "hi": 93,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -247,14 +249,14 @@
             "v": 71,
             "lo": 68,
             "hi": 73,
-            "days": 3,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 106,
-            "lo": 33,
+            "v": 143,
+            "lo": 117,
             "hi": 169,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
@@ -262,143 +264,143 @@
           "speed": {
             "v": 67,
             "lo": 64,
-            "hi": 70,
-            "days": 4,
+            "hi": 68,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 154,
-            "lo": 44,
+            "v": 190,
+            "lo": 182,
             "hi": 198,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:30": {
           "speed": {
-            "v": 66,
+            "v": 62,
             "lo": 59,
-            "hi": 81,
-            "days": 4,
+            "hi": 66,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 156,
-            "lo": 52,
+            "v": 191,
+            "lo": 176,
             "hi": 203,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 58,
+            "v": 55,
             "lo": 50,
-            "hi": 69,
-            "days": 4,
+            "hi": 62,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 140,
-            "lo": 49,
+            "v": 171,
+            "lo": 163,
             "hi": 175,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 53,
+            "v": 44,
             "lo": 26,
-            "hi": 80,
-            "days": 4,
+            "hi": 53,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 119,
-            "lo": 33,
+            "v": 148,
+            "lo": 132,
             "hi": 169,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:15": {
           "speed": {
-            "v": 58,
+            "v": 53,
             "lo": 49,
-            "hi": 73,
-            "days": 4,
+            "hi": 57,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 126,
-            "lo": 50,
+            "v": 151,
+            "lo": 137,
             "hi": 168,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:30": {
           "speed": {
-            "v": 48,
+            "v": 40,
             "lo": 18,
-            "hi": 71,
-            "days": 4,
+            "hi": 53,
+            "days": 3,
             "bad_days": 1
           },
           "flow": {
-            "v": 106,
-            "lo": 36,
+            "v": 129,
+            "lo": 121,
             "hi": 140,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:45": {
           "speed": {
-            "v": 50,
+            "v": 40,
             "lo": 18,
-            "hi": 78,
-            "days": 4,
+            "hi": 54,
+            "days": 3,
             "bad_days": 1
           },
           "flow": {
-            "v": 108,
-            "lo": 48,
+            "v": 128,
+            "lo": 106,
             "hi": 149,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 53,
+            "v": 44,
             "lo": 23,
-            "hi": 80,
-            "days": 4,
+            "hi": 55,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 114,
-            "lo": 34,
+            "v": 141,
+            "lo": 120,
             "hi": 152,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 54,
+            "v": 51,
             "lo": 28,
             "hi": 63,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 122,
-            "lo": 26,
+            "v": 153,
+            "lo": 130,
             "hi": 166,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -407,30 +409,30 @@
             "v": 66,
             "lo": 52,
             "hi": 74,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 100,
-            "lo": 33,
+            "v": 122,
+            "lo": 101,
             "hi": 145,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:45": {
           "speed": {
-            "v": 71,
-            "lo": 67,
+            "v": 72,
+            "lo": 71,
             "hi": 73,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 103,
-            "lo": 45,
+            "v": 122,
+            "lo": 88,
             "hi": 145,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -473,113 +475,113 @@
       "cells": {
         "07:00": {
           "speed": {
-            "v": 51,
+            "v": 47,
             "lo": 47,
-            "hi": 58,
+            "hi": 47,
+            "days": 2,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 42,
+            "lo": 39,
+            "hi": 46,
+            "days": 2
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 50,
+            "lo": 48,
+            "hi": 52,
             "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 31,
-            "lo": 9,
-            "hi": 46,
-            "days": 3
-          },
-          "samples": 2
-        },
-        "07:15": {
-          "speed": {
-            "v": 48,
-            "lo": 40,
-            "hi": 52,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 34,
-            "lo": 10,
+            "v": 42,
+            "lo": 38,
             "hi": 45,
-            "days": 4
+            "days": 3
           },
           "samples": 1
         },
         "07:30": {
           "speed": {
-            "v": 48,
+            "v": 46,
             "lo": 46,
-            "hi": 51,
-            "days": 3,
+            "hi": 47,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 53,
-            "lo": 14,
+            "v": 73,
+            "lo": 69,
             "hi": 77,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 50,
+            "v": 49,
             "lo": 46,
-            "hi": 52,
-            "days": 3,
+            "hi": 51,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 43,
-            "lo": 15,
+            "v": 58,
+            "lo": 51,
             "hi": 64,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 48,
+            "v": 47,
             "lo": 47,
-            "hi": 48,
+            "hi": 47,
+            "days": 2,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 78,
+            "lo": 72,
+            "hi": 83,
+            "days": 2
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 45,
+            "lo": 45,
+            "hi": 46,
             "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 54,
-            "lo": 8,
-            "hi": 83,
-            "days": 3
-          },
-          "samples": 2
-        },
-        "08:15": {
-          "speed": {
-            "v": 46,
-            "lo": 45,
-            "hi": 48,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 55,
-            "lo": 12,
+            "v": 70,
+            "lo": 64,
             "hi": 80,
-            "days": 4
+            "days": 3
           },
           "samples": 2
         },
         "08:30": {
           "speed": {
-            "v": 47,
+            "v": 46,
             "lo": 45,
-            "hi": 48,
-            "days": 4,
+            "hi": 47,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 52,
-            "lo": 14,
+            "v": 65,
+            "lo": 58,
             "hi": 77,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -588,78 +590,78 @@
             "v": 48,
             "lo": 46,
             "hi": 49,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 46,
-            "lo": 14,
+            "v": 56,
+            "lo": 54,
             "hi": 59,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 47,
+            "v": 46,
             "lo": 45,
-            "hi": 48,
-            "days": 4,
+            "hi": 47,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 56,
-            "lo": 24,
+            "v": 67,
+            "lo": 61,
             "hi": 74,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 49,
+            "v": 48,
             "lo": 46,
-            "hi": 51,
-            "days": 4,
+            "hi": 49,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 56,
-            "lo": 15,
+            "v": 70,
+            "lo": 55,
             "hi": 101,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:30": {
           "speed": {
             "v": 48,
-            "lo": 46,
+            "lo": 47,
             "hi": 49,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 48,
-            "lo": 30,
+            "v": 54,
+            "lo": 47,
             "hi": 60,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:45": {
           "speed": {
-            "v": 46,
-            "lo": 41,
+            "v": 48,
+            "lo": 46,
             "hi": 49,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 51,
-            "lo": 23,
+            "v": 60,
+            "lo": 53,
             "hi": 69,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -702,224 +704,224 @@
       "cells": {
         "07:00": {
           "speed": {
-            "v": 47,
-            "lo": 44,
-            "hi": 49,
-            "days": 3,
+            "v": 61,
+            "lo": 60,
+            "hi": 63,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 82,
-            "lo": 19,
-            "hi": 120,
-            "days": 3
+            "v": 116,
+            "lo": 103,
+            "hi": 129,
+            "days": 2
           },
           "samples": 3
         },
         "07:15": {
           "speed": {
-            "v": 42,
-            "lo": 38,
-            "hi": 48,
-            "days": 4,
+            "v": 51,
+            "lo": 50,
+            "hi": 52,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 105,
-            "lo": 33,
-            "hi": 162,
-            "days": 4
+            "v": 246,
+            "lo": 187,
+            "hi": 291,
+            "days": 3
           },
-          "samples": 3
+          "samples": 2
         },
         "07:30": {
           "speed": {
-            "v": 39,
-            "lo": 30,
-            "hi": 48,
-            "days": 4,
+            "v": 51,
+            "lo": 48,
+            "hi": 53,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 70,
-            "lo": 31,
-            "hi": 94,
-            "days": 4
+            "v": 119,
+            "lo": 112,
+            "hi": 125,
+            "days": 3
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 37,
-            "lo": 29,
-            "hi": 54,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 118,
-            "lo": 26,
-            "hi": 170,
-            "days": 4
-          },
-          "samples": 2
-        },
-        "08:00": {
-          "speed": {
-            "v": 36,
-            "lo": 29,
-            "hi": 48,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 130,
-            "lo": 14,
-            "hi": 176,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "08:15": {
-          "speed": {
-            "v": 38,
-            "lo": 26,
-            "hi": 51,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 90,
-            "lo": 28,
-            "hi": 123,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "08:30": {
-          "speed": {
-            "v": 35,
-            "lo": 23,
-            "hi": 58,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 83,
+            "v": 47,
             "lo": 40,
-            "hi": 124,
-            "days": 4
-          },
-          "samples": 2
-        },
-        "08:45": {
-          "speed": {
-            "v": 40,
-            "lo": 31,
-            "hi": 46,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 98,
-            "lo": 18,
-            "hi": 150,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "09:00": {
-          "speed": {
-            "v": 43,
-            "lo": 30,
-            "hi": 62,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 98,
-            "lo": 22,
-            "hi": 127,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "09:15": {
-          "speed": {
-            "v": 36,
-            "lo": 24,
-            "hi": 53,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 88,
-            "lo": 29,
-            "hi": 126,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "09:30": {
-          "speed": {
-            "v": 36,
-            "lo": 29,
-            "hi": 51,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 83,
-            "lo": 37,
-            "hi": 108,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "09:45": {
-          "speed": {
-            "v": 38,
-            "lo": 31,
-            "hi": 49,
-            "days": 4,
-            "bad_days": 0
-          },
-          "flow": {
-            "v": 110,
-            "lo": 53,
-            "hi": 168,
-            "days": 4
-          },
-          "samples": 3
-        },
-        "10:00": {
-          "speed": {
-            "v": 33,
-            "lo": 30,
-            "hi": 35,
+            "hi": 52,
             "days": 3,
             "bad_days": 0
           },
           "flow": {
             "v": 136,
-            "lo": 96,
-            "hi": 160,
+            "lo": 122,
+            "hi": 161,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 48,
+            "lo": 45,
+            "hi": 50,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 222,
+            "lo": 216,
+            "hi": 229,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 50,
+            "lo": 49,
+            "hi": 52,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 183,
+            "lo": 162,
+            "hi": 198,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 47,
+            "lo": 44,
+            "hi": 50,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 152,
+            "lo": 124,
+            "hi": 202,
+            "days": 3
+          },
+          "samples": 2
+        },
+        "08:45": {
+          "speed": {
+            "v": 42,
+            "lo": 28,
+            "hi": 62,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 123,
+            "lo": 90,
+            "hi": 149,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 41,
+            "lo": 31,
+            "hi": 48,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 181,
+            "lo": 147,
+            "hi": 200,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 49,
+            "lo": 47,
+            "hi": 52,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 190,
+            "lo": 169,
+            "hi": 204,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 50,
+            "lo": 47,
+            "hi": 52,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 118,
+            "lo": 117,
+            "hi": 118,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 52,
+            "lo": 49,
+            "hi": 56,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 149,
+            "lo": 115,
+            "hi": 211,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 51,
+            "lo": 49,
+            "hi": 53,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 251,
+            "lo": 241,
+            "hi": 269,
             "days": 3
           },
           "samples": 3
         },
         "10:15": {
           "speed": {
-            "v": 31,
-            "lo": 28,
-            "hi": 37,
+            "v": 53,
+            "lo": 51,
+            "hi": 57,
             "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 150,
-            "lo": 114,
-            "hi": 171,
+            "v": 207,
+            "lo": 144,
+            "hi": 238,
             "days": 3
           },
           "samples": 3
@@ -931,177 +933,177 @@
       "cells": {
         "07:00": {
           "speed": {
-            "v": 24,
-            "lo": 16,
+            "v": 28,
+            "lo": 28,
             "hi": 29,
-            "days": 3,
-            "bad_days": 1
+            "days": 2,
+            "bad_days": 0
           },
           "flow": {
-            "v": 91,
-            "lo": 18,
+            "v": 127,
+            "lo": 79,
             "hi": 175,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "07:15": {
           "speed": {
-            "v": 26,
-            "lo": 18,
+            "v": 29,
+            "lo": 26,
             "hi": 31,
-            "days": 4,
-            "bad_days": 1
+            "days": 3,
+            "bad_days": 0
           },
           "flow": {
-            "v": 94,
-            "lo": 24,
+            "v": 117,
+            "lo": 87,
             "hi": 140,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:30": {
           "speed": {
-            "v": 30,
+            "v": 31,
             "lo": 23,
             "hi": 41,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 110,
-            "lo": 31,
+            "v": 137,
+            "lo": 126,
             "hi": 147,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 25,
-            "lo": 16,
+            "v": 28,
+            "lo": 26,
             "hi": 32,
-            "days": 4,
-            "bad_days": 1
+            "days": 3,
+            "bad_days": 0
           },
           "flow": {
-            "v": 95,
-            "lo": 13,
+            "v": 123,
+            "lo": 100,
             "hi": 140,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 28,
-            "lo": 14,
+            "v": 32,
+            "lo": 24,
             "hi": 39,
-            "days": 4,
-            "bad_days": 1
-          },
-          "flow": {
-            "v": 128,
-            "lo": 15,
-            "hi": 180,
-            "days": 4
-          },
-          "samples": 2
-        },
-        "08:15": {
-          "speed": {
-            "v": 25,
-            "lo": 21,
-            "hi": 31,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 93,
-            "lo": 14,
+            "v": 166,
+            "lo": 154,
+            "hi": 180,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 26,
+            "lo": 23,
+            "hi": 31,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 119,
+            "lo": 95,
             "hi": 141,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:30": {
           "speed": {
-            "v": 24,
-            "lo": 20,
+            "v": 25,
+            "lo": 23,
             "hi": 28,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 119,
-            "lo": 26,
+            "v": 150,
+            "lo": 143,
             "hi": 155,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:45": {
           "speed": {
-            "v": 26,
-            "lo": 24,
+            "v": 27,
+            "lo": 25,
             "hi": 29,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 100,
-            "lo": 15,
+            "v": 128,
+            "lo": 110,
             "hi": 162,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 28,
-            "lo": 24,
+            "v": 29,
+            "lo": 28,
             "hi": 33,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 133,
-            "lo": 18,
+            "v": 171,
+            "lo": 146,
             "hi": 184,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 32,
+            "v": 33,
             "lo": 29,
             "hi": 37,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 123,
-            "lo": 22,
+            "v": 156,
+            "lo": 138,
             "hi": 187,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:30": {
           "speed": {
-            "v": 26,
-            "lo": 15,
+            "v": 29,
+            "lo": 26,
             "hi": 34,
-            "days": 4,
-            "bad_days": 1
+            "days": 3,
+            "bad_days": 0
           },
           "flow": {
-            "v": 112,
-            "lo": 19,
+            "v": 143,
+            "lo": 131,
             "hi": 157,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -1110,14 +1112,14 @@
             "v": 26,
             "lo": 23,
             "hi": 30,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 109,
-            "lo": 27,
+            "v": 136,
+            "lo": 123,
             "hi": 161,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -1160,193 +1162,193 @@
       "cells": {
         "07:00": {
           "speed": {
-            "v": 44,
+            "v": 42,
             "lo": 41,
-            "hi": 48,
-            "days": 3,
+            "hi": 44,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 151,
-            "lo": 37,
+            "v": 208,
+            "lo": 206,
             "hi": 211,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "07:15": {
           "speed": {
-            "v": 38,
-            "lo": 35,
+            "v": 39,
+            "lo": 36,
             "hi": 45,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 125,
-            "lo": 25,
+            "v": 158,
+            "lo": 136,
             "hi": 173,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:30": {
           "speed": {
-            "v": 37,
-            "lo": 25,
+            "v": 42,
+            "lo": 41,
             "hi": 42,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 134,
-            "lo": 28,
+            "v": 169,
+            "lo": 165,
             "hi": 172,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 36,
+            "v": 34,
             "lo": 33,
-            "hi": 42,
-            "days": 4,
+            "hi": 35,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 197,
-            "lo": 44,
+            "v": 248,
+            "lo": 228,
             "hi": 261,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 33,
+            "v": 32,
             "lo": 30,
-            "hi": 37,
-            "days": 4,
+            "hi": 34,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 157,
-            "lo": 49,
+            "v": 193,
+            "lo": 173,
             "hi": 206,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:15": {
           "speed": {
-            "v": 33,
+            "v": 30,
             "lo": 29,
-            "hi": 43,
-            "days": 4,
+            "hi": 31,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 151,
-            "lo": 36,
+            "v": 189,
+            "lo": 187,
             "hi": 191,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:30": {
           "speed": {
-            "v": 30,
+            "v": 31,
             "lo": 24,
             "hi": 36,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 133,
-            "lo": 31,
+            "v": 167,
+            "lo": 153,
             "hi": 177,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:45": {
           "speed": {
-            "v": 28,
+            "v": 24,
             "lo": 19,
-            "hi": 42,
-            "days": 4,
+            "hi": 29,
+            "days": 3,
             "bad_days": 1
           },
           "flow": {
-            "v": 189,
-            "lo": 49,
+            "v": 235,
+            "lo": 223,
             "hi": 258,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 33,
+            "v": 31,
             "lo": 30,
-            "hi": 37,
-            "days": 4,
+            "hi": 32,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 147,
-            "lo": 35,
+            "v": 184,
+            "lo": 174,
             "hi": 194,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 35,
+            "v": 33,
             "lo": 30,
-            "hi": 44,
-            "days": 4,
+            "hi": 35,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 163,
-            "lo": 36,
+            "v": 205,
+            "lo": 183,
             "hi": 238,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:30": {
           "speed": {
-            "v": 36,
-            "lo": 28,
+            "v": 39,
+            "lo": 38,
             "hi": 42,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 132,
-            "lo": 27,
+            "v": 166,
+            "lo": 157,
             "hi": 173,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:45": {
           "speed": {
-            "v": 38,
-            "lo": 34,
+            "v": 39,
+            "lo": 36,
             "hi": 42,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 172,
-            "lo": 53,
+            "v": 211,
+            "lo": 203,
             "hi": 222,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -1392,46 +1394,46 @@
             "v": 46,
             "lo": 45,
             "hi": 47,
-            "days": 3,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 34,
-            "lo": 9,
+            "v": 46,
+            "lo": 38,
             "hi": 55,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "07:15": {
           "speed": {
-            "v": 41,
-            "lo": 31,
+            "v": 44,
+            "lo": 40,
             "hi": 47,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 38,
-            "lo": 8,
+            "v": 47,
+            "lo": 38,
             "hi": 56,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:30": {
           "speed": {
-            "v": 40,
+            "v": 39,
             "lo": 37,
             "hi": 42,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 48,
-            "lo": 11,
+            "v": 60,
+            "lo": 44,
             "hi": 70,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -1440,142 +1442,142 @@
             "v": 39,
             "lo": 30,
             "hi": 44,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 52,
-            "lo": 13,
+            "v": 64,
+            "lo": 59,
             "hi": 71,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 38,
+            "v": 32,
             "lo": 29,
-            "hi": 54,
-            "days": 4,
+            "hi": 35,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 58,
-            "lo": 9,
+            "v": 74,
+            "lo": 70,
             "hi": 81,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:15": {
           "speed": {
-            "v": 32,
+            "v": 31,
             "lo": 27,
-            "hi": 38,
-            "days": 4,
+            "hi": 33,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 59,
-            "lo": 13,
+            "v": 75,
+            "lo": 69,
             "hi": 78,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:30": {
           "speed": {
-            "v": 35,
+            "v": 34,
             "lo": 30,
             "hi": 38,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 57,
-            "lo": 21,
+            "v": 69,
+            "lo": 61,
             "hi": 76,
-            "days": 4
+            "days": 3
           },
-          "samples": 2
+          "samples": 3
         },
         "08:45": {
           "speed": {
-            "v": 27,
+            "v": 25,
             "lo": 21,
-            "hi": 31,
-            "days": 4,
+            "hi": 29,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 54,
-            "lo": 18,
+            "v": 66,
+            "lo": 59,
             "hi": 72,
-            "days": 4
+            "days": 3
           },
-          "samples": 2
+          "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 32,
+            "v": 29,
             "lo": 28,
-            "hi": 39,
-            "days": 4,
+            "hi": 31,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 52,
-            "lo": 18,
+            "v": 63,
+            "lo": 56,
             "hi": 70,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 31,
-            "lo": 17,
+            "v": 35,
+            "lo": 32,
             "hi": 42,
-            "days": 4,
-            "bad_days": 1
+            "days": 3,
+            "bad_days": 0
           },
           "flow": {
-            "v": 62,
-            "lo": 16,
+            "v": 77,
+            "lo": 68,
             "hi": 86,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:30": {
           "speed": {
-            "v": 38,
+            "v": 36,
             "lo": 34,
-            "hi": 43,
-            "days": 4,
+            "hi": 38,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 60,
-            "lo": 26,
+            "v": 71,
+            "lo": 63,
             "hi": 83,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:45": {
           "speed": {
-            "v": 34,
-            "lo": 20,
+            "v": 39,
+            "lo": 37,
             "hi": 41,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 56,
-            "lo": 9,
+            "v": 72,
+            "lo": 65,
             "hi": 79,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -1618,161 +1620,161 @@
       "cells": {
         "07:00": {
           "speed": {
-            "v": 38,
-            "lo": 36,
+            "v": 39,
+            "lo": 37,
             "hi": 42,
-            "days": 3,
+            "days": 2,
             "bad_days": 0
           },
           "flow": {
-            "v": 79,
-            "lo": 24,
+            "v": 106,
+            "lo": 101,
             "hi": 111,
-            "days": 3
+            "days": 2
           },
           "samples": 3
         },
         "07:15": {
           "speed": {
-            "v": 39,
+            "v": 38,
             "lo": 35,
-            "hi": 41,
-            "days": 4,
+            "hi": 40,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 97,
-            "lo": 15,
+            "v": 124,
+            "lo": 114,
             "hi": 143,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:30": {
           "speed": {
-            "v": 38,
+            "v": 39,
             "lo": 37,
             "hi": 40,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 132,
-            "lo": 24,
+            "v": 168,
+            "lo": 159,
             "hi": 184,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "07:45": {
           "speed": {
-            "v": 36,
+            "v": 34,
             "lo": 31,
-            "hi": 41,
-            "days": 4,
+            "hi": 37,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 110,
-            "lo": 35,
+            "v": 135,
+            "lo": 120,
             "hi": 148,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:00": {
           "speed": {
-            "v": 35,
+            "v": 34,
             "lo": 33,
-            "hi": 39,
-            "days": 4,
+            "hi": 36,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 166,
-            "lo": 26,
+            "v": 212,
+            "lo": 205,
             "hi": 222,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:15": {
           "speed": {
-            "v": 33,
+            "v": 31,
             "lo": 29,
-            "hi": 39,
-            "days": 4,
+            "hi": 36,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 133,
-            "lo": 25,
+            "v": 169,
+            "lo": 163,
             "hi": 177,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:30": {
           "speed": {
-            "v": 34,
+            "v": 30,
             "lo": 28,
-            "hi": 44,
-            "days": 4,
+            "hi": 31,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 154,
-            "lo": 23,
+            "v": 197,
+            "lo": 165,
             "hi": 217,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "08:45": {
           "speed": {
-            "v": 35,
+            "v": 31,
             "lo": 29,
-            "hi": 45,
-            "days": 4,
+            "hi": 33,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 138,
-            "lo": 27,
+            "v": 174,
+            "lo": 161,
             "hi": 181,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:00": {
           "speed": {
-            "v": 37,
+            "v": 34,
             "lo": 33,
-            "hi": 45,
-            "days": 4,
+            "hi": 35,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 149,
-            "lo": 29,
+            "v": 189,
+            "lo": 182,
             "hi": 202,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:15": {
           "speed": {
-            "v": 36,
+            "v": 33,
             "lo": 30,
-            "hi": 43,
-            "days": 4,
+            "hi": 36,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 137,
-            "lo": 28,
+            "v": 173,
+            "lo": 152,
             "hi": 214,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
@@ -1781,30 +1783,30 @@
             "v": 37,
             "lo": 35,
             "hi": 38,
-            "days": 4,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 92,
-            "lo": 15,
+            "v": 117,
+            "lo": 106,
             "hi": 129,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
         "09:45": {
           "speed": {
-            "v": 36,
+            "v": 34,
             "lo": 33,
-            "hi": 44,
-            "days": 4,
+            "hi": 34,
+            "days": 3,
             "bad_days": 0
           },
           "flow": {
-            "v": 115,
-            "lo": 40,
+            "v": 140,
+            "lo": 123,
             "hi": 161,
-            "days": 4
+            "days": 3
           },
           "samples": 3
         },
