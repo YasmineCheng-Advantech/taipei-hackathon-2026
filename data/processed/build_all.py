@@ -8,6 +8,10 @@
 - TDX 歷史資料：data/raw/tdx_vd_hist/vd_tdx_targets.csv（data/fetch/fetch_tdx_vd_hist.py 產生）。
   TDX 是完整的官方紀錄，某支偵測器某一天有 TDX 資料時，就不用自己收的那天（兩邊的 5 分鐘切法不同，混用會重複算）
 
+車數的單位：VDLive.xml 的車數是「最近 1 分鐘」的車數，自己收的是每 5 分鐘抓一次，所以每筆只有 5 分鐘裡的 1 分鐘。
+TDX 是每分鐘都有，彙整成 5 分鐘的車數。合併時把自己收的車數 ×5，估成 5 分鐘的車數，兩邊單位才一致
+（10/20 08:00–10:00 同一支偵測器比對，TDX 每筆平均是自己收的 5.0 倍，車速兩邊相同）。
+
 輸出
 - data/processed/vd_readings.csv   全部讀數合併、去重、依時間排序（臺北市公開資料，可以進 git 給隊友用）
 - data/processed/COLLECTION.md     每天收到哪些時段、各偵測器幾筆、資料來自哪些檔案
@@ -28,6 +32,7 @@ REPO = DATA.parent
 OUT = HERE / "vd_readings.csv"
 SUMMARY = HERE / "COLLECTION.md"
 TDX = DATA / "raw" / "tdx_vd_hist" / "vd_tdx_targets.csv"
+LIVE_SCALE = 5  # 自己收的每筆是 1 分鐘車數 → ×5 估成 5 分鐘車數
 FIELDS = ['poll_time', 'entrance', 'vdid', 'link_id', 'status', 'collect_time',
           'lanes', 'vol_M', 'vol_S', 'vol_L', 'vol_T', 'speed', 'occupancy']
 AM, PM = (7 * 60, 10 * 60 + 30), (16 * 60 + 30, 20 * 60 + 30)
@@ -74,7 +79,11 @@ def merge(paths):
                 if k in keys:
                     continue
                 keys.add(k)
-                rows.append({f: r.get(f, "") for f in FIELDS})
+                row = {f: r.get(f, "") for f in FIELDS}
+                if not is_tdx:
+                    for c in ("vol_M", "vol_S", "vol_L", "vol_T"):
+                        row[c] = int(row[c] or 0) * LIVE_SCALE
+                rows.append(row)
                 n += 1
         contrib[p] = n
     rows.sort(key=lambda r: (r["collect_time"], r["vdid"], r["link_id"]))
@@ -104,7 +113,7 @@ def summary(rows, contrib):
 
     lines = ["# VD 收集紀錄", "",
              f"{dt.datetime.now():%b %d, %Y %H:%M} 由 `data/processed/build_all.py` 產生，資料在 [`vd_readings.csv`](vd_readings.csv)。", "",
-             "臺北市交工處 VDLive.xml（自己收）與 TDX 歷史資料，每 5 分鐘一筆。收完整＝5 個入口的讀數到齊 80% 以上。", "",
+             "臺北市交工處 VDLive.xml（自己收）與 TDX 歷史資料，每 5 分鐘一筆；自己收的車數是 1 分鐘的車數，已 ×5 估成 5 分鐘。收完整＝5 個入口的讀數到齊 80% 以上。", "",
              "## 每天收到哪些時段", "",
              "| 日期 | 早上 07:00–10:30 | 傍晚 16:30–20:30 | 有資料的時間 | 讀數 |", "| --- | --- | --- | --- | --- |"]
     full_am, full_pm = [], []

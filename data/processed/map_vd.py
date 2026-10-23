@@ -6,7 +6,7 @@ explore_vd.py 會把這張地圖放進 data/raw/explore.html（最上面的「�
   先找 data/raw/VD.xml，沒有就下載一次存在那裡。
 - 路段：從 OpenStreetMap（Overpass API）抓偵測器所在那條路的形狀，畫出偵測器前後約 400 公尺，跟著時間變色。
   抓一次存在 data/raw/roads.json，之後直接用；要重抓就刪掉那個檔。抓不到時只畫點。
-- 顏色：服務水準 A–F（E、F 算塞），可以切換兩把尺，定義與 explore_vd.py 相同；5 分鐘不到 5 輛車的讀數不判斷。
+- 顏色：服務水準 A–F（E、F 算塞），可以切換兩把尺，定義與 explore_vd.py 相同；5 分鐘不到 25 輛汽車的讀數不判斷。
 """
 import csv
 import json

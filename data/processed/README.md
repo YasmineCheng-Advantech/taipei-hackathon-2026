@@ -25,7 +25,7 @@
 - **data.gov.tw 166031 已下架。** 頁面標示「資料集已下架，此為歷史資料留存」，詮釋資料最後更新 2024-09-11，提供機關寫的是地政司，原本就是指向 TDX 的轉載。ROLES.md／TASKS.md 寫的收集來源要改。
 - **臺北市交工處 VD（可用，免金鑰）**，就是之後收集程式該抓的來源：
   - 靜態：`https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml`（data.taipei「臺北市車輛偵測器(VD)靜態資料」，604 支，交通部即時路況標準 v2.0）
-  - 即時：`https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml`（約 1.7 MB，每分鐘更新，數值為 5 分鐘統計；分車種 M 機車／S 小車／L 大車／T 聯結車，分車道）
+  - 即時：`https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml`（約 1.7 MB，每分鐘更新，車數是最近 1 分鐘的車數（10/23 和 TDX 歷史資料比對確認，見 `build_all.py`）；分車種 M 機車／S 小車／L 大車／T 聯結車，分車道）
   - 另有舊格式 `GetVDDATA.xml.gz`（逐車道）與 `GetVD.xml.gz`（路段彙總，附路段名如「環東進城 前方」，對照位置很好用）。
 - **TDX**：連得到，但 API 回 401「Valid API Key Required」，沒有金鑰不能用。國道 VD 只能從這裡（或高公局）拿。
 - **高公局 tisvcloud.freeway.gov.tw**：從這個雲端環境連線逾時（伺服器端沒回應，不是網域白名單問題，推測只開放國內 IP）。在你自己的電腦上應該抓得到，用 `data/fetch/fetch_freeway_vd.py`（不用金鑰，有歷史檔，可以事後補抓 10/20–10/23）。
