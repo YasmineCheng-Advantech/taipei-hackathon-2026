@@ -83,7 +83,7 @@ Oct 23, 2026 · 狀態：**預想，未經全隊討論**。題目公布後依原
 | 臺北市公車站位 | `…/blobbus/GetStopLocation.gz` | `id`、`name`、`address`、`lon`、`lat`、`bearing` | 站牌的 `stopLocationId` 對到這裡，把同一站位的多個站牌合併 | ✅ 10/23 |
 | 臺北市公車路線 | `…/blobbus/GetRoute.gz` | `nameZh`、`providerName`、`departureZh`、`destinationZh`、`distance`；首末班 `goFirstBusTime`、`goLastBusTime`、`backFirstBusTime`、`backLastBusTime`；班距 `peakHeadway`、`offPeakHeadway`、`headwayDesc`；假日另有一組（`holiday…`） | 等車時間、夜間缺口（末班車） | ✅ 10/23；**有班距**，不用 TDX 也算得出等車時間 |
 | 公車班表、路線線形 | TDX `Bus`（市區公車） | 班表、站序、路線線形 | 里 × 時段熱力圖、選址的候選點 | ⏳ 要金鑰 |
-| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei，Big5） | `年份`、`月份`、`區域代碼`、`區域別`、`性別`、`總計`、`0歲數量`…（逐歲） | 需求、高齡比例 | ✅ 10/23；從 110 年 1 月起逐月，第一列是 `區域代碼` 63000000、`區域別`「總計」（全市），性別分計、男、女三列。樣本只抓了開頭，要確認後面有沒有里的列；要最新月份得下載完整檔 |
+| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei，Big5） | `年份`、`月份`、`區域代碼`、`區域別`、`性別`、`總計`、`0歲數量`…（逐歲） | 需求、高齡比例 | ✅ 10/23；從 110 年 1 月起逐月，第一列是 `區域代碼` 63000000、`區域別`「總計」（全市），性別分計、男、女三列。後面依序是區（`63000010` 松山區）與里（`63000010002` 莊敬里），**有里的列**。里的代碼是 11 碼，應該可以直接對到村里界圖的 `VILLCODE`（待確認）。樣本只抓了開頭，要最新月份得下載完整檔 |
 | 村里界圖 | [data.gov.tw 7438](https://data.gov.tw/dataset/7438)（內政部國土測繪中心，全國） | `VILLCODE`、`COUNTYNAME`、`TOWNNAME`、`VILLNAME` 與里的範圍（多邊形） | 把人口放到地圖上，算每個里離站多遠 | ⚠️ 網路搜尋得知；應該是 SHP，讀它要裝 `pyshp`（`pip3 install pyshp`） |
 | 捷運出入口、YouBike | 已在 `catalog.md`（A3） | 座標 | 捷運、YouBike 也算進覆蓋 | ⚠️ |
 | 候車亭位置 | 關鍵字「候車亭」 | | 候車亭題 | ⚠️ 不確定有公開；沒有就讓民眾回報 |

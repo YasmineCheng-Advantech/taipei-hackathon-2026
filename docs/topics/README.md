@@ -68,7 +68,8 @@ Oct 23, 2026 · 給 10/24 選題用。塞車（#4）已經有完整的作品；�
 | --- | --- | --- |
 | 資料 | ~~跑 `check_catalog.py accident bus population`~~：10/23 已跑，8 個都抓得到，已回填 [`catalog.md`](../../data/catalog.md) | 完成 |
 | 資料 | ~~跑 `fetch_accidents.py 177136`~~：10/23 已跑，臺北市 114 年 A1 137 列、A2 約 52,900 列 | 完成 |
-| 資料 | 跑 `python3 data/processed/build_crash.py`：彙整成路口 × 每 2 小時，印出前 20 個路口與各欄最常見的值（見 [`crash.md`](crash.md#路口怎麼歸併)）。想看多年，先 `fetch_accidents.py 167905` 再跑一次 | 5 分鐘 |
+| 資料 | ~~跑 `build_crash.py`~~：10/23 已跑，結果見 [`crash.md`](crash.md#1023-用-114-年真實資料看到的)。規則改過（座標補路口、行人定義），`git pull` 後重跑一次，把 `data/processed/crash_places.csv` commit 上來 | 5 分鐘 |
+| 資料 | 想看多年（「3 年裡有幾年在前 20」）：`fetch_accidents.py 167905` 再重跑 `build_crash.py` | 10 分鐘 |
 | 資料 | 公車題要里的範圍才算得出覆蓋率：用瀏覽器下載 [村里界圖 7438](https://data.gov.tw/dataset/7438) | 10 分鐘 |
 | 網站 | 看上面 #6–#8，決定接不接 | 10 分鐘 |
 | 設計 | 車禍看 `A2*`、`A4*`，公車看 `A3*`；想一下「改善前 N 個路口」和「覆蓋率曲線」的滑桿長怎樣 | 15 分鐘 |

@@ -56,7 +56,7 @@ Oct 20, 2026 · 給 10/24 選題用：每個推測題目有哪些資料、拿不
 | YouBike 2.0 即時車位 | [youbike_immediate.json](https://tcgbusfs.blob.core.windows.net/dotapp/youbike/v2/youbike_immediate.json) | JSON | 每分鐘 | 無，要自己收 | 站號、站名、總車位、可借、可還、座標 | ✅ 10/23 下載得到（930 KB）；確認有 `sno` 站號、`sna` 站名、`sarea` 行政區、`mday` 更新時間；車位與座標在第 12 欄之後，重跑會印出來 |
 | 公車路線與站位 | TDX `Bus` | JSON | 不定期 | — | 路線、站序、座標 | ⏳ 要金鑰 |
 | 臺北市公車站牌、站位、路線 | [GetStop.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz)、[GetStopLocation.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetStopLocation.gz)、[GetRoute.gz](https://tcgbusfs.blob.core.windows.net/blobbus/GetRoute.gz) | JSON（gzip） | 不定期 | — | 站牌：`Id`、`routeId`、`nameZh`、`seqNo`、`goBack`、`longitude`、`latitude`、`stopLocationId`、`address`。站位：`id`、`name`、`lon`、`lat`、`address`、`bearing`。路線：`nameZh`、`providerName`、`departureZh`、`destinationZh`、`distance`、首末班（`goFirstBusTime` 等）、班距 `peakHeadway`、`offPeakHeadway`、`headwayDesc`，假日另有一組 | ✅ 10/23，免金鑰（站牌 9 MB、站位 0.9 MB、路線 0.9 MB） |
-| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei） | CSV（Big5） | 每月 | 有 | 年份、月份、區域代碼、區域別、性別、總計、0歲數量…（逐歲） | ✅ 10/23；從 110 年 1 月起逐月，第一列是全市（`區域代碼` 63000000）；後面有沒有里的列、要最新月份都得下載完整檔 |
+| 臺北市各里人口數按年齡分 | [data.gov.tw 136896](https://data.gov.tw/dataset/136896)（檔案在 data.taipei） | CSV（Big5） | 每月 | 有 | 年份、月份、區域代碼、區域別、性別、總計、0歲數量…（逐歲） | ✅ 10/23；從 110 年 1 月起逐月，第一列是全市（`區域代碼` 63000000）；後面依序是區（8 碼）與里（11 碼，例如 `63000010002` 莊敬里），有里的列；要最新月份得下載完整檔 |
 | 村里界圖 | [data.gov.tw 7438](https://data.gov.tw/dataset/7438)（內政部國土測繪中心） | SHP（推測） | 不定期 | — | `VILLCODE`、`COUNTYNAME`、`TOWNNAME`、`VILLNAME`、里的範圍 | ⚠️ 網路搜尋得知，公車設點算覆蓋率要用 |
 | 捷運車站出入口 | [data.gov.tw 128428](https://data.gov.tw/dataset/128428) | CSV | 不定期 | — | 站名、出口、座標 | ⚠️ |
 
