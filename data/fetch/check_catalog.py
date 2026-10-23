@@ -2,6 +2,7 @@
 
 用法（在自己的電腦，雲端環境連不到這些網站）：
     python3 data/fetch/check_catalog.py          # Windows：py data/fetch/check_catalog.py
+    python3 data/fetch/check_catalog.py accident bus population   # 只跑名稱含這些字的資料集
 輸出：data/raw/catalog/<id>.<副檔名>（不進 git），以及每個資料集的狀態、大小、前幾個欄位。
 每個網址只抓一次；即時資料的網址不要重複狂跑。
 
@@ -14,6 +15,7 @@ import csv
 import gzip
 import io
 import json
+import ssl
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -29,6 +31,10 @@ URLS = [
     ("parking-available", "https://tcgbusfs.blob.core.windows.net/blobtcmsv/TCMSV_allavailable.json"),
     ("parking-desc", "https://tcgbusfs.blob.core.windows.net/blobtcmsv/TCMSV_alldesc.json"),
     ("freeway-history", "https://tisvcloud.freeway.gov.tw/history/motc20/"),
+    # 公車設點（docs/topics/transit.md）：網址出自 2018 年 data.taipei API 文件，要確認還在
+    ("bus-stop", "https://tcgbusfs.blob.core.windows.net/blobbus/GetStop.gz"),
+    ("bus-stop-location", "https://tcgbusfs.blob.core.windows.net/blobbus/GetStopLocation.gz"),
+    ("bus-route", "https://tcgbusfs.blob.core.windows.net/blobbus/GetRoute.gz"),
 ]
 
 # data.gov.tw 資料集編號（catalog.md 對應的題目寫在註解）
@@ -37,14 +43,23 @@ GOV_TW = [
     ("mrt-exits", "128428"),       # A3 臺北捷運車站出入口座標
     ("accident-stats", "135546"),  # A2／A4 臺北市交通事故統計（交通局）
     ("accident-a3", "135091"),     # A2／A4 臺北市 A3 交通事故資料（警察局）
+    ("accident-114", "177136"),    # 車禍 114 年傷亡道路交通事故逐案資料（交通部，全國，有經緯度）
+    ("accident-112", "167905"),    # 車禍 112 年傷亡道路交通事故逐案資料（多年比對用）
+    ("population-village-age", "136896"),  # 公車設點 臺北市各里人口數按年齡分
 ]
 GOV_TW_API = "https://data.gov.tw/api/v2/rest/dataset/{}"
 MAX_BYTES = 2 * 1024 * 1024
+MAX_FIELDS = 20
+
+# Python 3.13 起預設多一項嚴格憑證檢查，data.gov.tw、freeway.gov.tw 的憑證缺 Subject Key Identifier 會被擋
+# （CERTIFICATE_VERIFY_FAILED: Missing Subject Key Identifier）。只關掉這一項，憑證鏈與網域照樣驗證。
+SSL_CTX = ssl.create_default_context()
+SSL_CTX.verify_flags &= ~getattr(ssl, "VERIFY_X509_STRICT", 0)
 
 
 def fetch(url, limit=None):
     req = urllib.request.Request(url, headers={"Accept-Encoding": "gzip", "User-Agent": "taipei-hackathon-2026 catalog check"})
-    with urllib.request.urlopen(req, timeout=60) as r:
+    with urllib.request.urlopen(req, timeout=60, context=SSL_CTX) as r:
         body = r.read(limit) if limit else r.read()
         ctype = r.headers.get("Content-Type", "")
     if body[:2] == b"\x1f\x8b":
@@ -73,22 +88,32 @@ def gov_tw_urls(dataset_id):
     return [u for _, u in found]
 
 
+def first_record(d, depth=0):
+    """找出 JSON 裡第一個由物件組成的陣列，回傳第一筆；停車資料包在 data.park 底下，要往下找。"""
+    if isinstance(d, list):
+        return d[0] if d and isinstance(d[0], dict) else None
+    if isinstance(d, dict) and depth < 3:
+        for v in d.values():
+            r = first_record(v, depth + 1)
+            if r:
+                return r
+    return None
+
+
 def describe(body):
     """回傳格式與前幾個欄位名稱。"""
     body = body.removeprefix(b"\xef\xbb\xbf").lstrip()
     head = body[:1]
     if head in (b"[", b"{"):
         d = json.loads(body.decode("utf-8"))
-        if isinstance(d, dict):
-            inner = next((v for v in d.values() if isinstance(v, list) and v and isinstance(v[0], dict)), None)
-            return "json", list((inner[0] if inner else d).keys())[:12]
-        return "json", list(d[0].keys())[:12] if d and isinstance(d[0], dict) else []
+        rec = first_record(d) or (d if isinstance(d, dict) else {})
+        return "json", list(rec.keys())[:MAX_FIELDS]
     if head == b"<":
         try:
             root = ET.fromstring(body)
         except ET.ParseError:
             return "html", []
-        return "xml", [e.tag.split("}")[-1] for e in root.iter() if len(e) == 0][:12]
+        return "xml", [e.tag.split("}")[-1] for e in root.iter() if len(e) == 0][:MAX_FIELDS]
     for enc in ("utf-8", "cp950"):  # 市府的 CSV 常是 Big5
         try:
             first = body.decode(enc, errors="strict" if enc == "utf-8" else "replace").splitlines()[0]
@@ -96,7 +121,7 @@ def describe(body):
             continue
         row = next(csv.reader([first]))
         if len(row) > 1:
-            return "csv", row[:12]
+            return "csv", row[:MAX_FIELDS]
     return "other", []
 
 
@@ -113,14 +138,17 @@ def main():
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")  # Windows 命令列預設 cp950，印 ✓ 會出錯
     OUT.mkdir(parents=True, exist_ok=True)
+    keys = sys.argv[1:]  # 只跑名稱含這些字的；不給就全部
+    urls = [(n, u) for n, u in URLS if not keys or any(k in n for k in keys)]
+    gov_tw = [(n, d) for n, d in GOV_TW if not keys or any(k in n for k in keys)]
     ok = 0
-    for name, url in URLS:
+    for name, url in urls:
         try:
             save(name, url)
             ok += 1
         except Exception as e:
             print(f"✗ {name}：{e}\n  {url}")
-    for name, dataset_id in GOV_TW:
+    for name, dataset_id in gov_tw:
         page = f"https://data.gov.tw/dataset/{dataset_id}"
         try:
             urls = gov_tw_urls(dataset_id)
@@ -130,7 +158,7 @@ def main():
             ok += 1
         except Exception as e:
             print(f"✗ {name}：{e}\n  改用瀏覽器打開 {page}，下載一個檔案看欄位")
-    total = len(URLS) + len(GOV_TW)
+    total = len(urls) + len(gov_tw)
     print(f"\n{ok}/{total} 個抓得到。抓得到的，把 data/catalog.md 的「⚠️」改成「✅ 日期」，欄位不對就改關鍵欄位。")
     return 0 if ok else 1
 
