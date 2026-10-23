@@ -16,16 +16,24 @@
 import argparse
 import json
 import math
+import sys
 from pathlib import Path
 
 ap = argparse.ArgumentParser(description="產生 #4 內科晨峰資料檔")
 ap.add_argument("--real", type=Path, help="build_vd_15min.py 的輸出；給了就用真實 VD 取代有資料的熱力格")
-ap.add_argument("--model", type=Path, default=Path(__file__).parent / "inputs" / "model_input.json",
+MOCK_MODEL = Path(__file__).parent / "inputs" / "model_input.json"
+ap.add_argument("--model", type=Path, default=MOCK_MODEL,
                 help="排隊模型的輸入（容量與到達曲線）；預設是假設值 data/mock/inputs/model_input.json")
 ap.add_argument("--out", type=Path, help="輸出路徑")
 ARGS = ap.parse_args()
 REAL = json.loads(ARGS.real.read_text(encoding="utf-8")) if ARGS.real else None
 MODEL = json.loads(ARGS.model.read_text(encoding="utf-8"))
+if max(MODEL["arrival"]["values"]) <= MODEL["capacity"]["hi"]:
+    # 到達從沒超過容量上限 → 排隊模型算不出排隊，「排隊減半」之類的結論沒有意義
+    print(f"警告：{ARGS.model} 的到達最高 {max(MODEL['arrival']['values'])} 輛/15 分鐘，沒超過容量上限 {MODEL['capacity']['hi']}，"
+          f"排隊模型算不出排隊。情境、城市目標、一頁紙改用假設的容量與到達曲線（標成模擬）；熱力圖照樣用真實資料。", file=sys.stderr)
+    ARGS.model = MOCK_MODEL
+    MODEL = json.loads(MOCK_MODEL.read_text(encoding="utf-8"))
 QSIM = MODEL["sim"]  # 排隊模型算出的數字是不是模擬：取決於容量與到達曲線是不是假設值
 OUT = ARGS.out or (Path(__file__).parents[1] / "processed" / "t4-morning.json" if REAL or not QSIM
                    else Path(__file__).with_name("t4-morning.json"))
