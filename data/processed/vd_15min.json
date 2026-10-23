@@ -1,0 +1,1847 @@
+{
+  "source": "臺北市交工處 VDLive.xml，經 data/fetch/collect_vd.py 收集",
+  "built_at": "2026-10-23T10:03:40+08:00",
+  "window": "平日 07:00–10:30",
+  "days": [
+    "2026-10-20",
+    "2026-10-21",
+    "2026-10-22",
+    "2026-10-23"
+  ],
+  "bad_speed": 20,
+  "skipped_reads": 259,
+  "detectors": {
+    "V6120C0": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 65,
+            "lo": 61,
+            "hi": 68,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 58,
+            "lo": 23,
+            "hi": 82,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 65,
+            "lo": 59,
+            "hi": 75,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 63,
+            "lo": 24,
+            "hi": 78,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 62,
+            "lo": 57,
+            "hi": 66,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 64,
+            "lo": 36,
+            "hi": 85,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 59,
+            "lo": 52,
+            "hi": 72,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 72,
+            "lo": 26,
+            "hi": 102,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 57,
+            "lo": 51,
+            "hi": 70,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 61,
+            "lo": 22,
+            "hi": 86,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 59,
+            "lo": 49,
+            "hi": 71,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 66,
+            "lo": 25,
+            "hi": 87,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 60,
+            "lo": 51,
+            "hi": 72,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 67,
+            "lo": 21,
+            "hi": 92,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:45": {
+          "speed": {
+            "v": 60,
+            "lo": 57,
+            "hi": 66,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 58,
+            "lo": 22,
+            "hi": 72,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 59,
+            "lo": 55,
+            "hi": 69,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 66,
+            "lo": 34,
+            "hi": 86,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 57,
+            "lo": 53,
+            "hi": 61,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 74,
+            "lo": 40,
+            "hi": 109,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 54,
+            "lo": 40,
+            "hi": 61,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 70,
+            "lo": 21,
+            "hi": 87,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 59,
+            "lo": 44,
+            "hi": 68,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 76,
+            "lo": 42,
+            "hi": 93,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 56,
+            "lo": 48,
+            "hi": 63,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 85,
+            "lo": 67,
+            "hi": 102,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 58,
+            "lo": 56,
+            "hi": 61,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 79,
+            "lo": 77,
+            "hi": 83,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "環東大道（西端，備用）"
+    },
+    "V6310G0": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 71,
+            "lo": 68,
+            "hi": 73,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 106,
+            "lo": 33,
+            "hi": 169,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 67,
+            "lo": 64,
+            "hi": 70,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 154,
+            "lo": 44,
+            "hi": 198,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 66,
+            "lo": 59,
+            "hi": 81,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 156,
+            "lo": 52,
+            "hi": 203,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 58,
+            "lo": 50,
+            "hi": 69,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 140,
+            "lo": 49,
+            "hi": 175,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 53,
+            "lo": 26,
+            "hi": 80,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 119,
+            "lo": 33,
+            "hi": 169,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 58,
+            "lo": 49,
+            "hi": 73,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 126,
+            "lo": 50,
+            "hi": 168,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 48,
+            "lo": 18,
+            "hi": 71,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 106,
+            "lo": 36,
+            "hi": 140,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:45": {
+          "speed": {
+            "v": 50,
+            "lo": 18,
+            "hi": 78,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 108,
+            "lo": 48,
+            "hi": 149,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 53,
+            "lo": 23,
+            "hi": 80,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 114,
+            "lo": 34,
+            "hi": 152,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 54,
+            "lo": 28,
+            "hi": 63,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 122,
+            "lo": 26,
+            "hi": 166,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 66,
+            "lo": 52,
+            "hi": 74,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 100,
+            "lo": 33,
+            "hi": 145,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 71,
+            "lo": 67,
+            "hi": 73,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 103,
+            "lo": 45,
+            "hi": 145,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 70,
+            "lo": 68,
+            "hi": 72,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 128,
+            "lo": 92,
+            "hi": 153,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 69,
+            "lo": 67,
+            "hi": 72,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 101,
+            "lo": 77,
+            "hi": 136,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "環東大道（東端）"
+    },
+    "VMLXB00": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 51,
+            "lo": 47,
+            "hi": 58,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 31,
+            "lo": 9,
+            "hi": 46,
+            "days": 3
+          },
+          "samples": 2
+        },
+        "07:15": {
+          "speed": {
+            "v": 48,
+            "lo": 40,
+            "hi": 52,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 34,
+            "lo": 10,
+            "hi": 45,
+            "days": 4
+          },
+          "samples": 1
+        },
+        "07:30": {
+          "speed": {
+            "v": 48,
+            "lo": 46,
+            "hi": 51,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 53,
+            "lo": 14,
+            "hi": 77,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 50,
+            "lo": 46,
+            "hi": 52,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 43,
+            "lo": 15,
+            "hi": 64,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 48,
+            "lo": 47,
+            "hi": 48,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 54,
+            "lo": 8,
+            "hi": 83,
+            "days": 3
+          },
+          "samples": 2
+        },
+        "08:15": {
+          "speed": {
+            "v": 46,
+            "lo": 45,
+            "hi": 48,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 55,
+            "lo": 12,
+            "hi": 80,
+            "days": 4
+          },
+          "samples": 2
+        },
+        "08:30": {
+          "speed": {
+            "v": 47,
+            "lo": 45,
+            "hi": 48,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 52,
+            "lo": 14,
+            "hi": 77,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:45": {
+          "speed": {
+            "v": 48,
+            "lo": 46,
+            "hi": 49,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 46,
+            "lo": 14,
+            "hi": 59,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 47,
+            "lo": 45,
+            "hi": 48,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 56,
+            "lo": 24,
+            "hi": 74,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 49,
+            "lo": 46,
+            "hi": 51,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 56,
+            "lo": 15,
+            "hi": 101,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 48,
+            "lo": 46,
+            "hi": 49,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 48,
+            "lo": 30,
+            "hi": 60,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 46,
+            "lo": 41,
+            "hi": 49,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 51,
+            "lo": 23,
+            "hi": 69,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 47,
+            "lo": 46,
+            "hi": 48,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 60,
+            "lo": 49,
+            "hi": 78,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 47,
+            "lo": 46,
+            "hi": 49,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 58,
+            "lo": 52,
+            "hi": 68,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "成美橋"
+    },
+    "VPMSV40": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 47,
+            "lo": 44,
+            "hi": 49,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 82,
+            "lo": 19,
+            "hi": 120,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 42,
+            "lo": 38,
+            "hi": 48,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 105,
+            "lo": 33,
+            "hi": 162,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 39,
+            "lo": 30,
+            "hi": 48,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 70,
+            "lo": 31,
+            "hi": 94,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 37,
+            "lo": 29,
+            "hi": 54,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 118,
+            "lo": 26,
+            "hi": 170,
+            "days": 4
+          },
+          "samples": 2
+        },
+        "08:00": {
+          "speed": {
+            "v": 36,
+            "lo": 29,
+            "hi": 48,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 130,
+            "lo": 14,
+            "hi": 176,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 38,
+            "lo": 26,
+            "hi": 51,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 90,
+            "lo": 28,
+            "hi": 123,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 35,
+            "lo": 23,
+            "hi": 58,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 83,
+            "lo": 40,
+            "hi": 124,
+            "days": 4
+          },
+          "samples": 2
+        },
+        "08:45": {
+          "speed": {
+            "v": 40,
+            "lo": 31,
+            "hi": 46,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 98,
+            "lo": 18,
+            "hi": 150,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 43,
+            "lo": 30,
+            "hi": 62,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 98,
+            "lo": 22,
+            "hi": 127,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 36,
+            "lo": 24,
+            "hi": 53,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 88,
+            "lo": 29,
+            "hi": 126,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 36,
+            "lo": 29,
+            "hi": 51,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 83,
+            "lo": 37,
+            "hi": 108,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 38,
+            "lo": 31,
+            "hi": 49,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 110,
+            "lo": 53,
+            "hi": 168,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 33,
+            "lo": 30,
+            "hi": 35,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 136,
+            "lo": 96,
+            "hi": 160,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 31,
+            "lo": 28,
+            "hi": 37,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 150,
+            "lo": 114,
+            "hi": 171,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "堤頂大道北向"
+    },
+    "VQBUL20": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 24,
+            "lo": 16,
+            "hi": 29,
+            "days": 3,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 91,
+            "lo": 18,
+            "hi": 175,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 26,
+            "lo": 18,
+            "hi": 31,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 94,
+            "lo": 24,
+            "hi": 140,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 30,
+            "lo": 23,
+            "hi": 41,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 110,
+            "lo": 31,
+            "hi": 147,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 25,
+            "lo": 16,
+            "hi": 32,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 95,
+            "lo": 13,
+            "hi": 140,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 28,
+            "lo": 14,
+            "hi": 39,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 128,
+            "lo": 15,
+            "hi": 180,
+            "days": 4
+          },
+          "samples": 2
+        },
+        "08:15": {
+          "speed": {
+            "v": 25,
+            "lo": 21,
+            "hi": 31,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 93,
+            "lo": 14,
+            "hi": 141,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 24,
+            "lo": 20,
+            "hi": 28,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 119,
+            "lo": 26,
+            "hi": 155,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:45": {
+          "speed": {
+            "v": 26,
+            "lo": 24,
+            "hi": 29,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 100,
+            "lo": 15,
+            "hi": 162,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 28,
+            "lo": 24,
+            "hi": 33,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 133,
+            "lo": 18,
+            "hi": 184,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 32,
+            "lo": 29,
+            "hi": 37,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 123,
+            "lo": 22,
+            "hi": 187,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 26,
+            "lo": 15,
+            "hi": 34,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 112,
+            "lo": 19,
+            "hi": 157,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 26,
+            "lo": 23,
+            "hi": 30,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 109,
+            "lo": 27,
+            "hi": 161,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 32,
+            "lo": 21,
+            "hi": 39,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 131,
+            "lo": 99,
+            "hi": 157,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 29,
+            "lo": 26,
+            "hi": 32,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 89,
+            "lo": 72,
+            "hi": 107,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "民權大橋"
+    },
+    "VRHT600": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 44,
+            "lo": 41,
+            "hi": 48,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 151,
+            "lo": 37,
+            "hi": 211,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 38,
+            "lo": 35,
+            "hi": 45,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 125,
+            "lo": 25,
+            "hi": 173,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 37,
+            "lo": 25,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 134,
+            "lo": 28,
+            "hi": 172,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 36,
+            "lo": 33,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 197,
+            "lo": 44,
+            "hi": 261,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 33,
+            "lo": 30,
+            "hi": 37,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 157,
+            "lo": 49,
+            "hi": 206,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 33,
+            "lo": 29,
+            "hi": 43,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 151,
+            "lo": 36,
+            "hi": 191,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 30,
+            "lo": 24,
+            "hi": 36,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 133,
+            "lo": 31,
+            "hi": 177,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:45": {
+          "speed": {
+            "v": 28,
+            "lo": 19,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 189,
+            "lo": 49,
+            "hi": 258,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 33,
+            "lo": 30,
+            "hi": 37,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 147,
+            "lo": 35,
+            "hi": 194,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 35,
+            "lo": 30,
+            "hi": 44,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 163,
+            "lo": 36,
+            "hi": 238,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 36,
+            "lo": 28,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 132,
+            "lo": 27,
+            "hi": 173,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 38,
+            "lo": 34,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 172,
+            "lo": 53,
+            "hi": 222,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 25,
+            "lo": 22,
+            "hi": 27,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 98,
+            "lo": 80,
+            "hi": 119,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 32,
+            "lo": 28,
+            "hi": 34,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 101,
+            "lo": 92,
+            "hi": 109,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "堤頂港墘路"
+    },
+    "VRPSV00": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 46,
+            "lo": 45,
+            "hi": 47,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 34,
+            "lo": 9,
+            "hi": 55,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 41,
+            "lo": 31,
+            "hi": 47,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 38,
+            "lo": 8,
+            "hi": 56,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 40,
+            "lo": 37,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 48,
+            "lo": 11,
+            "hi": 70,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 39,
+            "lo": 30,
+            "hi": 44,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 52,
+            "lo": 13,
+            "hi": 71,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 38,
+            "lo": 29,
+            "hi": 54,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 58,
+            "lo": 9,
+            "hi": 81,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 32,
+            "lo": 27,
+            "hi": 38,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 59,
+            "lo": 13,
+            "hi": 78,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 35,
+            "lo": 30,
+            "hi": 38,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 57,
+            "lo": 21,
+            "hi": 76,
+            "days": 4
+          },
+          "samples": 2
+        },
+        "08:45": {
+          "speed": {
+            "v": 27,
+            "lo": 21,
+            "hi": 31,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 54,
+            "lo": 18,
+            "hi": 72,
+            "days": 4
+          },
+          "samples": 2
+        },
+        "09:00": {
+          "speed": {
+            "v": 32,
+            "lo": 28,
+            "hi": 39,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 52,
+            "lo": 18,
+            "hi": 70,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 31,
+            "lo": 17,
+            "hi": 42,
+            "days": 4,
+            "bad_days": 1
+          },
+          "flow": {
+            "v": 62,
+            "lo": 16,
+            "hi": 86,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 38,
+            "lo": 34,
+            "hi": 43,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 60,
+            "lo": 26,
+            "hi": 83,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 34,
+            "lo": 20,
+            "hi": 41,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 56,
+            "lo": 9,
+            "hi": 79,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 32,
+            "lo": 30,
+            "hi": 34,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 60,
+            "lo": 50,
+            "hi": 79,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 30,
+            "lo": 28,
+            "hi": 32,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 53,
+            "lo": 46,
+            "hi": 63,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "堤頂下游"
+    },
+    "VTXQJ20": {
+      "cells": {
+        "07:00": {
+          "speed": {
+            "v": 38,
+            "lo": 36,
+            "hi": 42,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 79,
+            "lo": 24,
+            "hi": 111,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "07:15": {
+          "speed": {
+            "v": 39,
+            "lo": 35,
+            "hi": 41,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 97,
+            "lo": 15,
+            "hi": 143,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:30": {
+          "speed": {
+            "v": 38,
+            "lo": 37,
+            "hi": 40,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 132,
+            "lo": 24,
+            "hi": 184,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "07:45": {
+          "speed": {
+            "v": 36,
+            "lo": 31,
+            "hi": 41,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 110,
+            "lo": 35,
+            "hi": 148,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:00": {
+          "speed": {
+            "v": 35,
+            "lo": 33,
+            "hi": 39,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 166,
+            "lo": 26,
+            "hi": 222,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:15": {
+          "speed": {
+            "v": 33,
+            "lo": 29,
+            "hi": 39,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 133,
+            "lo": 25,
+            "hi": 177,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:30": {
+          "speed": {
+            "v": 34,
+            "lo": 28,
+            "hi": 44,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 154,
+            "lo": 23,
+            "hi": 217,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "08:45": {
+          "speed": {
+            "v": 35,
+            "lo": 29,
+            "hi": 45,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 138,
+            "lo": 27,
+            "hi": 181,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:00": {
+          "speed": {
+            "v": 37,
+            "lo": 33,
+            "hi": 45,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 149,
+            "lo": 29,
+            "hi": 202,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:15": {
+          "speed": {
+            "v": 36,
+            "lo": 30,
+            "hi": 43,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 137,
+            "lo": 28,
+            "hi": 214,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:30": {
+          "speed": {
+            "v": 37,
+            "lo": 35,
+            "hi": 38,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 92,
+            "lo": 15,
+            "hi": 129,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "09:45": {
+          "speed": {
+            "v": 36,
+            "lo": 33,
+            "hi": 44,
+            "days": 4,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 115,
+            "lo": 40,
+            "hi": 161,
+            "days": 4
+          },
+          "samples": 3
+        },
+        "10:00": {
+          "speed": {
+            "v": 36,
+            "lo": 34,
+            "hi": 40,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 86,
+            "lo": 66,
+            "hi": 108,
+            "days": 3
+          },
+          "samples": 3
+        },
+        "10:15": {
+          "speed": {
+            "v": 38,
+            "lo": 37,
+            "hi": 39,
+            "days": 3,
+            "bad_days": 0
+          },
+          "flow": {
+            "v": 114,
+            "lo": 100,
+            "hi": 130,
+            "days": 3
+          },
+          "samples": 3
+        }
+      },
+      "entrance": "內湖路一段"
+    }
+  }
+}
