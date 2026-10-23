@@ -29,6 +29,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from calendar_tw import is_workday
 from explore_vd import threshold
 from preview_vd import load
 
@@ -86,7 +87,7 @@ def read_bins(paths):
     speeds = [(r["speed"], sum(r["cars"].values())) for r in rows if r["vdid"] == VD]
     for r in rows:
         t = r["t"]
-        if r["vdid"] != VD or t.weekday() >= 5:
+        if r["vdid"] != VD or not is_workday(t):
             continue
         i = (t.hour * 60 + t.minute - 7 * 60) // 15
         if 0 <= i < len(TIMES):

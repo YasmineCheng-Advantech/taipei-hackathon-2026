@@ -22,6 +22,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from calendar_tw import is_workday  # noqa: E402
+
 OUT = Path(__file__).with_name("vd_15min.json")
 BAD_SPEED = 20  # 與 gen_t4_morning.py 的 BAD_SPEED 相同
 START, END = dt.time(7, 0), dt.time(10, 30)
@@ -45,7 +48,7 @@ def main(argv):
     ap.add_argument("csv", nargs="*")
     ap.add_argument("--start", type=dt.time.fromisoformat, default=START)
     ap.add_argument("--end", type=dt.time.fromisoformat, default=END)
-    ap.add_argument("--weekends", action="store_true", help="也納入週末（預設只取平日）")
+    ap.add_argument("--weekends", action="store_true", help="也納入週末與國定假日（預設只取上班日）")
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args(argv)
     paths = args.csv
@@ -67,7 +70,7 @@ def main(argv):
                     skipped += 1
                     continue
                 t = dt.datetime.fromisoformat(r["collect_time"])
-                if not (args.start <= t.time() < args.end) or (t.weekday() >= 5 and not args.weekends):
+                if not (args.start <= t.time() < args.end) or (not is_workday(t) and not args.weekends):
                     continue
                 n = sum(int(r[k] or 0) for k in ("vol_M", "vol_S", "vol_L", "vol_T"))
                 reads[(r["vdid"], t.date().isoformat(), bin_of(t))].append((float(r["speed"]), n))
