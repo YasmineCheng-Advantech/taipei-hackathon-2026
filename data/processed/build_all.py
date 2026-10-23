@@ -5,6 +5,8 @@
 自動找的讀數（重複的只留一筆）
 - 自己電腦：data/raw/vd_taipei_targets.csv
 - GitHub Actions 下載的：~/Downloads/vd-raw-*（還沒解壓縮的 .zip 會先解壓縮到同名資料夾）、data/raw/actions/
+- TDX 歷史資料：data/raw/tdx_vd_hist/vd_tdx_targets.csv（data/fetch/fetch_tdx_vd_hist.py 產生）。
+  TDX 是完整的官方紀錄，某支偵測器某一天有 TDX 資料時，就不用自己收的那天（兩邊的 5 分鐘切法不同，混用會重複算）
 
 輸出
 - data/processed/vd_readings.csv   全部讀數合併、去重、依時間排序（臺北市公開資料，可以進 git 給隊友用）
@@ -25,6 +27,7 @@ DATA = HERE.parent
 REPO = DATA.parent
 OUT = HERE / "vd_readings.csv"
 SUMMARY = HERE / "COLLECTION.md"
+TDX = DATA / "raw" / "tdx_vd_hist" / "vd_tdx_targets.csv"
 FIELDS = ['poll_time', 'entrance', 'vdid', 'link_id', 'status', 'collect_time',
           'lanes', 'vol_M', 'vol_S', 'vol_L', 'vol_T', 'speed', 'occupancy']
 AM, PM = (7 * 60, 10 * 60 + 30), (16 * 60 + 30, 20 * 60 + 30)
@@ -39,7 +42,7 @@ def sources(extra):
             with zipfile.ZipFile(z) as f:
                 f.extractall(target)
             print(f"解壓縮 {z.name} → {target}")
-    found = [DATA / "raw" / "vd_taipei_targets.csv"]
+    found = [TDX, DATA / "raw" / "vd_taipei_targets.csv"]
     for base in (downloads, DATA / "raw" / "actions"):
         if base.exists():
             found += sorted(p for d in base.glob("vd-raw-*") if d.is_dir() for p in d.rglob("vd_taipei_targets.csv"))
@@ -54,11 +57,20 @@ def sources(extra):
 
 def merge(paths):
     rows, keys, contrib = [], set(), {}
+    # TDX 某支偵測器某天有 2/3 以上的 5 分鐘（288 格的 192 格）才算涵蓋那天；頭尾那天常只有一部分，自己收的要留著
+    per_day = defaultdict(int)
+    if TDX in paths:
+        with open(TDX, encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                per_day[(r["vdid"], r["collect_time"][:10])] += 1
+    tdx_days = {k for k, n in per_day.items() if n >= 192}
     for p in paths:
-        n = 0
+        n, is_tdx = 0, p.resolve() == TDX.resolve()
         with open(p, encoding="utf-8") as f:
             for r in csv.DictReader(f):
                 k = (r["vdid"], r["link_id"], r["collect_time"])
+                if not is_tdx and (r["vdid"], r["collect_time"][:10]) in tdx_days:
+                    continue
                 if k in keys:
                     continue
                 keys.add(k)
@@ -92,7 +104,7 @@ def summary(rows, contrib):
 
     lines = ["# VD 收集紀錄", "",
              f"{dt.datetime.now():%b %d, %Y %H:%M} 由 `data/processed/build_all.py` 產生，資料在 [`vd_readings.csv`](vd_readings.csv)。", "",
-             "臺北市交工處 VDLive.xml，每 5 分鐘一筆。收完整＝5 個入口的讀數到齊 80% 以上。", "",
+             "臺北市交工處 VDLive.xml（自己收）與 TDX 歷史資料，每 5 分鐘一筆。收完整＝5 個入口的讀數到齊 80% 以上。", "",
              "## 每天收到哪些時段", "",
              "| 日期 | 早上 07:00–10:30 | 傍晚 16:30–20:30 | 有資料的時間 | 讀數 |", "| --- | --- | --- | --- | --- |"]
     full_am, full_pm = [], []
