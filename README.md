@@ -55,8 +55,11 @@
 | 項目 | 內容 |
 | --- | --- |
 | **作品名稱** | Traffic Gem｜內科晨峰 |
-| **作品網址** | <https://yasminecheng-advantech.github.io/taipei-hackathon-2026/> |
+| **作品網址** | <https://taipei-hackathon-2026-web.vercel.app> |
+| **備用網址** | <https://yasminecheng-advantech.github.io/taipei-hackathon-2026/>（GitHub Pages，純靜態，沒有即時路況那一列） |
 | **GitHub** | <https://github.com/YasmineCheng-Advantech/taipei-hackathon-2026> |
+
+交件請用 Vercel 那個網址：它跑得動 [`web/api/live.js`](web/api/live.js)，「現在路況」會顯示臺北市交工處的即時 VD 讀數（標示為真實觀測）。Pages 是純靜態、跑不了 Serverless Function，留作備用，萬一 Vercel 出狀況時 18 個其他畫面照常可以操作。
 
 - [x] 資料來源清單：真實開放資料與模擬資料分別列出，見 [`data/SOURCES.md`](data/SOURCES.md)
 - [x] 使用的 AI 工具與開源套件：見 [`data/SOURCES.md` 第五節](data/SOURCES.md#五ai-工具與開源套件)
@@ -83,12 +86,21 @@
 
 選單裡另有「入口地圖」「哪個入口最塞」「排隊是怎麼來的」三張圖。
 
-**換題目看：** 網址加 `?topic=<id>`，例如 [`?topic=b1-1999-mock`](https://yasminecheng-advantech.github.io/taipei-hackathon-2026/?topic=b1-1999-mock)（1999 陳情，模擬資料）、`?topic=a1-evening-mock`（晚尖峰，模擬資料）。網站只讀題目 JSON，換題不改程式。
+**換題目看：** 網址加 `?topic=<id>`，例如 [`?topic=b1-1999-mock`](https://taipei-hackathon-2026-web.vercel.app/?topic=b1-1999-mock)（1999 陳情，模擬資料）、`?topic=a1-evening-mock`（晚尖峰，模擬資料）。網站只讀題目 JSON，換題不改程式。
 
 **離線也能跑：** 整個網站是單一 HTML 檔，字型內嵌、地圖是 SVG 示意圖，沒有任何自動載入的外部資源。
 
-### 目前這個網址的已知限制
+### 兩個網址的差別
 
-GitHub Pages 是純靜態，跑不了 [`web/api/live.js`](web/api/live.js)（即時路況的 Serverless Function），所以**「現在路況」那一列會顯示「暫時取不到即時資料」**，其他 18 個畫面完全正常——前端對後端失敗的處理就是只讓那一列降級，不會整頁壞掉。要有即時層就另外部署到 Vercel（設定已在 [`web/vercel.json`](web/vercel.json)）。
+| | Vercel（交件用） | GitHub Pages（備用） |
+| --- | --- | --- |
+| 18 個畫面 | ✅ | ✅ |
+| 「現在路況」即時層 | ✅ 臺北市交工處即時 VD，標示為真實觀測 | ✗ 顯示「暫時取不到即時資料」 |
+| 為什麼 | 跑得動 [`web/api/live.js`](web/api/live.js) | 純靜態，跑不了 Serverless Function |
+| 自動部署 | 推 `master` 即更新 | 推 `master` 即更新（[`deploy-pages.yml`](.github/workflows/deploy-pages.yml)） |
+
+即時層取不到時只有那一列降級，不會整頁壞掉——這是前端刻意的設計，所以備用網址仍然可以完整操作與 Demo。
+
+即時層對來源的保護：`/api/live` 由 CDN 快取（`s-maxage=300`）＋ 伺服器端節流雙重把關，對交工處**每 5 分鐘最多一次**；帶 query string 的請求一律回可快取的 308 導回乾淨網址，避免被洗參數繞過快取。
 
 推上 `master` 會自動重建並更新這個網址（[`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml)），網址不會變。
