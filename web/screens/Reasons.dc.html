@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>為什麼沒辦法錯峰</title>
+<title>無法錯峰的理由</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -11,79 +11,91 @@
 <style>
 body{margin:0}
 a{color:#0E6F84}a:hover{color:#0B3A4A}
-.chip{appearance:none;border:0;border-radius:16px;background:#DEDCDA;color:#3F3935;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
-.chip.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
-.box{width:24px;height:24px;border-radius:7px;box-sizing:border-box;border:2px solid #4A4440;background:#FFFFFF;flex:none;display:grid;place-items:center;color:transparent}
-.chip.on .box{border:2px solid #FFFFFF;background:#FFFFFF;color:#E2582A}
-.consent{appearance:none;border:0;width:100%;text-align:left;cursor:pointer;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;color:#0B3A4A;background:#EAF8FB;border-radius:20px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:inset 0 0 0 2px #BFE6EE}
-.consent.on{background:#D6F3F8;box-shadow:inset 0 0 0 2px #14B8E2}
-.consent .box{border-color:#0E6F84;margin-top:2px}
-.consent.on .box{background:#0E6F84;border-color:#0E6F84;color:#FFFFFF}
-.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 22px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.16em;text-decoration:none}
-.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
-.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
-.tab.on{color:#C8481F;font-weight:500}
+.card{background:#FFFFFF;border-radius:24px;box-shadow:0 10px 30px rgba(214,110,50,.14)}
+.chip{appearance:none;border:0;border-radius:10px;background:#DBDBDB;color:#4C4C4C;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.05)}
+.chip.on{background:linear-gradient(180deg,#F6A86A 0%,#F28A52 45%,#F2693B 100%);color:#FFFFFF;box-shadow:0 0 0 1.5px #FFE3B8,0 4px 10px rgba(226,88,42,.22)}
+.chip.on::before{content:'';position:absolute;left:5px;right:5px;top:3px;height:40%;border-radius:9px;background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.06));pointer-events:none}
+.chip > span{position:relative}
+.box{width:15px;height:15px;border-radius:4px;box-sizing:border-box;border:1.5px solid #5A5A5A;background:#FFFFFF;flex:none;display:grid;place-items:center;color:transparent}
+.chip.on .box{border:1.5px solid #FFFFFF;color:#E2582A}
+.other{appearance:none;border:0;border-radius:10px;background:#DBDBDB;height:46px;width:100%;box-sizing:border-box;padding:0 16px 0 21px;font:700 14px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.04em;color:#3A2418;box-shadow:0 2px 4px rgba(0,0,0,.05)}
+.other::placeholder{color:#4C4C4C;opacity:1}
+.other:focus{outline:none;background:#FFFFFF;box-shadow:inset 0 0 0 2px #F28A52}
+.cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
+.cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
+.cta span{position:relative}
+.cta:hover{color:#1E4A5E;filter:brightness(1.04)}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
 </style>
 </helmet>
-<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(60% 160px at 50% 800px, rgba(240,130,60,.42), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF7F1 120px, #FBE6D6 380px, #F7D3B8 700px, #FFF8F3 960px)">
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 30px">
-    <p style="margin: 0; font-size: 14px; letter-spacing: 0.14em; color: #8A3A18">第 2 步，共 2 步</p>
-    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
-      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 21px 15px 0 22px">
+    <a href="Setup.dc.html" aria-label="回上一步" style="width: 44px; height: 44px; display: grid; place-items: center; color: #F07848">
+      <span style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 10px rgba(0,0,0,.08); display: grid; place-items: center">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5L4.5 7 9 11.5"></path></svg>
+      </span>
+    </a>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
     </a>
   </div>
-  <div style="padding: 10px 16px 0; display: flex; flex-direction: column; gap: 10px">
-    <h1 style="margin: 0 0 0 14px; font-size: 20px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">有什麼讓你沒辦法錯峰嗎</h1>
-    <p style="margin: 0 0 2px 14px; font-size: 14px; line-height: 1.6; letter-spacing: 0.06em; color: #6B4A3A">可以複選，也可以跳過。</p>
-    <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
-      <sc-for list="{{items}}" as="c" hint-placeholder-count="5">
-        <button type="button" class="chip {{c.cls}}" aria-pressed="{{c.on}}" onClick="{{c.toggle}}" style="min-height: 52px; padding: 8px 16px; display: flex; align-items: center; gap: 14px; text-align: left; font-size: 16px; font-weight: 500; letter-spacing: 0.08em; line-height: 1.45">
-          <span class="box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg></span>
-          <span>{{c.label}}</span>
-        </button>
-      </sc-for>
+
+  <div style="padding: 8px 17px 0; display: flex; flex-direction: column; gap: 13px">
+    <div style="margin-left: 12px; display: flex; align-items: baseline; gap: 9px; flex-wrap: wrap">
+      <h1 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.06em; color: #4C4C4C">無法錯峰的理由</h1>
+      <span style="font-size: 12px; letter-spacing: 0.04em; color: #75716E">可以複選，也可以跳過</span>
     </div>
 
-    <button type="button" class="consent {{consentCls}}" aria-pressed="{{consentOn}}" onClick="{{toggleConsent}}">
-      <span class="box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg></span>
-      <span style="display: flex; flex-direction: column; gap: 4px">
-        <b style="font-size: 16px; letter-spacing: 0.06em">匿名提供我的通勤資料</b>
-        <span style="font-size: 13px; line-height: 1.6">彙總後，作為和市府、企業協商的數據依據。不勾也能拿到建議。</span>
-      </span>
-    </button>
-    <div style="margin: 0 6px; padding: 12px 14px; border-radius: 18px; background: rgba(255,255,255,.7); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; font-size: 12.5px; line-height: 1.6">
-      <b style="color: #0E6F84">會送出</b><b style="color: #8A3A18">不會送出</b>
-      <span>常經過的入口</span><span>姓名、電話、帳號</span>
-      <span>最晚到、時間彈性</span><span>GPS 位置、住址</span>
-      <span>上面勾的原因、日期</span><span>任何可以認出你的東西</span>
+    <div class="card" style="box-sizing: border-box; padding: 20px 20px 20px 19px; display: flex; flex-direction: column; gap: 8.5px">
+      <sc-for list="{{items}}" as="c" hint-placeholder-count="5">
+        <button type="button" class="chip {{c.cls}}" aria-pressed="{{c.on}}" onClick="{{c.toggle}}" style="min-height: 46px; flex: none; padding: 8px 12px 8px 21px; display: flex; align-items: center; gap: 21px; text-align: left">
+          <span class="box" aria-hidden="true"><svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg></span>
+          <span style="font-size: 14px; font-weight: 700; letter-spacing: 0.02em; line-height: 1.4">{{c.label}}</span>
+        </button>
+      </sc-for>
+      <label style="display: block; flex: none">
+        <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">其他原因（最多 40 字）</span>
+        <input class="other" type="text" maxlength="40" placeholder="其他：點選自填原因" value="{{other}}" onChange="{{onOther}}">
+      </label>
     </div>
+
+    <div style="box-sizing: border-box; padding: 14px 19px; border-radius: 22px; background: #FFF6EF; box-shadow: 0 6px 18px rgba(214,110,50,.08); display: flex; flex-direction: column; gap: 5px">
+      <p style="margin: 0; font-size: 12.5px; font-weight: 700; letter-spacing: 0.06em; color: #3A1A10">會送出的資料：</p>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; letter-spacing: 0.04em; color: #C8423C">入口、最晚到、時間彈性、勾選與自填原因、日期</p>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; letter-spacing: 0.04em; color: #75716E">不會送出：姓名、電話、帳號、GPS 位置、住址，或任何可以認出你的東西。自填原因請不要寫個人資料。</p>
+    </div>
+
+    <a class="cta" href="Loading.dc.html" style="margin: 6px 23px 0"><span>產生今日推薦</span></a>
   </div>
-  <div class="cta-bar sticky"><a class="cta" href="Loading.dc.html">產生今日推薦</a></div>
-  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
     <a class="tab on" href="Today.dc.html">今日</a>
-    <a class="tab" href="City.dc.html">數據</a>
     <a class="tab" href="Settings.dc.html">設定</a>
   </nav>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  state = { on: {}, consent: false, ...app.load('Reasons') };
+  // 同意提供資料的開關移到「我的設定與資料」，這一頁不再問（v2 改版）
+  state = { on: {}, other: '', ...app.load('Reasons') };
   save(p) { this.setState(p); app.save('Reasons', { ...this.state, ...p }); }
   renderVals() {
     // 「為什麼沒辦法錯峰」的選項來自題目 JSON（decide.setup.constraints），對應 city.actions
     const list = D.setup.constraints || [];
     const on = this.state.on;
     return {
+      other: this.state.other || '',
+      // 最多 40 字，前後空白去掉；空字串當作沒填
+      onOther: (e) => this.save({ other: String(e.target.value || '').slice(0, 40).trim() }),
       items: list.map((c) => ({
         ...c,
         cls: on[c.id] ? 'on' : '',
         on: on[c.id] ? 'true' : 'false',
         toggle: () => this.save({ on: { ...on, [c.id]: !on[c.id] } })
       })),
-      consentCls: this.state.consent ? 'on' : '',
-      consentOn: this.state.consent ? 'true' : 'false',
-      toggleConsent: () => this.save({ consent: !this.state.consent })
     };
   }
 }

@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>邀同事一起錯峰</title>
+<title>邀同事一起避開塞車</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -50,16 +50,29 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
     </div>
     <p style="margin: 0 14px; font-size: 12.5px; line-height: 1.6; color: #6B4A3A">{{basis}}</p>
   </div>
-  <div class="cta-bar" style="display: flex; flex-direction: column; align-items: center; gap: 6px">
-    <button type="button" class="cta" onClick="{{share}}">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"></path><path d="M12 3v12"></path><path d="M7 8l5-5 5 5"></path></svg>
-      分享出去
-    </button>
-    <button type="button" class="ghost" onClick="{{saveImg}}">存成圖片</button>
+  <a href="Menu.dc.html" aria-label="開啟選單" style="position: absolute; top: 21px; right: 15px; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+    <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
+  </a>
+
+  <h1 style="position: absolute; top: 103px; left: 28px; margin: 0; font-size: 21px; font-weight: 900; line-height: 30px; letter-spacing: 0.15em; color: #6b4a3a">邀同事一起避開塞車</h1>
+
+  <figure aria-label="分享卡預覽" style="position: absolute; top: 143px; left: 17px; right: 17px; height: 172px; margin: 0; border-radius: 24px; background: linear-gradient(150deg, #FDF0E7 0%, #FFFCFB 22%, #FFF8F2 48%, #FCE0CB 74%, #F7B585 100%); box-shadow: 0 10px 30px rgba(214,110,50,.16); overflow: hidden">
+    <img src="/_blob/3e63621b4ee8957d116141f41b79f155" alt="Traffic Gem" style="position: absolute; top: 15px; left: 20px; width: 140px; height: 27px; mix-blend-mode: multiply">
+    <p aria-live="polite" style="position: absolute; top: 60px; left: 40px; right: 16px; margin: 0; font-size: 14.5px; font-weight: 700; line-height: 25px; letter-spacing: 0.02em; color: #2A0100; white-space: pre-line">{{cardText}}</p>
+    <p style="position: absolute; right: 27px; bottom: 13px; margin: 0; font-size: 11.5px; letter-spacing: 0.06em; color: #3A1A10">{{pill}}<span style="letter-spacing: 0.69px">・</span>{{route}}</p>
+  </figure>
+
+  <h2 style="position: absolute; top: 347px; left: 27px; margin: 0; font-size: 21px; font-weight: 700; line-height: 20px; letter-spacing: 0.06em; color: #6b4a3a">選一張卡片</h2>
+  <div role="group" aria-label="選一張卡片" style="position: absolute; top: 383px; left: 17px; right: 17px; height: 195px; box-sizing: border-box; padding: 20px 20px 0 19px; background: #FFFFFF; border-radius: 24px; box-shadow: 0 10px 30px rgba(214,110,50,.14); display: flex; flex-direction: column; gap: 9px">
+    <sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+      <button type="button" class="chip {{c.cls}}" aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="height: 46px; flex: none; padding: 0 21px; display: flex; align-items: center; text-align: left"><span style="font-size: 15px; font-weight: 700; letter-spacing: 0.06em">{{c.label}}</span></button>
+    </sc-for>
   </div>
-  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+  <p style="position: absolute; top: 589px; left: 29px; right: 24px; margin: 0; font-size: 12px; line-height: 18px; letter-spacing: 0.03em; color: #4A2A20">卡片上不放任何人數。地點與時間來自你的設定：堤頂大道（北向）、平常 07:45 經過。</p>
+
+  <button type="button" class="cta" onClick="{{share}}" style="top: 691px"><span>{{ctaText}}</span></button>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
     <a class="tab on" href="Today.dc.html">今日</a>
-    <a class="tab" href="City.dc.html">數據</a>
     <a class="tab" href="Settings.dc.html">設定</a>
   </nav>
 </div>

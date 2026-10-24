@@ -12,14 +12,28 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 const root = new URL('.', import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), 'utf8');
 
-const hero = 'data:image/webp;base64,' + readFileSync(new URL('hero.webp', root)).toString('base64');
+// 設計稿用 /_blob/<id> 引用圖片，原圖放在 assets/<id>.<副檔名>，build 時一律內嵌成 data URI。
+// 零外部請求（SECURITY.md）也讓離線 Demo 能跑。換主視覺只要換 assets/ 裡的檔案，不用改程式。
+const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', svg: 'image/svg+xml' };
+const blobs = new Map(
+  readdirSync(new URL('assets/', root))
+    .filter((f) => f.includes('.'))
+    .map((f) => {
+      const [id, ext] = f.split('.');
+      if (!MIME[ext]) throw new Error(`assets/${f}：不認得的圖片格式 .${ext}`);
+      return ['/_blob/' + id, `data:${MIME[ext]};base64,` + readFileSync(new URL('assets/' + f, root)).toString('base64')];
+    })
+);
 // 品牌字內嵌，網站才會零外部請求（SECURITY.md：不把使用者 IP 送給第三方；離線也要能跑完 Demo）。
 // 中文不內嵌（CJK 字檔要數 MB），shell.html 裡改用系統字。
 const font = 'data:font/woff2;base64,' + readFileSync(new URL('grandstander-800.woff2', root)).toString('base64');
 
 const screens = {};
 for (const f of readdirSync(new URL('screens/', root)).filter((f) => f.endsWith('.dc.html')).sort()) {
-  screens[f.split('.')[0]] = read('screens/' + f).replaceAll('/_blob/9ec09c185edb5019891596a830757aa8', hero);
+  screens[f.split('.')[0]] = read('screens/' + f).replace(/\/_blob\/[0-9a-f]+/g, (m) => {
+    if (!blobs.has(m)) throw new Error(`${f} 引用了 ${m}，但 assets/ 裡找不到對應的圖片`);
+    return blobs.get(m);
+  });
 }
 
 // 題目 JSON：真實資料用原本的 id，模擬資料加 -mock 後綴，兩份都內嵌讓 ?topic= 可以切換對照

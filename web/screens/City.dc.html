@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>數據依據</title>
+<title>數據依據・內科晨峰</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -111,14 +111,13 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
     </sc-for>
     <p style="margin: 4px 14px 0; font-size: 12.5px; line-height: 1.65; color: #6B4A3A">{{disclaimer}}</p>
   </div>
-  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
     <a class="tab" href="Today.dc.html">今日</a>
-    <a class="tab on" href="City.dc.html" aria-current="page">數據</a>
     <a class="tab" href="Settings.dc.html">設定</a>
   </nav>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1720}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   usesLive = true; // 資料來源那一列要顯示即時更新時間
   state = { tab: 0 };

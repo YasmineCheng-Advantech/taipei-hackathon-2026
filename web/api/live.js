@@ -164,10 +164,22 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: '只支援 GET' });
   }
 
+  // 帶 query string 的請求一律導回乾淨網址，不在這裡回資料。
+  //
+  // 為什麼：CDN 的快取鍵包含 query string，/api/live?x=1、?x=2… 每一個都是獨立的 cache miss。
+  // 模組層節流只在同一個 serverless 實例內有效，實例一多就擋不住（實測帶新參數的請求 3.6 秒，
+  // 比直接抓上游還久＝冷啟動後真的去打了交工處）。導回唯一的網址之後，會回資料的快取鍵只有一個，
+  // 迴圈洗參數也只會拿到可快取的 308，打不到市府系統。
+  const qs = (req.url || '').indexOf('?');
+  if (qs >= 0) {
+    res.setHeader('Location', '/api/live');
+    res.setHeader('Cache-Control', 'public, s-maxage=86400');
+    return res.status(308).end();
+  }
+
   let updatedAt;
   let found;
   try {
-    // query string 一律忽略：這支沒有任何參數，不讓它變成繞過快取的途徑
     ({ updatedAt, found } = await fetchUpstream());
   } catch (e) {
     // 取不到就說取不到，不拿舊值或歷史值假裝是現在。
@@ -208,7 +220,8 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
   return res.status(200).json({
     updated_at: updatedAt,
-    fetched_at: new Date().toISOString(),
+    // 這份資料是什麼時候從上游抓的（不是這個回應產生的時間），這樣才看得出有沒有命中節流
+    fetched_at: new Date(cached ? cached.at : Date.now()).toISOString(),
     stale: !(age >= 0 && age < STALE_AFTER_MS),
     units: { speed: 'km/h', volume: '輛 / 分鐘' },
     source: { id: 'vd-live', name: '臺北市交工處 VD 即時資料（VDLive.xml）', url: SOURCE },

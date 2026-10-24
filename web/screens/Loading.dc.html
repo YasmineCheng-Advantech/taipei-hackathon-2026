@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>產生今日推薦中</title>
+<title>Traffic Gem 計算中</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -11,42 +11,56 @@
 <style>
 body{margin:0}
 a{color:#0E6F84}a:hover{color:#0B3A4A}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-@keyframes fill{0%{opacity:.25;transform:scaleY(.6)}100%{opacity:1;transform:scaleY(1)}}
-.bob{animation:bob 2.4s ease-in-out infinite}
-.cell{height:30px;border-radius:9px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.08),inset 0 2px 0 rgba(255,255,255,.45);animation:fill .5s ease-out both}
-.hero-img{-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
-.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 22px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.16em;text-decoration:none}
-.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
-@media (prefers-reduced-motion: reduce){.bob,.cell{animation:none}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1.2deg)}}
+@keyframes shadow{0%,100%{transform:scaleX(1);opacity:.42}50%{transform:scaleX(.78);opacity:.22}}
+@keyframes pop{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:scale(1)}}
+@keyframes rise{0%{opacity:0;transform:translateY(10px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes tick{0%{transform:scale(0)}70%{transform:scale(1.2)}100%{transform:scale(1)}}
+.float{animation:float 2.2s ease-in-out infinite;transform-origin:40% 80%}
+.shadow{animation:shadow 2.2s ease-in-out infinite}
+.cell{height:22px;border-radius:5px;box-shadow:inset 0 0 0 1px rgba(255,190,140,.35),inset 0 -2px 0 rgba(0,0,0,.08),inset 0 2px 0 rgba(255,255,255,.18);animation:pop .35s ease-out both}
+.step{display:flex;align-items:center;gap:11px;min-height:22px;font-size:13px;letter-spacing:.12em;color:#3A0A02;animation:rise .45s ease-out both}
+.ck{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;color:#FFFFFF;flex:none;background:linear-gradient(180deg,#5EE3F8 0%,#22B8E6 100%);box-shadow:0 1px 2px rgba(20,120,170,.3);animation:tick .4s .15s ease-out both}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
+@media (prefers-reduced-motion: reduce){.float,.shadow,.cell,.step,.ck{animation:none}}
 </style>
 </helmet>
-<div class="screen" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(80% 280px at 50% 330px, rgba(240,130,60,.38), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FDF1E8 160px, #F9DCC6 420px, #FBE6D6 640px, #FFF8F3 844px)">
-  <div class="bob" style="width: min(350px, calc(100% - 40px)); aspect-ratio: 350 / 343; max-height: 40vh">
-    <img class="hero-img" src="/_blob/9ec09c185edb5019891596a830757aa8" alt="" style="width: 100%; height: 100%; object-fit: contain">
+<div class="screen has-tabs" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 56px 0 32px; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+  <a href="Menu.dc.html" aria-label="開啟選單" style="position: absolute; top: 21px; right: 15px; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+    <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
+  </a>
+
+  <div style="position: relative; width: min(276px, calc(100% - 80px)); aspect-ratio: 276 / 150">
+    <div class="shadow" aria-hidden="true" style="position: absolute; bottom: 4px; left: 8%; width: 62%; height: 16px; border-radius: 50%; background: radial-gradient(closest-side, rgba(150,70,20,.55), rgba(150,70,20,0))"></div>
+    <div class="float" style="position: absolute; top: 0; left: 0; right: 0">
+      <img src="/_blob/05a91b51545cf61640459a55678f5130" alt="冒著白煙的藍色小汽車" style="display: block; width: 100%; height: auto">
+    </div>
   </div>
-  <div style="margin: 20px 24px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
-    <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.14em; color: #5A2410">{{title}}</h1>
-    <p style="margin: 0; font-size: 14px; letter-spacing: 0.08em; color: #6B4A3A">{{summary}}</p>
-  </div>
-  <div aria-hidden="true" style="align-self: stretch; margin: 24px 32px 0; display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 4px">
+
+  <div aria-hidden="true" style="align-self: stretch; margin: 38px 32px 0; display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 3px">
     <sc-for list="{{cells}}" as="c" hint-placeholder-count="10">
-      <div class="cell" style="background: {{c.bg}}; animation-delay: {{c.delay}}"></div>
+      <div class="cell" style="background-color: {{c.bg}}; animation-delay: {{c.delay}}"></div>
     </sc-for>
   </div>
-  <ul style="align-self: stretch; margin: 22px 40px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 14px; letter-spacing: 0.06em; color: #6B4A3A">
+
+  <h1 style="margin: 22px 24px 0; text-align: center; font-size: 15px; font-weight: 700; line-height: 24px; letter-spacing: 0.12em; color: #3A0A02">{{summary}}</h1>
+
+  <ul aria-live="polite" style="margin: 24px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px">
     <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
-      <li style="display: flex; align-items: center; gap: 10px">
-        <span style="width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: {{s.dot}}; color: #FFFFFF; flex: none">
-          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"></path></svg>
-        </span>
+      <li class="step">
+        <span class="ck" aria-hidden="true"><svg width="10" height="10" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg></span>
         <span>{{s.text}}</span>
       </li>
     </sc-for>
   </ul>
-  <sc-if value="{{done}}" hint-placeholder-val="{{ true }}">
-    <a class="cta" href="Today.dc.html" style="align-self: stretch; margin: 32px 40px 0">看今日推薦</a>
-  </sc-if>
+
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
+    <a class="tab on" href="Today.dc.html">今日</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
@@ -54,11 +68,12 @@ class Component extends DCLogic {
   state = { step: 0 };
   componentDidMount() {
     this.timer = setInterval(() => {
-      if (this.state.step >= 3) { clearInterval(this.timer); return; }
+      // 三個步驟都打勾後，自動帶到今日推薦
+      if (this.state.step >= 3) { clearInterval(this.timer); this.timer = setTimeout(() => app.go('Today'), 700); return; }
       this.setState({ step: this.state.step + 1 });
     }, 900);
   }
-  componentWillUnmount() { clearInterval(this.timer); }
+  componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.timer); }
   renderVals() {
     // 動畫用使用者那個入口的真實色階，不是寫死的色塊
     const p = app.profile();
@@ -71,17 +86,15 @@ class Component extends DCLogic {
       `比較 ${range.start || ''}–${range.end || ''} 每 ${D.meta.bin_minutes || 15} 分鐘`,
       '把建議分散到不同時段',
     ];
-    const n = this.state.step;
+    const n = Math.min(3, this.state.step);
     return {
       summary: app.summary(),
-      title: n >= 3 ? '好了！' : '正在把塞車捲起來…',
-      done: n >= 3,
       nCols: D.cols.length,
       cells: D.cols.map((_, i) => {
         const c = D.cell(layer.id, ri, i);
-        return { bg: c.gap ? 'transparent' : `var(--ramp-${D.level(layer, c.v)})`, delay: (i * 0.12) + 's' };
+        return { bg: c.gap ? 'transparent' : `var(--ramp-${D.level(layer, c.v)})`, delay: (i * 0.09) + 's' };
       }),
-      steps: texts.map((t, i) => ({ text: t, dot: i < n ? '#0E6F84' : '#E2CDBE' }))
+      steps: texts.slice(0, n).map((t) => ({ text: t })),
     };
   }
 }

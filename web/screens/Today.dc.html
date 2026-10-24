@@ -13,93 +13,83 @@ body{margin:0}
 a{color:#0E6F84}a:hover{color:#0B3A4A}
 .sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
 /* 斜線紋路只代表模擬資料（.hatch），不是每一格都有 */
-.cell{position:relative;height:30px;border-radius:9px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.08),inset 0 2px 0 rgba(255,255,255,.45)}
-.cell.pick{box-shadow:0 0 0 3px #0E6F84,inset 0 -3px 0 rgba(0,0,0,.06)}
-.cell.gap{background:transparent;box-shadow:inset 0 0 0 1.5px #D8C6B8}
-.opt{appearance:none;border:0;border-radius:18px;background:#EFEDEB;color:#3A2418;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;cursor:pointer;width:100%;text-align:left;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
-.opt.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
-.opt.on .meta{color:#FFFFFF}
-.opt.off{background:#F4F2F0;color:#6B6460;cursor:not-allowed}
-.meta{color:#5E5650}
-.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 21px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.14em;text-decoration:none}
-.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
-.go{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px;padding:12px 20px;background:#FFFFFF;border-radius:22px;box-shadow:0 10px 26px rgba(214,100,40,.12);text-decoration:none;color:#3A2418}
-.go:hover{color:#3A2418;box-shadow:0 12px 30px rgba(214,100,40,.2)}
-.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
-.tab.on{color:#C8481F;font-weight:500}
+.cell{appearance:none;border:0;padding:0;position:relative;height:26px;border-radius:6px;cursor:pointer;box-shadow:inset 0 0 0 1.5px rgba(255,180,130,.45),inset 0 -2px 0 rgba(0,0,0,.08),inset 0 2px 0 rgba(255,255,255,.18)}
+.cell.pick{box-shadow:0 0 0 2.5px #FFFFFF,0 0 0 4px #1E4A5E}
+.cell.gap{background:transparent;cursor:default;box-shadow:inset 0 0 0 1.5px rgba(216,198,184,.9)}
+.cell:focus-visible{outline:3px solid #1E4A5E;outline-offset:2px}
+.go{box-sizing:border-box;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:72px;background:#FFFFFF;border-radius:22px;box-shadow:0 10px 26px rgba(214,110,50,.12);text-decoration:none;color:#4C4C4C}
+.go:hover{color:#4C4C4C;box-shadow:0 12px 30px rgba(214,110,50,.2)}
+.cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
+.cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
+.cta span{position:relative}
+.cta:hover{color:#1E4A5E;filter:brightness(1.04)}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
 </style>
 </helmet>
-<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 240px at 50% 980px, rgba(240,130,60,.28), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 520px, #F8D6BD 900px, #FBE6D6 1150px, #FFF8F3 1190px)">
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 30px">
-    <p style="margin: 0; font-size: 14px; letter-spacing: 0.12em; color: #8A3A18">{{header}}</p>
-    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
-      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 90px, #F9D0B0 350px, #FBE0CB 450px, #FDEFE4 550px, #FFF6EF 600px, #FFFFFF 700px)">
+
+  <div style="display: flex; align-items: center; gap: 8px; padding: 22px 15px 0 27px">
+    <p style="flex: 1 1 auto; margin: 0; min-height: 34px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 12px rgba(0,0,0,.07); display: flex; align-items: center; justify-content: center; gap: 9px; font-size: 13.5px; letter-spacing: 0.1em; color: #4C4C4C">
+      <svg width="12" height="13" viewBox="0 0 12 13" fill="none" stroke="#4C4C4C" stroke-width="1.4" aria-label="已鎖定今天的設定" role="img" style="flex: none"><rect x="1" y="5.5" width="10" height="6.8" rx="1.6"></rect><path d="M3.3 5.5V3.9a2.7 2.7 0 0 1 5.4 0v1.6"></path></svg>
+      <span>{{pill}}</span>
+    </p>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="flex: none; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
     </a>
   </div>
 
-  <div style="padding: 8px 16px 0; display: flex; flex-direction: column; gap: 14px">
-    <section aria-label="今天的建議" style="background: #FFFFFF; border-radius: 28px; box-shadow: 0 14px 34px rgba(214,100,40,.16); padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 6px">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
-        <p style="margin: 0; font-size: 15px; letter-spacing: 0.12em; color: #6B4A3A">{{kicker}}</p>
-        <sc-if value="{{heroSim}}"><span class="sim">含模擬資料</span></sc-if>
-      </div>
-      <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap">
-        <p style="margin: 0; font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 56px; line-height: 1.05; color: #0E6F84">{{heroTime}}</p>
-        <p style="margin: 0; font-size: 18px; font-weight: 700; letter-spacing: 0.06em">經過{{entry}} <span style="font-size: 13px; font-weight: 400; color: #6B4A3A">{{entrySub}}</span></p>
-      </div>
-      <p style="margin: 0; font-size: 15px; line-height: 1.6">{{heroSaved}}<span style="color: #D9B8A2; margin: 0 8px">•</span>{{heroEarly}}</p>
-      <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #6B4A3A">{{reason}}</p>
-      <p class="live-bar {{live.cls}}" aria-live="polite" style="margin-top: 8px"><span class="dot" aria-hidden="true"></span><span>{{live.text}}</span><span class="note">{{live.note}}</span></p>
-      <div aria-hidden="true" style="margin-top: 30px; display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 4px">
-        <sc-for list="{{strip}}" as="c" hint-placeholder-count="10">
-          <div class="cell {{c.cls}}" data-level="{{c.level}}">
-            <sc-if value="{{c.isPick}}" hint-placeholder-val="{{ false }}">
-              <span style="position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%); padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: #40CBE2; color: #0B3A4A">建議</span>
-            </sc-if>
-            <sc-if value="{{c.isUsual}}" hint-placeholder-val="{{ false }}">
-              <span style="position: absolute; bottom: calc(100% + 7px); left: 50%; transform: translateX(-50%); padding: 1px 8px; border-radius: 999px; font-size: 12px; white-space: nowrap; background: #FFFFFF; color: #6B4A3A; box-shadow: inset 0 0 0 1px #E2CDBE">平常</span>
-            </sc-if>
-          </div>
-        </sc-for>
-      </div>
-      <div style="display: flex; justify-content: space-between; font-size: 12px; color: #6B4A3A; font-variant-numeric: tabular-nums"><span>{{firstCol}}</span><span>{{lastCol}}</span></div>
-      <p style="margin: 6px 0 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 13px; line-height: 1.65; color: #6B4A3A">{{stripNote}}</p>
-    </section>
+  <section aria-label="今天的建議" style="position: relative; margin-top: 24px; padding: 42px 26px 26px; border-radius: 70px 70px 0 0; background: radial-gradient(170px 120px at 50% 0px, rgba(238,128,48,.95), rgba(238,128,48,0) 100%), linear-gradient(180deg, #F3A066 0px, #F4AE7C 110px, #F6BF96 200px, #F8CBA8 280px, rgba(249,208,176,0) 360px)">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+      <p style="margin: 0; font-size: 17px; font-weight: 700; line-height: 24px; letter-spacing: 0.08em; color: #FFFFFF">{{kicker}}</p>
+      <sc-if value="{{heroSim}}"><span class="sim">含模擬資料</span></sc-if>
+    </div>
+    <div style="margin-top: 2px; display: flex; align-items: baseline; gap: 13px; flex-wrap: wrap">
+      <p style="margin: 0; font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 58px; line-height: 64px; letter-spacing: 0.01em; color: #FFFFFF; font-variant-numeric: tabular-nums">{{heroTime}}</p>
+      <p style="margin: 0; font-size: 17px; font-weight: 700; letter-spacing: 0.08em; color: #FFFFFF">經過{{entry}} <span style="font-size: 13px; font-weight: 400">{{entrySub}}</span></p>
+    </div>
+    <p aria-live="polite" style="margin: 2px 0 0 2px; font-size: 15px; font-weight: 700; line-height: 24px; letter-spacing: 0.03em; color: #3A0A02">{{heroLine}}</p>
 
-    <h2 style="margin: 10px 0 0 14px; font-size: 18px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">自己挑一個時段</h2>
-    <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 12px; display: flex; flex-direction: column; gap: 8px">
-      <sc-for list="{{opts}}" as="o" hint-placeholder-count="6">
-        <button type="button" class="opt {{o.cls}}" aria-pressed="{{o.on}}" disabled="{{o.disabled}}" onClick="{{o.pick}}" style="min-height: 60px; padding: 8px 14px; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 10px">
-          <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 22px; font-variant-numeric: tabular-nums">{{o.key}}</span>
-          <span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
-            <span class="meta" style="font-size: 13px; letter-spacing: 0.04em">{{o.meta}}</span>
-            <span aria-hidden="true" style="height: 7px; border-radius: 4px; background: rgba(0,0,0,.06); overflow: hidden"><span style="display: block; height: 7px; width: {{o.barW}}%; background: {{o.barColor}}; border-radius: 4px"></span></span>
-          </span>
-          <span style="padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; background: {{o.tagBg}}; color: {{o.tagFg}}">{{o.tag}}</span>
-        </button>
+    <div role="group" aria-label="點格子看不同時段" style="margin-top: 13px; display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 4px">
+      <sc-for list="{{strip}}" as="c" hint-placeholder-count="10">
+        <button type="button" class="cell {{c.cls}}" data-level="{{c.level}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" disabled="{{c.disabled}}" onClick="{{c.pick}}"></button>
       </sc-for>
     </div>
-    <p style="margin: 0 14px; font-size: 13px; line-height: 1.6; color: #6B4A3A">不同的人會拿到不同的建議，避免大家擠到同一個時段。<a href="Tradeoff.dc.html">為什麼推薦這個時段 →</a></p>
+    <div aria-hidden="true" style="margin-top: 6px; display: flex; justify-content: space-between; font-size: 11.5px; letter-spacing: 0.04em; color: #440C00; font-variant-numeric: tabular-nums"><span>{{firstCol}}</span><span>{{lastCol}}</span></div>
+    <div aria-hidden="true" style="margin-top: 3px; border-top: 1.5px dashed #E86B4F"></div>
+    <p style="margin: 5px 0 0; text-align: right; font-size: 12.5px; letter-spacing: 0.1em; color: #3A0A02">格子越深越塞</p>
+    <p style="margin: 8px 0 0; font-size: 12.5px; line-height: 1.65; color: #4A1405">{{stripNote}}</p>
+    <p class="live-bar {{live.cls}}" aria-live="polite" style="margin-top: 10px"><span class="dot" aria-hidden="true"></span><span>{{live.text}}</span><span class="note">{{live.note}}</span></p>
+  </section>
 
-
+  <div style="padding: 20px 27px 0; display: flex; flex-direction: column; gap: 12px">
     <a class="go" href="City.dc.html">
-      <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px; letter-spacing: 0.08em">你的資料，變成協商依據</b><span style="font-size: 13px; color: #6B4A3A">{{claimedText}}</span></span>
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C8481F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"></path></svg>
+      <span style="display: flex; flex-direction: column; gap: 3px">
+        <b style="font-size: 15.5px; font-weight: 700; letter-spacing: 0.04em">你的資料，變成協商依據</b>
+        <span style="font-size: 12px; letter-spacing: 0.03em; color: #6E6E6E">{{claimedText}}</span>
+      </span>
+      <svg width="12" height="18" viewBox="0 0 12 18" fill="none" stroke="#F8652F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l6 6-6 6"></path></svg>
     </a>
     <a class="go" href="Share.dc.html">
-      <span style="display: flex; flex-direction: column; gap: 2px"><b style="font-size: 16px; letter-spacing: 0.08em">邀同事一起錯峰</b><span style="font-size: 13px; color: #6B4A3A">做一張分享卡傳到 LINE</span></span>
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="#C8481F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l6 6-6 6"></path></svg>
+      <span style="display: flex; flex-direction: column; gap: 3px">
+        <b style="font-size: 15.5px; font-weight: 700; letter-spacing: 0.04em">邀請同事一起避開塞車</b>
+        <span style="font-size: 12px; letter-spacing: 0.03em; color: #6E6E6E">分享給好朋友也可以 :)</span>
+      </span>
+      <svg width="12" height="18" viewBox="0 0 12 18" fill="none" stroke="#F8652F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l6 6-6 6"></path></svg>
     </a>
+    <p style="margin: 2px 2px 0; font-size: 12.5px; line-height: 1.6; color: #6E6E6E">不同的人會拿到不同的建議，避免大家擠到同一個時段。<a href="Tradeoff.dc.html">為什麼推薦這個時段 →</a></p>
+    <a class="cta" href="Setup.dc.html" style="margin-top: 10px"><span>產生今日推薦</span></a>
   </div>
 
-  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
     <a class="tab on" href="Today.dc.html" aria-current="page">今日</a>
-    <a class="tab" href="City.dc.html">數據</a>
     <a class="tab" href="Settings.dc.html">設定</a>
   </nav>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1190}}'>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1000}}'>
 class Component extends DCLogic {
   usesLive = true; // 建議不受即時影響，但下面的「現在」要跟著更新
 
@@ -108,71 +98,78 @@ class Component extends DCLogic {
     // 依使用者設定挑一份 plan，並照時間彈性篩掉不能選的時段
     const t = app.today();
     this.t = t;
-    const opts = t.options;
-    const recIndex = Math.max(0, opts.findIndex((o) => t.rec && o.id === t.rec.id));
-    this.state = { sel: recIndex };
+    // 色條的一格 = 熱力圖的一個時段欄；預設選在建議的那一格
+    const recKey = t.rec && t.rec.key;
+    const recCol = D.cols.findIndex((c) => c.label === recKey);
+    this.state = { sel: recCol >= 0 ? recCol : 0 };
   }
 
-  renderVals() {
+  /** 第 i 欄對應的時段選項（沒有就是沒資料的欄） */
+  optAt(i) {
+    const label = D.cols[i] && D.cols[i].label;
+    return this.t.options.find((o) => o.key === label);
+  }
+
+  /** 選到的那一格要顯示的一句話：照實說會早到或晚到，不只講省幾分 */
+  lineFor(o) {
     const { profile: p, plan } = this.t;
-    const opts = this.t.options;
+    if (!o) return '這個時段沒有資料，我們留白，不補數字。';
+    if (o.status === 'peak') return `尖峰，${p.deadline} 前可能會遲到`;
+    if (o.status === 'late') return `${p.deadline} 前可能會遲到`;
+    if (plan && o.id === plan.baseline) return `這是你平常經過的時段，${o.arrive} 到公司`;
 
-    if (!plan || !opts.length) {
-      // 這個入口／最晚到達沒有資料時不要整頁壞掉
-      return {
-        header: '今日・' + (p.entry || '') + '・' + p.deadline + ' 前到',
-        kicker: '今天沒有建議', heroTime: '—', entry: p.entry, entrySub: p.entrySub,
-        heroSim: false, heroSaved: '', heroEarly: '這個入口目前沒有資料，我們留白，不補數字。',
-        reason: '', nCols: D.cols.length, strip: [], firstCol: '', lastCol: '',
-        stripNote: '', opts: [], claimedText: '', live: { cls: 'is-error', text: '', note: '' },
-      };
-    }
-
-    const base = opts.find((o) => o.id === plan.baseline);
-    const sel = opts[Math.min(this.state.sel, opts.length - 1)];
-    const isRec = this.t.rec && sel.id === this.t.rec.id;
-    const noBetter = this.t.rec && this.t.rec.id === plan.baseline;
-
-    const saved = D.num(sel.saved);
-    const early = D.num(sel.arrive_early);
-    const cost = D.num(sel.cost);
-    const maxCost = Math.max(...opts.map((o) => (o.cost && o.cost.value) || 0), 1);
-
-    // 省下的分鐘給區間，同時寫出會早到幾分鐘（CLAUDE.md）
-    const earlyText = early.value > 0 ? `比平常早 ${early.value} 分到公司`
-      : early.value < 0 ? `比平常晚 ${-early.value} 分到公司` : '和平常一樣時間到';
-    // saved 可能是負的（尖峰、可能遲到的時段），不能一律寫成「路上少 N 分」
+    const saved = D.num(o.saved);
+    const early = D.num(o.arrive_early);
     const sv = Number(saved.value);
+    // saved 可能是負的（比平常慢的時段），不能一律寫成「路上少 N 分」
     const savedText = saved.pending ? '省下的分鐘待補'
       : sv > 0 ? `路上少 ${saved.text} 分`
       : sv < 0 ? `路上多 ${saved.range ? `${-saved.hi}–${-saved.lo}` : -sv} 分`
       : '路上時間和平常差不多';
+    const earlyText = early.value > 0 ? `比平常早 ${early.value} 分到公司`
+      : early.value < 0 ? `比平常晚 ${-early.value} 分到公司` : '和平常一樣時間到';
+    return `${savedText}，${earlyText}`;
+  }
 
-    const tagOf = (o) => {
-      if (o.status === 'peak') return { tag: '尖峰', tagBg: '#FCE4D8', tagFg: '#8A2E0B' };
-      if (o.status === 'late') return { tag: '可能遲到', tagBg: '#FCE4D8', tagFg: '#8A2E0B' };
-      if (this.t.rec && o.id === this.t.rec.id) return { tag: '建議', tagBg: '#40CBE2', tagFg: '#0B3A4A' };
-      if (base && o.id === base.id) return { tag: '平常', tagBg: '#FFFFFF', tagFg: '#4A4440' };
-      const s = D.num(o.saved);
-      return { tag: '少 ' + s.text + ' 分', tagBg: '#DDF4F8', tagFg: '#0B4F60' };
-    };
-
-    // 色帶：使用者那個入口的車速，依圖層門檻上色（程式不碰色碼）
+  renderVals() {
+    const { profile: p, plan } = this.t;
     const layer = D.layerOf(D.collective.layer || 'speed');
     const ri = D.rowIndex(p.rowId);
-    const selCol = D.cols.findIndex((c) => c.label === sel.key);
-    const baseCol = base ? D.cols.findIndex((c) => c.label === base.key) : -1;
+    const claimed = D.num(D.city.claimed);
+    // 日期用使用者裝置的今天；建議一天鎖定一份，不會一直往後延
+    const d = new Date();
+    const today = `${d.getMonth() + 1}/${d.getDate()}`;
+    const pill = `${today}：${p.entry}・${p.deadline} 前到`;
+
+    if (!plan || !this.t.options.length) {
+      // 這個入口／最晚到達沒有資料時不要整頁壞掉
+      return {
+        pill, kicker: '今天沒有建議', heroTime: '—', entry: p.entry, entrySub: p.entrySub,
+        heroSim: false, heroLine: '這個入口目前沒有資料，我們留白，不補數字。',
+        nCols: D.cols.length, strip: [], firstCol: '', lastCol: '', stripNote: '',
+        claimedText: '', live: { cls: 'is-error', text: '', note: '' },
+      };
+    }
+
+    const sel = this.optAt(this.state.sel);
+    const isRec = !!(this.t.rec && sel && sel.id === this.t.rec.id);
+    const noBetter = this.t.rec && this.t.rec.id === plan.baseline;
+    const recCol = this.t.rec ? D.cols.findIndex((c) => c.label === this.t.rec.key) : -1;
+    const baseCol = D.cols.findIndex((c) => {
+      const o = this.t.options.find((x) => x.key === c.label);
+      return o && o.id === plan.baseline;
+    });
 
     const live = D.live;
     const here = D.liveAt(p.rowId);
-    const typical = selCol >= 0 ? D.cell(layer.id, ri, selCol) : { gap: true };
+    const typical = D.cell(layer.id, ri, this.state.sel);
     const liveBar = live.state === 'ok' && here
       ? {
           cls: live.stale ? 'is-stale' : '',
           text: `現在 ${D.hhmm(live.updated_at)}・${p.entry} ${here.speed} km/h`,
           note: here.low_sample ? `這一分鐘只有 ${here.samples} 輛車有車速，測不準`
             : !D.isPeakNow() ? `現在不是${D.meta.days || '平日'}晨峰；建議是依${D.meta.days || '平日'}平均算的`
-            : !typical.gap ? `${sel.key} 這一格的${D.meta.days || '平日'}平均是 ${typical.v} km/h` : '',
+            : !typical.gap ? `這一格的${D.meta.days || '平日'}平均是 ${typical.v} km/h` : '',
         }
       : {
           cls: 'is-error',
@@ -180,47 +177,31 @@ class Component extends DCLogic {
           note: '今天的建議是依歷史資料算的，不受影響',
         };
 
-    const claimed = D.num(D.city.claimed);
-
     return {
-      header: '今日・' + p.entry + '・' + p.deadline + ' 前到',
+      pill,
       kicker: noBetter ? '今天照平常時間走就好' : isRec ? '今天建議你' : '你挑的時段',
-      heroTime: sel.key,
+      heroTime: (D.cols[this.state.sel] && D.cols[this.state.sel].label) || '—',
       entry: p.entry,
       entrySub: p.entrySub,
-      heroSim: !!(sel.saved && sel.saved.sim),
-      heroSaved: savedText,
-      heroEarly: earlyText,
-      reason: isRec ? plan.reason || '' : '',
+      heroSim: !!(sel && sel.saved && sel.saved.sim),
+      heroLine: this.lineFor(sel),
       nCols: D.cols.length,
       firstCol: D.cols[0] && D.cols[0].label,
       lastCol: D.cols[D.cols.length - 1] && D.cols[D.cols.length - 1].label,
-      stripNote: `格子越深越塞（${p.entry}${p.entrySub} 的${layer.name}）。省下的分鐘是「只有你改時間」的估計，每天路況不同，所以給區間。`,
+      // 省下的分鐘是「只有你改時間」的估計，每天路況不同，所以給區間（CLAUDE.md）
+      stripNote: `色條是${p.entry}${p.entrySub} 的${layer.name}。省下的分鐘是「只有你改時間」的估計，每天路況不同，所以給區間。`,
 
       strip: D.cols.map((c, i) => {
         const cell = D.cell(layer.id, ri, i);
-        // 時段可能落在熱力圖的範圍外（例如 09:30、09:45），這時標在最後一格
-        const pickAt = selCol >= 0 ? selCol : D.cols.length - 1;
+        const o = this.optAt(i);
+        const mark = i === recCol ? '（建議）' : i === baseCol ? '（平常）' : '';
         return {
           level: cell.gap ? false : D.level(layer, cell.v),
-          cls: (cell.gap ? 'gap' : '') + (cell.sim ? ' hatch' : '') + (i === pickAt ? ' pick' : ''),
-          isPick: i === pickAt,
-          isUsual: i === baseCol && i !== pickAt,
-        };
-      }),
-
-      opts: opts.map((o, i) => {
-        const off = o.status === 'peak' || o.status === 'full';
-        const on = i === this.state.sel;
-        const c = D.num(o.cost);
-        return {
-          key: o.key,
-          meta: `${o.arrive} 到公司・路上 ${c.text} 分`,
-          barW: Math.round((((o.cost && o.cost.value) || 0) / maxCost) * 100),
-          barColor: `var(--ramp-${D.level({ thresholds: [maxCost * 0.35, maxCost * 0.5, maxCost * 0.65, maxCost * 0.85, maxCost], direction: 'high_is_bad' }, (o.cost && o.cost.value) || 0)})`,
-          cls: off ? 'off' : on ? 'on' : '', on: on ? 'true' : 'false', disabled: off,
-          pick: () => { if (!off) this.setState({ sel: i }); },
-          ...tagOf(o),
+          cls: (cell.gap ? 'gap' : '') + (cell.sim ? ' hatch' : '') + (i === this.state.sel ? ' pick' : ''),
+          on: i === this.state.sel ? 'true' : 'false',
+          disabled: !o,
+          aria: c.label + ' 經過' + mark,
+          pick: () => { if (o) this.setState({ sel: i }); },
         };
       }),
 
