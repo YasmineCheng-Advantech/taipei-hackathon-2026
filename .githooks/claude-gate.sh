@@ -31,7 +31,11 @@ ${out}
 處理方式見 SECURITY.md。不要用 --no-verify 繞過。"
     ;;
   *git*push*)
-    bad=$(git ls-files | grep -iE '(^|/)\.env($|\.)|^data/raw/|\.DS_Store$|(^|/)\.venv/|\.pem$|\.key$' | head -5)
+    # .env.example 只有 KEY 名稱、沒有值，是刻意追蹤的，要先排除；
+    # 不排除的話每次 push 都會被自己擋下（10/24 實際發生過）。
+    bad=$(git ls-files \
+      | grep -vE '(^|/)\.env\.example$' \
+      | grep -iE '(^|/)\.env($|\.)|^data/raw/|\.DS_Store$|(^|/)\.venv/|\.pem$|\.key$' | head -5)
     [ -n "$bad" ] && deny "資安閘門擋下這次 push：repo 裡有不該被追蹤的檔案
 
 ${bad}

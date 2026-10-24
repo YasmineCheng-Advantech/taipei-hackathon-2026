@@ -27,6 +27,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from calendar_tw import HOLIDAYS, is_workday
 from preview_vd import DEFAULT_CSV, MAIN, ROOT, STYLE, VEH, load
 
 OUT = ROOT / "raw" / "explore.html"
@@ -216,7 +217,7 @@ __STYLE__
 <h1>這幾天的路況</h1><p class="sub" id="sub"></p>
 
 <p class="grp">手上有哪些資料</p>
-<section class="card"><h2>每天收到哪些時段？</h2><div class="scroll"><svg id="cv"></svg></div><div class="legend"><span>顏色越深，那一小時收到的讀數越完整（5 個入口、每 5 分鐘一筆）</span></div><p class="say" id="sv"></p></section>
+<section class="card"><h2>每天收到哪些時段？</h2><div class="scroll"><svg id="cv"></svg></div><div class="legend"><span>顏色越深，那一小時收到的讀數越完整（5 個入口、每 5 分鐘一筆）</span></div><p class="note">__OFFDAYS__</p><p class="say" id="sv"></p></section>
 
 <p class="grp">在地圖上看</p>
 <section class="card"><h2>路況地圖：拖動時間，看每條路的等級怎麼變</h2><iframe id="mapframe" title="路況地圖" style="width:100%;height:1000px;border:0;display:block"></iframe><p class="note" id="mapnote"></p></section>
@@ -585,6 +586,11 @@ def main(argv):
         print(f"找不到 {', '.join(map(str, missing))}；收集程式至少要成功抓過一次")
         return 1
     rows, _ = load(paths)
+    days = sorted({r["t"].date() for r in rows})
+    off = [d for d in days if not is_workday(d)]
+    rows = [r for r in rows if is_workday(r["t"])]  # 通勤只看上班日，週末與國定假日會把尖峰沖淡
+    named = "、".join(f"{d:%-m/%-d} {HOLIDAYS[d]}" for d in off if d in HOLIDAYS)
+    offnote = f"只看上班日：週末與國定假日不列入（共 {len(off)} 天{'，含 ' + named if named else ''}）。" if off else ""
     if not [r for r in rows if r["vdid"] in MAIN]:
         print("檔案裡還沒有 5 個入口的有效讀數")
         return 1
@@ -593,7 +599,7 @@ def main(argv):
     page_map = render(rows)
     MAP = json.dumps(page_map, ensure_ascii=False).replace("</", "<\\/")
     OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text(PAGE.replace("__STYLE__", STYLE).replace("__MAP__", MAP).replace("__DATA__", data.replace("</", "<\\/")), encoding="utf-8")
+    OUT.write_text(PAGE.replace("__STYLE__", STYLE).replace("__MAP__", MAP).replace("__OFFDAYS__", offnote).replace("__DATA__", data.replace("</", "<\\/")), encoding="utf-8")
     print(f"wrote {OUT}（{len(rows):,} 筆讀數）。執行 open {OUT.relative_to(ROOT.parent)} 用瀏覽器打開")
     return 0
 

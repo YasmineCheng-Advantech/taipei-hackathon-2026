@@ -26,6 +26,7 @@ import zipfile
 from collections import defaultdict
 from pathlib import Path
 
+from calendar_tw import HOLIDAYS, is_workday
 from preview_vd import SKIP_DAYS
 
 HERE = Path(__file__).resolve().parent
@@ -125,17 +126,19 @@ def summary(rows, contrib):
         span = f"{mins[0] // 60:02d}:{mins[0] % 60:02d}–{(mins[-1] + 5) // 60:02d}:{(mins[-1] + 5) % 60:02d}" if mins else "—"
         n = sum(len(v) for v in per_day[day].values())
         mark = lambda c: f"{'✅' if c >= 80 else '⚠️' if c else '—'} {c}%"
+        # 兩個條件都要過：is_workday 排除週末與國定假日，SKIP_DAYS 排除颱風假
         skip = SKIP_DAYS.get(day.isoformat())
-        note = f"・{skip}，不算" if skip else ""
+        off = HOLIDAYS.get(day, "")
+        note = ("，" + off if off else "") + (f"・{skip}，不算" if skip else "")
         lines.append(f"| {day:%m/%d}（{WEEK[day.weekday()]}{note}） | {mark(a)} | {mark(b)} | {span} | {n:,} |")
-        if a >= 80 and day.weekday() < 5 and not skip:
+        if a >= 80 and is_workday(day) and not skip:
             full_am.append(f"{day:%m/%d}")
-        if b >= 80 and day.weekday() < 5 and not skip:
+        if b >= 80 and is_workday(day) and not skip:
             full_pm.append(f"{day:%m/%d}")
     skipped = "、".join(f"{d[5:].replace('-', '/')}（{why}）" for d, why in SKIP_DAYS.items())
-    lines += ["", f"**平日早上收完整：{len(full_am)} 天**（{'、'.join(full_am) or '無'}）；"
-                  f"**平日傍晚收完整：{len(full_pm)} 天**（{'、'.join(full_pm) or '無'}）。"
-                  + (f"不算的日子：{skipped}。" if skipped else ""), "",
+    lines += ["", f"**上班日早上收完整：{len(full_am)} 天**（{'、'.join(full_am) or '無'}）；"
+                  f"**上班日傍晚收完整：{len(full_pm)} 天**（{'、'.join(full_pm) or '無'}）。"
+                  + (f"另外不算的日子：{skipped}。" if skipped else ""), "",
               "熱力圖、排隊模型與探索圖表，每個入口只用往內湖方向的路段（`entrances_detail.csv` 的 LinkID）。", "",
               "## 各偵測器的讀數", "", "| 偵測器 | 名稱 | 筆數 |", "| --- | --- | --- |"]
     for v in sorted(names, key=lambda v: (v not in main, main.index(v) if v in main else 0, v)):
@@ -165,7 +168,7 @@ def main(argv):
     rows, contrib = merge(paths)
     am, pm = summary(rows, contrib)
     print(f"合併 {len(paths)} 個檔案，共 {len(rows):,} 筆讀數 → {OUT.relative_to(REPO)}")
-    print(f"平日早上收完整 {len(am)} 天（{'、'.join(am) or '無'}），傍晚 {len(pm)} 天（{'、'.join(pm) or '無'}）；細節見 {SUMMARY.relative_to(REPO)}")
+    print(f"上班日早上收完整 {len(am)} 天（{'、'.join(am) or '無'}），傍晚 {len(pm)} 天（{'、'.join(pm) or '無'}）；細節見 {SUMMARY.relative_to(REPO)}")
     run("熱力圖格子", HERE / "build_vd_15min.py", OUT)
     ok = run("排隊模型輸入（容量與到達曲線）", HERE / "build_model_input.py", OUT)
     model = ["--model", HERE / "model_input.json"] if ok else []
