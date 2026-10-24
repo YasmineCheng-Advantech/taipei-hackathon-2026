@@ -11,43 +11,31 @@
 <style>
 body{margin:0}
 a{color:#0E6F84}a:hover{color:#0B3A4A}
-.hero-img{-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 90%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 7%,#000 90%,transparent 100%)}
+/* 主視覺用設計稿原圖裁出蛋糕捲那一段；上下淡出讓它融進背景漸層，左右不留邊 */
+.hero-img{-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 5%,#000 93%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 5%,#000 93%,transparent 100%)}
 .cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
 .cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
 .cta span{position:relative}
 .cta:hover{color:#1E4A5E;filter:brightness(1.04)}
 </style>
 </helmet>
-<div class="screen" style="position: relative; display: flex; flex-direction: column; padding-bottom: calc(20px + env(safe-area-inset-bottom)); font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+<div class="screen" style="position: relative; display: flex; flex-direction: column; padding-bottom: calc(clamp(16px, 4.7vh, 40px) + env(safe-area-inset-bottom)); font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
   <a href="Menu.dc.html" aria-label="開啟選單" style="position: absolute; top: 18px; right: 14px; width: 48px; height: 48px; display: grid; place-items: center; color: #E8693A">
     <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
   </a>
-  <h1 style="position: relative; z-index: 1; margin: clamp(60px, 11vh, 97px) 0 0; text-align: center; font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 66px; line-height: 66px; letter-spacing: 0.03em; color: #F4683A">Traffic<br>Gem</h1>
-  <div style="position: relative; flex: 1 1 auto; min-height: 240px; max-height: 314px; margin-top: clamp(14px, 3vh, 36px)">
-    <img class="hero-img" src="/_blob/b031d341488e6ace86a74a57c6d240ac" alt="被捲成蛋糕捲的橘色道路，兩台玩具車停在流出來的果醬上" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
+  <h1 style="position: relative; z-index: 1; margin: clamp(64px, 11.9vh, 100px) 0 0; text-align: center; font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 66px; line-height: 66px; letter-spacing: 0.03em; color: #F4683A">Traffic<br>Gem</h1>
+  <div style="position: relative; flex: 0 0 auto; height: clamp(230px, 39.3vh, 332px); margin-top: clamp(8px, 1.9vh, 16px)">
+    <img class="hero-img" src="/_blob/hero-home" alt="被捲成蛋糕捲的橘色道路，兩台玩具車停在流出來的果醬上" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover">
   </div>
-  <p style="position: relative; margin: 14px 0 0; text-align: center; font-size: 15.5px; font-weight: 700; line-height: 25px; letter-spacing: 0.2em; color: #FFFFFF">把塞車捲起來<br>找到不塞的那15分鐘</p>
-  <p style="position: relative; margin: 10px 24px 0; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.6; letter-spacing: 0.12em; color: #A63C16">{{tagline}}</p>
-  <a class="cta" href="Setup.dc.html" style="margin: 18px 40px 0"><span>準備出門</span></a>
-  <p style="margin: 16px 0 0; text-align: center; font-size: 14px; font-weight: 500; letter-spacing: 0.14em; color: #E8693A">免註冊，只要30秒！</p>
-  <p class="live-bar {{liveCls}}" aria-live="polite" style="margin: 12px 24px 0; justify-content: center"><span class="dot" aria-hidden="true"></span><span>{{liveText}}</span></p>
+  <p style="position: relative; margin: clamp(6px, 1.4vh, 12px) 0 0; text-align: center; font-size: 15.5px; font-weight: 700; line-height: 25px; letter-spacing: 0.2em; color: #FFFFFF">把塞車捲起來<br>找到不塞的那15分鐘</p>
+  <a class="cta" href="Setup.dc.html" style="margin: clamp(18px, 4vh, 34px) 40px 0"><span>準備出門</span></a>
+  <p style="margin: clamp(16px, 5.2vh, 44px) 0 0; text-align: center; font-size: 15px; font-weight: 500; letter-spacing: 0.14em; color: #E8693A">免註冊，只要30秒！</p>
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  usesLive = true;
   renderVals() {
-    const live = D.live;
-    const here = D.rows.map((r) => ({ r, e: D.liveSpeed(r.id) })).filter((x) => x.e);
-    // 首頁放一行即時摘要；取不到就不吹噓，直接說取不到
-    const text = live.state === 'ok' && here.length
-      ? `現在 ${D.hhmm(live.updated_at)}・` + here.slice(0, 3).map((x) => `${x.r.name} ${x.e.text}`).join('、')
-      : live.state === 'loading' ? '正在取得即時路況…' : '暫時取不到即時路況';
-    return {
-      tagline: D.meta.title + '・幫你挑一個比較不塞的時段',
-      liveText: text,
-      liveCls: live.state === 'ok' && here.length ? (live.stale ? 'is-stale' : '') : 'is-error',
-    };
+    return {};
   }
 }
 </script>
