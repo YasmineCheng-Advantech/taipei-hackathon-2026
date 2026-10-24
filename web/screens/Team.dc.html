@@ -35,11 +35,7 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
     <sc-for list="{{people}}" as="p" hint-placeholder-count="3">
       <li style="display: flex; align-items: center; gap: 14px; min-height: 52px">
         <span class="av" aria-hidden="true">
-          <svg width="52" height="52" viewBox="0 0 52 52">
-            <defs><linearGradient id="{{p.gid}}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{{p.c1}}"></stop><stop offset="1" stop-color="{{p.c2}}"></stop></linearGradient></defs>
-            <circle cx="26" cy="21" r="8" fill="url(#{{p.gid}})"></circle>
-            <path d="M11 49c0-9 6.7-15.5 15-15.5S41 40 41 49z" fill="url(#{{p.gid}})"></path>
-          </svg>
+          <img src="{{p.img}}" alt="" style="display: block; width: 52px; height: 52px; object-fit: contain">
         </span>
         <span style="display: flex; flex-direction: column; gap: 2px">
           <b style="font-size: 15px; font-weight: 700; line-height: 21px; letter-spacing: 0.06em; color: #4E1408">{{p.role}}</b>
@@ -58,12 +54,13 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
   renderVals() {
-    // 三位的名字與角色是作品資訊，不是題目資料，所以留在這裡而不是題目 JSON
+    // 三位的名字、角色與頭像是作品資訊，不是題目資料，所以留在這裡而不是題目 JSON。
+    // 頭像用 Yasmine 提供的原檔（assets/avatar-*.webp），不是程式畫的 SVG。
     return {
       people: [
-        { gid: 'av-o', role: 'Engineer', name: 'Yasmine Cheng', c1: '#F6A86A', c2: '#EE5F2E' },
-        { gid: 'av-b', role: '吉祥物', name: 'Potter Yang', c1: '#2FD6F6', c2: '#1E8FB8' },
-        { gid: 'av-p', role: 'UI/UX', name: 'Coi Chang', c1: '#F7A5AE', c2: '#E8566A' }
+        { img: '/_blob/avatar-orange', role: 'Engineer', name: 'Yasmine Cheng' },
+        { img: '/_blob/avatar-blue', role: '吉祥物', name: 'Potter Yang' },
+        { img: '/_blob/avatar-pink', role: 'UI/UX', name: 'Coi Chang' }
       ]
     };
   }
