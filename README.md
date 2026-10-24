@@ -1,12 +1,20 @@
-# Traffic Gem
+<p align="center">
+  <img src="docs/images/banner.jpg" alt="Traffic Gem：把塞車捲起來，找到不塞的那 15 分鐘" width="760">
+</p>
 
-**把塞車捲起來，找到不塞的那 15 分鐘。**
+<h1 align="center">Traffic Gem</h1>
 
-### 👉 [打開網站](https://taipei-hackathon-2026-web.vercel.app)
+<p align="center"><strong>把塞車捲起來，找到不塞的那 15 分鐘。</strong></p>
 
-手機開最適合。免註冊，大約 30 秒。
+<p align="center">
+  <a href="https://taipei-hackathon-2026-web.vercel.app"><strong>👉 打開網站</strong></a><br>
+  <sub>手機開最適合。免註冊，大約 30 秒。</sub>
+</p>
 
-台北黑客松 2026 參賽作品｜議題 #4 內湖科技園區平日晨峰車流。作品名稱取自 traffic jam 的諧音。
+<p align="center">
+  <sub>台北黑客松 2026 參賽作品｜議題 #4 內湖科技園區平日晨峰車流<br>
+  作品名稱取自 traffic jam 的諧音</sub>
+</p>
 
 ---
 
@@ -28,6 +36,10 @@
 
 我們建議的是「**經過入口的時間**」，不是「出門時間」——我們不知道你從哪裡出發。
 
+<p align="center">
+  <img src="docs/images/car-blue.webp" alt="黏土風格的藍色小汽車" width="320">
+</p>
+
 ## 推薦只是一半
 
 你勾的「為什麼沒辦法錯峰」會被**匿名**記錄、彙整，變成交給市府的依據：
@@ -43,6 +55,12 @@
 熱力圖、錯峰情境、入口地圖、敏感度分析這些圖，我們**刻意**收進右上角的選單。因為民眾打開網站是想知道幾點出門，不是看圖表。
 
 但資料一直都在：市府可以從這裡找出塞車的根本原因，民眾也能隨時查。
+
+## 畫面長什麼樣
+
+<p align="center">
+  <img src="docs/images/poster.jpg" alt="Traffic Gem 的畫面：首頁、設定、今日建議、無法錯峰的理由、分享卡、產生中、設定頁" width="420">
+</p>
 
 ## 我們怎麼讓數字可以被檢查
 
@@ -107,3 +125,9 @@ cd dist && python3 -m http.server 4321
 | 為什麼 | 跑得動 Serverless Function | 純靜態 |
 
 即時層取不到時只有那一列降級，不會整頁壞掉，所以備用網址一樣可以完整操作。
+
+---
+
+<p align="center">
+  <img src="docs/images/wordmark.webp" alt="Traffic Gem" width="260">
+</p>
