@@ -17,7 +17,7 @@ const read = (p) => readFileSync(new URL(p, root), 'utf8');
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', svg: 'image/svg+xml' };
 const blobs = new Map(
   readdirSync(new URL('assets/', root))
-    .filter((f) => f.includes('.'))
+    .filter((f) => !f.startsWith('.')) // 擋掉 macOS 的 .DS_Store 這類隱藏檔
     .map((f) => {
       const [id, ext] = f.split('.');
       if (!MIME[ext]) throw new Error(`assets/${f}：不認得的圖片格式 .${ext}`);

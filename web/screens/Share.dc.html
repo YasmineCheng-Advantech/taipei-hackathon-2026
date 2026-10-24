@@ -11,66 +11,61 @@
 <style>
 body{margin:0}
 a{color:#0E6F84}a:hover{color:#0B3A4A}
-.chip{appearance:none;border:0;border-radius:16px;background:#DEDCDA;color:#3F3935;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.chip{appearance:none;border:0;border-radius:10px;background:#DBDBDB;color:#4C4C4C;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;cursor:pointer;position:relative;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.05)}
 .chip.off{background:#F4F2F0;color:#8A837E;cursor:not-allowed}
-.chip.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+.chip.on{background:linear-gradient(180deg,#F6A86A 0%,#F28A52 45%,#F2693B 100%);color:#FFFFFF;box-shadow:0 0 0 1.5px #FFE3B8,0 4px 10px rgba(226,88,42,.22)}
+.chip.on::before{content:'';position:absolute;left:5px;right:5px;top:3px;height:40%;border-radius:9px;background:linear-gradient(180deg,rgba(255,255,255,.3),rgba(255,255,255,.06));pointer-events:none}
+.chip > span{position:relative}
 .sim{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
-.cta{display:flex;align-items:center;justify-content:center;gap:10px;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 21px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.14em;text-decoration:none;border:0;cursor:pointer;width:100%}
-.ghost{appearance:none;border:0;background:transparent;height:44px;font:500 15px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.12em;color:#8A3A18;cursor:pointer}
-.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
-.tab.on{color:#C8481F;font-weight:500}
+.cta{position:relative;height:58px;width:100%;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
+.cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
+.cta span{position:relative}
+.cta:hover{filter:brightness(1.04)}
+.cta:disabled{filter:grayscale(.5);cursor:not-allowed}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
 </style>
 </helmet>
-<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 200px at 50% 300px, rgba(240,130,60,.26), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 680px, #FFF8F3 844px)">
-  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
-    <a href="Today.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
-      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>今日
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 21px 15px 0 22px">
+    <a href="Today.dc.html" aria-label="回今日推薦" style="width: 44px; height: 44px; display: grid; place-items: center; color: #F07848">
+      <span style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 10px rgba(0,0,0,.08); display: grid; place-items: center">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5L4.5 7 9 11.5"></path></svg>
+      </span>
     </a>
-    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
-      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
     </a>
   </div>
-  <div style="padding: 4px 16px 0; display: flex; flex-direction: column; gap: 12px">
-    <h1 style="margin: 0 0 0 14px; font-size: 22px; font-weight: 900; letter-spacing: 0.12em; color: #5A2410">邀同事一起錯峰</h1>
-    <div style="aspect-ratio: 1200 / 630; border-radius: 22px; overflow: hidden; position: relative; box-shadow: 0 16px 34px rgba(214,100,40,.22); background: radial-gradient(90% 120% at 100% 100%, #F6B07E 0%, #F7C9A6 45%, #FDF1E8 100%)">
-      <div style="position: absolute; inset: 16px 18px; display: flex; flex-direction: column; justify-content: space-between">
-        <div style="display: flex; align-items: center; justify-content: space-between">
-          <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 20px; color: #D2532A">Traffic Gem</span>
-          <sc-if value="{{usesSim}}" hint-placeholder-val="{{ true }}"><span class="sim">{{simBadge}}</span></sc-if>
-        </div>
-        <p style="margin: 0; font-size: 16px; font-weight: 900; line-height: 1.6; letter-spacing: 0.04em; color: #5A2410">{{text}}</p>
-        <p style="margin: 0; font-size: 11px; letter-spacing: 0.06em; color: #6B3A20">{{footer}}</p>
-      </div>
-    </div>
-    <h2 style="margin: 4px 0 0 14px; font-size: 16px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">選一張卡片</h2>
-    <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 12px; display: flex; flex-direction: column; gap: 8px">
-      <sc-for list="{{tpls}}" as="t" hint-placeholder-count="3">
-        <button type="button" class="chip {{t.cls}}" aria-pressed="{{t.on}}" disabled="{{t.disabled}}" onClick="{{t.pick}}" style="min-height: 50px; padding: 6px 18px; text-align: left; font-size: 16px; font-weight: 500; letter-spacing: 0.1em">{{t.title}}<span style="display: block; font-size: 11.5px; font-weight: 400; letter-spacing: 0.04em; opacity: .75">{{t.note}}</span></button>
+
+  <div style="padding: 10px 17px 0; display: flex; flex-direction: column; gap: 13px">
+    <h1 style="margin: 0 0 0 11px; font-size: 21px; font-weight: 900; line-height: 30px; letter-spacing: 0.15em; color: #6B4A3A">邀同事一起避開塞車</h1>
+
+    <figure aria-label="分享卡預覽" style="position: relative; margin: 0; min-height: 172px; border-radius: 24px; background: linear-gradient(150deg, #FDF0E7 0%, #FFFCFB 22%, #FFF8F2 48%, #FCE0CB 74%, #F7B585 100%); box-shadow: 0 10px 30px rgba(214,110,50,.16); overflow: hidden">
+      <img src="/_blob/3e63621b4ee8957d116141f41b79f155" alt="Traffic Gem" style="position: absolute; top: 15px; left: 20px; width: 140px; height: 27px; mix-blend-mode: multiply">
+      <sc-if value="{{usesSim}}" hint-placeholder-val="{{ true }}">
+        <span class="sim" style="position: absolute; top: 15px; right: 18px">{{simBadge}}</span>
+      </sc-if>
+      <p aria-live="polite" style="margin: 0; padding: 60px 24px 34px 40px; font-size: 14.5px; font-weight: 700; line-height: 25px; letter-spacing: 0.02em; color: #2A0100; white-space: pre-line">{{cardText}}</p>
+      <p style="position: absolute; right: 27px; bottom: 13px; margin: 0; font-size: 11.5px; letter-spacing: 0.06em; color: #3A1A10">{{stamp}}</p>
+    </figure>
+
+    <h2 style="margin: 4px 0 0 10px; font-size: 21px; font-weight: 700; line-height: 20px; letter-spacing: 0.06em; color: #6B4A3A">選一張卡片</h2>
+    <div role="group" aria-label="選一張卡片" style="box-sizing: border-box; padding: 20px 20px 20px 19px; background: #FFFFFF; border-radius: 24px; box-shadow: 0 10px 30px rgba(214,110,50,.14); display: flex; flex-direction: column; gap: 9px">
+      <sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
+        <button type="button" class="chip {{c.cls}}" aria-pressed="{{c.on}}" disabled="{{c.disabled}}" onClick="{{c.pick}}" style="min-height: 46px; flex: none; padding: 7px 21px; display: flex; flex-direction: column; justify-content: center; text-align: left">
+          <span style="font-size: 15px; font-weight: 700; letter-spacing: 0.06em">{{c.label}}</span>
+          <span style="font-size: 11.5px; font-weight: 400; letter-spacing: 0.04em; opacity: .8">{{c.note}}</span>
+        </button>
       </sc-for>
     </div>
-    <p style="margin: 0 14px; font-size: 12.5px; line-height: 1.6; color: #6B4A3A">{{basis}}</p>
+
+    <p style="margin: 0 12px; font-size: 12px; line-height: 18px; letter-spacing: 0.03em; color: #4A2A20">{{basis}}</p>
+    <button type="button" class="cta" onClick="{{share}}" disabled="{{noCard}}" style="margin: 6px 23px 0"><span>{{ctaText}}</span></button>
   </div>
-  <a href="Menu.dc.html" aria-label="開啟選單" style="position: absolute; top: 21px; right: 15px; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
-    <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
-  </a>
 
-  <h1 style="position: absolute; top: 103px; left: 28px; margin: 0; font-size: 21px; font-weight: 900; line-height: 30px; letter-spacing: 0.15em; color: #6b4a3a">邀同事一起避開塞車</h1>
-
-  <figure aria-label="分享卡預覽" style="position: absolute; top: 143px; left: 17px; right: 17px; height: 172px; margin: 0; border-radius: 24px; background: linear-gradient(150deg, #FDF0E7 0%, #FFFCFB 22%, #FFF8F2 48%, #FCE0CB 74%, #F7B585 100%); box-shadow: 0 10px 30px rgba(214,110,50,.16); overflow: hidden">
-    <img src="/_blob/3e63621b4ee8957d116141f41b79f155" alt="Traffic Gem" style="position: absolute; top: 15px; left: 20px; width: 140px; height: 27px; mix-blend-mode: multiply">
-    <p aria-live="polite" style="position: absolute; top: 60px; left: 40px; right: 16px; margin: 0; font-size: 14.5px; font-weight: 700; line-height: 25px; letter-spacing: 0.02em; color: #2A0100; white-space: pre-line">{{cardText}}</p>
-    <p style="position: absolute; right: 27px; bottom: 13px; margin: 0; font-size: 11.5px; letter-spacing: 0.06em; color: #3A1A10">{{pill}}<span style="letter-spacing: 0.69px">・</span>{{route}}</p>
-  </figure>
-
-  <h2 style="position: absolute; top: 347px; left: 27px; margin: 0; font-size: 21px; font-weight: 700; line-height: 20px; letter-spacing: 0.06em; color: #6b4a3a">選一張卡片</h2>
-  <div role="group" aria-label="選一張卡片" style="position: absolute; top: 383px; left: 17px; right: 17px; height: 195px; box-sizing: border-box; padding: 20px 20px 0 19px; background: #FFFFFF; border-radius: 24px; box-shadow: 0 10px 30px rgba(214,110,50,.14); display: flex; flex-direction: column; gap: 9px">
-    <sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
-      <button type="button" class="chip {{c.cls}}" aria-pressed="{{c.on}}" onClick="{{c.pick}}" style="height: 46px; flex: none; padding: 0 21px; display: flex; align-items: center; text-align: left"><span style="font-size: 15px; font-weight: 700; letter-spacing: 0.06em">{{c.label}}</span></button>
-    </sc-for>
-  </div>
-  <p style="position: absolute; top: 589px; left: 29px; right: 24px; margin: 0; font-size: 12px; line-height: 18px; letter-spacing: 0.03em; color: #4A2A20">卡片上不放任何人數。地點與時間來自你的設定：堤頂大道（北向）、平常 07:45 經過。</p>
-
-  <button type="button" class="cta" onClick="{{share}}" style="top: 691px"><span>{{ctaText}}</span></button>
   <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
     <a class="tab on" href="Today.dc.html">今日</a>
     <a class="tab" href="Settings.dc.html">設定</a>
@@ -79,8 +74,8 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
 class Component extends DCLogic {
-  // 卡片文字來自 share.templates，{place}{time}{saved}{origin}{constraint} 由設定與今天的建議代入
-  state = { t: 0 };
+  // 卡片文字來自 share.templates，{place}{time}{saved}{constraint} 由設定與今天的建議代入
+  state = { t: 0, shared: false };
 
   renderVals() {
     const t = app.today();
@@ -97,43 +92,51 @@ class Component extends DCLogic {
       place,
       time: base ? base.key : '',
       saved: savedNum && !savedNum.pending ? savedNum.text : '',
-      origin: p.origin ? p.origin.label : '',
       constraint: p.constraints.length ? (p.constraints[0].share_text || p.constraints[0].label) : '',
     };
     // 今天沒有推薦（建議＝平常）時，不能選「錯峰可以少塞多久」
     if (rec && t.plan && rec.id === t.plan.baseline) fills.saved = '';
 
-    const all = (D.share.templates || []).map((tpl) => {
-      const missing = (tpl.needs || []).filter((k) => !fills[k]);
-      const text = (tpl.text || '').replace(/\{(\w+)\}/g, (_, k) => fills[k] || '');
-      // 卡片用到的數字是不是模擬的（saved 來自 assumed/sim 的欄位）
-      const sim = (tpl.needs || []).includes('saved') && !!(rec && rec.saved && rec.saved.sim);
-      return { ...tpl, text, sim, missing };
-    });
+    // 需要「出發地區」的模板在 v2 已經沒有資料可以填（出發地區整個移除），直接不列
+    const NEEDS_TEXT = { place: '常經過的入口', time: '平常經過的時間', saved: '今天的建議時段', constraint: '無法錯峰的理由' };
+    const all = (D.share.templates || [])
+      .filter((tpl) => !(tpl.needs || []).includes('origin'))
+      .map((tpl) => {
+        const missing = (tpl.needs || []).filter((k) => !fills[k]);
+        const text = (tpl.text || '').replace(/\{(\w+)\}/g, (_, k) => fills[k] || '');
+        // 卡片用到的數字是不是模擬的（saved 來自 assumed/sim 的欄位）
+        const sim = (tpl.needs || []).includes('saved') && !!(rec && rec.saved && rec.saved.sim);
+        return { ...tpl, text, sim, missing };
+      });
     const usable = all.filter((x) => !x.missing.length);
     const ti = Math.min(this.state.t, Math.max(0, all.length - 1));
     const cur = all[ti] && !all[ti].missing.length ? all[ti] : usable[0];
 
     return {
-      text: cur ? cur.text : '目前的設定還湊不出可以分享的卡片。',
+      cardText: cur ? cur.text : '目前的設定還湊不出可以分享的卡片。',
+      // 卡片右下角蓋日期・入口・最晚到（v2 改版加上的）
+      stamp: cur ? `${this.dateText()}・${p.entry}・${p.deadline} 前到` : '',
       usesSim: !!(cur && cur.sim),
       simBadge: D.share.sim_badge || '含模擬資料',
-      footer: D.share.footer && D.share.footer.indexOf('[') < 0
-        ? D.share.footer
-        : '內科晨峰・挑一個比較不塞的時段 → ' + location.href.split('#')[0],
       basis: `卡片上不放任何人數。地點與時間來自你的設定：${place}${base ? '、平常 ' + base.key + ' 經過' : ''}。`,
-      share: () => cur && app.share(cur.text),
-      saveImg: () => cur && app.saveCard(cur.text, cur.sim),
-      tpls: all.map((x, i) => ({
-        title: x.title,
-        // needs 缺欄位就不能選這張（契約規定）
-        note: x.missing.length ? '需要先在設定補上：' + x.missing.join('、') : '',
+      noCard: !cur,
+      ctaText: this.state.shared ? '已複製分享連結' : '分享出去',
+      share: async () => { if (cur) { await app.share(cur.text); this.setState({ shared: true }); } },
+      cards: all.map((x, i) => ({
+        label: x.title,
+        // needs 缺欄位就不能選這張（契約規定），用白話說缺什麼，不露出欄位代碼
+        note: x.missing.length ? '要先在設定填：' + x.missing.map((k) => NEEDS_TEXT[k] || k).join('、') : '',
         disabled: x.missing.length > 0,
         cls: cur && x.id === cur.id ? 'on' : x.missing.length ? 'off' : '',
         on: cur && x.id === cur.id ? 'true' : 'false',
-        pick: () => { if (!x.missing.length) this.setState({ t: i }); },
+        pick: () => { if (!x.missing.length) this.setState({ t: i, shared: false }); },
       })),
     };
+  }
+
+  dateText() {
+    const d = new Date();
+    return `${d.getMonth() + 1}/${d.getDate()}`;
   }
 }
 </script>
