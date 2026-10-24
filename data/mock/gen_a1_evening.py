@@ -237,7 +237,7 @@ decide = {
             {"id": "zhongshan-dazhi", "label": "中山／大直／士林", "region": "臺北市", "rows": ["tiding-n", "minquan-br"]},
             {"id": "ntpc-west", "label": "三重／蘆洲／板橋等新北西側", "region": "新北市", "rows": ["tiding-n"]},
             {"id": "xizhi-keelung", "label": "汐止／基隆", "region": "新北市・基隆市", "rows": [],
-             "note": "多半走國 1 或康寧路：國 1 的資料還在等 TDX，康寧路沒有偵測器，目前無法給建議。"},
+             "note": "多半走國 1 或康寧路：國 1 是國道、我們拿不到它的偵測器資料，康寧路沒有偵測器，目前無法給建議。"},
             {"id": "other", "label": "其他", "rows": SETUP_ROWS},
         ],
         "constraints": [
@@ -367,7 +367,7 @@ for o in brief["options"]:
 lm = copy.deepcopy(T4["limits"])
 for it in lm["items"]:
     if it["id"] == "coverage":
-        it["why"] = "出城方向的偵測器還沒盤點；國 1 等 TDX 金鑰；康寧路沒有偵測器。麥帥二橋的偵測器正好是出城方向。"
+        it["why"] = "出城方向的偵測器還沒盤點；國 1 是國道、拿不到偵測器資料；康寧路沒有偵測器。麥帥二橋的偵測器正好是出城方向。"
     elif it["id"] == "early-arrival":
         it["title"] = "早走或晚走省下的路上時間，大多變成在公司少待或多待的時間"
         it["handling"] = "建議同時顯示「路上少幾分鐘」與「早或晚幾分鐘經過出口」；差超過 30 分鐘就不推薦。"

@@ -18,7 +18,7 @@ Oct 24, 2026 · 給接手網站的夥伴
 | 換題 | **可用**，三份 mock 題目都測過，不用改程式 |
 | 資安 | `SECURITY.md` 交代的兩項已修，`dist/index.html` 零外部請求 |
 | 分支 | **已合併 master**，領先 20 個 commit、落後 0；下一步開 PR |
-| 部署 | **還沒上線**（見[第八節](#八待辦照優先序) P0-1） |
+| 部署 | GitHub Pages 已上線（**無即時層**）；Vercel 待接，見[第八節](#八待辦照優先序) P0-1 |
 
 ---
 
@@ -228,14 +228,36 @@ Yasmine 還沒決定方向。兩個選項：
 
 ### P0 — 交件必要（10/24 16:00 前）
 
-1. **部署到 Vercel 拿到公開網址。**
-   Import Project 時 **Root Directory 要設成 `web`**。`vercel.json` 已經設定好 Build Command
-   與 Output Directory，`api/live.js` 會自動被辨識成 Serverless Function。
+1. **接 Vercel，讓即時層真的會動。**
+
+   目前網站已經部署在 GitHub Pages
+   （<https://yasminecheng-advantech.github.io/taipei-hackathon-2026/>，推 master 自動重建）。
+   **但 Pages 是純靜態，跑不了 `api/live.js`**，所以「現在路況」那一列永遠顯示
+   「暫時取不到即時資料」。其他畫面照常，不會壞 —— 但「即時」這件事沒有達成。
+
+   Vercel 可以跑 Serverless Function，所以即時層要靠它。**用網頁介面連 GitHub，不要用 CLI**
+   （CLI 要互動登入，而且網頁版推 master 會自動重建）：
+
+   | 步驟 | 做什麼 |
+   | --- | --- |
+   | 1 | <https://vercel.com/new> → 用 GitHub 登入 → 選 `taipei-hackathon-2026` |
+   | 2 | **Root Directory 改成 `web`**（這一步最容易漏，漏了會找不到 `package.json` 而失敗） |
+   | 3 | Framework Preset 選 **Other**；Build／Output 不用動，`web/vercel.json` 已經設好 |
+   | 4 | Deploy。不需要任何環境變數（臺北市 VDLive 不用金鑰） |
+
    部署後驗收：
    ```bash
    curl -s https://<網址>/api/live | jq '.updated_at, .entries["tiding-n"]'
+   # → updated_at 要是幾分鐘內；tiding-n 要有 speed 與 link_id
+
    curl -s -o /dev/null -w "%{http_code}\n" -X POST https://<網址>/api/live   # 要是 405
+
+   for i in 1 2 3; do curl -s "https://<網址>/api/live?x=$i" -o /dev/null -w "%{time_total}s "; done
+   # → 第 2、3 次應該明顯比第 1 次快（命中快取，沒有打到交工處）
    ```
+
+   **兩個網址都留著**：Pages 當備援（靜態、一定開得起來），Vercel 當交件網址（有即時層）。
+   交件時填 Vercel 那個。
 2. **決定主標與 Demo 台詞**（見[第七節](#七資料的真相最重要的一節)）。這是內容決定，不是程式。
 3. **更新交件文件**：`README.md` 補作品網址與 Demo 操作說明。
    `data/SOURCES.md` 的開源套件清單我已經補好了。
@@ -259,7 +281,7 @@ Yasmine 還沒決定方向。兩個選項：
    不存 IP、不存個資，要有頻率限制，Demo 用獨立房間。
 8. **設定加「從哪裡出發」一步。** `decide.setup.origins` 的資料已經在 JSON 裡，
    City 的「大家從哪裡來」也等著它。但這是新功能，要先問 Yasmine（範圍凍結）。
-9. **國 1 內湖交流道的即時資料。** 需要 TDX 金鑰設到 Vercel 環境變數。
+9. ~~**國 1 內湖交流道的即時資料。**~~ **做不到**：國道資料要走 TDX，本專案的免費額度已於 2026-10-24 用完且無法恢復。這個入口維持模擬值並標示。
    **注意：`SECURITY.md` 第七節記著 TDX 金鑰 10/24 08:07 起已失效**，要先去重新產生。
 
 ---

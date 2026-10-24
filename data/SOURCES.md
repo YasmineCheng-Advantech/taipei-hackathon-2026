@@ -17,7 +17,11 @@ Oct 20, 2026 · 交件 README 的「資料來源」「AI 工具與開源套件�
 
 收集方式與頻率：`data/fetch/collect_vd.py`，每 5 分鐘一次，不更頻繁（行為準則：不對市府系統做壓測）。原始檔不進 git。
 
-> **TDX 金鑰現況（10/24）：** token 端點自 08:07 起回 `unauthorized_client`／`Invalid client credentials`，是憑證在 TDX 端失效，不是流量限制。影響的只有國道即時值——該入口本來就是模擬；臺北市 VDLive 不需金鑰、照常運作；上表的一個月歷史資料已經抓完存檔。詳見 [`SECURITY.md`](../SECURITY.md)。
+> **TDX 現況（10/24，已確認無法恢復）：** 本專案的 TDX **免費額度已用完**，token 端點自 08:07 起回 `unauthorized_client`／`Invalid client credentials`，無法重新產生金鑰。
+>
+> **影響很小，且已處理：** 上表的一個月歷史資料（100,848 筆，占真實資料 98%）**在額度用完前就已抓完存檔**，不受影響；臺北市 VDLive 不需任何金鑰，5 個入口照常收。唯一拿不到的是國道即時值，而國 1 內湖交流道在畫面上**本來就是模擬值**（`assumed`／`sim: true`），有標示。
+>
+> 收集程式已改為預設不抓 TDX（要抓須加 `--tdx`），GitHub Actions 的 TDX secrets 已移除。詳見 [`SECURITY.md`](../SECURITY.md)。
 
 ## 二、調查、統計與文獻（引用的數字）
 
@@ -38,7 +42,7 @@ Oct 20, 2026 · 交件 README 的「資料來源」「AI 工具與開源套件�
 
 | 檔案 | 產生腳本 | 模擬了什麼 | 換成真實資料的方式 |
 | --- | --- | --- | --- |
-| `mock/t4-morning.json` | `mock/gen_t4_morning.py` | 熱力圖的車速與流量、文湖線負載、個人建議的路上時間、時段名額比例、「如果大家都這樣」的三種結果 | 熱力圖 5 個入口與錯峰情境已接好真實 VD（`--real`、`--model`）；國 1 等 TDX；麥帥二橋、康寧路是缺口，不補值 |
+| `mock/t4-morning.json` | `mock/gen_t4_morning.py` | 熱力圖的車速與流量、文湖線負載、個人建議的路上時間、時段名額比例、「如果大家都這樣」的三種結果 | 熱力圖 5 個入口與錯峰情境已接好真實 VD（`--real`、`--model`）；國 1 的國道資料取不到（TDX 額度已用完），維持模擬；麥帥二橋、康寧路是缺口，不補值 |
 | `mock/inputs/model_input.json` | `processed/build_model_input.py --mock` | 堤頂大道的容量（1,000 輛／15 分鐘 ±10%）與到達曲線 | `build_model_input.py` 讀收集到的 VD，輸出 `processed/model_input.json` |
 | `mock/a1-evening.json` | `mock/gen_a1_evening.py` | 晚尖峰版本，換題演練用 | 盤點出城方向的偵測器後收傍晚資料 |
 | `mock/b1-1999.json` | `mock/gen_b1_1999.py` | 1999 陳情的件數、結案天數、管道回覆天數、積案，換題演練用 | 臺北市 1999 派工資料 |

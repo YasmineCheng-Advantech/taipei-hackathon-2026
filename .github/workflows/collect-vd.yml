@@ -1,7 +1,9 @@
 # 平日早上與傍晚在 GitHub 的機器上跑 VD 收集程式，結果存成 Actions 的 artifact（保留 30 天），不進 git。
 # 手動執行（Actions → collect-vd → Run workflow）可以填開始、結束時間，例如臨時要收今晚。
-# 注意：repo 是私人的，Actions 每月免費 2,000 分鐘，等待時間也算，所以不整天收。
-# 需要在 repo 的 Settings → Secrets and variables → Actions 新增 TDX_CLIENT_ID、TDX_CLIENT_SECRET。
+# 這支只收臺北市交工處的 VDLive，**不需要任何金鑰**。
+# TDX 國道資料：本專案的免費額度已於 2026-10-24 用完、金鑰失效，所以不再抓；
+# 國 1 內湖交流道在畫面上維持模擬值（assumed／sim: true）。詳見 data/SOURCES.md。
+# repo 已於 10/24 轉為公開，公開 repo 的 Actions 分鐘數不計費，但仍不整天收（對來源客氣）。
 name: collect-vd
 
 on:
@@ -42,10 +44,8 @@ jobs:
           else s=16:30; e=20:30; fi
           echo "start=$s" >> "$GITHUB_OUTPUT"; echo "end=$e" >> "$GITHUB_OUTPUT"
           echo "收集時段：$s–$e（台北）"
+      # 不抓 TDX（免費額度已用完，見下方註解）。臺北市 VDLive 不需要金鑰。
       - name: Collect
-        env:
-          TDX_CLIENT_ID: ${{ secrets.TDX_CLIENT_ID }}
-          TDX_CLIENT_SECRET: ${{ secrets.TDX_CLIENT_SECRET }}
         run: python3 data/fetch/collect_vd.py --today --start ${{ steps.w.outputs.start }} --end ${{ steps.w.outputs.end }}
       - name: Upload raw data
         if: always()
