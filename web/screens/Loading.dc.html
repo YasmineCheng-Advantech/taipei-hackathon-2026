@@ -75,10 +75,8 @@ class Component extends DCLogic {
   }
   componentWillUnmount() { clearInterval(this.timer); clearTimeout(this.timer); }
   renderVals() {
-    // 動畫用使用者那個入口的真實色階，不是寫死的色塊
     const p = app.profile();
     const layer = D.layerOf('speed');
-    const ri = D.rowIndex(p.rowId);
     const range = D.meta.time_range || {};
     const metric = layer.name.replace('壅塞（', '').replace('）', '');
     const texts = [
@@ -87,13 +85,18 @@ class Component extends DCLogic {
       '把建議分散到不同時段',
     ];
     const n = Math.min(3, this.state.step);
+    const BAR = [2, 2, 3, 3, 4, 5, 5, 5, 5, 4];
+    const nCols = D.cols.length || BAR.length;
     return {
       summary: app.summary(),
-      nCols: D.cols.length,
-      cells: D.cols.map((_, i) => {
-        const c = D.cell(layer.id, ri, i);
-        return { bg: c.gap ? 'transparent' : `var(--ramp-${D.level(layer, c.v)})`, delay: (i * 0.09) + 's' };
-      }),
+      nCols,
+      // 載入條的方格：照設計稿 design/traffic-gem-screens-v2/Loading.dc.html 的色階，左淡右深、最後一格回淡。
+      // 這排是 aria-hidden 的進度動畫，不是資料；色碼仍然只用 tokens.css 的 --ramp-*，程式不碰色碼。
+      // 格數跟著題目的時段數走，換題不用改這裡。
+      cells: Array.from({ length: nCols }, (_, i) => ({
+        bg: `var(--ramp-${BAR[Math.round((i / Math.max(1, nCols - 1)) * (BAR.length - 1))]})`,
+        delay: (i * 0.09) + 's',
+      })),
       steps: texts.slice(0, n).map((t) => ({ text: t })),
     };
   }
