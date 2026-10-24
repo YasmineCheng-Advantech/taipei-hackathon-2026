@@ -2,7 +2,7 @@
 
 Oct 24, 2026 · 給所有在這個 repo 工作的人與 AI（兩個 Claude 帳號都要先讀這份）
 
-> 這份把 [`CLAUDE.md`](CLAUDE.md) 的「隱私與合規」變成**可以逐條檢查**的規則。交件要求公開 GitHub 網址，所以 repo 會轉成 public：**只要進了 git，就當作全世界看得到，而且刪不掉。**
+> 這份把 `CLAUDE.md` 的「隱私與合規」變成**可以逐條檢查**的規則。交件要求公開 GitHub 網址，所以 repo 會轉成 public：**只要進了 git，就當作全世界看得到，而且刪不掉。**
 
 ## 一頁摘要
 
@@ -68,7 +68,7 @@ Oct 24, 2026 · 給所有在這個 repo 工作的人與 AI（兩個 Claude 帳�
    git config core.hooksPath .githooks
    ```
 
-兩者跑的是同一支 [`.githooks/scan-staged.sh`](.githooks/scan-staged.sh)。
+兩者跑的是同一支 `.githooks/scan-staged.sh`。
 
 **被擋下時不要用 `--no-verify` 硬推。** 先確認那真的是誤判，再把例外加進腳本並說明原因。
 
