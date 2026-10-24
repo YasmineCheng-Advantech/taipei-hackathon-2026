@@ -2,7 +2,7 @@
 
 Oct 24, 2026 · 給正在改 `web/` 的人（另一個 Claude 帳號）
 
-> 這兩項在 `web/` 底下，而你正在改那個目錄，所以**沒有動你的檔案**，寫成交代單。
+> **狀態：兩項都在 2026-10-24 修好了**，驗收結果見每一節最後。這份保留下來，說明當初的問題與修法。
 > 背景規則見 [`SECURITY.md`](../SECURITY.md)。兩項都不影響版面，只改行為。
 
 ## 一、`web/api/live.js`：擋住對市府系統的放大（**優先**）
@@ -74,10 +74,10 @@ return res.status(503).json({ error: '暫時取不到即時資料' });
 
 ### 驗收
 
-- [ ] `/api/live?x=1`、`?x=2`、`?x=3` 連續打，伺服器 log 只看到**一次**對 `tcgbusfs.blob.core.windows.net` 的請求
-- [ ] `curl -X POST /api/live` 回 405
-- [ ] 上游故障時前端只有「現在路況」那一列顯示「暫時取不到」，**其他畫面照常**（CLAUDE.md：後端掛掉不能整頁壞掉）
-- [ ] 回應裡不含上游的錯誤字串
+- [x] `/api/live?x=1`、`?x=2`、`?x=3` 連續打，只有**一次**對上游的請求（用假的 fetch 驗過）
+- [x] `POST /api/live` 回 405，並帶 `Allow: GET, HEAD`
+- [x] 上游故障時只有「現在路況」那一列顯示「暫時取不到」，其他畫面照常
+- [x] 回應裡不含上游的錯誤字串（只回 `{"error":"暫時取不到即時資料"}`，詳情寫 `console.error`）
 
 ## 二、`web/src/shell.html`：字型改離線
 
@@ -117,9 +117,10 @@ const font = 'data:font/woff2;base64,' + readFileSync(new URL('grandstander-800.
 
 ### 驗收
 
-- [ ] 關掉 Wi-Fi 開 `dist/index.html`，18 個畫面字型與版面都正常
-- [ ] DevTools Network 面板：**零個**外部請求
-- [ ] Grandstander 是 SIL OFL 授權，要記進 [`data/SOURCES.md`](../data/SOURCES.md) 的開源套件清單（本來就是交件必填項）
+- [x] `dist/index.html` 裡沒有任何 `http(s)://` 的 `src`／`href`／`url()`，唯一的對外呼叫是 `fetch('api/live')`（同網域）
+- [x] Grandstander 800 內嵌（22 KB，`data:font/woff2`），中文用系統字堆疊
+- [x] 已記進 [`data/SOURCES.md`](../data/SOURCES.md)：Grandstander 為 SIL OFL 1.1
+- [ ] **還沒做**：關掉 Wi-Fi 用真的瀏覽器開一次，確認 18 個畫面版面都正常（建議交件前做）
 
 ### 補充：前端的 `cache: 'no-store'`
 
@@ -127,7 +128,7 @@ const font = 'data:font/woff2;base64,' + readFileSync(new URL('grandstander-800.
 
 ## 三、順手的小事（不急）
 
-`web/src/runtime.js` 第 69、81 行的 `window.claude.use('downloads')` 是 claude.ai artifact 的殘留。在 Vercel 上是死碼（不會報錯，只是永遠走不到）。清掉比較乾淨。
+~~`web/src/runtime.js` 的 `window.claude.use('downloads')` 是 claude.ai artifact 的殘留。~~ **10/24 已清掉**，改成單純的 `<a download>`，並補上 `URL.revokeObjectURL`。
 
 ## 四、commit 前要知道的
 

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>4 天裡有幾天會塞</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+/* 收集天數會隨資料增加（目前 20 天以上），所以用比例長條而不是固定幾個點 */
+.cell{position:relative;appearance:none;border:0;background:#FAF5F1;border-radius:10px;height:40px;padding:0;cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cell.sel{box-shadow:0 0 0 2.5px #0E6F84;background:#FFFFFF}
+.cell.gap{background:transparent;box-shadow:inset 0 0 0 1.5px #E4D6CA;cursor:default}
+.cell:focus-visible{outline:3px solid #0B3A4A}
+.fill{position:absolute;left:0;right:0;bottom:0;background:#C93A22;opacity:.85}
+.count{position:relative;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;color:#5A3A2A}
+.count.onbar{color:#FFFFFF}
+.swatch{width:12px;height:12px;border-radius:3px;box-sizing:border-box}
+.swatch.bad{background:#C93A22}
+.swatch.ok{background:#FAF5F1;border:1.5px solid #C9B6A8}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 560px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 720px, #FFF8F3 900px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Heatmap.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>熱力圖
+    </a>
+    <span class="sim">含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">平均不準？看看幾天會塞</h1>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #6B4A3A">{{subtitle}}</p>
+    </div>
+    <sc-if value="{{noBad}}">
+      <section class="card" style="padding: 18px 20px">
+        <p style="margin: 0; font-size: 14px; line-height: 1.7; color: #5A3A2A">這個題目沒有定義「算不算嚴重」的門檻，也沒有逐日資料，所以沒有這張圖。我們留白，不補數字。</p>
+      </section>
+    </sc-if>
+    <sc-if value="{{hasBad}}">
+    <section class="card" aria-label="各地點各時段達到門檻的天數" style="padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 6px">
+      <div aria-hidden="true" style="display: grid; grid-template-columns: {{grid}}; gap: 4px; font-size: 11px; color: #6B4A3A; text-align: center; font-variant-numeric: tabular-nums">
+        <span></span>
+        <sc-for list="{{heads}}" as="h" hint-placeholder-count="6"><span>{{h}}</span></sc-for>
+      </div>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: {{grid}}; gap: 4px; align-items: center">
+          <span style="font-size: 13px; font-weight: 700; line-height: 1.25">{{r.name}}</span>
+          <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="6">
+            <button type="button" class="cell {{c.cls}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" disabled="{{c.gap}}" onClick="{{c.pick}}">
+              <i class="fill" aria-hidden="true" style="height: {{c.fillH}}%"></i>
+              <span class="count {{c.countCls}}">{{c.text}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="display: flex; gap: 14px; margin-top: 6px; font-size: 12px; color: #6B4A3A">
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" class="swatch bad"></i>會塞的天數佔比</span>
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" class="swatch ok"></i>沒塞</span>
+      </div>
+      <p aria-live="polite" style="margin: 6px 4px 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 14px; line-height: 1.65">{{readout}}</p>
+    </section>
+    <section class="card" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.06em">為什麼要看這張</h2>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.7; color: #5A3A2A">{{why}}</p>
+    </section>
+    </sc-if>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  state = { r: 0, c: 0 };
+  renderVals() {
+    const S = this.state;
+    const layer = D.layerOf('speed');
+    const bad = layer.bad_at;
+    const unit = layer.unit.replace('平均車速 ', '');
+    // 後半段的時段（車流最多的那幾格），太多欄手機放不下
+    const from = Math.max(0, D.cols.length - 6);
+    const cols = D.cols.slice(from);
+    // 只列有資料的入口
+    const R = D.rows
+      .map((row) => ({ row, cells: cols.map((_, i) => D.cell(layer.id, D.rowIndex(row.id), from + i)) }))
+      .filter((x) => x.cells.some((c) => !c.gap));
+
+    const ri = Math.min(S.r, Math.max(0, R.length - 1));
+    const ci = Math.min(S.c, Math.max(0, cols.length - 1));
+    const cur = (R[ri] && R[ri].cells[ci]) || { gap: true };
+    const days = (R.flatMap((x) => x.cells).find((c) => !c.gap) || {}).days;
+    // bad_at 與逐日天數都是選填：沒有的話這張圖不成立，直接說沒有，不硬畫
+    const hasBad = bad != null && days != null;
+    if (!hasBad) return { hasBad: false, noBad: true, grid: '', heads: [], subtitle: '', rows: [], readout: '', why: '' };
+
+    return {
+      hasBad: true,
+      noBad: false,
+      grid: '82px repeat(' + cols.length + ', minmax(0, 1fr))',
+      heads: cols.map((c) => c.label),
+      subtitle: `每格的紅色高度＝收集期間${days ? ' ' + days + ' 個' : ''}${D.meta.days || '平日'}裡，車速低於 ${bad} ${unit} 的天數佔比`,
+      rows: R.map((x, i) => ({
+        name: x.row.name + (x.cells.some((c) => c.sim) ? '（模擬）' : ''),
+        cells: x.cells.map((c, j) => {
+          const on = i === ri && j === ci;
+          const ratio = c.gap || !c.days ? 0 : (c.bad_days || 0) / c.days;
+          return {
+            gap: !!c.gap,
+            fillH: Math.round(ratio * 100),
+            text: c.gap ? '—' : `${c.bad_days || 0}/${c.days}`,
+            countCls: ratio > 0.6 ? 'onbar' : '',
+            cls: (c.gap ? 'gap' : '') + (on ? ' sel' : ''),
+            on: on ? 'true' : 'false',
+            aria: c.gap
+              ? `${x.row.name} ${cols[j].label}：沒有資料`
+              : `${x.row.name} ${cols[j].label}：${c.days} 天裡 ${c.bad_days || 0} 天會塞`,
+            pick: () => { if (!c.gap) this.setState({ r: i, c: j }); },
+          };
+        }),
+      })),
+      readout: cur.gap
+        ? '這一格沒有資料，我們留白，不補數字。'
+        : `${R[ri].row.name} ${cols[ci].label}：${cur.days} 天裡有 ${cur.bad_days || 0} 天會塞。平均 ${cur.v} ${unit}`
+          + (cur.lo != null ? `，每天在 ${cur.lo}–${cur.hi} ${unit} 之間。` : '。'),
+      why: `同樣平均 ${cur.gap ? '' : cur.v + ' ' + unit + '，'}「每天都差不多」和「幾天很順、幾天停住」是兩回事。紅色越滿代表越常塞，越值得換時段；只有零星幾天的格子，換了也未必有感。`,
+    };
+  }
+}
+</script>
+</body>
+</html>

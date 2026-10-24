@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>熱力圖</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.seg{appearance:none;border:0;border-radius:14px;min-height:44px;background:#DEDCDA;color:#3F3935;font:500 16px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.12em;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.seg.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+.cell{appearance:none;border:0;padding:0;height:28px;border-radius:6px;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.07)}
+.cell.hatch{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 1.5px,transparent 1.5px 5px)}
+.cell.gap{background:transparent;box-shadow:inset 0 0 0 1.5px #D8C6B8;cursor:default}
+.cell.sel{outline:0;box-shadow:0 0 0 3px #0E6F84,inset 0 -2px 0 rgba(0,0,0,.07)}
+.cell:focus-visible{outline:3px solid #0B3A4A;outline-offset:1px}
+.cell.now{box-shadow:0 0 0 2px #0E6F84 inset,inset 0 -2px 0 rgba(0,0,0,.07)}
+.nowcol{font-weight:700;color:#0E6F84}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 260px at 50% 700px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 520px, #F8D6BD 900px, #FFF8F3 1300px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Menu.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>選單
+    </a>
+    <sc-if value="{{hasSim}}"><span class="sim">含模擬資料</span></sc-if>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.1em; color: #5A2410">{{title}}</h1>
+      <p style="margin: 0; font-size: 13.5px; color: #6B4A3A">{{subtitle}}</p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{kpis}}" as="k" hint-placeholder-count="3">
+        <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+          <span style="font-size: 12px; color: #6B4A3A">{{k.title}}</span>
+          <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: {{k.size}}px; line-height: 1.2">{{k.value}}</b>
+          <span style="font-size: 11.5px; color: #6B4A3A">{{k.note}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <p class="live-bar {{live.cls}}" aria-live="polite"><span class="dot" aria-hidden="true"></span><span>{{live.text}}</span><span class="note">{{live.note}}</span></p>
+
+    <div role="group" aria-label="切換圖層" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{layers}}" as="l" hint-placeholder-count="2">
+        <button type="button" class="seg {{l.cls}}" aria-pressed="{{l.on}}" onClick="{{l.pick}}">{{l.name}}</button>
+      </sc-for>
+    </div>
+
+    <section class="card" aria-label="熱力圖矩陣" style="padding: 14px 12px 12px; display: flex; flex-direction: column; gap: 4px">
+      <div aria-hidden="true" style="display: grid; grid-template-columns: {{grid}}; gap: 3px; font-size: 11px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <span></span>
+        <sc-for list="{{colHeads}}" as="h" hint-placeholder-count="10"><span class="{{h.cls}}">{{h.label}}</span></sc-for>
+      </div>
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="8">
+        <div style="display: grid; grid-template-columns: {{grid}}; gap: 3px; align-items: center">
+          <span style="display: flex; flex-direction: column; line-height: 1.2; padding-right: 4px">
+            <span style="font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{r.name}}</span>
+            <span style="font-size: 10.5px; color: {{r.kindFg}}">{{r.kindText}}</span>
+          </span>
+          <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="10">
+            <button type="button" class="cell {{c.cls}}" data-level="{{c.level}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" disabled="{{c.gap}}" onClick="{{c.pick}}"></button>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="margin-top: 8px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 11.5px; color: #6B4A3A">
+        <span>{{legendLo}}</span>
+        <span aria-hidden="true" style="display: inline-flex; gap: 2px">
+          <sc-for list="{{legend}}" as="g" hint-placeholder-count="6"><i data-level="{{g.level}}" style="display: block; width: 16px; height: 10px; border-radius: 3px"></i></sc-for>
+        </span>
+        <span>{{legendHi}}</span>
+        <span style="flex: 1"></span>
+        <span class="hatch" aria-hidden="true" data-level="2" style="display: inline-block; width: 14px; height: 10px; border-radius: 3px"></span><span>模擬</span>
+        <span aria-hidden="true" style="display: inline-block; width: 14px; height: 10px; border-radius: 3px; box-shadow: inset 0 0 0 1.5px #D8C6B8"></span><span>沒有資料</span>
+      </div>
+    </section>
+
+    <section class="card" aria-live="polite" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 6px">
+      <p style="margin: 0; font-size: 14px; letter-spacing: 0.08em; color: #6B4A3A">{{d.where}}</p>
+      <p style="margin: 0; display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 44px; line-height: 1.05; color: #5A2410">{{d.v}}</span><span style="font-size: 15px; font-weight: 700">{{d.unit}}</span><span class="tag tag-{{d.label}}">{{d.labelText}}</span></p>
+      <p style="margin: 0; font-size: 15px; font-weight: 700">{{d.level}}</p>
+      <p style="margin: 0; font-size: 14px; line-height: 1.65">{{d.days}}</p>
+      <sc-if value="{{d.hasLive}}"><p style="margin: 0; font-size: 14px; line-height: 1.65; color: #0E6F84">{{d.liveText}}</p></sc-if>
+      <p style="margin: 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 13px; line-height: 1.65; color: #6B4A3A">{{d.other}}</p>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #8A8079">{{d.src}}</p>
+    </section>
+
+    <sc-if value="{{aux.show}}">
+    <section class="card" aria-label="{{aux.title}}" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px">
+        <h2 style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 0.08em">{{aux.title}}</h2>
+      </div>
+      <div style="position: relative; height: 110px; display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 3px; align-items: end">
+        <div aria-hidden="true" style="position: absolute; left: 0; right: 0; bottom: {{aux.lineY}}px; border-top: 2px dashed #8A2E0B"></div>
+        <span aria-hidden="true" style="position: absolute; right: 0; bottom: {{aux.labelY}}px; font-size: 11px; font-weight: 700; color: #8A2E0B; background: #FFFFFF; padding: 0 4px">{{aux.alertText}}</span>
+        <sc-for list="{{aux.bars}}" as="m" hint-placeholder-count="10">
+          <div class="{{m.cls}}" title="{{m.tip}}" style="height: {{m.h}}px; border-radius: 4px 4px 2px 2px; background-color: {{m.bg}}"></div>
+        </sc-for>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6B4A3A; font-variant-numeric: tabular-nums"><span>{{firstCol}}</span><span>{{lastCol}}</span></div>
+      <p style="margin: 0; font-size: 13px; line-height: 1.65; color: #6B4A3A">{{aux.note}}</p>
+    </section>
+    </sc-if>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1300}}'>
+class Component extends DCLogic {
+  // 用即時資料：資料到了會自動重畫
+  usesLive = true;
+  state = { layer: 0, r: 1, c: 7 };
+
+  renderVals() {
+    const S = this.state;
+    const cols = D.cols;
+    const rows = D.rows;
+    const layers = D.heatmap.layers || [];
+    const layer = layers[S.layer] || layers[0];
+    const nowCol = D.currentColIndex();
+
+    // 選取的格子若落在缺口上，往右找第一個有資料的
+    const valAt = (ri, ci) => { const c = D.cell(layer.id, ri, ci); return c.gap ? null : c.v; };
+
+    const kindText = { observed: '真實觀測', sim: '模擬', gap: '沒有偵測器' };
+    const kindFg = { observed: '#1F4E79', sim: '#7A5200', gap: '#8A3A18' };
+
+    const r = rows[S.r] || rows[0];
+    const sel = D.cell(layer.id, S.r, S.c);
+    const other = layers.find((l) => l.id !== layer.id);
+    const otherCell = other ? D.cell(other.id, S.r, S.c) : null;
+    const liveNow = D.liveAt(r.id);
+    const end = (cols[S.c + 1] && cols[S.c + 1].label) || (D.meta.time_range && D.meta.time_range.end) || '';
+    const src = D.sourceById(r.src);
+
+    // 即時列：取不到就說取不到，不拿歷史值假裝是現在
+    const L = D.live;
+    const liveRows = rows.map((row) => ({ row, e: D.liveAt(row.id) })).filter((x) => x.e);
+    const peak = D.isPeakNow();
+    const live = L.state === 'ok' && liveRows.length
+      ? {
+          cls: L.stale ? 'is-stale' : '',
+          text: `現在 ${D.hhmm(L.updated_at)}：` + liveRows.map((x) => `${x.row.name} ${x.e.speed}`).join('、') + ' km/h',
+          note: L.stale ? '來源超過 15 分鐘沒更新，可能延遲' : peak ? '' : '現在不是平日晨峰，下面的矩陣是' + (D.meta.days || '平日') + '平均',
+        }
+      : { cls: 'is-error', text: L.state === 'loading' ? '正在取得即時路況…' : '暫時取不到即時資料', note: '下面的矩陣是歷史平均，不受影響' };
+
+    const aux = D.heatmap.aux;
+    const alertAt = aux && aux.alert_at;
+
+    return {
+      title: D.heatmap.title || D.meta.title,
+      subtitle: D.heatmap.subtitle || D.meta.subtitle,
+      hasSim: !!D.meta.sim || rows.some((x) => x.kind === 'sim'),
+      nCols: cols.length,
+      grid: '80px repeat(' + cols.length + ', minmax(0, 1fr))',
+      firstCol: cols[0] && cols[0].label,
+      lastCol: cols[cols.length - 1] && cols[cols.length - 1].label,
+      live,
+
+      kpis: D.kpis.map((k) => ({
+        title: k.title,
+        value: String(k.value) + (k.unit ? ' ' + k.unit : ''),
+        size: String(k.value).length > 4 ? 19 : 26,
+        note: k.note,
+      })),
+
+      // 每小時顯示一次時間，其餘留白；現在所在的欄位標出來
+      colHeads: cols.map((c, i) => ({
+        label: c.label.endsWith(':00') ? c.label : '',
+        cls: i === nowCol ? 'nowcol' : '',
+      })),
+
+      layers: layers.map((x, i) => ({
+        name: x.name, cls: i === S.layer ? 'on' : '', on: i === S.layer ? 'true' : 'false',
+        pick: () => this.setState({ layer: i }),
+      })),
+
+      legend: (layer.legend || []).map((_, i) => ({ level: i })),
+      legendLo: (layer.legend_ends || [])[0] || '',
+      legendHi: (layer.legend_ends || [])[1] || '',
+
+      rows: rows.map((row, ri) => ({
+        name: row.name,
+        kindText: kindText[row.kind] || row.kind,
+        kindFg: kindFg[row.kind] || '#6B4A3A',
+        cells: cols.map((t, ci) => {
+          const c = D.cell(layer.id, ri, ci);
+          const gap = !!c.gap;
+          const on = ri === S.r && ci === S.c;
+          return {
+            gap,
+            level: gap ? false : D.level(layer, c.v),
+            cls: (gap ? 'gap' : '') + (c.sim ? ' hatch' : '') + (on ? ' sel' : '') + (!gap && !on && ci === nowCol ? ' now' : ''),
+            on: on ? 'true' : 'false',
+            aria: row.name + ' ' + t.label + (gap ? ' 沒有資料' : ' ' + c.v + ' ' + layer.unit),
+            pick: () => { if (!gap) this.setState({ r: ri, c: ci }); },
+          };
+        }),
+      })),
+
+      d: {
+        where: r.name + ' ' + (r.sub || '') + '・' + (cols[S.c] ? cols[S.c].label : '') + '–' + end,
+        v: sel.gap ? '—' : String(sel.v),
+        unit: layer.unit,
+        label: sel.label || '',
+        labelText: D.labelText(sel.label),
+        level: sel.gap ? '這個地點沒有資料，我們留白，不補數字。' : (layer.level_text || [])[D.level(layer, sel.v)] || '',
+        // bad_at 與 days 都是選填：非時段題（例如陳情件數）沒有「塞」的門檻
+        days: sel.gap ? '' : (layer.bad_at != null && sel.days != null
+          ? (sel.bad_days > 0
+              ? `${sel.days} 天裡有 ${sel.bad_days} 天低於 ${layer.bad_at} ${layer.unit.replace('平均車速 ', '')}。`
+              : `${sel.days} 天都沒有低於 ${layer.bad_at} ${layer.unit.replace('平均車速 ', '')}。`)
+          : '')
+          + (sel.lo != null ? `每天在 ${sel.lo}–${sel.hi} 之間。` : ''),
+        hasLive: !!liveNow,
+        liveText: liveNow
+          ? `現在 ${liveNow.speed} km/h（${D.hhmm(D.live.updated_at)} 更新` + (liveNow.low_sample ? '，這一分鐘只有 ' + liveNow.samples + ' 輛車有車速，測不準' : '') + '）'
+          : '',
+        other: otherCell && !otherCell.gap ? `同一格的${other.name}：${otherCell.v} ${other.unit}` : '',
+        src: src ? `來源：${src.name}${src.period ? '，' + src.period : ''}` : '',
+      },
+
+      aux: aux ? {
+        show: true,
+        title: aux.title,
+        note: aux.subtitle || '',
+        alertText: alertAt ? alertAt + '% 警戒' : '',
+        lineY: alertAt ? Math.round(alertAt * 1.1) : 0,
+        labelY: alertAt ? Math.round(alertAt * 1.1) + 4 : 0,
+        bars: (aux.values || []).map((m, i) => ({
+          h: m.gap ? 0 : Math.round(m.v * 1.1),
+          bg: m.gap ? 'transparent' : (alertAt && m.v >= alertAt ? '#8A2E0B' : '#7FC4D3'),
+          cls: m.sim ? 'hatch' : '',
+          tip: (cols[i] ? cols[i].label : '') + ' ' + (m.gap ? '沒有資料' : m.v + aux.unit),
+        })),
+      } : { show: false },
+    };
+  }
+}
+</script>
+</body>
+</html>

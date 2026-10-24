@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF5EE">
+<title>Traffic Gem</title>
+<style>
+/* 字型全部離線：沒有任何外部請求（SECURITY.md：不把使用者 IP 送給第三方；離線也要能跑完 Demo）。
+   Grandstander（品牌字、拉丁字母）內嵌成 data URI；
+   中文不內嵌（CJK 字檔要數 MB），改用系統字，macOS／iOS 走蘋方、Windows 走微軟正黑體。 */
+@font-face{font-family:'Grandstander';font-style:normal;font-weight:800;font-display:swap;src:url(/*FONT*/) format('woff2')}
+:root{color-scheme:light;--tab-h:66px;--page:#F3E6DC;--screen:#FFF8F3}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#2A1D16;--screen:#FFF8F3}}
+:root[data-theme="dark"]{--page:#2A1D16;--screen:#FFF8F3}
+html,body{margin:0;background:var(--page)}
+body{-webkit-tap-highlight-color:transparent}
+#stage{width:100%;max-width:430px;margin:0 auto;background:var(--screen);min-height:var(--app-h,100vh);box-shadow:0 0 40px rgba(160,70,30,.12)}
+/* each design screen: full width, at least one phone screen tall */
+#stage .screen{width:100%;min-height:var(--app-h,100vh);overflow:clip;box-sizing:border-box;padding-top:env(safe-area-inset-top)}
+#stage .screen.has-tabs{padding-bottom:calc(var(--tab-h) + 20px + env(safe-area-inset-bottom))}
+#stage .screen:has(> .cta-bar){display:flex;flex-direction:column}
+#stage .cta-bar{margin-top:auto;padding:24px 40px 0}
+#stage .cta-bar.sticky{position:sticky;bottom:calc(var(--tab-h) + env(safe-area-inset-bottom));z-index:5;padding-bottom:14px;background:linear-gradient(180deg,rgba(255,248,243,0) 0,rgba(255,248,243,.92) 38%,#FFF8F3 100%)}
+#stage .screen.has-tabs:has(> .cta-bar.sticky){padding-bottom:calc(var(--tab-h) + 6px + env(safe-area-inset-bottom))}
+#stage .cta-bar > .cta{width:100%;box-sizing:border-box}
+/* fixed-size charts stay centered when the card is wider than they are */
+#stage div:has(> svg[width="330"]){width:330px;margin-inline:auto}
+#stage nav[aria-label="主要分頁"]{position:fixed!important;top:auto!important;bottom:0!important;left:50%!important;right:auto!important;width:100%;max-width:430px;height:auto!important;min-height:var(--tab-h);transform:translateX(-50%);z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+#toast{position:fixed;left:50%;bottom:96px;transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:.25s;z-index:30;padding:10px 18px;border-radius:999px;background:#3A2418;color:#fff;font:500 14px/1.4 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.06em;white-space:nowrap}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+/* 即時路況列：每個用到即時資料的畫面共用 */
+#stage .live-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;padding:9px 12px;border-radius:12px;background:#F2FAFC;border:1px solid #CBE7EE;font:500 12.5px/1.5 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;color:var(--live-fg)}
+#stage .live-bar.is-error,#stage .live-bar.is-stale{background:#FBF4EC;border-color:#EBD9C4;color:var(--warn-fg)}
+#stage .live-bar .dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+#stage .live-bar .note{color:var(--ink-soft);font-weight:400}
+</style>
+<style id="tokens">/*TOKENS*/</style>
+<style id="screen-style"></style>
+</head>
+<body>
+<main id="stage"></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+window.__SCREENS__ = /*SCREENS*/;
+window.__TOPICS__ = /*TOPICS*/;
+window.__DEFAULT_TOPIC__ = /*DEFAULT_TOPIC*/;
+</script>
+<script>/*DATA*/</script>
+<script>/*RUNTIME*/</script>
+</body>
+</html>

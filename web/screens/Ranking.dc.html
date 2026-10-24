@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>哪個入口最塞</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.seg{appearance:none;border:0;border-radius:14px;min-height:44px;background:#DEDCDA;color:#3F3935;font:500 15px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.04em;cursor:pointer;font-variant-numeric:tabular-nums;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.seg.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+.bar{height:22px;border-radius:2px 6px 6px 2px;transition:width .35s ease;box-shadow:inset 0 -2px 0 rgba(0,0,0,.07)}
+.bar.hatch{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 1.5px,transparent 1.5px 5px)}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 560px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 700px, #FFF8F3 880px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Heatmap.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>熱力圖
+    </a>
+    <span class="sim">含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">這個時段，哪個入口最塞？</h1>
+      <p style="margin: 0; font-size: 13.5px; color: #6B4A3A">平均車速，越慢排越前面</p>
+    </div>
+    <div role="group" aria-label="選時段" style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px">
+      <sc-for list="{{times}}" as="t" hint-placeholder-count="5">
+        <button type="button" class="seg {{t.cls}}" aria-pressed="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+    <section class="card" aria-label="入口車速排名" style="padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 12px">
+      <sc-for list="{{rank}}" as="r" hint-placeholder-count="6">
+        <div style="display: grid; grid-template-columns: 22px 84px 1fr; align-items: center; gap: 8px">
+          <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 18px; color: #8A3A18">{{r.n}}</span>
+          <span style="font-size: 14px; font-weight: 700; line-height: 1.25">{{r.name}}</span>
+          <span style="display: flex; align-items: center; gap: 8px; min-width: 0">
+            <span class="bar {{r.cls}}" style="width: {{r.w}}%; background-color: {{r.bg}}"></span>
+            <span style="font-size: 13px; font-weight: 700; white-space: nowrap; font-variant-numeric: tabular-nums">{{r.v}}</span>
+          </span>
+        </div>
+      </sc-for>
+      <sc-if value="{{hasGaps}}">
+      <div style="display: grid; grid-template-columns: 22px 84px 1fr; align-items: center; gap: 8px; padding-top: 10px; border-top: 2px dotted #F1DCCD; color: #6B4A3A">
+        <span></span><span style="font-size: 13px; line-height: 1.35">{{gapNames}}</span><span style="font-size: 13px">{{gapNote}}</span>
+      </div>
+      </sc-if>
+    </section>
+    <section class="card" aria-live="polite" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.06em">{{headline}}</h2>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.7; color: #5A3A2A">{{sub}}</p>
+    </section>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":880}}'>
+class Component extends DCLogic {
+  usesLive = true; // 多一個「現在」檔位，依即時車速排名
+  // 預設挑尖峰裡最塞的那個時段，而不是寫死索引
+  state = { t: null };
+
+  renderVals() {
+    const layer = D.layerOf('speed');
+    const cols = D.cols;
+    const bad = layer.bad_at;
+    const u = layer.unit.replace('平均車速 ', '');
+
+    // 只顯示後半段（車流開始變多之後）的時段，太多按鈕手機放不下
+    const showFrom = Math.max(0, cols.length - 4);
+    const slots = [{ id: 'now', label: '現在' }].concat(
+      cols.slice(showFrom).map((c, i) => ({ id: showFrom + i, label: c.label }))
+    );
+    const cur = this.state.t == null ? slots[1] || slots[0] : slots.find((s) => s.id === this.state.t) || slots[0];
+    const isNow = cur.id === 'now';
+
+    const live = D.live;
+    const entries = D.rows
+      .map((row) => {
+        if (isNow) {
+          const e = D.liveAt(row.id);
+          return e ? { row, v: e.speed, sim: false, lowSample: e.low_sample } : null;
+        }
+        const c = D.cell(layer.id, D.rowIndex(row.id), cur.id);
+        return c.gap ? null : { row, v: c.v, sim: !!c.sim };
+      })
+      .filter(Boolean)
+      // 低的壞（車速）就由小到大排；高的壞（流量、件數）就由大到小排
+      .sort((a, b) => (layer.direction === 'high_is_bad' ? b.v - a.v : a.v - b.v));
+
+    const gaps = D.rows.filter((row) => (isNow ? !D.liveAt(row.id) : D.cell(layer.id, D.rowIndex(row.id), cur.id).gap));
+    const max = Math.max(...entries.map((e) => e.v), 1);
+    // bad_at 是選填：非時段題沒有「塞」的門檻
+    const slow = bad != null ? entries.filter((e) => e.v < bad).length : null;
+
+    const headline = !entries.length
+      ? (isNow && live.state !== 'ok' ? '暫時取不到即時路況' : '這個時段沒有可以排名的入口')
+      : (isNow ? `現在 ${D.hhmm(live.updated_at)}` : cur.label) +
+        ` 最${layer.direction === 'low_is_bad' ? '塞' : '嚴重'}的是${entries[0].row.name}（${entries[0].v} ${layer.unit.replace('平均車速 ', '')}）`;
+
+    const sub = !entries.length
+      ? '沒有資料時我們留白，不補數字。'
+      : (slow == null ? ''
+          : slow > 0 ? `這個時段有 ${slow} 個地點低於 ${bad} ${u}。`
+          : `這個時段沒有地點低於 ${bad} ${u}。`) +
+        '換時段的效果，要看你常經過的那一個，不只看最嚴重的。' +
+        (isNow ? '' : `（${D.meta.days || ''}平均）`);
+
+    return {
+      times: slots.map((s) => ({
+        label: s.label,
+        cls: s.id === cur.id ? 'on' : '',
+        on: s.id === cur.id ? 'true' : 'false',
+        pick: () => this.setState({ t: s.id }),
+      })),
+      rank: entries.map((e, i) => ({
+        n: i + 1,
+        name: e.row.name + (e.sim ? '（模擬）' : ''),
+        v: e.v + ' ' + u + (e.lowSample ? '（車少）' : ''),
+        w: Math.max(6, Math.round((e.v / max) * 82)),
+        bg: `var(--ramp-${D.level(layer, e.v)})`,
+        cls: e.sim ? 'hatch' : '',
+      })),
+      hasGaps: gaps.length > 0,
+      gapNames: gaps.map((g) => g.name).join('、'),
+      gapNote: isNow ? '現在沒有即時讀數，無法排名' : '沒有偵測器，無法排名',
+      headline,
+      sub,
+    };
+  }
+}
+</script>
+</body>
+</html>

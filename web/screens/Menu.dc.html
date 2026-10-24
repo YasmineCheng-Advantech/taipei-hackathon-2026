@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>選單</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.item{display:flex;align-items:center;justify-content:space-between;min-height:50px;padding:0 6px;font-size:18px;font-weight:500;letter-spacing:.14em;color:#3A2418;text-decoration:none;border-bottom:1px solid #F3E6DC}
+.item:hover{color:#C8481F}
+.item.on{color:#C8481F}
+.pro{display:flex;align-items:center;justify-content:space-between;min-height:40px;padding:0 6px;font-size:15px;letter-spacing:.1em;color:#0B4F60;text-decoration:none}
+.pro:hover{color:#0B3A4A;text-decoration:underline}
+</style>
+</helmet>
+<div class="screen" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: linear-gradient(180deg, #F6D2B8 0px, #F2BE98 844px)">
+  <div style="margin-left: 28px; min-height: var(--app-h); box-sizing: border-box; background: #FFFFFF; border-radius: 32px 0 0 32px; box-shadow: -18px 0 40px rgba(160,70,30,.22); padding: 18px 22px 24px 28px; display: flex; flex-direction: column; gap: 6px">
+    <div style="display: flex; align-items: center; justify-content: space-between">
+      <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #D2532A">Traffic Gem</span>
+      <a href="#back" aria-label="關閉選單" style="width: 48px; height: 48px; margin-right: -8px; display: grid; place-items: center; color: #D2532A">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20"></path></svg>
+      </a>
+    </div>
+    <p style="margin: 0 0 10px; font-size: 13px; letter-spacing: 0.12em; color: #8A3A18">{{subtitle}}</p>
+    <nav aria-label="民眾版" style="display: flex; flex-direction: column">
+      <a class="item on" href="Today.dc.html" aria-current="page">今日推薦</a>
+      <a class="item" href="City.dc.html">數據依據</a>
+      <a class="item" href="Settings.dc.html">我的設定與資料</a>
+    </nav>
+    <div style="margin-top: 18px; padding: 14px 16px; border-radius: 22px; background: #EAF8FB; display: flex; flex-direction: column">
+      <p style="margin: 0 0 4px 6px; font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: #0B4F60">給市府與企業</p>
+      <a class="pro" href="Heatmap.dc.html">熱力圖<span aria-hidden="true">→</span></a>
+      <a class="pro" href="Scenario.dc.html">錯峰情境<span aria-hidden="true">→</span></a>
+      <a class="pro" href="Sensitivity.dc.html">哪個假設最影響結論<span aria-hidden="true">→</span></a>
+      <a class="pro" href="EntryMap.dc.html">入口地圖<span aria-hidden="true">→</span></a>
+      <a class="pro" href="Reliability.dc.html">4 天裡有幾天會塞<span aria-hidden="true">→</span></a>
+      <a class="pro" href="Ranking.dc.html">哪個入口最塞<span aria-hidden="true">→</span></a>
+      <a class="pro" href="CumCurve.dc.html">排隊是怎麼來的<span aria-hidden="true">→</span></a>
+    </div>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 4px">
+      <a href="Sensitivity.dc.html" style="min-height: 44px; display: flex; align-items: center; font-size: 15px; letter-spacing: 0.08em; color: #8A3A18">我們可能錯在哪</a>
+      <p style="margin: 0; font-size: 12px; line-height: 1.6; color: #6B4A3A">資料來源：{{sources}}。部分數字為模擬資料，畫面上會標示。</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      subtitle: D.meta.title + '・' + (D.meta.subtitle || ''),
+      sources: (D.meta.sources || []).map((x) => x.name).join('、'),
+    };
+  }
+}
+</script>
+</body>
+</html>

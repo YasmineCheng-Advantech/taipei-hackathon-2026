@@ -97,7 +97,7 @@ Oct 24, 2026 · 給所有在這個 repo 工作的人與 AI（兩個 Claude 帳�
 | 項目 | 狀態 |
 | --- | --- |
 | **TDX 金鑰已失效** | 10/24 08:07 起，token 端點回 `unauthorized_client`／`Invalid client credentials`。**不是流量限制**（那會是 429／403）。先前成功 744 次，所以是在 TDX 那端被撤銷或重新產生。要到 <https://tdx.transportdata.tw/> 重新產生、更新 `.env`、**重啟 `collect_vd.py`**。<br>**影響範圍小**：臺北市 VDLive 不需金鑰，5 個入口的真實資料照常；國 1 內湖交流道本來就是 `assumed`／`sim: true`；一個月歷史資料已抓完存在 `data/raw/tdx_vd_hist/` |
-| `web/api/live.js` 的 query string 繞過快取 | **待修**，見[交代單](docs/handoff-security.md) |
-| `web/src/shell.html` 外連 Google Fonts（會把使用者 IP 送給 Google，且斷網會掉字型） | **待修**，見[交代單](docs/handoff-security.md) |
+| ~~`web/api/live.js` 的 query string 繞過快取~~ | **10/24 已修**：加了模組層節流（TTL 5 分鐘）＋ inflight 共用，忽略 query string；限定 `GET`／`HEAD`，其餘回 405；錯誤訊息不再把上游原始錯誤回給前端 |
+| ~~`web/src/shell.html` 外連 Google Fonts~~ | **10/24 已修**：Grandstander 800 內嵌成 data URI（22 KB），中文改系統字；18 個畫面的 `<link>` 也一併移除。`dist/index.html` 現在**零外部請求** |
 | repo 仍為 private | 交件前才轉 public，照第六節清單 |
 | `~/Downloads/traffic-gem` 舊副本 | 已停用、**不要再改**。正本是本 repo 的 [`web/`](web/) |

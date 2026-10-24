@@ -62,6 +62,10 @@ Oct 20, 2026 · 交件 README 的「資料來源」「AI 工具與開源套件�
 | Python 3 標準函式庫 | 資料收集與處理腳本 | PSF License |
 | [jsonschema](https://github.com/python-jsonschema/jsonschema) | 驗證資料契約 | MIT |
 | GitHub Actions（`actions/checkout`、`actions/setup-python`、`actions/upload-artifact`） | 平日早上自動收集 VD | MIT |
-| [待網站工程師補] | 網站框架、圖表、部署平台、認領後端 | |
+| Node.js 18+ | 網站打包（`web/build.mjs`，零相依套件；`npm install` 不裝任何東西） | MIT |
+| [Grandstander](https://fonts.google.com/specimen/Grandstander) 800 | 品牌字（拉丁字母）；woff2 內嵌進網站，不外連 Google Fonts | SIL Open Font License 1.1 |
+| 系統中文字型（蘋方／微軟正黑體） | 內文中文；不內嵌、不外連，用使用者裝置既有的字型 | 作業系統內建 |
+| Vercel | 靜態網站託管與 Serverless Function（`web/api/live.js` 即時 VD 代理） | 商業服務 |
+| [待補] 認領後端 | 時段認領（尚未實作，人數一律顯示「尚無資料」） | |
 
 網站若有即時呼叫 LLM 的功能，要補上模型服務的名稱、用途與流量上限。
