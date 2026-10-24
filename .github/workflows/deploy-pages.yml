@@ -1,0 +1,66 @@
+# 把 web/ 建置成單一檔案並發佈到 GitHub Pages。
+#
+# 為什麼要這個：交件需要一個公開網址。Vercel 要互動登入，Pages 不用，
+# 而且推上 master 就會自動重建，網址不變——改 UI 不必重做部署。
+#
+# 限制：Pages 是純靜態，跑不了 web/api/live.js（Serverless Function）。
+# 「現在路況」那一列會顯示「暫時取不到即時資料」，其他畫面照常
+# （前端 src/data.js 已處理失敗情況，不會整頁壞掉）。
+# 要有即時層就接 Vercel，設定在 web/vercel.json。
+name: 發佈網站到 GitHub Pages
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'web/**'
+      - 'data/processed/t4-morning.json'
+      - 'data/mock/*.json'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同時只跑一個部署；排隊中的舊的直接取消，但不中斷進行中的
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # 零相依套件，不需要 npm install
+      - name: 建置單一檔案
+        run: node build.mjs
+        working-directory: web
+
+      # 18 個畫面的契約與互動檢查；有契約錯誤就讓部署失敗，不要把壞掉的數字推上線
+      - name: 自動檢查
+        run: node src/screens.test.mjs
+        working-directory: web
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
