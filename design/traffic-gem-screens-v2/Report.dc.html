@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>回報今天的狀況</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.chip{appearance:none;border:0;border-radius:14px;min-height:46px;background:#DEDCDA;color:#3F3935;font:500 15px/1.3 'Noto Sans TC',sans-serif;letter-spacing:.06em;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.chip.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 21px/1 'Noto Sans TC',sans-serif;letter-spacing:.14em;text-decoration:none;border:0;cursor:pointer;width:100%}
+.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1)}}
+.pop{animation:pop .5s ease-out both}
+@media (prefers-reduced-motion: reduce){.pop{animation:none}}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+.tab.on{color:#C8481F;font-weight:500}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 960px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(60% 160px at 50% 800px, rgba(240,130,60,.36), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF7F1 120px, #FBE6D6 380px, #F7D3B8 700px, #FFF8F3 960px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Today.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>今日
+    </a>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
+      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    </a>
+  </div>
+
+  <sc-if value="{{notSent}}" hint-placeholder-val="{{ true }}">
+    <div style="padding: 4px 16px 0; display: flex; flex-direction: column; gap: 10px">
+      <div style="margin: 0 0 4px 14px; display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.1em; color: #5A2410">今天走得怎麼樣？</h1>
+        <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #6B4A3A">今天建議你 07:30 經過堤頂大道。三題，10 秒。</p>
+      </div>
+      <section style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 16px; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0 0 0 4px; font-size: 16px; font-weight: 700; letter-spacing: 0.08em">1. 今天大約幾點經過？</h2>
+        <div role="group" aria-label="今天經過的時間" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <sc-for list="{{times}}" as="t" hint-placeholder-count="6">
+            <button type="button" class="chip {{t.cls}}" aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="font-variant-numeric: tabular-nums">{{t.label}}</button>
+          </sc-for>
+        </div>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 16px; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0 0 0 4px; font-size: 16px; font-weight: 700; letter-spacing: 0.08em">2. 路上感覺</h2>
+        <div role="group" aria-label="路上感覺" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+          <sc-for list="{{feels}}" as="f" hint-placeholder-count="3">
+            <button type="button" class="chip {{f.cls}}" aria-pressed="{{f.on}}" onClick="{{f.pick}}">{{f.label}}</button>
+          </sc-for>
+        </div>
+      </section>
+      <section style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 16px; display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0 0 0 4px; font-size: 16px; font-weight: 700; letter-spacing: 0.08em">3. 沒照建議走的話，為什麼？</h2>
+        <div role="group" aria-label="沒照建議的原因" style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{whys}}" as="w" hint-placeholder-count="4">
+            <button type="button" class="chip {{w.cls}}" aria-pressed="{{w.on}}" onClick="{{w.pick}}" style="text-align: left; padding: 8px 16px">{{w.label}}</button>
+          </sc-for>
+        </div>
+      </section>
+      <div style="padding: 6px 24px 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+        <button type="button" class="cta" onClick="{{send}}">匿名送出</button>
+        <p style="margin: 0; font-size: 12.5px; color: #6B4A3A">只送出日期、入口與這三題的答案</p>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{sent}}" hint-placeholder-val="{{ false }}">
+    <div style="padding: 40px 16px 0; display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center">
+      <div class="pop" aria-hidden="true" style="width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(180deg, #6BEBFA 0%, #2AD4F0 45%, #14B8E2 100%); box-shadow: inset 0 8px 0 rgba(255,255,255,.32), 0 6px 0 #1C8DB3, 0 16px 26px rgba(20,140,180,.25); color: #FFFFFF">
+        <svg width="46" height="46" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg>
+      </div>
+      <h1 style="margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.14em; color: #5A2410">收到了，謝謝！</h1>
+      <section style="align-self: stretch; background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; text-align: left">
+        <p style="margin: 0; font-size: 14px; color: #6B4A3A">你的回報會用在</p>
+        <ul style="margin: 0; padding-left: 20px; font-size: 14.5px; line-height: 1.8">
+          <li>檢查建議準不準，校正明天的建議</li>
+          <li>算出「照建議走的人實際少塞幾分」</li>
+          <li>統計「為什麼沒辦法錯峰」，帶去和市府、企業協商</li>
+        </ul>
+      </section>
+      <section style="align-self: stretch; background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 16px 20px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+        <span style="font-size: 14px; color: #6B4A3A">本週匿名回報</span>
+        <b style="font-size: 20px; color: #5E5650">尚無資料</b>
+      </section>
+      <a class="cta" href="City.dc.html" style="margin-top: 20px">看這些數據怎麼用</a>
+      <button type="button" onClick="{{reset}}" style="appearance: none; border: 0; background: transparent; height: 44px; font: 500 15px/1 'Noto Sans TC', sans-serif; letter-spacing: 0.12em; color: #8A3A18; cursor: pointer">修改剛才的回報</button>
+    </div>
+  </sc-if>
+
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab on" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  state = { t: 2, f: 0, w: 0, sent: false };
+  renderVals() {
+    const S = this.state;
+    const pick = (key, list) => list.map((label, i) => ({
+      label, cls: S[key] === i ? 'on' : '', on: S[key] === i ? 'true' : 'false',
+      pick: () => this.setState({ [key]: i })
+    }));
+    return {
+      times: pick('t', ['07:00', '07:15', '07:30', '07:45', '08:00', '更晚']),
+      feels: pick('f', ['比平常順', '差不多', '比平常塞']),
+      whys: pick('w', ['有照建議走', '要接送小孩', '公司或會議時間不能動', '其他原因']),
+      notSent: !S.sent, sent: S.sent,
+      send: () => this.setState({ sent: true }),
+      reset: () => this.setState({ sent: false })
+    };
+  }
+}
+</script>
+</body>
+</html>

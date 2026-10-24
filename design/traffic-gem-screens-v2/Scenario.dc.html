@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>錯峰情境</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.seg{appearance:none;border:0;border-radius:14px;min-height:44px;background:#DEDCDA;color:#3F3935;font:500 15px/1.3 'Noto Sans TC',sans-serif;letter-spacing:.08em;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.seg.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:12px;border-radius:6px;background:linear-gradient(180deg,#F2E6DE,#E8D7CB)}
+input[type=range]::-moz-range-track{height:12px;border-radius:6px;background:#EADBD0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-11px;border-radius:50%;background:linear-gradient(180deg,#6BEBFA,#14B8E2);box-shadow:inset 0 4px 0 rgba(255,255,255,.35),0 3px 0 #1C8DB3,0 6px 12px rgba(20,140,180,.3);border:0}
+input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#2AD4F0;box-shadow:0 3px 0 #1C8DB3;border:0}
+input[type=range]:focus-visible{outline:3px solid #0B3A4A;outline-offset:2px;border-radius:8px}
+.col{appearance:none;border:0;padding:0;background:transparent;position:relative;height:150px;cursor:pointer;border-radius:6px}
+.col.peak{background:rgba(201,58,34,.07)}
+.col.sel{box-shadow:inset 0 0 0 2px #3A2418}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 1180px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 240px at 50% 640px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 500px, #F8D6BD 860px, #FFF8F3 1180px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Menu.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>選單
+    </a>
+    <span class="sim">程式計算・含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; line-height: 1.5; letter-spacing: 0.08em; color: #5A2410">要多少人換時段，才不會塞？</h1>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #6B4A3A">堤頂大道北向・把 08:30–09:15 的一部分車流移到別的時段</p>
+    </div>
+
+    <section class="card" style="padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px">
+      <div role="group" aria-label="移到哪個時段" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{targets}}" as="t" hint-placeholder-count="2">
+          <button type="button" class="seg {{t.cls}}" aria-pressed="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <label for="shift" style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px">
+        <span style="font-size: 15px; font-weight: 700; letter-spacing: 0.08em">移出尖峰的比例</span>
+        <span style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84">{{shift}}%</span>
+      </label>
+      <div style="position: relative">
+        <input id="shift" type="range" min="0" max="50" step="5" value="{{shift}}" onChange="{{onSlide}}" aria-valuetext="{{shiftText}}">
+        <span aria-hidden="true" style="position: absolute; left: 13%; top: 44px; transform: translateX(-50%); width: 2px; height: 10px; background: #3A2418"></span>
+      </div>
+      <div style="position: relative; height: 34px; font-size: 11.5px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <span style="position: absolute; left: 0; top: 0">0%</span>
+        <span style="position: absolute; left: 13%; top: 8px; transform: translateX(-30%); white-space: nowrap; color: #3A2418">檀香山 1988 實際參與 6–7%</span>
+        <span style="position: absolute; right: 0; top: 0">50%</span>
+      </div>
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #6B4A3A">最長排隊</span>
+        <b style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{q}}</b>
+        <span style="font-size: 11.5px; color: #6B4A3A">{{qRange}}</span>
+      </div>
+      <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #6B4A3A">排隊消散</span>
+        <b style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{clear}}</b>
+        <span style="font-size: 11.5px; color: #6B4A3A">原本 09:45</span>
+      </div>
+      <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #6B4A3A">總延誤</span>
+        <b style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15; color: {{delayColor}}">{{delay}}</b>
+        <span style="font-size: 11.5px; color: #6B4A3A">和現在比</span>
+      </div>
+    </div>
+
+    <sc-if value="{{hasPeak}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 20px; background: #FCE4D8; color: #6E2409">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 3l10 18H2z"></path><path d="M12 10v5"></path><path d="M12 18h.01"></path></svg>
+        <p style="margin: 0; font-size: 14px; line-height: 1.65"><b>移太多了：</b>{{peakText}} 變成新的尖峰，在那裡開始排隊。</p>
+      </div>
+    </sc-if>
+
+    <section class="card" aria-label="每 15 分鐘的排隊車輛" style="padding: 16px 14px 14px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 4px">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.08em">每 15 分鐘還在排隊的車</h2>
+      </div>
+      <div style="display: flex; gap: 14px; padding: 0 4px; font-size: 12px; color: #6B4A3A">
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; box-shadow: inset 0 0 0 2px #B8A79B"></i>現在</span>
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; background: #E2582A"></i>移出 {{shift}}% 後</span>
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; background: rgba(201,58,34,.12)"></i>原本尖峰</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; align-items: end">
+        <sc-for list="{{cols}}" as="c" hint-placeholder-count="14">
+          <button type="button" class="col {{c.cls}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" onClick="{{c.pick}}">
+            <span aria-hidden="true" style="position: absolute; left: 1px; right: 1px; bottom: 0; height: {{c.bh}}px; border-radius: 4px 4px 2px 2px; box-shadow: inset 0 0 0 2px #B8A79B"></span>
+            <span aria-hidden="true" style="position: absolute; left: 4px; right: 4px; bottom: 0; height: {{c.h}}px; border-radius: 4px 4px 2px 2px; background: #E2582A"></span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 2px; font-size: 10.5px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <span style="grid-column: span 4">07:00</span><span style="grid-column: span 4">08:00</span><span style="grid-column: span 4">09:00</span><span style="grid-column: span 2">10:00</span>
+      </div>
+      <p aria-live="polite" style="margin: 2px 4px 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 14px; line-height: 1.6">{{readout}}</p>
+    </section>
+    <a href="Sensitivity.dc.html" style="margin: 0 14px; min-height: 44px; display: flex; align-items: center; font-size: 14px; letter-spacing: 0.06em">這些數字有多可靠？看哪個假設最影響結論 →</a>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+  state = { target: 0, shift: 10, col: 8 };
+  renderVals() {
+    const S = this.state;
+    const R = {
+      early: [[0,616,316,958,'09:45',0,null,[0,0,0,0,0,0,168,448,616,537,231,0,0,0]],[5,435,135,756,'09:45',-41,null,[0,0,0,0,0,0,110,326,435,310,4,0,0,0]],[10,254,52,575,'09:30',-70,null,[0,0,0,0,0,0,51,203,254,83,0,0,0,0]],[15,88,0,395,'09:15',-92,null,[0,0,0,0,0,0,0,88,81,0,0,0,0,0]],[20,24,0,214,'09:00',-98,'07:45',[0,0,0,20,0,0,0,24,0,0,0,0,0,0]],[25,216,33,416,'08:00',-85,'07:30',[0,0,83,216,0,0,0,0,0,0,0,0,0,0]],[30,443,243,643,'08:30',-58,'07:30',[0,0,197,443,137,58,0,0,0,0,0,0,0,0]],[35,670,470,870,'08:45',-16,'07:30',[0,0,310,670,364,285,44,0,0,0,0,0,0,0]],[40,897,697,1097,'08:45',32,'07:30',[0,0,423,897,591,512,213,0,0,0,0,0,0,0]],[45,1124,924,1324,'09:00',84,'07:30',[0,0,537,1124,818,739,381,85,0,0,0,0,0,0]],[50,1350,1150,1550,'09:00',137,'07:30',[0,0,650,1350,1044,966,550,190,0,0,0,0,0,0]]],
+      late: [[0,616,316,958,'09:45',0,null,[0,0,0,0,0,0,168,448,616,537,231,0,0,0]],[5,435,135,756,'09:45',-35,null,[0,0,0,0,0,0,110,326,435,310,118,0,0,0]],[10,254,52,575,'09:45',-70,null,[0,0,0,0,0,0,51,203,254,83,4,0,0,0]],[15,88,0,418,'09:45',-90,'09:30',[0,0,0,0,0,0,0,88,81,0,34,0,0,0]],[20,167,48,418,'10:00',-83,'09:30',[0,0,0,0,0,0,0,24,0,0,148,167,0,0]],[25,394,194,594,'10:00',-67,'09:30',[0,0,0,0,0,0,0,0,0,0,261,394,0,0]],[30,621,421,821,'10:15',-43,'09:30',[0,0,0,0,0,0,0,0,0,0,375,621,137,0]],[35,848,648,1048,'10:15',-15,'09:30',[0,0,0,0,0,0,0,0,0,0,488,848,364,0]],[40,1075,875,1275,'10:30',18,'09:30',[0,0,0,0,0,0,0,0,0,0,601,1075,591,94]],[45,1302,1102,1502,'10:30',58,'09:30',[0,0,0,0,0,0,0,0,0,0,715,1302,818,321]],[50,1528,1328,1728,'10:30',97,'09:30',[0,0,0,0,0,0,0,0,0,0,828,1528,1044,548]]]
+    };
+    const T = [{ id: 'early', label: '提早到 07:30–08:00' }, { id: 'late', label: '延後到 09:30–10:00' }];
+    const times = ['07:00','07:15','07:30','07:45','08:00','08:15','08:30','08:45','09:00','09:15','09:30','09:45','10:00','10:15'];
+    const base = R.early[0][7];
+    const r = R[T[S.target].id][S.shift / 5];
+    const [shift, q, lo, hi, clear, delay, peak, queue] = r;
+    const scale = 150 / 1750;
+    const c = S.col;
+    const fmt = (n) => n.toLocaleString('en-US');
+    return {
+      targets: T.map((t, i) => ({ label: t.label, cls: i === S.target ? 'on' : '', on: i === S.target ? 'true' : 'false', pick: () => this.setState({ target: i }) })),
+      shift,
+      shiftText: '移出 ' + shift + '%',
+      onSlide: (e) => this.setState({ shift: Number(e.target.value) }),
+      q: fmt(q) + ' 輛', qRange: '區間 ' + fmt(lo) + '–' + fmt(hi),
+      clear,
+      delay: (delay > 0 ? '+' : delay < 0 ? '−' : '') + Math.abs(delay) + '%',
+      delayColor: delay < 0 ? '#0E6F84' : delay > 0 ? '#A12A0E' : '#3A2418',
+      hasPeak: !!peak,
+      peakText: peak || '',
+      cols: times.map((t, i) => ({
+        h: Math.round(queue[i] * scale), bh: Math.round(base[i] * scale),
+        cls: (i >= 6 && i <= 9 ? 'peak' : '') + (i === c ? ' sel' : ''),
+        on: i === c ? 'true' : 'false',
+        aria: t + ' 排隊 ' + queue[i] + ' 輛，現在 ' + base[i] + ' 輛',
+        pick: () => this.setState({ col: i })
+      })),
+      readout: times[c] + '：還在排隊 ' + fmt(queue[c]) + ' 輛（現在 ' + fmt(base[c]) + ' 輛）'
+    };
+  }
+}
+</script>
+</body>
+</html>
