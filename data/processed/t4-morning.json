@@ -17,7 +17,7 @@
         "name": "臺北市交工處 VD 即時資料（VDLive.xml）",
         "kind": "real",
         "url": "https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml",
-        "period": "2026-10-20～2026-10-23 平日 07:00–10:30，共 4 天"
+        "period": "2026-09-23～2026-10-23 平日 07:00–10:30，共 23 天"
       },
       {
         "id": "vd-static",
@@ -53,7 +53,7 @@
   "heatmap": {
     "title": "早上八點半，車都卡在哪裡？",
     "subtitle": "平日 07:00–09:30 · 每 15 分鐘 · 流入內湖",
-    "days_label": "4 個平日（10/20、10/21、10/22、10/23）；標「真實觀測」的格子來自臺北市 VD，其餘為模擬",
+    "days_label": "23 個平日（09/23、09/24、09/25、09/28、09/29、09/30、10/01、10/02、10/05、10/06、10/07、10/08、10/09、10/12、10/13、10/14、10/15、10/16、10/19、10/20、10/21、10/22、10/23）；標「真實觀測」的格子來自臺北市 VD，其餘為模擬",
     "rows": [
       {
         "id": "neihu-rd-1",
@@ -245,20 +245,20 @@
         "cells": [
           [
             {
-              "v": 38,
+              "v": 40,
               "lo": 36,
-              "hi": 42,
-              "days": 3,
+              "hi": 44,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 39,
-              "lo": 35,
-              "hi": 41,
-              "days": 4,
+              "v": 40,
+              "lo": 39,
+              "hi": 42,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -266,9 +266,9 @@
             },
             {
               "v": 38,
-              "lo": 37,
-              "hi": 40,
-              "days": 4,
+              "lo": 34,
+              "hi": 43,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -276,19 +276,19 @@
             },
             {
               "v": 36,
-              "lo": 31,
-              "hi": 41,
-              "days": 4,
+              "lo": 32,
+              "hi": 42,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 35,
-              "lo": 33,
-              "hi": 39,
-              "days": 4,
+              "v": 34,
+              "lo": 30,
+              "hi": 44,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -297,48 +297,48 @@
             {
               "v": 33,
               "lo": 29,
-              "hi": 39,
-              "days": 4,
+              "hi": 42,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 34,
-              "lo": 28,
+              "v": 32,
+              "lo": 26,
               "hi": 44,
-              "days": 4,
+              "days": 21,
               "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 32,
+              "lo": 22,
+              "hi": 45,
+              "days": 21,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 32,
+              "lo": 20,
+              "hi": 45,
+              "days": 21,
+              "bad_days": 1,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
               "v": 35,
-              "lo": 29,
-              "hi": 45,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 37,
-              "lo": 33,
-              "hi": 45,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 36,
-              "lo": 30,
+              "lo": 22,
               "hi": 43,
-              "days": 4,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -347,80 +347,10 @@
           ],
           [
             {
-              "v": 47,
-              "lo": 44,
-              "hi": 49,
-              "days": 3,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 42,
-              "lo": 38,
-              "hi": 48,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 39,
-              "lo": 30,
-              "hi": 48,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 37,
-              "lo": 29,
-              "hi": 54,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 36,
-              "lo": 29,
-              "hi": 48,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 38,
-              "lo": 26,
-              "hi": 51,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 35,
-              "lo": 23,
-              "hi": 58,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 40,
-              "lo": 31,
-              "hi": 46,
-              "days": 4,
+              "v": 49,
+              "lo": 40,
+              "hi": 57,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -428,9 +358,19 @@
             },
             {
               "v": 43,
-              "lo": 30,
-              "hi": 62,
-              "days": 4,
+              "lo": 37,
+              "hi": 55,
+              "days": 21,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 42,
+              "lo": 36,
+              "hi": 58,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -438,9 +378,69 @@
             },
             {
               "v": 36,
-              "lo": 24,
+              "lo": 29,
+              "hi": 55,
+              "days": 21,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 35,
+              "lo": 23,
+              "hi": 56,
+              "days": 21,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 39,
+              "lo": 22,
+              "hi": 57,
+              "days": 22,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 40,
+              "lo": 27,
+              "hi": 58,
+              "days": 22,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 41,
+              "lo": 30,
+              "hi": 54,
+              "days": 22,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 43,
+              "lo": 28,
+              "hi": 62,
+              "days": 22,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 41,
+              "lo": 32,
               "hi": 53,
-              "days": 4,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -449,40 +449,40 @@
           ],
           [
             {
-              "v": 24,
-              "lo": 16,
-              "hi": 29,
-              "days": 3,
-              "bad_days": 1,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 26,
-              "lo": 18,
-              "hi": 31,
-              "days": 4,
-              "bad_days": 1,
+              "v": 27,
+              "lo": 13,
+              "hi": 34,
+              "days": 22,
+              "bad_days": 3,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
               "v": 30,
+              "lo": 18,
+              "hi": 36,
+              "days": 21,
+              "bad_days": 1,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 31,
               "lo": 23,
-              "hi": 41,
-              "days": 4,
+              "hi": 36,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 25,
+              "v": 29,
               "lo": 16,
-              "hi": 32,
-              "days": 4,
+              "hi": 34,
+              "days": 21,
               "bad_days": 1,
               "label": "observed",
               "sim": false,
@@ -491,58 +491,58 @@
             {
               "v": 28,
               "lo": 14,
-              "hi": 39,
-              "days": 4,
+              "hi": 32,
+              "days": 22,
+              "bad_days": 2,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 27,
+              "lo": 17,
+              "hi": 30,
+              "days": 22,
               "bad_days": 1,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 25,
-              "lo": 21,
-              "hi": 31,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 24,
+              "v": 27,
               "lo": 20,
-              "hi": 28,
-              "days": 4,
+              "hi": 32,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 26,
-              "lo": 24,
-              "hi": 29,
-              "days": 4,
+              "v": 27,
+              "lo": 21,
+              "hi": 30,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 28,
-              "lo": 24,
-              "hi": 33,
-              "days": 4,
+              "v": 30,
+              "lo": 20,
+              "hi": 32,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 32,
-              "lo": 29,
-              "hi": 37,
-              "days": 4,
+              "v": 30,
+              "lo": 22,
+              "hi": 35,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -593,20 +593,20 @@
           ],
           [
             {
-              "v": 51,
-              "lo": 47,
+              "v": 47,
+              "lo": 34,
               "hi": 58,
-              "days": 3,
+              "days": 16,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 48,
+              "v": 47,
               "lo": 40,
-              "hi": 52,
-              "days": 4,
+              "hi": 49,
+              "days": 15,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -616,27 +616,37 @@
               "v": 48,
               "lo": 46,
               "hi": 51,
-              "days": 3,
+              "days": 15,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 50,
-              "lo": 46,
+              "v": 47,
+              "lo": 45,
               "hi": 52,
-              "days": 3,
+              "days": 15,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 48,
-              "lo": 47,
+              "v": 47,
+              "lo": 45,
+              "hi": 49,
+              "days": 15,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 46,
+              "lo": 43,
               "hi": 48,
-              "days": 3,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -646,47 +656,37 @@
               "v": 46,
               "lo": 45,
               "hi": 48,
-              "days": 4,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 47,
-              "lo": 45,
+              "v": 46,
+              "lo": 42,
               "hi": 48,
-              "days": 4,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 48,
-              "lo": 46,
-              "hi": 49,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 47,
-              "lo": 45,
+              "v": 46,
+              "lo": 36,
               "hi": 48,
-              "days": 4,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 49,
-              "lo": 46,
+              "v": 45,
+              "lo": 29,
               "hi": 51,
-              "days": 4,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -695,10 +695,20 @@
           ],
           [
             {
-              "v": 71,
-              "lo": 68,
-              "hi": 73,
-              "days": 3,
+              "v": 73,
+              "lo": 69,
+              "hi": 76,
+              "days": 22,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 70,
+              "lo": 63,
+              "hi": 76,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -706,29 +716,29 @@
             },
             {
               "v": 67,
-              "lo": 64,
-              "hi": 70,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 66,
-              "lo": 59,
+              "lo": 53,
               "hi": 81,
-              "days": 4,
+              "days": 21,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 58,
-              "lo": 50,
-              "hi": 69,
-              "days": 4,
+              "v": 65,
+              "lo": 55,
+              "hi": 76,
+              "days": 21,
+              "bad_days": 0,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 56,
+              "lo": 38,
+              "hi": 80,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
@@ -736,60 +746,50 @@
             },
             {
               "v": 53,
-              "lo": 26,
-              "hi": 80,
-              "days": 4,
+              "lo": 22,
+              "hi": 76,
+              "days": 22,
               "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 58,
-              "lo": 49,
-              "hi": 73,
-              "days": 4,
-              "bad_days": 0,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 48,
-              "lo": 18,
-              "hi": 71,
-              "days": 4,
+              "v": 52,
+              "lo": 20,
+              "hi": 74,
+              "days": 22,
               "bad_days": 1,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 50,
-              "lo": 18,
-              "hi": 78,
-              "days": 4,
-              "bad_days": 1,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 53,
-              "lo": 23,
-              "hi": 80,
-              "days": 4,
-              "bad_days": 0,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
               "v": 54,
-              "lo": 28,
-              "hi": 63,
-              "days": 4,
-              "bad_days": 0,
+              "lo": 18,
+              "hi": 78,
+              "days": 22,
+              "bad_days": 1,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 56,
+              "lo": 19,
+              "hi": 80,
+              "days": 22,
+              "bad_days": 1,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 63,
+              "lo": 19,
+              "hi": 74,
+              "days": 22,
+              "bad_days": 1,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
@@ -966,183 +966,91 @@
         "cells": [
           [
             {
-              "v": 79,
-              "lo": 24,
-              "hi": 111,
-              "days": 3,
+              "v": 372,
+              "lo": 120,
+              "hi": 465,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 97,
-              "lo": 15,
-              "hi": 143,
-              "days": 4,
+              "v": 465,
+              "lo": 75,
+              "hi": 574,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 132,
-              "lo": 24,
-              "hi": 184,
-              "days": 4,
+              "v": 632,
+              "lo": 120,
+              "hi": 794,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 110,
-              "lo": 35,
-              "hi": 148,
-              "days": 4,
+              "v": 636,
+              "lo": 175,
+              "hi": 804,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 166,
-              "lo": 26,
-              "hi": 222,
-              "days": 4,
+              "v": 717,
+              "lo": 130,
+              "hi": 912,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 133,
-              "lo": 25,
-              "hi": 177,
-              "days": 4,
+              "v": 683,
+              "lo": 125,
+              "hi": 850,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 154,
-              "lo": 23,
-              "hi": 217,
-              "days": 4,
+              "v": 687,
+              "lo": 115,
+              "hi": 872,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 138,
-              "lo": 27,
-              "hi": 181,
-              "days": 4,
+              "v": 666,
+              "lo": 135,
+              "hi": 862,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 149,
-              "lo": 29,
-              "hi": 202,
-              "days": 4,
+              "v": 682,
+              "lo": 145,
+              "hi": 908,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 137,
-              "lo": 28,
-              "hi": 214,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            }
-          ],
-          [
-            {
-              "v": 82,
-              "lo": 19,
-              "hi": 120,
-              "days": 3,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 105,
-              "lo": 33,
-              "hi": 162,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 70,
-              "lo": 31,
-              "hi": 94,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 118,
-              "lo": 26,
-              "hi": 170,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 130,
-              "lo": 14,
-              "hi": 176,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 90,
-              "lo": 28,
-              "hi": 123,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 83,
-              "lo": 40,
-              "hi": 124,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 98,
-              "lo": 18,
-              "hi": 150,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 98,
-              "lo": 22,
-              "hi": 127,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 88,
-              "lo": 29,
-              "hi": 126,
-              "days": 4,
+              "v": 631,
+              "lo": 140,
+              "hi": 778,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
@@ -1150,91 +1058,183 @@
           ],
           [
             {
-              "v": 91,
-              "lo": 18,
-              "hi": 175,
-              "days": 3,
+              "v": 349,
+              "lo": 95,
+              "hi": 445,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 94,
-              "lo": 24,
-              "hi": 140,
-              "days": 4,
+              "v": 506,
+              "lo": 128,
+              "hi": 631,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 110,
-              "lo": 31,
-              "hi": 147,
-              "days": 4,
+              "v": 518,
+              "lo": 121,
+              "hi": 633,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 95,
-              "lo": 13,
-              "hi": 140,
-              "days": 4,
+              "v": 522,
+              "lo": 130,
+              "hi": 650,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 128,
-              "lo": 15,
-              "hi": 180,
-              "days": 4,
+              "v": 526,
+              "lo": 70,
+              "hi": 680,
+              "days": 21,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 93,
-              "lo": 14,
-              "hi": 141,
-              "days": 4,
+              "v": 512,
+              "lo": 140,
+              "hi": 663,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 119,
-              "lo": 26,
-              "hi": 155,
-              "days": 4,
+              "v": 498,
+              "lo": 183,
+              "hi": 625,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 100,
-              "lo": 15,
-              "hi": 162,
-              "days": 4,
+              "v": 508,
+              "lo": 90,
+              "hi": 626,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 133,
-              "lo": 18,
-              "hi": 184,
-              "days": 4,
+              "v": 514,
+              "lo": 110,
+              "hi": 647,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 123,
-              "lo": 22,
-              "hi": 187,
-              "days": 4,
+              "v": 495,
+              "lo": 145,
+              "hi": 596,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            }
+          ],
+          [
+            {
+              "v": 311,
+              "lo": 84,
+              "hi": 423,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 417,
+              "lo": 120,
+              "hi": 562,
+              "days": 21,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 545,
+              "lo": 155,
+              "hi": 726,
+              "days": 21,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 555,
+              "lo": 65,
+              "hi": 684,
+              "days": 21,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 606,
+              "lo": 75,
+              "hi": 792,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 571,
+              "lo": 70,
+              "hi": 723,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 625,
+              "lo": 130,
+              "hi": 781,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 575,
+              "lo": 75,
+              "hi": 758,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 611,
+              "lo": 90,
+              "hi": 774,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 561,
+              "lo": 110,
+              "hi": 684,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
@@ -1284,183 +1284,183 @@
           ],
           [
             {
-              "v": 31,
-              "lo": 9,
-              "hi": 46,
-              "days": 3,
+              "v": 171,
+              "lo": 45,
+              "hi": 215,
+              "days": 16,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 34,
-              "lo": 10,
-              "hi": 45,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 53,
-              "lo": 14,
-              "hi": 77,
-              "days": 3,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 43,
-              "lo": 15,
-              "hi": 64,
-              "days": 3,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 54,
-              "lo": 8,
-              "hi": 83,
-              "days": 3,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 55,
-              "lo": 12,
-              "hi": 80,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 52,
-              "lo": 14,
-              "hi": 77,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 46,
-              "lo": 14,
-              "hi": 59,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 56,
-              "lo": 24,
-              "hi": 74,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 56,
-              "lo": 15,
-              "hi": 101,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            }
-          ],
-          [
-            {
-              "v": 106,
-              "lo": 33,
-              "hi": 169,
-              "days": 3,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 154,
-              "lo": 44,
-              "hi": 198,
-              "days": 4,
-              "label": "observed",
-              "sim": false,
-              "src": "vd-live"
-            },
-            {
-              "v": 156,
+              "v": 193,
               "lo": 52,
-              "hi": 203,
-              "days": 4,
+              "hi": 240,
+              "days": 15,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 140,
-              "lo": 49,
-              "hi": 175,
-              "days": 4,
+              "v": 261,
+              "lo": 70,
+              "hi": 315,
+              "days": 15,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 119,
-              "lo": 33,
-              "hi": 169,
-              "days": 4,
+              "v": 285,
+              "lo": 75,
+              "hi": 346,
+              "days": 15,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 126,
-              "lo": 50,
-              "hi": 168,
-              "days": 4,
+              "v": 302,
+              "lo": 38,
+              "hi": 371,
+              "days": 15,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 106,
-              "lo": 36,
-              "hi": 140,
-              "days": 4,
+              "v": 259,
+              "lo": 60,
+              "hi": 353,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 108,
-              "lo": 48,
-              "hi": 149,
-              "days": 4,
+              "v": 304,
+              "lo": 70,
+              "hi": 411,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 114,
-              "lo": 34,
-              "hi": 152,
-              "days": 4,
+              "v": 275,
+              "lo": 70,
+              "hi": 345,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
             },
             {
-              "v": 122,
-              "lo": 26,
-              "hi": 166,
-              "days": 4,
+              "v": 266,
+              "lo": 112,
+              "hi": 444,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 271,
+              "lo": 75,
+              "hi": 357,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            }
+          ],
+          [
+            {
+              "v": 489,
+              "lo": 137,
+              "hi": 725,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 670,
+              "lo": 158,
+              "hi": 958,
+              "days": 21,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 743,
+              "lo": 168,
+              "hi": 1128,
+              "days": 21,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 697,
+              "lo": 172,
+              "hi": 1009,
+              "days": 21,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 671,
+              "lo": 165,
+              "hi": 1030,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 651,
+              "lo": 190,
+              "hi": 970,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 631,
+              "lo": 180,
+              "hi": 916,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 578,
+              "lo": 195,
+              "hi": 899,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 534,
+              "lo": 170,
+              "hi": 792,
+              "days": 22,
+              "label": "observed",
+              "sim": false,
+              "src": "vd-live"
+            },
+            {
+              "v": 508,
+              "lo": 130,
+              "hi": 759,
+              "days": 22,
               "label": "observed",
               "sim": false,
               "src": "vd-live"
@@ -1669,9 +1669,9 @@
     {
       "id": "worst-cell",
       "title": "最塞的一格",
-      "value": 24,
+      "value": 27,
       "unit": "km/h",
-      "note": "民權大橋 07:00，平均車速最低；3 天裡有 1 天低於 20 km/h",
+      "note": "民權大橋 07:00，平均車速最低；22 天裡有 3 天低於 20 km/h",
       "ref": {
         "row": "minquan-br",
         "col": "t0700"
@@ -8938,7 +8938,12 @@
           },
           "cells": [
             {
-              "v": 47,
+              "v": 49,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 43,
               "label": "observed",
               "sim": true
             },
@@ -8948,22 +8953,7 @@
               "sim": true
             },
             {
-              "v": 39,
-              "label": "observed",
-              "sim": true
-            },
-            {
-              "v": 37,
-              "label": "observed",
-              "sim": true
-            },
-            {
               "v": 36,
-              "label": "observed",
-              "sim": true
-            },
-            {
-              "v": 38,
               "label": "observed",
               "sim": true
             },
@@ -8973,7 +8963,17 @@
               "sim": true
             },
             {
+              "v": 39,
+              "label": "observed",
+              "sim": true
+            },
+            {
               "v": 40,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 41,
               "label": "observed",
               "sim": true
             },
@@ -8994,12 +8994,7 @@
           },
           "cells": [
             {
-              "v": 24,
-              "label": "observed",
-              "sim": true
-            },
-            {
-              "v": 26,
+              "v": 27,
               "label": "observed",
               "sim": true
             },
@@ -9009,7 +9004,12 @@
               "sim": true
             },
             {
-              "v": 25,
+              "v": 31,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 29,
               "label": "observed",
               "sim": true
             },
@@ -9019,22 +9019,22 @@
               "sim": true
             },
             {
-              "v": 25,
+              "v": 27,
               "label": "observed",
               "sim": true
             },
             {
-              "v": 24,
+              "v": 27,
               "label": "observed",
               "sim": true
             },
             {
-              "v": 26,
+              "v": 27,
               "label": "observed",
               "sim": true
             },
             {
-              "v": 28,
+              "v": 30,
               "label": "observed",
               "sim": true
             }
@@ -9050,7 +9050,12 @@
           },
           "cells": [
             {
-              "v": 51,
+              "v": 47,
+              "label": "observed",
+              "sim": true
+            },
+            {
+              "v": 47,
               "label": "observed",
               "sim": true
             },
@@ -9060,17 +9065,12 @@
               "sim": true
             },
             {
-              "v": 48,
+              "v": 47,
               "label": "observed",
               "sim": true
             },
             {
-              "v": 50,
-              "label": "observed",
-              "sim": true
-            },
-            {
-              "v": 48,
+              "v": 47,
               "label": "observed",
               "sim": true
             },
@@ -9080,17 +9080,17 @@
               "sim": true
             },
             {
-              "v": 47,
+              "v": 46,
               "label": "observed",
               "sim": true
             },
             {
-              "v": 48,
+              "v": 46,
               "label": "observed",
               "sim": true
             },
             {
-              "v": 47,
+              "v": 46,
               "label": "observed",
               "sim": true
             }

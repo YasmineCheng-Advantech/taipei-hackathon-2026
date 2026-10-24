@@ -1,4 +1,22 @@
+# 原始資料：不進 git（CLAUDE.md 隱私與合規）
 data/raw/
-__pycache__/
+
+# 金鑰與環境變數：只走環境變數與 GitHub Secrets
 .env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Node
 node_modules/
+
+# 建置產物
+dist/
+
+# 作業系統與編輯器
+.DS_Store
+*.log
