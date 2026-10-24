@@ -87,7 +87,7 @@ Oct 22, 2026 · 固定版面上每個數字從哪裡來、怎麼算、標什麼�
 | `city.goal.need` | 排隊模型 | 同 `sensitivity.base`；`lo`／`hi` 對應容量上下限。`note` 換算成車輛數（尖峰總到達量 × 比例），不換算成人數 | `computed` | 換成該題「要做到多少才有感」 |
 | `city.claimed` | 網站後端 | 意向登記人數 | 一律 `pending` | 不變 |
 | `city.actions[].support` | 網站後端 | 「我也需要」人數 | 一律 `pending` | 不變；`actions` 的內容（局處、為什麼、對你）要換 |
-| `city.breakdowns[].items[].count` | 網站後端 | 設定答案的彙總人數 | 一律 `pending` | `key` 跟著 `decide.setup.origins`、`constraints` 換 |
+| `city.breakdowns[].items[].count` | 網站後端 | 設定答案的彙總人數 | 一律 `pending` | `key` 跟著 `decide.setup.origins`、`constraints`、`rows` 換；自己取 id 的欄位要附 `label` |
 
 ## brief 協商一頁紙
 

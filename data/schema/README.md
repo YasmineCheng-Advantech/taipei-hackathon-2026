@@ -76,7 +76,7 @@
 - `baseline` 是移出 0% 的現況；`results` 每個 target × 每個滑桿刻度一筆，含 `queue_max`（區間）、`clear_time`、`delay_change`、`new_peak`、累積到達／通過曲線、每格排隊與前後差。驗證會檢查是否每個刻度都有。
 
 ### `city`
-`goal`（一句話加需要移出的比例區間，由排隊模型反推，不換算成人數）、`claimed`（意向登記人數，一律 `pending`，網站沒拿到後端數字時顯示「尚無資料」）、`claimed_since`（起算日期）、`claimed_caption`（固定說明，如「意向登記，未經驗證」）、`actions`（標題、負責局處、為什麼、對你、成本文字、「我也需要」人數；需要跨縣市或跨機關協調的標 `cross_agency: true`）、`breakdowns`（設定答案的彙總，如大家從哪裡來、為什麼沒辦法錯峰，人數一律 `pending`）、`disclaimer`。
+`goal`（一句話加需要移出的比例區間，由排隊模型反推，不換算成人數）、`claimed`（意向登記人數，一律 `pending`，網站沒拿到後端數字時顯示「尚無資料」）、`claimed_since`（起算日期）、`claimed_caption`（固定說明，如「意向登記，未經驗證」）、`actions`（標題、負責局處、為什麼、對你、成本文字、「我也需要」人數；需要跨縣市或跨機關協調的標 `cross_agency: true`）、`breakdowns`（設定答案的彙總，如從哪裡進內湖、為什麼沒辦法錯峰，人數一律 `pending`；`source` 是 `origins`／`constraints`／`rows`，沒有對應選項的欄位自己取 `key` 並用 `label` 寫畫面要顯示的字）、`disclaimer`。
 
 ### `brief`
 `exposure`（入口占比與色帶）、`conclusion`（一句話結論，整句帶標示）、`options`（做法比較）、`support`（市府配合）、`pilot`（試辦設計）、`public`（民意數字）、`operations`（營運影響：算得出的給數字，算不出的填 `pending` 並寫 `how` 與 `needs`）、`sources_text`。

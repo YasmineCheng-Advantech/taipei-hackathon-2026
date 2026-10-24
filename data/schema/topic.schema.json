@@ -1392,7 +1392,7 @@
           "type": "string"
         },
         "breakdowns": {
-          "description": "設定答案的彙總，如 大家從哪裡來、為什麼沒辦法錯峰。人數規則同 city.claimed：一律 pending，網站沒拿到後端數字時顯示「尚無資料」。",
+          "description": "設定答案的彙總，如 從哪裡進內湖、為什麼沒辦法錯峰。人數規則同 city.claimed：一律 pending，網站沒拿到後端數字時顯示「尚無資料」。",
           "type": "array",
           "items": {
             "type": "object",
@@ -1410,10 +1410,11 @@
                 "type": "string"
               },
               "source": {
-                "description": "彙總哪一組設定選項。",
+                "description": "彙總哪一組設定選項。rows 代表彙總「從哪個入口進來」。",
                 "enum": [
                   "origins",
-                  "constraints"
+                  "constraints",
+                  "rows"
                 ]
               },
               "note": {
@@ -1429,8 +1430,12 @@
                   ],
                   "properties": {
                     "key": {
-                      "description": "填 source 那組選項的 id。",
+                      "description": "填 source 那組選項的 id；沒有對應選項的彙總欄（例如「其他」「沒填」）自己取一個 id，並用 label 寫出畫面要顯示的字。",
                       "$ref": "#/$defs/id"
+                    },
+                    "label": {
+                      "description": "畫面要顯示的字。沒給就用 key 去 source 那組選項裡找。",
+                      "type": "string"
                     },
                     "count": {
                       "$ref": "#/$defs/num"
