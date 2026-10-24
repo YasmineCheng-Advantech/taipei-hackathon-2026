@@ -83,10 +83,10 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
         <sc-for list="{{rows}}" as="r" hint-placeholder-count="5">
           <div style="display: grid; grid-template-columns: 1fr 72px; gap: 10px; align-items: center">
             <span style="display: flex; flex-direction: column; gap: 4px">
-              <span style="font-size: 13.5px">{{r}}</span>
+              <span style="font-size: 13.5px">{{r.name}}</span>
               <span aria-hidden="true" style="height: 8px; border-radius: 4px; background: repeating-linear-gradient(135deg, #F2EBE6 0 4px, #FAF6F3 4px 8px)"></span>
             </span>
-            <span style="font-size: 12.5px; text-align: right; color: #5E5650">尚無資料</span>
+            <span style="font-size: 12.5px; text-align: right; color: #5E5650">{{r.count}}</span>
           </div>
         </sc-for>
       </div>
@@ -145,14 +145,21 @@ class Component extends DCLogic {
       { name: '匿名意向登記', from: '使用者在設定裡勾選提供；只存日期、入口、時段與匿名裝置代碼', amount: '尚無資料', label: '使用者提供', cls: 'user', amountFg: '#5E5650' },
     ]);
 
-    // 彙總分類來自 city.breakdowns，項目名稱對回 origins / constraints
+    // 彙總分類來自 city.breakdowns。items 的每一項是 { key, count }，key 對回 origins／constraints；
+    // count 的單位是「人」，契約規定一律 pending，沒有後端就顯示「尚無資料」，不放模擬值。
     const nameOf = (key) => {
       const o = (D.setup.origins || []).find((x) => x.id === key);
       if (o) return o.label;
       const c = (D.setup.constraints || []).find((x) => x.id === key);
       return c ? c.label : key;
     };
-    const T = (city.breakdowns || []).map((b) => ({ label: b.title, rows: (b.items || []).map(nameOf) }));
+    const T = (city.breakdowns || []).map((b) => ({
+      label: b.title,
+      rows: (b.items || []).map((it) => {
+        const n = D.num(it.count);
+        return { name: nameOf(it.key), count: n.pending ? '尚無資料' : `${n.text} ${n.unit || ''}`.trim() };
+      }),
+    }));
     const ti = Math.min(this.state.tab, Math.max(0, T.length - 1));
 
     return {

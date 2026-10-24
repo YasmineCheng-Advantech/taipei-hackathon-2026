@@ -152,16 +152,24 @@ function checkKeys(html, vals) {
       const as = (open.match(/as="(\w+)"/) || [])[1];
       if (list && !has(scope, list)) miss.push(`sc-for list={{${list}}} 在 renderVals() 裡沒有`);
       const sample = list ? pick(scope, list) : null;
+      // 元素是字串或清單是空的，就沒有欄位可以比對；標成「這一輪看不到」而不是當成空物件
       const blind = sample == null || typeof sample !== 'object';
       if (blind) unknown.add(as);
-      walk(body, { ...scope, [as]: sample || {} });
+      walk(body, { ...scope, [as]: blind ? sample : sample });
       if (blind) unknown.delete(as);
       i = end;
     }
     for (const m of plain.matchAll(/\{\{\s*([\w.]+)\s*\}\}/g)) {
       const path = m[1];
       if (path === 'true' || path === 'false') continue;
-      if (!has(scope, path)) miss.push(`{{${path}}} 在 renderVals() 裡沒有`);
+      if (!has(scope, path)) { miss.push(`{{${path}}} 在 renderVals() 裡沒有`); continue; }
+      // 這一輪取不到樣本的名字（清單是空的、或元素是字串）不做型別判斷，否則會誤報
+      if (unknown.has(path.split('.')[0])) continue;
+      // 值是物件的話畫面會印出 [object Object]（City 的 {{r}} 就是這樣壞掉的）
+      const v = pick(scope, path);
+      if (v && typeof v === 'object' && !Array.isArray(v)) {
+        miss.push(`{{${path}}} 的值是物件，畫面會印成 [object Object]`);
+      }
     }
   };
 
