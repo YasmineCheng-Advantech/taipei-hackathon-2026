@@ -18,8 +18,14 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
 .chip.on .radio{border:3px solid #FFFFFF;background:transparent}
 .radio i{width:12px;height:12px;border-radius:50%;background:transparent}
 .chip.on .radio i{background:#FFFFFF}
-.wheel-row{appearance:none;border:0;background:transparent;width:100%;height:42px;display:grid;grid-template-columns:2fr 1.1fr 0.3fr 1.1fr;align-items:center;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-size:21px;letter-spacing:.1em;color:#C8481F;cursor:pointer;font-variant-numeric:tabular-nums}
-.wheel-row.on{background:linear-gradient(180deg,#F6A46C 0%,#EE7A40 55%,#E2582A 100%);color:#FFFFFF;border-radius:14px;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.3)}
+/* 最晚到達是真的滾輪：外層卡片畫固定的橘色選取條，內層捲動容器用 scroll-snap 對齊 */
+.wheel-card{position:relative;background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13);padding:6px 12px}
+.wheel-sel{position:absolute;left:12px;right:12px;top:34px;height:28px;border-radius:12px;background:linear-gradient(180deg,#F6A46C 0%,#EE7A40 55%,#E2582A 100%);box-shadow:inset 0 3px 0 rgba(255,255,255,.3);pointer-events:none}
+.wheel{position:relative;z-index:1;height:84px;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wheel::-webkit-scrollbar{display:none}
+.wheel-pad{height:28px}
+.wheel-row{appearance:none;border:0;background:transparent;width:100%;height:28px;scroll-snap-align:center;display:grid;grid-template-columns:2fr 0.9fr 0.3fr 0.9fr 0.9fr;align-items:center;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-size:18px;letter-spacing:.1em;color:#EE9A6E;cursor:pointer;font-variant-numeric:tabular-nums}
+.wheel-row.on{color:#FFFFFF;font-weight:700}
 .cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
 .cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
 .cta:hover{color:#0B3A4A;filter:brightness(1.04)}
@@ -44,12 +50,17 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
       </sc-for>
     </div>
     <h2 style="margin: 8px 0 0 14px; font-size: 18px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">最晚幾點要到公司</h2>
-    <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 8px 14px; display: flex; flex-direction: column; gap: 2px">
-      <sc-for list="{{wheel}}" as="w" hint-placeholder-count="3">
-        <button type="button" class="wheel-row {{w.cls}}" aria-label="{{w.aria}}" aria-pressed="{{w.on}}" onClick="{{w.pick}}">
-          <span>{{w.ampm}}</span><span style="text-align: center">{{w.h}}</span><span style="text-align: center">{{w.colon}}</span><span style="text-align: center">{{w.m}}</span>
-        </button>
-      </sc-for>
+    <div class="wheel-card">
+      <div class="wheel-sel" aria-hidden="true"></div>
+      <div class="wheel" id="dl-wheel">
+        <div class="wheel-pad" aria-hidden="true"></div>
+        <sc-for list="{{wheel}}" as="w" hint-placeholder-count="4">
+          <button type="button" class="wheel-row {{w.cls}}" aria-label="{{w.aria}}" aria-pressed="{{w.on}}" onClick="{{w.pick}}">
+            <span>{{w.ampm}}</span><span style="text-align: center">{{w.h}}</span><span style="text-align: center">{{w.colon}}</span><span style="text-align: center">{{w.m}}</span><span></span>
+          </button>
+        </sc-for>
+        <div class="wheel-pad" aria-hidden="true"></div>
+      </div>
     </div>
     <h2 style="margin: 8px 0 0 14px; font-size: 18px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">你的時間有多少彈性</h2>
     <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 12px 18px; display: flex; flex-direction: column; gap: 8px">
@@ -81,19 +92,49 @@ class Component extends DCLogic {
     ...app.load('Setup')
   };
   save(p) { this.setState(p); app.save('Setup', { ...this.state, ...p }); }
+
+  // 最晚到達是滾輪：捲動停下來後取對齊中間的那一列。每列 28px，上下各墊一列讓頭尾也能置中。
+  ROW = 28;
+  // 自動檢查是在 Node 裡跑的，沒有真的 DOM；取不到就當作沒有滾輪，邏輯照樣要能跑
+  wheelEl() { return typeof document === 'object' && document.getElementById ? document.getElementById('dl-wheel') : null; }
+  componentDidMount() {
+    const sc = this.wheelEl();
+    if (!sc) return;
+    const n = (D.setup.deadlines || []).length;
+    if (!n) return;
+    requestAnimationFrame(() => { sc.scrollTop = this.state.dl * this.ROW; });
+    let t = null;
+    sc.addEventListener('scroll', () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        const i = Math.max(0, Math.min(n - 1, Math.round(sc.scrollTop / this.ROW)));
+        if (i !== this.state.dl) this.save({ dl: i });
+      }, 90);
+    }, { passive: true });
+  }
+
+  // 直接點某一列時也捲過去，兩種操作結果一樣
+  pickDl(i) {
+    const sc = this.wheelEl();
+    if (sc) sc.scrollTo({ top: i * this.ROW, behavior: 'smooth' });
+    this.save({ dl: i });
+  }
+
   renderVals() {
     const S = this.state;
     const rows = (D.setup.rows || []).map((id) => ({ id, label: (D.rowById(id) || {}).name || id }));
     const dls = D.setup.deadlines || [];
     const flex = D.setup.flex || [];
-    const wheel = [S.dl - 1, S.dl, S.dl + 1].map((i, k) => {
-      if (i < 0 || i >= dls.length) return { ampm: '', h: '', colon: '', m: '', cls: '', on: 'false', aria: '沒有更多時間', pick: () => {} };
-      const [hh, mm] = dls[i].split(':');
+    const wheel = dls.map((t, i) => {
+      const [hh, mm] = t.split(':');
+      const ampm = Number(hh) < 12 ? '上午' : '下午';
+      const h12 = Number(hh) % 12 || 12;
+      const sel = i === S.dl;
       return {
-        ampm: '上午', h: String(Number(hh)), colon: k === 1 ? ':' : '', m: mm,
-        cls: k === 1 ? 'on' : '', on: k === 1 ? 'true' : 'false',
-        aria: '上午 ' + dls[i] + ' 前到',
-        pick: () => this.save({ dl: i })
+        ampm, h: String(h12).padStart(2, '0'), colon: sel ? ':' : '', m: mm,
+        cls: sel ? 'on' : '', on: sel ? 'true' : 'false',
+        aria: ampm + ' ' + t + ' 前到',
+        pick: () => this.pickDl(i)
       };
     });
     const sel = (cur, id, fn) => ({ cls: cur === id ? 'on' : '', on: cur === id ? 'true' : 'false', pick: fn });
