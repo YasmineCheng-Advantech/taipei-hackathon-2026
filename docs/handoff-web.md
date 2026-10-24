@@ -2,7 +2,7 @@
 
 Oct 24, 2026 · 給接手網站的夥伴
 
-> 先講結論：**18 個畫面都已經接上真實資料與即時路況，可以跑、可以部署。**
+> 先講結論：**19 個畫面都已經接上真實資料與即時路況，可以跑、可以部署。**
 > 剩下的工作分三類：交件必要的（部署、主標）、品質的（斷網測試、桌機版）、加分的（認領後端）。
 > 全部待辦與優先序在[第八節](#八待辦照優先序)。
 
@@ -13,12 +13,12 @@ Oct 24, 2026 · 給接手網站的夥伴
 | 項目 | 狀態 |
 | --- | --- |
 | 程式位置 | `web/`（branch `claude/web-data`，commit `cd73716`，已 push） |
-| 18 個畫面 | **全部接上題目 JSON**，程式裡沒有寫死的資料陣列 |
+| 19 個畫面 | **全部接上題目 JSON**，程式裡沒有寫死的資料陣列（原 18 個，v2 UI 新增「數據指向哪些改變」） |
 | 即時路況 | **已接**，6 個畫面會顯示（`Main`、`Today`、`Heatmap`、`EntryMap`、`Ranking`、`City`） |
 | 換題 | **可用**，三份 mock 題目都測過，不用改程式 |
 | 資安 | `SECURITY.md` 交代的兩項已修，`dist/index.html` 零外部請求 |
 | 分支 | **已合併 master**，領先 20 個 commit、落後 0；下一步開 PR |
-| 部署 | GitHub Pages 已上線（**無即時層**）；Vercel 待接，見[第八節](#八待辦照優先序) P0-1 |
+| 部署 | **兩個都上線了**：Vercel <https://taipei-hackathon-2026-web.vercel.app>（有即時層）、GitHub Pages（備援，無即時層）。推 master 兩邊都自動重建 |
 
 ---
 
@@ -51,7 +51,7 @@ cd dist && python3 -m http.server 4321
 ### 改完要跑的
 
 ```bash
-node src/screens.test.mjs                        # 18 個畫面的自動檢查
+node src/screens.test.mjs                        # 19 個畫面的自動檢查
 node src/screens.test.mjs Heatmap                # 只看一個
 node src/screens.test.mjs --topic b1-1999-mock   # 換題測試，最會抓到問題的一支
 node build.mjs                                   # 重新打包
@@ -69,7 +69,7 @@ build 時 ─→ data/processed/*.json ─┐
             data/mock/*.json      ─┴→ 內嵌進 dist/index.html ─→ window.__TOPICS__
                                                                      │
                                                                      ▼
-                                                                   D.*  ──→ 18 個畫面
+                                                                   D.*  ──→ 19 個畫面
                                                                      ▲
 每 5 分鐘 ─→ fetch('api/live') ──→ Vercel Function ──→ 交工處 VD ──→ D.live
 ```
@@ -92,7 +92,7 @@ build 時 ─→ data/processed/*.json ─┐
 
 | 路徑 | 是什麼 | 要改的時候 |
 | --- | --- | --- |
-| `screens/*.dc.html` | 18 個畫面。`<x-dc>` 模板 ＋ `<helmet>` CSS ＋ `class Component` | 改版面或改某頁顯示什麼 |
+| `screens/*.dc.html` | 19 個畫面。`<x-dc>` 模板 ＋ `<helmet>` CSS ＋ `class Component` | 改版面或改某頁顯示什麼 |
 | `src/data.js` | **資料層**，掛 `window.D`。挑題目、驗契約、算色階、查 plan 與情境、合併即時 | 要加新的資料查詢函式 |
 | `src/runtime.js` | 迷你執行層：模板、DOM diff、路由、localStorage、`window.app` | 很少需要改 |
 | `src/tokens.css` | 色階、發散色階、資料標籤、斜線紋路 | 設計交付 `design/tokens.css` 後來這裡換值 |
@@ -228,43 +228,32 @@ Yasmine 還沒決定方向。兩個選項：
 
 ### P0 — 交件必要（10/24 16:00 前）
 
-1. **接 Vercel，讓即時層真的會動。**
+1. ~~**接 Vercel**~~ **已完成（10/24）。**
 
-   目前網站已經部署在 GitHub Pages
-   （<https://yasminecheng-advantech.github.io/taipei-hackathon-2026/>，推 master 自動重建）。
-   **但 Pages 是純靜態，跑不了 `api/live.js`**，所以「現在路況」那一列永遠顯示
-   「暫時取不到即時資料」。其他畫面照常，不會壞 —— 但「即時」這件事沒有達成。
+   | 網址 | 即時層 | 用途 |
+   | --- | --- | --- |
+   | <https://taipei-hackathon-2026-web.vercel.app> | ✅ 有 | 主要網址 |
+   | <https://yasminecheng-advantech.github.io/taipei-hackathon-2026/> | ❌ 無（Pages 是純靜態） | 備援 |
 
-   Vercel 可以跑 Serverless Function，所以即時層要靠它。**用網頁介面連 GitHub，不要用 CLI**
-   （CLI 要互動登入，而且網頁版推 master 會自動重建）：
+   兩邊都是推 `master` 自動重建。Vercel 的 Root Directory 設成 `web`。
 
-   | 步驟 | 做什麼 |
-   | --- | --- |
-   | 1 | <https://vercel.com/new> → 用 GitHub 登入 → 選 `taipei-hackathon-2026` |
-   | 2 | **Root Directory 改成 `web`**（這一步最容易漏，漏了會找不到 `package.json` 而失敗） |
-   | 3 | Framework Preset 選 **Other**；Build／Output 不用動，`web/vercel.json` 已經設好 |
-   | 4 | Deploy。不需要任何環境變數（臺北市 VDLive 不用金鑰） |
-
-   部署後驗收：
+   回歸驗收（改過 `api/live.js` 之後都要跑一次）：
    ```bash
-   curl -s https://<網址>/api/live | jq '.updated_at, .entries["tiding-n"]'
-   # → updated_at 要是幾分鐘內；tiding-n 要有 speed 與 link_id
-
-   curl -s -o /dev/null -w "%{http_code}\n" -X POST https://<網址>/api/live   # 要是 405
-
-   for i in 1 2 3; do curl -s "https://<網址>/api/live?x=$i" -o /dev/null -w "%{time_total}s "; done
-   # → 第 2、3 次應該明顯比第 1 次快（命中快取，沒有打到交工處）
+   U=https://taipei-hackathon-2026-web.vercel.app
+   curl -s $U/api/live | jq '.updated_at, .stale, .entries["tiding-n"]'   # 要新鮮、stale=false
+   curl -s -o /dev/null -w "%{http_code}\n" -X POST $U/api/live          # 405
+   curl -s -o /dev/null -w "%{http_code}\n" "$U/api/live?x=1"            # 308（不是 200）
    ```
+   **`?x=1` 一定要是 308。** 回 200 就代表洗 query string 又能打到交工處了
+   （CDN 快取鍵含 query string，模組層節流擋不住跨實例）。
 
-   **兩個網址都留著**：Pages 當備援（靜態、一定開得起來），Vercel 當交件網址（有即時層）。
-   交件時填 Vercel 那個。
 2. **決定主標與 Demo 台詞**（見[第七節](#七資料的真相最重要的一節)）。這是內容決定，不是程式。
 3. **更新交件文件**：`README.md` 補作品網址與 Demo 操作說明。
    `data/SOURCES.md` 的開源套件清單我已經補好了。
 
 ### P1 — 品質
 
-4. **斷網測試。** 關掉 Wi-Fi 用真的瀏覽器開 `dist/index.html`，走過 18 個畫面，
+4. **斷網測試。** 關掉 Wi-Fi 用真的瀏覽器開 `dist/index.html`，走過 19 個畫面，
    確認字型與版面都正常、只有即時那一列顯示取不到。
    我只驗過「檔案裡沒有外部網址」，沒有實際斷網跑過。
 5. **真機測試。** iPhone Safari 與 Android Chrome 各開一次，確認沒有橫向捲動、
@@ -326,14 +315,14 @@ origin/claude/relaxed-dirac-ysp1hu   ←─ 另一個作業，還在動
 | [`SECURITY.md`](../SECURITY.md) | 動後端、抓資料、commit 之前 |
 | [`web/README.md`](../web/README.md) | 網站的技術細節 |
 | [`data/schema/README.md`](../data/schema/README.md) | 要讀 JSON 的哪個欄位時 |
-| [`SCREENS.md`](../SCREENS.md) | 原始的畫面規格（注意：和現在的實作有落差，實作是 18 個手機畫面，規格寫的是 8 個手機＋桌機） |
+| [`SCREENS.md`](../SCREENS.md) | 原始的畫面規格（注意：和現在的實作有落差，實作是 19 個手機畫面，規格寫的是 8 個手機＋桌機） |
 | [`PRODUCT.md`](../PRODUCT.md) | Demo 怎麼講 |
 
 ---
 
 ## 十一、我沒做到的事（誠實記錄）
 
-- **沒有用真的瀏覽器看過畫面。** 我的驗證都是程式層的（18 個畫面 × 4 個題目的
+- **沒有用真的瀏覽器看過畫面。** 我的驗證都是程式層的（19 個畫面 × 4 個題目的
   `renderVals()` 檢查、契約檢查正反向、即時 API 與 Python 算法對帳）。
   **版面是否跑掉、顏色對不對、手機上好不好點，都還沒有人看過。** 這是最大的風險。
 - **沒有斷網測試。**
