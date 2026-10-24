@@ -216,6 +216,7 @@ def main():
     log(f"開始收集，{days} {args.start:%H:%M}–{args.end:%H:%M} 每 5 分鐘一次"
         + (f"，收到 {args.until} 為止" if args.until else '') + f"；輸出到 {ROOT}。按 Ctrl+C 停止")
     waiting = False
+    last_poll = 0.0  # 上一次「開始」抓取的時間，用來保證兩次請求至少相隔 INTERVAL
     while True:
         now = dt.datetime.now(TPE)
         if args.until and (now.date() > args.until or (now.date() == args.until and now.time() > args.end)):
@@ -223,6 +224,7 @@ def main():
             return
         if in_window(now, args.start, args.end, args.weekends):
             waiting = False
+            last_poll = time.time()
             poll_once(tdx)
         elif args.today and now.time() > args.end:
             log('今天的收集時段結束')
@@ -230,8 +232,14 @@ def main():
         elif not waiting:
             log('不在收集時段，等待中')
             waiting = True
-        # 睡到下一個整 5 分鐘
+        # 睡到下一個整 5 分鐘。但這一輪的工作（抓取、重試）會吃掉時間，若只對齊邊界，
+        # 兩次請求「開始」的間隔可能掉到 300 秒以下（實測量到 293 秒）。來源規定不可更頻繁，
+        # 所以再加一道下限：距離上次開始不足 INTERVAL 時，補睡到滿。
         time.sleep(INTERVAL - time.time() % INTERVAL + 1)
+        if last_poll:
+            short = INTERVAL - (time.time() - last_poll)
+            if short > 0:
+                time.sleep(short)
 
 
 if __name__ == '__main__':
