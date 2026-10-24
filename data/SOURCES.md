@@ -6,13 +6,18 @@ Oct 20, 2026 · 交件 README 的「資料來源」「AI 工具與開源套件�
 
 ## 一、真實開放資料
 
-| 資料 | 提供單位 | 連結 | 用在哪裡 | 期間 | 現況 |
-| --- | --- | --- | --- | --- | --- |
-| 臺北市車輛偵測器（VD）即時資料 | 臺北市交通管制工程處 | [VDLive.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml) | 熱力圖 5 個入口的車速與流量；錯峰情境的容量與到達曲線（`model_input.json`） | 2026-10-20～10-23 平日 07:00–10:30，每 5 分鐘收一次 | 收集中 |
-| 臺北市車輛偵測器（VD）靜態資料 | 臺北市交通管制工程處 | [VD.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml)、[data.taipei](https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2) | 偵測器與入口的對照（`processed/entrances.csv`） | 2026-10-19 下載 | 已使用 |
-| 國道車輛偵測器 | 交通部 TDX／高速公路局 | [TDX](https://tdx.transportdata.tw/) | 國 1 內湖交流道 | — | 未使用：TDX 金鑰還沒下來，該入口目前是模擬 |
+| 資料 | 提供單位 | 連結 | 用在哪裡 | 期間 | 筆數 | 現況 |
+| --- | --- | --- | --- | --- | --- | --- |
+| **臺北市車輛偵測器（VD）歷史資料** | 交通部 TDX（轉載臺北市交工處） | [TDX](https://tdx.transportdata.tw/) | **熱力圖 5 個入口車速與流量的主要來源**；錯峰情境的容量與到達曲線（`model_input.json`） | 2026-09-23～10-23，每 5 分鐘一筆 | **100,848** | 已使用，由 `data/fetch/fetch_tdx_vd_hist.py` 抓取 |
+| 臺北市車輛偵測器（VD）即時資料 | 臺北市交通管制工程處 | [VDLive.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml) | 同上；另供網站「現在路況」即時層（`web/api/live.js`） | 2026-10-19 起每 5 分鐘收一次；併入資料集的是 10-23～10-24 | 2,088 | 收集中。**不需金鑰** |
+| 臺北市車輛偵測器（VD）靜態資料 | 臺北市交通管制工程處 | [VD.xml](https://tcgbusfs.blob.core.windows.net/blobtisv/VD.xml)、[data.taipei](https://data.taipei/dataset/detail?id=47cb9090-e1c9-4b1d-b299-b11c375c5ee2) | 偵測器與入口的對照（`processed/entrances.csv`） | 2026-10-19 下載 | — | 已使用 |
+| 國道車輛偵測器 | 交通部 TDX／高速公路局 | [TDX](https://tdx.transportdata.tw/) | 國 1 內湖交流道 | 2026-10-19～10-24，共 748 檔 | — | **收到了但未用於成果**：該入口在畫面上仍是模擬（`assumed`／`sim: true`），原始檔留在 `data/raw/tdx_freeway/` |
+
+兩個來源重疊的日子以 TDX 為準（官方完整紀錄；與自己收的 5 分鐘切法不同，混用會重複計算），所以自己收的資料只有未被 TDX 涵蓋的 10-23～10-24 進入最終資料集。合計 102,936 筆，平日 22 天（10/23 颱風假不列入）。
 
 收集方式與頻率：`data/fetch/collect_vd.py`，每 5 分鐘一次，不更頻繁（行為準則：不對市府系統做壓測）。原始檔不進 git。
+
+> **TDX 金鑰現況（10/24）：** token 端點自 08:07 起回 `unauthorized_client`／`Invalid client credentials`，是憑證在 TDX 端失效，不是流量限制。影響的只有國道即時值——該入口本來就是模擬；臺北市 VDLive 不需金鑰、照常運作；上表的一個月歷史資料已經抓完存檔。詳見 [`SECURITY.md`](../SECURITY.md)。
 
 ## 二、調查、統計與文獻（引用的數字）
 
