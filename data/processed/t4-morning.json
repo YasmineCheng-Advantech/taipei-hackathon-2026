@@ -8781,13 +8781,13 @@
     ],
     "breakdowns": [
       {
-        "id": "origin",
-        "title": "大家從哪裡來",
-        "source": "origins",
-        "note": "依設定時選的出發地區彙總，未經驗證",
+        "id": "entry",
+        "title": "從哪裡進內湖",
+        "source": "rows",
+        "note": "依設定時選的入口彙總，未經驗證",
         "items": [
           {
-            "key": "xindian-wenshan",
+            "key": "tiding-n",
             "count": {
               "pending": true,
               "unit": "人",
@@ -8797,7 +8797,7 @@
             }
           },
           {
-            "key": "songshan-nangang",
+            "key": "minquan-br",
             "count": {
               "pending": true,
               "unit": "人",
@@ -8807,7 +8807,7 @@
             }
           },
           {
-            "key": "zhongshan-dazhi",
+            "key": "chengmei-br",
             "count": {
               "pending": true,
               "unit": "人",
@@ -8817,17 +8817,7 @@
             }
           },
           {
-            "key": "ntpc-west",
-            "count": {
-              "pending": true,
-              "unit": "人",
-              "note": "意向登記，未經驗證",
-              "label": "observed",
-              "sim": true
-            }
-          },
-          {
-            "key": "xizhi-keelung",
+            "key": "huandong",
             "count": {
               "pending": true,
               "unit": "人",
@@ -8838,6 +8828,18 @@
           },
           {
             "key": "other",
+            "label": "從別的入口進來",
+            "count": {
+              "pending": true,
+              "unit": "人",
+              "note": "意向登記，未經驗證",
+              "label": "observed",
+              "sim": true
+            }
+          },
+          {
+            "key": "none",
+            "label": "沒填入口",
             "count": {
               "pending": true,
               "unit": "人",

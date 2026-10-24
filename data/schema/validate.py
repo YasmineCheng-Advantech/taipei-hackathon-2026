@@ -132,7 +132,9 @@ def cross_checks(d):
     setup = dc["setup"]
     action_ids = [a["id"] for a in d["city"]["actions"]]
     unique(action_ids, "city.actions")
-    groups = {"origins": setup.get("origins", []), "constraints": setup.get("constraints", [])}
+    # rows 也能當彙總來源（「從哪裡進內湖」），用 setup.rows 的 id 當作選項
+    groups = {"origins": setup.get("origins", []), "constraints": setup.get("constraints", []),
+              "rows": [{"id": r} for r in setup.get("rows", [])]}
     for name, items in groups.items():
         unique([x["id"] for x in items], f"decide.setup.{name}")
     for o in groups["origins"]:
@@ -144,7 +146,9 @@ def cross_checks(d):
     for b in d["city"].get("breakdowns", []):
         keys = [x["id"] for x in groups[b["source"]]]
         for it in b["items"]:
-            need(it["key"] in keys, f"city.breakdowns[{b['id']}]：「{it['key']}」不在 decide.setup.{b['source']} 裡")
+            # 自己取 id 的彙總欄（「其他」「沒填」）要用 label 寫出畫面要顯示的字
+            need(it["key"] in keys or it.get("label"),
+                 f"city.breakdowns[{b['id']}]：「{it['key']}」不在 decide.setup.{b['source']} 裡，也沒有 label")
 
     sh = d.get("share")
     if sh:

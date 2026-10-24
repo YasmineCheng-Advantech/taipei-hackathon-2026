@@ -136,7 +136,7 @@ Oct 20, 2026 · 給網站工程師，開始搭架構與做畫面用
 | 目標 | `city.goal.text`、`city.goal.need`（比例區間） | 只顯示比例，不換算成人數 |
 | 意向登記人數 | 後端；`city.claimed_caption`、`city.claimed_since` | 沒有資料顯示「尚無資料」 |
 | 各時段認領分布 | `collective.claims.slots`（`key`、`filled`、`full`）、`collective.claims.note` | JSON 裡的比例是情境假設，後端接上後可改用真實的「已認領 ÷ 名額」 |
-| 大家從哪裡來、為什麼沒辦法錯峰 | `city.breakdowns`（`items[].key` 對到 `origins` 或 `constraints` 的 id） | 人數向後端拿，沒有就「尚無資料」 |
+| 從哪裡進內湖、為什麼沒辦法錯峰 | `city.breakdowns`（`items[].key` 對到 `rows`、`origins` 或 `constraints` 的 id；自己取 id 的欄位用 `label`） | 人數向後端拿，沒有就「尚無資料」 |
 | 城市行動清單 | `city.actions`（`title`、`depts`、`why`、`you`、`cost`、`support`、`cross_agency`） | 每項有「我也需要」按鈕與人數（後端）；`cross_agency` 加「需跨機關協調」標籤 |
 | 聲明與連結 | `city.note`、`city.disclaimer` | 連到協商一頁紙 |
 

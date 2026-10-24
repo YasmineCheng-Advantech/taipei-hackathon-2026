@@ -639,9 +639,11 @@ city = {
          "you": "出門前能一起看到國道和入口的路況。", "cost": "資料介接，待推估", "support": headcount()},
     ],
     "breakdowns": [
-        {"id": "origin", "title": "大家從哪裡來", "source": "origins", "note": "依設定時選的出發地區彙總，未經驗證",
-         "items": [{"key": o, "count": headcount()} for o in
-                   ("xindian-wenshan", "songshan-nangang", "zhongshan-dazhi", "ntpc-west", "xizhi-keelung", "other")]},
+        # 設定第一步問的就是「你從哪裡進內湖」，所以這一欄彙總的是入口，不是出發地區
+        {"id": "entry", "title": "從哪裡進內湖", "source": "rows", "note": "依設定時選的入口彙總，未經驗證",
+         "items": [{"key": r, "count": headcount()} for r in SETUP_ROWS]
+                  + [{"key": "other", "label": "從別的入口進來", "count": headcount()},
+                     {"key": "none", "label": "沒填入口", "count": headcount()}]},
         {"id": "why-not", "title": "為什麼沒辦法錯峰", "source": "constraints", "note": "可複選；自願填答，不代表全體通勤者",
          "items": [{"key": c, "count": headcount()} for c in ("kids", "shift", "company", "meeting", "transit")]},
     ],

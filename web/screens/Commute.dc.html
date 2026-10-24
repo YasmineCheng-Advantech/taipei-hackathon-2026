@@ -71,15 +71,19 @@ class Component extends DCLogic {
 
   renderVals() {
     const city = D.city;
-    const nameOf = (key) => {
-      const o = (D.setup.origins || []).find((x) => x.id === key);
+    // 每一列的字優先用資料裡的 label；沒給就拿 key 去設定選項（出發地區／原因／入口）裡找
+    const nameOf = (it) => {
+      if (it.label) return it.label;
+      const o = (D.setup.origins || []).find((x) => x.id === it.key);
       if (o) return o.label;
-      const c = (D.setup.constraints || []).find((x) => x.id === key);
-      return c ? c.label : key;
+      const c = (D.setup.constraints || []).find((x) => x.id === it.key);
+      if (c) return c.label;
+      const r = D.rowById(it.key);
+      return (r && r.name) || it.key;
     };
     const T = (city.breakdowns || []).map((b) => ({
       label: b.title,
-      items: (b.items || []).map((it) => ({ name: nameOf(it.key), n: D.num(it.count) })),
+      items: (b.items || []).map((it) => ({ name: nameOf(it), n: D.num(it.count) })),
     }));
     const ti = Math.min(this.state.tab, Math.max(0, T.length - 1));
     const cur = T[ti] || { items: [] };

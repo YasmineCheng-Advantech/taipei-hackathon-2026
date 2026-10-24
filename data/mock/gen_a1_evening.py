@@ -323,7 +323,7 @@ city = {
          "why": "回新店、文山的人，最不穩的常是國 3 這段，但它不歸臺北市管。",
          "you": "下班前能一起看到國道和出口的路況。", "cost": "資料介接，待推估", "support": headcount()},
     ],
-    "breakdowns": [{**b, "title": "大家往哪裡回家" if b["id"] == "origin" else b["title"]} for b in ct["breakdowns"]],
+    "breakdowns": [{**b, "title": "從哪裡離開內科" if b["id"] == "entry" else b["title"]} for b in ct["breakdowns"]],
 }
 
 # ---------- 協商一頁紙 ----------
