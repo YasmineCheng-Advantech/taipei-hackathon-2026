@@ -76,19 +76,19 @@ Oct 24, 2026 · 給所有在這個 repo 工作的人與 AI（兩個 Claude 帳�
 
 交件要公開網址，轉 public **之前**逐項確認。轉成 public 之後，歷史與所有分支一次全公開，而且不可逆。
 
-- [ ] `gitleaks detect --redact --log-opts="--all"` 回報 0 筆
-- [ ] `git ls-files | grep -iE '\.env|data/raw/|\.DS_Store|\.venv'` 無輸出
-- [ ] 已合併或封存所有還有獨有內容的分支，刪掉其餘 `claude/*` 遠端分支
-- [ ] 前端斷網可完整操作（沒有外部請求）
-- [ ] `.env.example` 只有 KEY 名稱、沒有值
-- [ ] 轉 public **之後立刻**開啟 GitHub secret scanning 與 push protection：
+- [x] `gitleaks detect --redact --log-opts="--all"` 回報 0 筆
+- [x] `git ls-files | grep -iE '\.env|data/raw/|\.DS_Store|\.venv'` 無輸出
+- [x] 已合併或封存所有還有獨有內容的分支，刪掉其餘 `claude/*` 遠端分支
+- [x] 前端斷網可完整操作（沒有外部請求）
+- [x] `.env.example` 只有 KEY 名稱、沒有值
+- [x] 轉 public **之後立刻**開啟 GitHub secret scanning 與 push protection：
 
   ```bash
   gh api -X PATCH repos/<owner>/<repo> \
     -f security_and_analysis='{"secret_scanning":{"status":"enabled"},"secret_scanning_push_protection":{"status":"enabled"}}'
   ```
 
-- [ ] 用無痕視窗以登出狀態開 repo 與作品網址，確認看到的內容符合預期
+- [x] 用無痕視窗以登出狀態開 repo 與作品網址，確認看到的內容符合預期
 
 ## 七、目前已知、還沒處理的
 
@@ -99,5 +99,5 @@ Oct 24, 2026 · 給所有在這個 repo 工作的人與 AI（兩個 Claude 帳�
 | **TDX 金鑰已失效** | 10/24 08:07 起，token 端點回 `unauthorized_client`／`Invalid client credentials`。**不是流量限制**（那會是 429／403）。先前成功 744 次，所以是在 TDX 那端被撤銷或重新產生。要到 <https://tdx.transportdata.tw/> 重新產生、更新 `.env`、**重啟 `collect_vd.py`**。<br>**影響範圍小**：臺北市 VDLive 不需金鑰，5 個入口的真實資料照常；國 1 內湖交流道本來就是 `assumed`／`sim: true`；一個月歷史資料已抓完存在 `data/raw/tdx_vd_hist/` |
 | ~~`web/api/live.js` 的 query string 繞過快取~~ | **10/24 已修**：加了模組層節流（TTL 5 分鐘）＋ inflight 共用，忽略 query string；限定 `GET`／`HEAD`，其餘回 405；錯誤訊息不再把上游原始錯誤回給前端 |
 | ~~`web/src/shell.html` 外連 Google Fonts~~ | **10/24 已修**：Grandstander 800 內嵌成 data URI（22 KB），中文改系統字；18 個畫面的 `<link>` 也一併移除。`dist/index.html` 現在**零外部請求** |
-| repo 仍為 private | 交件前才轉 public，照第六節清單 |
+| ~~repo 仍為 private~~ | **10/24 11:18 已轉 public**，secret scanning 與 push protection 同時啟用；21 個 `claude/*` 分支已刪，只留 `master` |
 | `~/Downloads/traffic-gem` 舊副本 | 已停用、**不要再改**。正本是本 repo 的 [`web/`](web/) |
