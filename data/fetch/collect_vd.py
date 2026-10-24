@@ -144,13 +144,19 @@ class TDX:
     def enabled(self):
         return bool(self.id and self.secret) and not self.dead
 
+    def skip(self, why):
+        """這次執行不抓 TDX（預設行為；TDX 免費額度已用完）。"""
+        self.dead = True
+        log(f"不抓 TDX 國道資料（{why}）。臺北市 VDLive 不需金鑰，照常收；"
+            f"國 1 內湖交流道維持模擬值，畫面上標示為「情境假設」。")
+
     def give_up(self, why):
         """金鑰無效時停止嘗試。繼續每 5 分鐘打一組壞掉的憑證沒有意義，
         也不符合 CLAUDE.md「不對第三方系統做掃描、壓測」的精神。"""
         self.dead = True
         log(f"TDX 金鑰無效（{why}），這次執行不再嘗試 TDX。"
-            f"請到 https://tdx.transportdata.tw/ 重新產生金鑰、更新 .env 後重啟收集程式。"
-            f"臺北市的資料不受影響，會繼續收。")
+            f"本專案的免費額度已於 2026-10-24 用完；若日後換到可用的金鑰，"
+            f"更新 .env 後加 --tdx 重啟。臺北市的資料不受影響，會繼續收。")
 
     def auth(self, force=False):
         if not force and self.token and time.time() < self.expires - 300:
@@ -233,11 +239,20 @@ def main():
     ap.add_argument('--end', type=dt.time.fromisoformat, default=END, help='每天結束收的時間，預設 10:30')
     ap.add_argument('--weekends', action='store_true', help='週末也收（預設只收平日）')
     ap.add_argument('--until', type=dt.date.fromisoformat, help='收到這一天的時段結束就停，如 2026-10-31')
+    ap.add_argument('--tdx', action='store_true',
+                    help='同時抓 TDX 國道資料（需金鑰）。'
+                         '預設不抓：本專案的 TDX 免費額度已用完，金鑰失效，'
+                         '留著自動重試只會一直對 TDX 送出失敗的請求')
     args = ap.parse_args()
     ROOT.mkdir(parents=True, exist_ok=True)
     load_env()
     tdx = TDX()
-    if not tdx.enabled():
+    if not args.tdx:
+        # 2026-10-24：TDX 免費額度用完、金鑰失效，改為預設不抓。
+        # 臺北市 VDLive 不需要金鑰，5 個有偵測器的入口照常收；
+        # 國 1 內湖交流道維持模擬值（assumed／sim: true），畫面上有標示。
+        tdx.skip('未指定 --tdx；免費額度已用完')
+    elif not tdx.enabled():
         log('沒有設定 TDX_CLIENT_ID／TDX_CLIENT_SECRET，這次只抓臺北市資料')
     if args.once:
         poll_once(tdx)

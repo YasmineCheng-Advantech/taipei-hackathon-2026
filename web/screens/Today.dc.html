@@ -141,8 +141,12 @@ class Component extends DCLogic {
     // 省下的分鐘給區間，同時寫出會早到幾分鐘（CLAUDE.md）
     const earlyText = early.value > 0 ? `比平常早 ${early.value} 分到公司`
       : early.value < 0 ? `比平常晚 ${-early.value} 分到公司` : '和平常一樣時間到';
+    // saved 可能是負的（尖峰、可能遲到的時段），不能一律寫成「路上少 N 分」
+    const sv = Number(saved.value);
     const savedText = saved.pending ? '省下的分鐘待補'
-      : Number(saved.value) > 0 || saved.range ? `路上少 ${saved.text} 分` : '路上時間和平常差不多';
+      : sv > 0 ? `路上少 ${saved.text} 分`
+      : sv < 0 ? `路上多 ${saved.range ? `${-saved.hi}–${-saved.lo}` : -sv} 分`
+      : '路上時間和平常差不多';
 
     const tagOf = (o) => {
       if (o.status === 'peak') return { tag: '尖峰', tagBg: '#FCE4D8', tagFg: '#8A2E0B' };
@@ -195,11 +199,13 @@ class Component extends DCLogic {
 
       strip: D.cols.map((c, i) => {
         const cell = D.cell(layer.id, ri, i);
+        // 時段可能落在熱力圖的範圍外（例如 09:30、09:45），這時標在最後一格
+        const pickAt = selCol >= 0 ? selCol : D.cols.length - 1;
         return {
           level: cell.gap ? false : D.level(layer, cell.v),
-          cls: (cell.gap ? 'gap' : '') + (cell.sim ? ' hatch' : '') + (i === selCol ? ' pick' : ''),
-          isPick: i === selCol,
-          isUsual: i === baseCol && i !== selCol,
+          cls: (cell.gap ? 'gap' : '') + (cell.sim ? ' hatch' : '') + (i === pickAt ? ' pick' : ''),
+          isPick: i === pickAt,
+          isUsual: i === baseCol && i !== pickAt,
         };
       }),
 

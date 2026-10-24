@@ -19,13 +19,17 @@
 
 const SOURCE = 'https://tcgbusfs.blob.core.windows.net/blobtisv/VDLive.xml';
 
-// 入口 → 偵測器，出自 data/processed/entrances.csv
+// 入口 → 偵測器與「往內湖方向」的 LinkID，出自 data/processed/entrances_detail.csv。
+//
+// 為什麼要 LinkID：同一支偵測器常同時回報兩個方向（VPMSV40、VQBUL20、VMLXB00 都是），
+// 離線管線用 preview_vd.keep() 只留往內湖的那一段。即時端沒有一起篩的話，
+// 車流會變成約兩倍、車速是兩個方向的混合平均，和熱力圖的格子不可比。
 const DETECTOR = {
-  'neihu-rd-1': 'VTXQJ20',
-  'tiding-n': 'VPMSV40',
-  'minquan-br': 'VQBUL20',
-  'chengmei-br': 'VMLXB00',
-  huandong: 'V6310G0',
+  'neihu-rd-1': { vdid: 'VTXQJ20', link: '6000910200000A' },
+  'tiding-n': { vdid: 'VPMSV40', link: '2000700100210A' },
+  'minquan-br': { vdid: 'VQBUL20', link: '6005320200000A' },
+  'chengmei-br': { vdid: 'VMLXB00', link: '6001470000010A' },
+  huandong: { vdid: 'V6310G0', link: '2000900100640A' },
 };
 
 // 沒有偵測器的入口：留白，不補數字
@@ -39,7 +43,9 @@ const STALE_AFTER_MS = 15 * 60 * 1000; // 超過 15 分鐘沒更新就標成可�
 const UPSTREAM_TIMEOUT_MS = 10000;
 const LOW_SAMPLE = 5; // 車速背後不到 5 輛車就標 low_sample，畫面要說「車太少，測不準」
 
-const WANTED = new Set(Object.values(DETECTOR));
+const WANTED = new Set(Object.values(DETECTOR).map((d) => d.vdid));
+// VDID → 往內湖方向的 LinkID
+const INBOUND = Object.fromEntries(Object.values(DETECTOR).map((d) => [d.vdid, d.link]));
 
 const tag = (xml, name) => {
   const m = xml.match(new RegExp(`<${name}>([^<]*)</${name}>`));
@@ -72,7 +78,7 @@ function parseLinkFlow(xml) {
   return { speed: samples > 0 ? weighted / samples : null, volume, samples };
 }
 
-/** 從整份 XML 解析出目標偵測器的即時值。匯出供 api/live.test.mjs 對帳用。 */
+/** 從整份 XML 解析出目標偵測器的即時值。匯出供對帳用。 */
 export function parse(xml) {
   const updatedAt = tag(xml, 'UpdateTime');
   const found = {};
@@ -89,7 +95,11 @@ export function parse(xml) {
     let samples = 0;
     let volume = 0;
     let lanes = 0;
+    let matched = 0;
     for (const lf of blocks(vd, 'LinkFlow')) {
+      // 只算往內湖方向那一段。不能取「第一個」LinkFlow：實測 VPMSV40 的第一個就是反方向。
+      if (tag(lf, 'LinkID') !== INBOUND[id]) continue;
+      matched++;
       lanes += blocks(lf, 'Lane').length;
       const flow = parseLinkFlow(lf);
       volume += flow.volume;
@@ -97,6 +107,11 @@ export function parse(xml) {
         weighted += flow.speed * flow.samples;
         samples += flow.samples;
       }
+    }
+    // 篩不到往內湖的路段就當作沒有資料，不回退到另一個方向、也不當成 0
+    if (!matched) {
+      found[id] = { status, collectTime, unavailable: true, reason: '這次沒有往內湖方向的讀數' };
+      continue;
     }
     found[id] = {
       status,
@@ -121,15 +136,24 @@ let cached = null; // { at, data }
 let inflight = null; // 併發時共用同一個請求，不要各打各的
 
 async function fetchUpstream() {
-  if (cached && Date.now() - cached.at < THROTTLE_MS) return cached.data;
+  if (cached && Date.now() - cached.at < THROTTLE_MS) {
+    if (cached.error) throw cached.error;
+    return cached.data;
+  }
   if (inflight) return inflight;
   inflight = (async () => {
-    const r = await fetch(SOURCE, { signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) });
-    if (!r.ok) throw new Error(`上游回應 ${r.status}`);
-    const parsed = parse(await r.text());
-    if (!parsed.updatedAt) throw new Error('讀不到 UpdateTime，來源格式可能變了');
-    cached = { at: Date.now(), data: parsed };
-    return parsed;
+    try {
+      const r = await fetch(SOURCE, { signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) });
+      if (!r.ok) throw new Error(`上游回應 ${r.status}`);
+      const parsed = parse(await r.text());
+      if (!parsed.updatedAt) throw new Error('讀不到 UpdateTime，來源格式可能變了');
+      cached = { at: Date.now(), data: parsed };
+      return parsed;
+    } catch (e) {
+      // 失敗也要記進節流，否則上游掛掉時每個請求都會重試，5 分鐘上限等於消失
+      cached = { at: Date.now(), error: e };
+      throw e;
+    }
   })().finally(() => { inflight = null; });
   return inflight;
 }
@@ -155,10 +179,14 @@ export default async function handler(req, res) {
 
   const entries = {};
   for (const [row, note] of Object.entries(GAPS)) entries[row] = { gap: true, note };
-  for (const [row, vdid] of Object.entries(DETECTOR)) {
-    const f = found[vdid];
+  for (const [row, d] of Object.entries(DETECTOR)) {
+    const f = found[d.vdid];
     if (!f || f.unavailable || f.speed === null) {
-      entries[row] = { unavailable: true, detector: vdid, note: '偵測器目前沒有有效讀數' };
+      entries[row] = {
+        unavailable: true,
+        detector: d.vdid,
+        note: (f && f.reason) || '偵測器目前沒有有效讀數',
+      };
       continue;
     }
     entries[row] = {
@@ -167,7 +195,8 @@ export default async function handler(req, res) {
       samples: f.samples, // 車速背後有幾輛車
       low_sample: f.samples < LOW_SAMPLE, // 車太少，畫面要說「測不準」
       lanes: f.lanes,
-      detector: vdid,
+      detector: d.vdid,
+      link_id: d.link,
       collect_time: f.collectTime,
       label: 'observed', // 真實觀測
       sim: false,

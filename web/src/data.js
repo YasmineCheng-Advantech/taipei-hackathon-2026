@@ -133,7 +133,9 @@
   const notify = () => listeners.forEach((fn) => { try { fn(live); } catch (e) { /* 單一畫面壞掉不影響其他 */ } });
 
   let timer = null;
+  let lastFetch = 0;
   async function refresh() {
+    lastFetch = Date.now();
     try {
       const r = await fetch('api/live', { cache: 'no-store' });
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -157,8 +159,9 @@
     refresh();
     timer = setInterval(() => { if (!document.hidden) refresh(); }, POLL_MS);
     document.addEventListener('visibilitychange', () => {
-      // 回到前景且資料超過一輪沒更新就補抓一次
-      if (!document.hidden && live.state !== 'loading') refresh();
+      // 回到前景時，只有「距離上次抓取已經超過一輪」才補抓，否則切分頁就會一直打
+      if (document.hidden || live.state === 'loading') return;
+      if (Date.now() - lastFetch >= POLL_MS) refresh();
     });
   }
 

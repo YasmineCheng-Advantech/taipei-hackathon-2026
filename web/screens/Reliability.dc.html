@@ -99,7 +99,10 @@ class Component extends DCLogic {
     const ri = Math.min(S.r, Math.max(0, R.length - 1));
     const ci = Math.min(S.c, Math.max(0, cols.length - 1));
     const cur = (R[ri] && R[ri].cells[ci]) || { gap: true };
-    const days = (R.flatMap((x) => x.cells).find((c) => !c.gap) || {}).days;
+    // 各格的天數不一定一樣（偵測器上線時間不同），所以副標給範圍而不是挑一格
+    const allDays = R.flatMap((x) => x.cells).filter((c) => !c.gap && c.days != null).map((c) => c.days);
+    const days = allDays.length ? Math.max(...allDays) : null;
+    const minDays = allDays.length ? Math.min(...allDays) : null;
     // bad_at 與逐日天數都是選填：沒有的話這張圖不成立，直接說沒有，不硬畫
     const hasBad = bad != null && days != null;
     if (!hasBad) return { hasBad: false, noBad: true, grid: '', heads: [], subtitle: '', rows: [], readout: '', why: '' };
@@ -109,7 +112,8 @@ class Component extends DCLogic {
       noBad: false,
       grid: '82px repeat(' + cols.length + ', minmax(0, 1fr))',
       heads: cols.map((c) => c.label),
-      subtitle: `每格的紅色高度＝收集期間${days ? ' ' + days + ' 個' : ''}${D.meta.days || '平日'}裡，車速低於 ${bad} ${unit} 的天數佔比`,
+      subtitle: `每格的紅色高度＝車速低於 ${bad} ${unit} 的天數佔比`
+        + (minDays === days ? `（每格 ${days} 個${D.meta.days || '平日'}）` : `（各格 ${minDays}–${days} 個${D.meta.days || '平日'}不等，格子上標的是實際天數）`),
       rows: R.map((x, i) => ({
         name: x.row.name + (x.cells.some((c) => c.sim) ? '（模擬）' : ''),
         cells: x.cells.map((c, j) => {

@@ -80,11 +80,16 @@
       g.fillText(line, 56, y);
       g.fillStyle = '#6B3A20'; g.font = "400 28px 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif"; g.fillText('內科晨峰・挑一個比較不塞的時段 →', 56, H - 56);
       c.toBlob((blob) => {
+        if (!blob) { app.toast('沒辦法存檔'); return; }
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.download = 'traffic-gem.png';
-        a.href = URL.createObjectURL(blob);
+        a.href = url;
+        document.body.appendChild(a);
         a.click();
-        URL.revokeObjectURL(a.href);
+        a.remove();
+        // 等瀏覽器把下載接手之後再釋放，立刻 revoke 在部分瀏覽器會讓下載失敗
+        setTimeout(() => URL.revokeObjectURL(url), 60000);
         app.toast('已存成圖片');
       }, 'image/png');
     }
