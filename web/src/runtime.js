@@ -56,8 +56,13 @@
       t.textContent = msg; t.classList.add('show');
       clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2400);
     },
-    async share(text) {
-      const full = text + '\n內科晨峰・挑一個比較不塞的時段 → ' + location.href.split('#')[0];
+    /** 分享文字。sim 為真時一定要標出含模擬數字（CLAUDE.md：不能只靠斜線紋路）。 */
+    async share(text, sim) {
+      const tail = (D.share && D.share.footer && D.share.footer.indexOf('[') < 0)
+        ? D.share.footer
+        : `${D.meta.title || ''}・挑一個比較不塞的時段`;
+      const badge = sim ? `（${(D.share && D.share.sim_badge) || '含模擬資料'}）` : '';
+      const full = text + badge + '\n' + tail + ' → ' + location.href.split('#')[0];
       if (navigator.share) { try { await navigator.share({ title: 'Traffic Gem', text: full }); return; } catch (e) { if (e.name === 'AbortError') return; } }
       try { await navigator.clipboard.writeText(full); app.toast('已複製，貼到 LINE 就能分享'); }
       catch (e) { prompt('複製這段文字分享', full); }
@@ -70,7 +75,7 @@
       bg.addColorStop(0, '#F6B07E'); bg.addColorStop(0.45, '#F7C9A6'); bg.addColorStop(1, '#FDF1E8');
       g.fillStyle = bg; g.fillRect(0, 0, W, H);
       g.fillStyle = '#D2532A'; g.font = "800 60px Grandstander, 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif"; g.fillText('Traffic Gem', 56, 110);
-      if (sim) { g.fillStyle = '#7A5200'; g.font = "500 30px 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif"; g.textAlign = 'right'; g.fillText('含模擬資料', W - 56, 100); g.textAlign = 'left'; }
+      if (sim) { g.fillStyle = '#7A5200'; g.font = "500 30px 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif"; g.textAlign = 'right'; g.fillText((D.share && D.share.sim_badge) || '含模擬資料', W - 56, 100); g.textAlign = 'left'; }
       g.fillStyle = '#5A2410'; g.font = "900 46px 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif";
       let line = '', y = 260;
       for (const ch of text) {
@@ -78,7 +83,10 @@
         line += ch;
       }
       g.fillText(line, 56, y);
-      g.fillStyle = '#6B3A20'; g.font = "400 28px 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif"; g.fillText('內科晨峰・挑一個比較不塞的時段 →', 56, H - 56);
+      const tail = (D.share && D.share.footer && D.share.footer.indexOf('[') < 0)
+        ? D.share.footer
+        : `${D.meta.title || ''}・挑一個比較不塞的時段`;
+      g.fillStyle = '#6B3A20'; g.font = "400 28px 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif"; g.fillText(tail + ' →', 56, H - 56);
       c.toBlob((blob) => {
         if (!blob) { app.toast('沒辦法存檔'); return; }
         const url = URL.createObjectURL(blob);

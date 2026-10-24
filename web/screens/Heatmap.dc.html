@@ -141,18 +141,18 @@ class Component extends DCLogic {
     const sel = D.cell(layer.id, S.r, S.c);
     const other = layers.find((l) => l.id !== layer.id);
     const otherCell = other ? D.cell(other.id, S.r, S.c) : null;
-    const liveNow = D.liveAt(r.id);
+    const liveNow = D.liveSpeed(r.id);
     const end = (cols[S.c + 1] && cols[S.c + 1].label) || (D.meta.time_range && D.meta.time_range.end) || '';
     const src = D.sourceById(r.src);
 
     // 即時列：取不到就說取不到，不拿歷史值假裝是現在
     const L = D.live;
-    const liveRows = rows.map((row) => ({ row, e: D.liveAt(row.id) })).filter((x) => x.e);
+    const liveRows = rows.map((row) => ({ row, e: D.liveSpeed(row.id) })).filter((x) => x.e);
     const peak = D.isPeakNow();
     const live = L.state === 'ok' && liveRows.length
       ? {
           cls: L.stale ? 'is-stale' : '',
-          text: `現在 ${D.hhmm(L.updated_at)}：` + liveRows.map((x) => `${x.row.name} ${x.e.speed}`).join('、') + ' km/h',
+          text: `現在 ${D.hhmm(L.updated_at)}：` + liveRows.map((x) => `${x.row.name} ${x.e.text}`).join('、'),
           note: L.stale ? '來源超過 15 分鐘沒更新，可能延遲' : peak ? '' : '現在不是平日晨峰，下面的矩陣是' + (D.meta.days || '平日') + '平均',
         }
       : { cls: 'is-error', text: L.state === 'loading' ? '正在取得即時路況…' : '暫時取不到即時資料', note: '下面的矩陣是歷史平均，不受影響' };
@@ -227,7 +227,7 @@ class Component extends DCLogic {
           + (sel.lo != null ? `每天在 ${sel.lo}–${sel.hi} 之間。` : ''),
         hasLive: !!liveNow,
         liveText: liveNow
-          ? `現在 ${liveNow.speed} km/h（${D.hhmm(D.live.updated_at)} 更新` + (liveNow.low_sample ? '，這一分鐘只有 ' + liveNow.samples + ' 輛車有車速，測不準' : '') + '）'
+          ? `現在 ${liveNow.text}（${D.hhmm(D.live.updated_at)} 更新）` + (liveNow.caption ? `　${liveNow.caption}` : '')
           : '',
         other: otherCell && !otherCell.gap ? `同一格的${other.name}：${otherCell.v} ${other.unit}` : '',
         src: src ? `來源：${src.name}${src.period ? '，' + src.period : ''}` : '',

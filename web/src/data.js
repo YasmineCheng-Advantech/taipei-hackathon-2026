@@ -172,6 +172,25 @@
     return e;
   }
 
+  /**
+   * 即時車速的「可以直接顯示的字串」。統一在這裡組，畫面就不會忘記標「測不準」。
+   * 回 null 代表這個地點現在沒有即時讀數（缺口、偵測器異常、或篩不到往內湖的路段）。
+   */
+  function liveSpeed(rowId) {
+    const e = liveAt(rowId);
+    if (!e) return null;
+    const unit = (live.units && live.units.speed) || 'km/h';
+    return {
+      speed: e.speed,
+      samples: e.samples,
+      lowSample: !!e.low_sample,
+      unit,
+      // 車太少時一律帶上提醒，避免把 2、3 輛車的讀數講得像精確值
+      text: `${e.speed} ${unit}` + (e.low_sample ? '（車少，測不準）' : ''),
+      caption: e.low_sample ? `這一分鐘只有 ${e.samples} 輛車有車速，測不準` : '',
+    };
+  }
+
   // ---------- 現在是不是題目說的那段時間 ----------
   const toMin = (hhmm) => {
     const [h, m] = String(hhmm).split(':').map(Number);
@@ -242,6 +261,7 @@
     startLive,
     onLive,
     liveAt,
+    liveSpeed,
 
     currentColIndex,
     isPeakNow,

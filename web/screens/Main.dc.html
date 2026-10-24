@@ -38,10 +38,10 @@ class Component extends DCLogic {
   usesLive = true;
   renderVals() {
     const live = D.live;
-    const here = D.rows.map((r) => ({ r, e: D.liveAt(r.id) })).filter((x) => x.e);
+    const here = D.rows.map((r) => ({ r, e: D.liveSpeed(r.id) })).filter((x) => x.e);
     // 首頁放一行即時摘要；取不到就不吹噓，直接說取不到
     const text = live.state === 'ok' && here.length
-      ? `現在 ${D.hhmm(live.updated_at)}・` + here.slice(0, 3).map((x) => `${x.r.name} ${x.e.speed}`).join('、') + ' km/h'
+      ? `現在 ${D.hhmm(live.updated_at)}・` + here.slice(0, 3).map((x) => `${x.r.name} ${x.e.text}`).join('、')
       : live.state === 'loading' ? '正在取得即時路況…' : '暫時取不到即時路況';
     return {
       tagline: D.meta.title + '・幫你挑一個比較不塞的時段',
