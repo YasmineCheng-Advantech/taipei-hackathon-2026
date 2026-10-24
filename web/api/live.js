@@ -216,13 +216,16 @@ export default async function handler(req, res) {
     };
   }
 
+  // 上游與我們的時鐘不會完全一致，age 可能是小幅負數；容忍 2 分鐘，
+  // 否則上游稍微快一點就會把新鮮資料整排標成「可能延遲」
   const age = Date.now() - Date.parse(updatedAt);
+  const CLOCK_SKEW_MS = 2 * 60 * 1000;
   res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=600');
   return res.status(200).json({
     updated_at: updatedAt,
     // 這份資料是什麼時候從上游抓的（不是這個回應產生的時間），這樣才看得出有沒有命中節流
     fetched_at: new Date(cached ? cached.at : Date.now()).toISOString(),
-    stale: !(age >= 0 && age < STALE_AFTER_MS),
+    stale: !(age >= -CLOCK_SKEW_MS && age < STALE_AFTER_MS),
     units: { speed: 'km/h', volume: '輛 / 分鐘' },
     source: { id: 'vd-live', name: '臺北市交工處 VD 即時資料（VDLive.xml）', url: SOURCE },
     entries,

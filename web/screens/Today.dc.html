@@ -161,15 +161,17 @@ class Component extends DCLogic {
     });
 
     const live = D.live;
-    const here = D.liveAt(p.rowId);
-    const typical = D.cell(layer.id, ri, this.state.sel);
+    const here = D.liveSpeed(p.rowId);
+    // 要比就跟「現在這個時間」的平日平均比；拿被選中那一格的平均來比是兩個不同時段，會誤導
+    const nowCol = D.currentColIndex();
+    const nowTypical = nowCol >= 0 ? D.cell(layer.id, ri, nowCol) : { gap: true };
     const liveBar = live.state === 'ok' && here
       ? {
           cls: live.stale ? 'is-stale' : '',
-          text: `現在 ${D.hhmm(live.updated_at)}・${p.entry} ${here.speed} km/h`,
-          note: here.low_sample ? `這一分鐘只有 ${here.samples} 輛車有車速，測不準`
-            : !D.isPeakNow() ? `現在不是${D.meta.days || '平日'}晨峰；建議是依${D.meta.days || '平日'}平均算的`
-            : !typical.gap ? `這一格的${D.meta.days || '平日'}平均是 ${typical.v} km/h` : '',
+          text: `現在 ${D.hhmm(live.updated_at)}・${p.entry} ${here.text}`,
+          note: here.caption
+            || (!D.isPeakNow() ? `現在不是${D.meta.days || '平日'}晨峰；建議是依${D.meta.days || '平日'}平均算的`
+            : !nowTypical.gap ? `${D.cols[nowCol].label} 這一格的${D.meta.days || '平日'}平均是 ${nowTypical.v} km/h` : ''),
         }
       : {
           cls: 'is-error',

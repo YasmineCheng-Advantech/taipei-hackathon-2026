@@ -89,8 +89,8 @@ class Component extends DCLogic {
     const entries = D.rows
       .map((row) => {
         if (isNow) {
-          const e = D.liveAt(row.id);
-          return e ? { row, v: e.speed, sim: false, lowSample: e.low_sample } : null;
+          const e = D.liveSpeed(row.id);
+          return e ? { row, v: e.speed, sim: false, lowSample: e.lowSample, text: e.text } : null;
         }
         const c = D.cell(layer.id, D.rowIndex(row.id), cur.id);
         return c.gap ? null : { row, v: c.v, sim: !!c.sim };
@@ -107,7 +107,9 @@ class Component extends DCLogic {
     const headline = !entries.length
       ? (isNow && live.state !== 'ok' ? '暫時取不到即時路況' : '這個時段沒有可以排名的入口')
       : (isNow ? `現在 ${D.hhmm(live.updated_at)}` : cur.label) +
-        ` 最${layer.direction === 'low_is_bad' ? '塞' : '嚴重'}的是${entries[0].row.name}（${entries[0].v} ${layer.unit.replace('平均車速 ', '')}）`;
+        ` 最${layer.direction === 'low_is_bad' ? '塞' : '嚴重'}的是${entries[0].row.name}（${isNow ? entries[0].text : entries[0].v + ' ' + u}）`
+        // 排第一名如果是「車少、測不準」的讀數，標題不能講得像定論
+        + (isNow && entries[0].lowSample ? '，但那一分鐘車太少，這個排名不可靠' : '');
 
     const sub = !entries.length
       ? '沒有資料時我們留白，不補數字。'
@@ -127,7 +129,7 @@ class Component extends DCLogic {
       rank: entries.map((e, i) => ({
         n: i + 1,
         name: e.row.name + (e.sim ? '（模擬）' : ''),
-        v: e.v + ' ' + u + (e.lowSample ? '（車少）' : ''),
+        v: isNow && e.text ? e.text : e.v + ' ' + u,
         w: Math.max(6, Math.round((e.v / max) * 82)),
         bg: `var(--ramp-${D.level(layer, e.v)})`,
         cls: e.sim ? 'hatch' : '',
