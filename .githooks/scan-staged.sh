@@ -50,7 +50,10 @@ done <<< "$files"
 #   ${{ secrets.X }}  GitHub Actions
 #   os.environ / process.env / getenv   讀環境變數
 #   值是空的、<redacted>、your-...、xxx、...  範例與說明
-added=$(git diff --cached --diff-filter=ACMR -U0 -- $(printf '%s\n' "$files" | grep -vE '\.env\.example$') 2>/dev/null \
+# 用 git 自己的 pathspec 排除 .env.example，不要把檔名清單展開成參數：
+# 原本的寫法沒加引號，檔名含空白時會被詞彙分割，git 報錯又被 2>/dev/null 吞掉，
+# 結果整個內容掃描靜默跳過（也就是「往放行的方向失敗」，10/24 實測確認）。
+added=$(git diff --cached --diff-filter=ACMR -U0 -- . ':(exclude)*.env.example' \
         | grep '^+' | grep -v '^+++' || true)
 
 if [ -n "$added" ]; then
