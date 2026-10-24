@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<title>數據指向那些改變</title>
+<title>數據指向哪些改變</title>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -14,8 +14,6 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
 .chg{display:flex;flex-direction:column;gap:9px;box-sizing:border-box;padding:13px 18px 14px 20px;background:#FFFFFF;border-radius:24px;box-shadow:0 10px 30px rgba(214,110,50,.13);text-decoration:none;color:#4C4C4C}
 .chg:hover{color:#4C4C4C;box-shadow:0 12px 32px rgba(214,110,50,.22)}
 .chg:focus-visible{outline:3px solid #1E4A5E;outline-offset:2px}
-.state{padding:2px 9px;border-radius:999px;font-size:11px;font-weight:500;letter-spacing:.04em;white-space:nowrap;background:#F1EEEB;color:#6E6A66}
-.state.sim{color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE}
 .tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
 .tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
 .tab.on{color:#F07848}
@@ -29,21 +27,22 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5L4.5 7 9 11.5"></path></svg>
       </span>
     </a>
-    <h1 style="flex: 1 1 auto; margin: 0; min-height: 34px; box-sizing: border-box; padding: 0 12px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 12px rgba(0,0,0,.07); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 400; letter-spacing: 0.14em; color: #4C4C4C">{{title}}</h1>
+    <p style="flex: 1 1 auto; margin: 0; min-height: 34px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 12px rgba(0,0,0,.07); display: flex; align-items: center; justify-content: center; font-size: 14px; letter-spacing: 0.14em; color: #4C4C4C">數據依據・{{topicTitle}}</p>
     <a href="Menu.dc.html" aria-label="開啟選單" style="flex: none; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
       <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
     </a>
   </div>
 
-  <div style="padding: 16px 16px 0 18px; display: flex; flex-direction: column; gap: 10px">
+  <h1 style="margin: 39px 0 0 28px; font-size: 22px; font-weight: 900; line-height: 32px; letter-spacing: 0.14em; color: #4E1408">數據指向哪些改變</h1>
+
+  <div style="padding: 19px 16px 0 18px; display: flex; flex-direction: column; gap: 14px">
     <sc-for list="{{items}}" as="c" hint-placeholder-count="5">
       <a class="chg" href="{{c.href}}">
         <span style="display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 10px; row-gap: 2px">
           <b style="font-size: 15px; font-weight: 700; line-height: 22px; letter-spacing: 0.05em; color: #4C4C4C">{{c.title}}</b>
           <span style="font-size: 12px; line-height: 18px; letter-spacing: 0.05em; color: #5E5A57">{{c.who}}</span>
-          <span class="state {{c.stateCls}}">{{c.state}}</span>
         </span>
-        <span style="display: block; padding: 8px 13px; border-radius: 12px; background: #FFF6EF; font-size: 12px; line-height: 18px; letter-spacing: 0.02em; color: #4F4842"><b style="font-weight: 700; color: #4E1408; margin-right: 6px">依據</b>{{c.why}}</span>
+        <span style="display: block; padding: 8px 13px; border-radius: 12px; background: #FFF6EF; font-size: 12px; line-height: 18px; letter-spacing: 0.02em; color: #4F4842"><b style="font-weight: 700; color: #4E1408; margin-right: 6px">依據</b>{{c.why}}（{{c.state}}）</span>
       </a>
     </sc-for>
     <p style="margin: 2px 4px 0; font-size: 12px; line-height: 1.7; letter-spacing: 0.02em; color: #75716E">{{disclaimer}}</p>
@@ -65,7 +64,7 @@ class Component extends DCLogic {
     const PAGE = { flex: 'Scenario', care: 'Tradeoff', shuttle: 'EntryMap', signal: 'Ranking' };
 
     return {
-      title: '數據指向那些改變',
+      topicTitle: D.meta.title || '',
       disclaimer: D.city.disclaimer || '這些是依資料整理出的建議，不代表市府承諾。',
       items: actions.map((a) => {
         const s = D.num(a.support);
@@ -76,7 +75,6 @@ class Component extends DCLogic {
           who: (a.depts || []).join('・'),
           why: a.why,
           state,
-          stateCls: s.sim && !s.pending ? 'sim' : '',
           href: (PAGE[a.id] || 'Heatmap') + '.dc.html',
         };
       }),
