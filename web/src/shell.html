@@ -10,6 +10,8 @@
    Grandstander（品牌字、拉丁字母）內嵌成 data URI；
    中文不內嵌（CJK 字檔要數 MB），改用系統字，macOS／iOS 走蘋方、Windows 走微軟正黑體。 */
 @font-face{font-family:'Grandstander';font-style:normal;font-weight:800;font-display:swap;src:url(/*FONT*/) format('woff2')}
+/* Inter ExtraBold（SIL OFL）：給市府與企業那幾頁的大數字，一樣內嵌不外連。中文仍退回系統字。 */
+@font-face{font-family:'Inter';font-style:normal;font-weight:800;font-display:swap;src:url(/*FONT_INTER*/) format('woff2')}
 :root{color-scheme:light;--tab-h:66px;--page:#F3E6DC;--screen:#FFF8F3}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--page:#2A1D16;--screen:#FFF8F3}}
 :root[data-theme="dark"]{--page:#2A1D16;--screen:#FFF8F3}

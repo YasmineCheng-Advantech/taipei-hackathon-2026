@@ -49,7 +49,7 @@ input[type=range]:focus-visible{outline:3px solid #0B3A4A;outline-offset:2px;bor
       </div>
       <label for="shift" style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px">
         <span style="font-size: 15px; font-weight: 700; letter-spacing: 0.08em">{{sliderName}}</span>
-        <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84">{{shift}}{{sliderUnit}}</span>
+        <span style="font-family: 'Inter', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84">{{shift}}{{sliderUnit}}</span>
       </label>
       <div style="position: relative">
         <input id="shift" type="range" min="{{sliderMin}}" max="{{sliderMax}}" step="{{sliderStep}}" value="{{shift}}" onChange="{{onSlide}}" aria-valuetext="{{shiftText}}">
@@ -69,17 +69,17 @@ input[type=range]:focus-visible{outline:3px solid #0B3A4A;outline-offset:2px;bor
     <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
       <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
         <span style="font-size: 12px; color: #6B4A3A">最長排隊</span>
-        <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{q}}</b>
+        <b style="font-family: 'Inter', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{q}}</b>
         <span style="font-size: 11.5px; color: #6B4A3A">{{qRange}}</span>
       </div>
       <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
         <span style="font-size: 12px; color: #6B4A3A">排隊消散</span>
-        <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{clear}}</b>
+        <b style="font-family: 'Inter', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{clear}}</b>
         <span style="font-size: 11.5px; color: #6B4A3A">{{clearBase}}</span>
       </div>
       <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
         <span style="font-size: 12px; color: #6B4A3A">總延誤</span>
-        <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15; color: {{delayColor}}">{{delay}}</b>
+        <b style="font-family: 'Inter', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15; color: {{delayColor}}">{{delay}}</b>
         <span style="font-size: 11.5px; color: #6B4A3A">和現在比</span>
       </div>
     </div>

@@ -37,7 +37,7 @@ input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;bac
   <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
     <div style="margin: 0 0 0 14px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
       <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">{{heading}}</h1>
-      <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84; margin-right: 6px">{{time}}</span>
+      <span style="font-family: 'Inter', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84; margin-right: 6px">{{time}}</span>
     </div>
     <div role="group" aria-label="看現在還是看平均" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
       <sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
@@ -70,7 +70,7 @@ input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;bac
     </section>
     <section class="card" aria-live="polite" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
       <p style="margin: 0; font-size: 14px; color: #6B4A3A">{{sel.where}}</p>
-      <p style="margin: 0; display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #5A2410">{{sel.v}}</span><span style="font-size: 14px; font-weight: 700">{{sel.unit}}</span></p>
+      <p style="margin: 0; display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Inter', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #5A2410">{{sel.v}}</span><span style="font-size: 14px; font-weight: 700">{{sel.unit}}</span></p>
       <p style="margin: 0; font-size: 14px; line-height: 1.6">{{sel.text}}</p>
     </section>
     <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 14px; font-size: 11.5px; color: #6B4A3A">
