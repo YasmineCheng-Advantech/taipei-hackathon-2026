@@ -12,14 +12,17 @@ import { readFileSync, writeFileSync, readdirSync, mkdirSync, existsSync } from 
 const root = new URL('.', import.meta.url);
 const read = (p) => readFileSync(new URL(p, root), 'utf8');
 
-// 設計稿用 /_blob/<id> 引用圖片，原圖放在 assets/<id>.<副檔名>，build 時一律內嵌成 data URI。
+// 畫面用 /_blob/<名稱> 引用圖片，原圖放在 assets/<名稱>.<副檔名>，build 時一律內嵌成 data URI。
+// <名稱> 可以是設計稿的十六進位編號，也可以是看得懂的名字（例如 avatar-pink）。
 // 零外部請求（SECURITY.md）也讓離線 Demo 能跑。換主視覺只要換 assets/ 裡的檔案，不用改程式。
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', svg: 'image/svg+xml' };
 const blobs = new Map(
   readdirSync(new URL('assets/', root))
     .filter((f) => !f.startsWith('.')) // 擋掉 macOS 的 .DS_Store 這類隱藏檔
     .map((f) => {
-      const [id, ext] = f.split('.');
+      const i = f.lastIndexOf('.');
+      const id = f.slice(0, i);
+      const ext = f.slice(i + 1);
       if (!MIME[ext]) throw new Error(`assets/${f}：不認得的圖片格式 .${ext}`);
       return ['/_blob/' + id, `data:${MIME[ext]};base64,` + readFileSync(new URL('assets/' + f, root)).toString('base64')];
     })
@@ -30,7 +33,7 @@ const font = 'data:font/woff2;base64,' + readFileSync(new URL('grandstander-800.
 
 const screens = {};
 for (const f of readdirSync(new URL('screens/', root)).filter((f) => f.endsWith('.dc.html')).sort()) {
-  screens[f.split('.')[0]] = read('screens/' + f).replace(/\/_blob\/[0-9a-f]+/g, (m) => {
+  screens[f.split('.')[0]] = read('screens/' + f).replace(/\/_blob\/[A-Za-z0-9_-]+/g, (m) => {
     if (!blobs.has(m)) throw new Error(`${f} 引用了 ${m}，但 assets/ 裡找不到對應的圖片`);
     return blobs.get(m);
   });
