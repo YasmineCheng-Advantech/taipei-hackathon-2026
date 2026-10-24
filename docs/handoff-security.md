@@ -121,6 +121,10 @@ const font = 'data:font/woff2;base64,' + readFileSync(new URL('grandstander-800.
 - [ ] DevTools Network 面板：**零個**外部請求
 - [ ] Grandstander 是 SIL OFL 授權，要記進 [`data/SOURCES.md`](../data/SOURCES.md) 的開源套件清單（本來就是交件必填項）
 
+### 補充：前端的 `cache: 'no-store'`
+
+`web/src/data.js` 第 138 行是 `fetch('api/live', { cache: 'no-store' })`。這只影響**瀏覽器自己的**快取，不會穿透 CDN 的 `s-maxage`。但部分 CDN 會理會用戶端送來的 `Cache-Control: no-cache` 而回源，所以上面第 1 項的「模組層節流」更重要——有它在，就算每個請求都回源，打到交工處的仍然是 5 分鐘一次。
+
 ## 三、順手的小事（不急）
 
 `web/src/runtime.js` 第 69、81 行的 `window.claude.use('downloads')` 是 claude.ai artifact 的殘留。在 Vercel 上是死碼（不會報錯，只是永遠走不到）。清掉比較乾淨。
