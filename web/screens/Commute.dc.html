@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>民眾提供的通勤資料</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.seg{appearance:none;border:0;border-radius:10px;min-height:34px;background:#DBDBDB;color:#505050;font:500 13px/1.3 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.06em;cursor:pointer;position:relative;overflow:hidden}
+.seg.on{background:linear-gradient(180deg,#F6A86A 0%,#F28A52 45%,#F2693B 100%);color:#FFFFFF;box-shadow:0 0 0 1.5px #FFE3B8,0 3px 8px rgba(226,88,42,.2)}
+.cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
+.cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
+.cta span{position:relative}
+.cta:hover{color:#1E4A5E;filter:brightness(1.04)}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab:hover{color:#F07848}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; display: flex; flex-direction: column; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+  <div style="display: flex; align-items: center; gap: 8px; padding: 21px 15px 0 22px">
+    <a href="City.dc.html" aria-label="回目標" style="flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: #F07848">
+      <span style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 10px rgba(0,0,0,.08); display: grid; place-items: center">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5L4.5 7 9 11.5"></path></svg>
+      </span>
+    </a>
+    <p style="flex: 1 1 auto; margin: 0; min-height: 34px; box-sizing: border-box; padding: 0 14px; border-radius: 999px; background: #FFFFFF; box-shadow: 0 3px 12px rgba(0,0,0,.07); display: flex; align-items: center; justify-content: center; font-size: 14px; letter-spacing: 0.14em; color: #4C4C4C">數據依據・{{topicTitle}}</p>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="flex: none; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
+    </a>
+  </div>
+
+  <h1 style="margin: 39px 0 0 28px; font-size: 22px; font-weight: 900; line-height: 32px; letter-spacing: 0.14em; color: #4E1408">民眾提供的通勤資料</h1>
+
+  <section aria-label="民眾提供的通勤資料" style="margin: 19px 17px 0; box-sizing: border-box; padding: 19px 20px 20px 26px; background: #FFFFFF; border-radius: 24px; box-shadow: 0 10px 30px rgba(214,110,50,.14)">
+    <div role="group" aria-label="切換資料" style="display: grid; grid-template-columns: repeat({{nTabs}}, minmax(0, 1fr)); gap: 4px">
+      <sc-for list="{{tabs}}" as="t" hint-placeholder-count="2">
+        <button type="button" class="seg {{t.cls}}" aria-pressed="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button>
+      </sc-for>
+    </div>
+    <ul style="margin: 12px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="6">
+        <li style="position: relative; min-height: 38px">
+          <span style="display: block; padding-right: 76px; font-size: 14px; font-weight: 500; line-height: 18px; letter-spacing: 0.03em; color: #464646">{{r.label}}</span>
+          <span aria-hidden="true" style="display: block; margin-top: 3px; width: calc(100% - 76px); height: 8px; border-radius: 4px; background: #DBDBDB; overflow: hidden"><span style="display: block; height: 8px; width: {{r.w}}%; border-radius: 4px; background: linear-gradient(180deg, #F6A86A, #F2693B)"></span></span>
+          <span style="position: absolute; right: 0; top: 17px; font-size: {{r.fs}}px; font-weight: {{r.fw}}; letter-spacing: 0.04em; color: {{r.fg}}">{{r.value}}</span>
+        </li>
+      </sc-for>
+    </ul>
+    <p style="margin: 10px 0 0; font-size: 13px; line-height: 19px; letter-spacing: 0.02em; color: #464646">{{note}}</p>
+  </section>
+
+  <div class="cta-bar sticky"><a class="cta" href="Changes.dc.html"><span>數據指向哪些改變</span></a></div>
+
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  // 彙總分類來自 city.breakdowns；人數的單位是「人」，契約規定一律 pending，
+  // 沒有後端就顯示「尚無資料」、長條留空，不放模擬值（CLAUDE.md：不用模擬人數當民意）
+  state = { tab: 0 };
+
+  renderVals() {
+    const city = D.city;
+    const nameOf = (key) => {
+      const o = (D.setup.origins || []).find((x) => x.id === key);
+      if (o) return o.label;
+      const c = (D.setup.constraints || []).find((x) => x.id === key);
+      return c ? c.label : key;
+    };
+    const T = (city.breakdowns || []).map((b) => ({
+      label: b.title,
+      items: (b.items || []).map((it) => ({ name: nameOf(it.key), n: D.num(it.count) })),
+    }));
+    const ti = Math.min(this.state.tab, Math.max(0, T.length - 1));
+    const cur = T[ti] || { items: [] };
+    // 有真實人數時長條才按比例畫；全部 pending 時一律留空
+    const max = Math.max(...cur.items.map((x) => (x.n.pending ? 0 : Number(x.n.value) || 0)), 0);
+
+    return {
+      topicTitle: D.meta.title || '',
+      nTabs: Math.max(1, T.length),
+      tabs: T.map((t, i) => ({
+        label: t.label,
+        cls: i === ti ? 'on' : '', on: i === ti ? 'true' : 'false',
+        pick: () => this.setState({ tab: i }),
+      })),
+      rows: cur.items.map((x) => ({
+        label: x.name,
+        w: x.n.pending || !max ? 0 : Math.round(((Number(x.n.value) || 0) / max) * 100),
+        value: x.n.pending ? '尚無資料' : `${x.n.text} ${x.n.unit || ''}`.trim(),
+        fs: x.n.pending ? 12 : 13,
+        fw: x.n.pending ? 400 : 700,
+        fg: x.n.pending ? '#5E5A57' : '#3A1A10',
+      })),
+      note: city.note || '只顯示真實的匿名資料，未經驗證，也不代表全體通勤者。',
+    };
+  }
+}
+</script>
+</body>
+</html>
