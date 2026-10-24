@@ -30,6 +30,8 @@ const blobs = new Map(
 // 品牌字內嵌，網站才會零外部請求（SECURITY.md：不把使用者 IP 送給第三方；離線也要能跑完 Demo）。
 // 中文不內嵌（CJK 字檔要數 MB），shell.html 裡改用系統字。
 const font = 'data:font/woff2;base64,' + readFileSync(new URL('grandstander-800.woff2', root)).toString('base64');
+// Inter ExtraBold：給市府與企業那幾頁的大數字。一樣內嵌，零外部請求。
+const fontInter = 'data:font/woff2;base64,' + readFileSync(new URL('inter-800.woff2', root)).toString('base64');
 
 const screens = {};
 for (const f of readdirSync(new URL('screens/', root)).filter((f) => f.endsWith('.dc.html')).sort()) {
@@ -60,6 +62,7 @@ const json = (v) => JSON.stringify(v).replaceAll('</', '<\\/');
 
 const out = read('src/shell.html')
   .replace('/*FONT*/', () => font)
+  .replace('/*FONT_INTER*/', () => fontInter)
   .replace('/*TOKENS*/', () => read('src/tokens.css'))
   .replace('/*SCREENS*/', () => json(screens))
   .replace('/*TOPICS*/', () => json(topics))

@@ -68,6 +68,7 @@ Oct 20, 2026 · 交件 README 的「資料來源」「AI 工具與開源套件�
 | GitHub Actions（`actions/checkout`、`actions/setup-python`、`actions/upload-artifact`） | 平日早上自動收集 VD | MIT |
 | Node.js 18+ | 網站打包（`web/build.mjs`，零相依套件；`npm install` 不裝任何東西） | MIT |
 | [Grandstander](https://fonts.google.com/specimen/Grandstander) 800 | 品牌字（拉丁字母）；woff2 內嵌進網站，不外連 Google Fonts | SIL Open Font License 1.1 |
+| [Inter](https://fonts.google.com/specimen/Inter) 800（ExtraBold） | 「給市府與企業」那幾頁的大數字；woff2 內嵌進網站，不外連 Google Fonts | SIL Open Font License 1.1 |
 | 系統中文字型（蘋方／微軟正黑體） | 內文中文；不內嵌、不外連，用使用者裝置既有的字型 | 作業系統內建 |
 | Vercel | 靜態網站託管與 Serverless Function（`web/api/live.js` 即時 VD 代理） | 商業服務 |
 | [待補] 認領後端 | 時段認領（尚未實作，人數一律顯示「尚無資料」） | |
