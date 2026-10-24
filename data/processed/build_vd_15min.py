@@ -9,6 +9,8 @@
 
 規則
 - 只用 status = 0（正常）且有車速的讀數；同一支偵測器同一個 DataCollectTime 只算一次（收集程式可能抓到同一筆）。
+- 同一支偵測器常同時回報兩個方向：入口只用往內湖的路段（entrances_detail.csv 的 LinkID，見 preview_vd.keep）。
+- preview_vd.SKIP_DAYS 列的日子（颱風假）不算，記在輸出的 skipped_days。
 - 每筆讀數是 5 分鐘的車數（build_all.py 合併時已把自己收的 1 分鐘車數 ×5），依 DataCollectTime 落在哪個 15 分鐘格。
 - 一格的流量 = 該格各筆的車輛數加總；不滿 3 筆時按比例補成 15 分鐘，並記在 samples。
 - 一格的車速 = 各筆車速依車輛數加權平均。
@@ -21,6 +23,8 @@ import json
 import sys
 from collections import defaultdict
 from pathlib import Path
+
+from preview_vd import SKIP_DAYS, inbound_links, keep
 
 OUT = Path(__file__).with_name("vd_15min.json")
 BAD_SPEED = 20  # 與 gen_t4_morning.py 的 BAD_SPEED 相同
@@ -53,12 +57,15 @@ def main(argv):
         print(__doc__.strip())
         return 2
     seen, entrance = set(), {}
+    links = inbound_links()
     # (vdid, 日期, 格) -> [(車速, 車輛數)]
     reads = defaultdict(list)
     skipped = 0
     for p in paths:
         with open(p, encoding="utf-8") as f:
             for r in csv.DictReader(f):
+                if not keep(r, links) or r["collect_time"][:10] in SKIP_DAYS:
+                    continue
                 key = (r["vdid"], r["collect_time"])
                 if key in seen:
                     continue
@@ -98,12 +105,14 @@ def main(argv):
         "built_at": dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(timespec="seconds"),
         "window": f"{'每天' if args.weekends else '平日'} {args.start:%H:%M}–{args.end:%H:%M}",
         "days": sorted(days),
+        "skipped_days": SKIP_DAYS,
         "bad_speed": BAD_SPEED,
         "skipped_reads": skipped,
         "detectors": detectors,
     }
     args.out.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"wrote {args.out}：{len(detectors)} 支偵測器、{len(days)} 天（{', '.join(sorted(days))}），略過 {skipped} 筆異常讀數")
+    print(f"wrote {args.out}：{len(detectors)} 支偵測器、{len(days)} 天（{', '.join(sorted(days))}），略過 {skipped} 筆異常讀數；"
+          f"不算的日子：{'、'.join(f'{d}（{why}）' for d, why in SKIP_DAYS.items()) or '無'}")
     return 0
 
 

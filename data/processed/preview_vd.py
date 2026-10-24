@@ -9,6 +9,7 @@
 - 車種組成：各入口機車、小客車、大車、聯結車的比例
 - 最新讀數表
 規則和 build_vd_15min.py 相同：只用狀態正常的讀數，同一筆不重複計算，車速依車輛數加權。
+每個入口只用往內湖方向的路段（entrances_detail.csv 的 LinkID）；SKIP_DAYS 列的日子（颱風假）不算。
 """
 import csv
 import datetime as dt
@@ -22,13 +23,31 @@ DEFAULT_CSV = ROOT / "raw" / "vd_taipei_targets.csv"
 OUT = ROOT / "raw" / "preview.html"
 MAIN = ["VTXQJ20", "VPMSV40", "VQBUL20", "VMLXB00", "V6310G0"]  # 5 個入口；其餘是備用偵測器
 VEH = [("vol_M", "機車"), ("vol_S", "小客車"), ("vol_L", "大車"), ("vol_T", "聯結車")]
+DETAIL = Path(__file__).with_name("entrances_detail.csv")
+SKIP_DAYS = {"2026-10-23": "颱風假"}  # 不算進平日的日子：日期 → 原因
+
+
+def inbound_links():
+    """入口對應表（entrances_detail.csv）裡，每支偵測器往內湖方向的 LinkID。"""
+    with open(DETAIL, encoding="utf-8") as f:
+        return {r["VD編號"]: r["LinkID"] for r in csv.DictReader(f) if r["VD編號"] and r["LinkID"]}
+
+
+def keep(r, links):
+    """同一支偵測器常同時回報兩個方向：對應表裡的偵測器只留往內湖的路段。
+    表裡沒有的備用偵測器方向還沒確認，照舊每個時間取第一筆。"""
+    want = links.get(r["vdid"])
+    return want is None or r["link_id"] == want
 
 
 def load(paths):
     seen, rows, skipped = set(), [], 0
+    links = inbound_links()
     for p in paths:
         with open(p, encoding="utf-8") as f:
             for r in csv.DictReader(f):
+                if not keep(r, links) or r["collect_time"][:10] in SKIP_DAYS:
+                    continue
                 key = (r["vdid"], r["collect_time"])
                 if key in seen:
                     continue
