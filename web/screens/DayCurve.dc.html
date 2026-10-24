@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>單一入口一天的車速</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.chip{appearance:none;border:0;border-radius:999px;min-height:40px;padding:0 14px;background:#EFEDEB;color:#3F3935;font:500 14px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.06em;cursor:pointer;white-space:nowrap}
+.chip.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35)}
+.hit{appearance:none;border:0;padding:0;background:transparent;position:absolute;top:0;bottom:0;cursor:pointer}
+.hit:focus-visible{outline:2px solid #0B3A4A}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 560px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 740px, #FFF8F3 920px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Heatmap.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>熱力圖
+    </a>
+    <span class="sim">含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">一個入口的早上</h1>
+      <p style="margin: 0; font-size: 13.5px; color: #6B4A3A">{{subtitle}}</p>
+    </div>
+    <div role="group" aria-label="選入口" style="display: flex; flex-wrap: wrap; gap: 6px">
+      <sc-for list="{{entries}}" as="e" hint-placeholder-count="6">
+        <button type="button" class="chip {{e.cls}}" aria-pressed="{{e.on}}" onClick="{{e.pick}}">{{e.name}}</button>
+      </sc-for>
+    </div>
+    <section class="card" aria-label="{{chartAria}}" style="padding: 16px 14px 12px; display: flex; flex-direction: column; gap: 6px">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; padding: 0 4px">
+        <span style="font-size: 13px; color: #6B4A3A">km/h</span>
+        <span style="display: flex; gap: 12px; font-size: 12px; color: #6B4A3A">
+          <span style="display: flex; align-items: center; gap: 5px"><i aria-hidden="true" style="width: 16px; height: 3px; border-radius: 2px; background: #C93A22"></i>平均</span>
+          <span style="display: flex; align-items: center; gap: 5px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; background: #FBD5BE"></i>每天範圍</span>
+        </span>
+      </div>
+      <div style="position: relative; width: 330px; height: 210px">
+        <svg viewBox="0 0 330 210" width="330" height="210" aria-hidden="true" style="position: absolute; inset: 0; overflow: visible">
+          <line x1="28" y1="20" x2="322" y2="20" stroke="#F1E6DE" stroke-width="1"></line>
+          <line x1="28" y1="80" x2="322" y2="80" stroke="#F1E6DE" stroke-width="1"></line>
+          <line x1="28" y1="140" x2="322" y2="140" stroke="#F1E6DE" stroke-width="1"></line>
+          <line x1="28" y1="200" x2="322" y2="200" stroke="#D9C8BC" stroke-width="1"></line>
+          <text x="20" y="24" text-anchor="end" font-size="10" fill="#6B4A3A">{{ax3}}</text>
+          <text x="20" y="84" text-anchor="end" font-size="10" fill="#6B4A3A">{{ax2}}</text>
+          <text x="20" y="144" text-anchor="end" font-size="10" fill="#6B4A3A">{{ax1}}</text>
+          <text x="20" y="204" text-anchor="end" font-size="10" fill="#6B4A3A">0</text>
+          <sc-if value="{{hasBad}}">
+            <line x1="28" y1="{{badY}}" x2="322" y2="{{badY}}" stroke="#8A2E0B" stroke-width="1.5" stroke-dasharray="4 3"></line>
+            <text x="322" y="{{badLabelY}}" text-anchor="end" font-size="10" font-weight="700" fill="#8A2E0B">{{badText}}</text>
+          </sc-if>
+          <path d="{{band}}" fill="#FBD5BE"></path>
+          <path d="{{line}}" fill="none" stroke="#C93A22" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></path>
+          <line x1="{{selX}}" y1="14" x2="{{selX}}" y2="200" stroke="#3A2418" stroke-width="1"></line>
+          <circle cx="{{selX}}" cy="{{selY}}" r="6" fill="#C93A22" stroke="#FFFFFF" stroke-width="2.5"></circle>
+        </svg>
+        <sc-for list="{{hits}}" as="h" hint-placeholder-count="10">
+          <button type="button" class="hit" style="left: {{h.left}}px; width: 30px" aria-label="{{h.aria}}" onClick="{{h.pick}}"></button>
+        </sc-for>
+      </div>
+      <div style="position: relative; height: 16px; font-size: 11px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <sc-for list="{{xlabels}}" as="x" hint-placeholder-count="3">
+          <span style="position: absolute; left: {{x.left}}px; transform: translateX(-50%)">{{x.label}}</span>
+        </sc-for>
+      </div>
+      <p aria-live="polite" style="margin: 4px 4px 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 14px; line-height: 1.65">{{readout}}</p>
+    </section>
+    <section class="card" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.06em">怎麼讀</h2>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.7; color: #5A3A2A">範圍越寬，代表每天差很多、不好預測。範圍整段掉到虛線以下，代表幾乎每天都會塞。</p>
+    </section>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":920}}'>
+class Component extends DCLogic {
+  state = { e: 0, c: 0 };
+  renderVals() {
+    const S = this.state;
+    const layer = D.layerOf('speed');
+    const cols = D.cols;
+    const bad = layer.bad_at;
+    const unit = layer.unit.replace('平均車速 ', '');
+
+    // 只列有資料的入口；缺口留白，不畫假曲線
+    const E = D.rows
+      .map((row) => ({ row, cells: cols.map((_, ci) => D.cell(layer.id, D.rowIndex(row.id), ci)) }))
+      .filter((e) => e.cells.some((c) => !c.gap));
+    const cur = E[Math.min(S.e, E.length - 1)] || { row: {}, cells: [] };
+    const d = cur.cells;
+    const ci = Math.min(S.c, Math.max(0, d.length - 1));
+    const c = d[ci] || { gap: true };
+
+    // Y 軸依資料的實際範圍，不寫死刻度（換題或換指標都不用改程式）
+    // bad_at 是選填：非時段題（例如陳情件數）沒有「塞」的門檻
+    const vals = d.filter((x) => !x.gap).map((x) => (x.hi != null ? x.hi : x.v));
+    const top = Math.max(1, Math.ceil(Math.max(...vals, bad != null ? bad * 1.5 : 0, 1) / 3) * 3);
+    const xs = cols.map((_, i) => 28 + i * (294 / Math.max(1, cols.length - 1)));
+    const Y = (v) => 200 - (v / top) * 180;
+    const pt = (i, v) => xs[i].toFixed(1) + ' ' + Y(v).toFixed(1);
+    const solid = d.map((x, i) => ({ x, i })).filter((p) => !p.x.gap);
+    const line = solid.length ? 'M' + solid.map((p) => pt(p.i, p.x.v)).join(' L') : '';
+    const band = solid.length && solid[0].x.lo != null
+      ? 'M' + solid.map((p) => pt(p.i, p.x.hi)).join(' L')
+        + ' L' + solid.slice().reverse().map((p) => pt(p.i, p.x.lo)).join(' L') + ' Z'
+      : '';
+
+    const days = (d.find((x) => !x.gap) || {}).days;
+    const hasBand = solid.length > 0 && solid[0].x.lo != null;
+    return {
+      subtitle: `平均${layer.name.replace('壅塞（', '').replace('）', '')}`
+        + (hasBand ? `，加上${days ? ' ' + days + ' 個' : ''}${D.meta.days || '平日'}裡最高到最低的範圍` : ''),
+      entries: E.map((e, i) => ({
+        name: e.row.name + (e.cells.some((x) => x.sim) ? '（模擬）' : ''),
+        cls: i === S.e ? 'on' : '', on: i === S.e ? 'true' : 'false',
+        pick: () => this.setState({ e: i, c: 0 }),
+      })),
+      line, band,
+      ax1: Math.round(top / 3), ax2: Math.round((top * 2) / 3), ax3: top,
+      hasBad: bad != null,
+      badY: bad != null ? Math.round(Y(bad)) : 0,
+      badLabelY: bad != null ? Math.round(Y(bad)) - 5 : 0,
+      badText: bad != null ? `${bad} ${unit} 以下算塞` : '',
+      selX: xs[ci], selY: c.gap ? -99 : Y(c.v),
+      chartAria: `${cur.row.name} ${cols[0] && cols[0].label} 到 ${cols[cols.length - 1] && cols[cols.length - 1].label} 的平均${unit}曲線`,
+      hits: cols.map((t, i) => ({
+        left: xs[i] - 15,
+        aria: t.label + (d[i] && !d[i].gap ? ` 平均 ${d[i].v} ${unit}` : ' 沒有資料'),
+        pick: () => this.setState({ c: i }),
+      })),
+      xlabels: cols.map((t, i) => ({ left: Math.round(xs[i]), label: t.label.endsWith(':00') ? t.label : '' })).filter((x) => x.label),
+      readout: c.gap
+        ? `${cols[ci] && cols[ci].label}：這一格沒有資料，我們留白，不補數字。`
+        : `${cols[ci].label}：平均 ${c.v} ${unit}`
+          + (c.lo != null ? `，每天在 ${c.lo}–${c.hi} ${unit} 之間` : '')
+          + (bad != null && c.bad_days > 0 ? `；${c.days} 天裡有 ${c.bad_days} 天低於 ${bad}。` : '。'),
+    };
+  }
+}
+</script>
+</body>
+</html>

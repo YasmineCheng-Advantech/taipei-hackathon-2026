@@ -1,0 +1,115 @@
+/* 視覺規範：色階、資料標籤、格子狀態。
+ *
+ * 取自設計稿 design/heatmap-canvas/Tokens.dc.html（畫板「3 視覺規範」）。
+ * CLAUDE.md 規定「程式裡不寫死數字與色碼」：所有畫面一律用這裡的變數，
+ * JS 只負責算出色階等級 0–5（D.level()），不碰色碼。
+ *
+ * 設計稿尚未交付 design/tokens.css，暫以這份為準；交付後把值換掉即可，變數名稱不變。
+ */
+
+:root {
+  /* 1 依序色階：壅塞程度。門檻依意義手動決定（在題目 JSON 的 layer.thresholds），
+     不交給程式自動分位；亮度單調遞減，黑白列印或色盲也分得出深淺。 */
+  --ramp-0: #fef3dc;
+  --ramp-1: #fdd9a0;
+  --ramp-2: #fcb46e;
+  --ramp-3: #f2804a;
+  --ramp-4: #c93a22;
+  --ramp-5: #7e170f;
+  --ramp-ink: #3a3f45; /* 0–3 階的格內文字 */
+  --ramp-ink-deep: #ffffff; /* 4–5 階的格內文字用白色 */
+
+  /* 2 發散色階：情境的前後差異。不用綠，紅綠色盲也分得出來；
+     中間是灰色，避免小差異看起來像大改善。 */
+  --diverge-better-2: #1f5a96; /* 明顯改善 */
+  --diverge-better-1: #7fa9d3; /* 略改善 */
+  --diverge-same: #f1efe9; /* 差不多 */
+  --diverge-worse-1: #f0a774; /* 略惡化 */
+  --diverge-worse-2: #b4501a; /* 明顯惡化 */
+
+  /* 3 資料標籤：每個數字都要有一個。顏色之外一定配文字，不靠顏色單獨辨識。 */
+  --label-observed-bg: #e3ecf5;
+  --label-observed-fg: #1f4e79;
+  --label-computed-bg: #e2f0e8;
+  --label-computed-fg: #2f6b4f;
+  --label-assumed-bg: #fbf0d9;
+  --label-assumed-fg: #7a5200;
+  --label-ai-bg: #efe7f8;
+  --label-ai-fg: #5e3591;
+
+  /* 4 熱力格的狀態 */
+  --cell-gap-bg: #f1efe9; /* 缺口：不補值 */
+  --cell-gap-fg: #8f8a7e;
+  --cell-selected: #1f4e79; /* 選取用深藍外框，不改填色，避免和色階混淆 */
+  --cell-min-height: 44px; /* 手機也點得到 */
+
+  /* 其他 */
+  --map-bg: #f8f7f3;
+  --ink: #3a2418;
+  --ink-soft: #5e5650;
+  --live-fg: #0e6f84; /* 即時資料 */
+  --warn-fg: #8a2e0b;
+}
+
+/* 色階等級 0–5：畫面只加 data-level，不寫色碼 */
+[data-level='0'] { background: var(--ramp-0); color: var(--ramp-ink); }
+[data-level='1'] { background: var(--ramp-1); color: var(--ramp-ink); }
+[data-level='2'] { background: var(--ramp-2); color: var(--ramp-ink); }
+[data-level='3'] { background: var(--ramp-3); color: var(--ramp-ink); }
+[data-level='4'] { background: var(--ramp-4); color: var(--ramp-ink-deep); }
+[data-level='5'] { background: var(--ramp-5); color: var(--ramp-ink-deep); }
+
+/* 發散色階等級 -2…+2（情境前後差） */
+[data-diff='-2'] { background: var(--diverge-better-2); color: #fff; }
+[data-diff='-1'] { background: var(--diverge-better-1); color: var(--ramp-ink); }
+[data-diff='0'] { background: var(--diverge-same); color: var(--ramp-ink); }
+[data-diff='1'] { background: var(--diverge-worse-1); color: var(--ramp-ink); }
+[data-diff='2'] { background: var(--diverge-worse-2); color: #fff; }
+
+/* 模擬資料：不是第五種標籤，而是疊在格子上的斜線紋路，可以和任何一類並存 */
+.hatch {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.55) 0 3px,
+    rgba(255, 255, 255, 0) 3px 7px
+  );
+}
+
+/* 缺口：留白，不補值。各畫面可以再覆蓋成自己的樣子（例如只畫虛線框）。 */
+.gap {
+  background: var(--cell-gap-bg);
+  color: var(--cell-gap-fg);
+}
+
+/* 選取：深藍外框，不改填色 */
+.sel {
+  outline: 2px solid var(--cell-selected);
+  outline-offset: -2px;
+}
+
+/* 資料標籤 */
+.tag {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.tag-observed { background: var(--label-observed-bg); color: var(--label-observed-fg); }
+.tag-computed { background: var(--label-computed-bg); color: var(--label-computed-fg); }
+.tag-assumed { background: var(--label-assumed-bg); color: var(--label-assumed-fg); }
+.tag-ai { background: var(--label-ai-bg); color: var(--label-ai-fg); }
+
+/* 契約錯誤：缺 label 或 sim 時直接在畫面上指出，不預設成真實 */
+.contract-error {
+  margin: 10px 16px;
+  padding: 10px 12px;
+  border: 1px solid var(--ramp-4);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--ramp-4);
+  font-size: 12.5px;
+  line-height: 1.6;
+}

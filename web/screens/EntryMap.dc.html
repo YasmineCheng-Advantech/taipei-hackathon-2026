@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>入口示意地圖</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.pin{appearance:none;border:0;position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;padding:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.pin i{display:block;width:22px;height:22px;border-radius:50%;border:3px solid #FFFFFF;box-shadow:0 2px 6px rgba(90,40,20,.3)}
+.pin.gap i{background:#FFFFFF !important;border:2.5px dashed #A8968A;box-shadow:none}
+.pin.sel i{width:28px;height:28px;box-shadow:0 0 0 3px #0E6F84,0 2px 6px rgba(90,40,20,.3)}
+.pin:focus-visible{outline:3px solid #0B3A4A;border-radius:50%}
+.lab{position:absolute;font-size:11.5px;font-weight:700;color:#3A2418;white-space:nowrap;pointer-events:none;background:rgba(255,255,255,.85);padding:0 4px;border-radius:6px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:12px;border-radius:6px;background:linear-gradient(90deg,#FEF3DC,#FDD9A0,#FCB46E,#F2804A,#C93A22)}
+input[type=range]::-moz-range-track{height:12px;border-radius:6px;background:#EADBD0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-11px;border-radius:50%;background:linear-gradient(180deg,#6BEBFA,#14B8E2);box-shadow:inset 0 4px 0 rgba(255,255,255,.35),0 3px 0 #1C8DB3;border:0}
+input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#2AD4F0;border:0}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 600px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 760px, #FFF8F3 960px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Menu.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>選單
+    </a>
+    <span class="sim">含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">{{heading}}</h1>
+      <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84; margin-right: 6px">{{time}}</span>
+    </div>
+    <div role="group" aria-label="看現在還是看平均" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+      <sc-for list="{{modes}}" as="m" hint-placeholder-count="2">
+        <button type="button" class="seg {{m.cls}}" aria-pressed="{{m.on}}" disabled="{{m.disabled}}" onClick="{{m.pick}}">{{m.label}}</button>
+      </sc-for>
+    </div>
+    <section class="card" style="padding: 14px">
+      <div style="position: relative; width: 330px; height: 330px; border-radius: 18px; background: var(--map-bg); overflow: hidden">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" width="330" height="330" aria-hidden="true" style="position: absolute; inset: 0">
+          <path d="M0 97 C 18 90, 34 99, 52 95 S 82 90, 100 96" fill="none" stroke="#BFE6EE" stroke-width="5"></path>
+          <rect x="53" y="20" width="20" height="16" rx="5" fill="#FBE4D3" stroke="#E9C7AE" stroke-width="0.6"></rect>
+          <sc-for list="{{roads}}" as="rd" hint-placeholder-count="8">
+            <line x1="{{rd.x}}" y1="{{rd.y}}" x2="63" y2="28" stroke="{{rd.stroke}}" stroke-width="{{rd.w}}" stroke-linecap="round" stroke-dasharray="{{rd.dash}}"></line>
+          </sc-for>
+        </svg>
+        <sc-for list="{{landmarks}}" as="lm" hint-placeholder-count="2">
+          <span style="position: absolute; left: {{lm.x}}%; top: {{lm.y}}%; transform: translate(-50%, -50%); width: 22%; text-align: center; font-size: 10.5px; font-weight: {{lm.weight}}; color: {{lm.color}}; line-height: 1.3">{{lm.name}}</span>
+        </sc-for>
+        <sc-for list="{{pins}}" as="p" hint-placeholder-count="8">
+          <button type="button" class="pin {{p.cls}}" style="left: {{p.x}}%; top: {{p.y}}%" aria-label="{{p.aria}}" aria-pressed="{{p.on}}" onClick="{{p.pick}}"><i style="background: {{p.bg}}"></i></button>
+          <span class="lab" style="left: {{p.lx}}%; top: {{p.ly}}%; transform: {{p.lt}}">{{p.name}}</span>
+        </sc-for>
+      </div>
+      <sc-if value="{{isHist}}">
+        <label for="t" style="display: block; margin: 12px 4px 0; font-size: 13px; color: #6B4A3A">拉動時間，看車速怎麼隨時段變化</label>
+        <input id="t" type="range" min="0" max="{{maxT}}" step="1" value="{{t}}" onChange="{{onT}}" aria-valuetext="{{time}}">
+        <div style="display: flex; justify-content: space-between; margin: -4px 4px 0; font-size: 11px; color: #6B4A3A; font-variant-numeric: tabular-nums"><span>{{firstCol}}</span><span>{{lastCol}}</span></div>
+      </sc-if>
+      <p class="live-bar {{live.cls}}" aria-live="polite" style="margin-top: 12px"><span class="dot" aria-hidden="true"></span><span>{{live.text}}</span><span class="note">{{live.note}}</span></p>
+    </section>
+    <section class="card" aria-live="polite" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
+      <p style="margin: 0; font-size: 14px; color: #6B4A3A">{{sel.where}}</p>
+      <p style="margin: 0; display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #5A2410">{{sel.v}}</span><span style="font-size: 14px; font-weight: 700">{{sel.unit}}</span></p>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6">{{sel.text}}</p>
+    </section>
+    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 14px; font-size: 11.5px; color: #6B4A3A">
+      <span>{{legendLo}}</span>
+      <span aria-hidden="true" style="display: inline-flex; gap: 2px">
+        <sc-for list="{{legend}}" as="g" hint-placeholder-count="6"><i data-level="{{g.level}}" style="width: 16px; height: 10px; border-radius: 3px"></i></sc-for>
+      </span>
+      <span>{{legendHi}}</span><span style="flex: 1"></span>
+      <span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 50%; border: 2px dashed #A8968A"></span><span>沒有偵測器</span>
+    </div>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  usesLive = true;
+  // mode: 'now' 看即時、'hist' 看平均；t 是歷史模式的時段索引
+  state = { mode: 'now', t: null, sel: 0 };
+
+  renderVals() {
+    const S = this.state;
+    const layer = D.layerOf('speed');
+    const cols = D.cols;
+    const rows = D.rows;
+    const unit = layer.unit.replace('平均車速 ', '');
+    const live = D.live;
+    const liveOk = live.state === 'ok' && rows.some((r) => D.liveAt(r.id));
+    const mode = S.mode === 'now' && !liveOk ? 'hist' : S.mode;
+    const isHist = mode === 'hist';
+
+    // 預設停在現在所屬的時段，沒有就停在最後一格
+    const nowCol = D.currentColIndex();
+    const t = S.t != null ? Math.min(S.t, cols.length - 1) : (nowCol >= 0 ? nowCol : cols.length - 1);
+
+    // 一個入口在目前模式下的值；沒有就是 null（留白，不補數字）
+    const valueOf = (row) => {
+      if (isHist) {
+        const c = D.cell(layer.id, D.rowIndex(row.id), t);
+        return c.gap ? null : { v: c.v, sim: !!c.sim, label: c.label };
+      }
+      const e = D.liveAt(row.id);
+      return e ? { v: e.speed, sim: false, label: 'observed', lowSample: e.low_sample, samples: e.samples } : null;
+    };
+
+    const lab = (e) => {
+      // 標籤放哪一邊依 x 推算（設計稿的 side 不在資料裡）
+      if (e.x < 40) return { lx: e.x + 5, ly: e.y, lt: 'translateY(-50%)' };
+      if (e.x > 70) return { lx: e.x - 5, ly: e.y, lt: 'translate(-100%, -50%)' };
+      return { lx: e.x, ly: e.y - 6, lt: 'translate(-50%, -100%)' };
+    };
+
+    const si = Math.min(S.sel, rows.length - 1);
+    const s = rows[si];
+    const sv = valueOf(s);
+
+    const peak = D.isPeakNow();
+    const liveBar = liveOk
+      ? {
+          cls: live.stale ? 'is-stale' : '',
+          text: `即時資料 ${D.hhmm(live.updated_at)} 更新`,
+          note: live.stale ? '來源超過 15 分鐘沒更新，可能延遲'
+            : peak ? '' : `現在不是${D.meta.days || '平日'}晨峰，和右邊的平均不能直接比`,
+        }
+      : {
+          cls: 'is-error',
+          text: live.state === 'loading' ? '正在取得即時路況…' : '暫時取不到即時路況',
+          note: '下面顯示的是歷史平均',
+        };
+
+    return {
+      heading: D.meta.region || D.meta.title,
+      time: isHist ? (cols[t] ? cols[t].label : '') : (liveOk ? D.hhmm(live.updated_at) : '—'),
+      isHist,
+      maxT: cols.length - 1,
+      t,
+      firstCol: cols[0] && cols[0].label,
+      lastCol: cols[cols.length - 1] && cols[cols.length - 1].label,
+      onT: (ev) => this.setState({ t: Number(ev.target.value) }),
+      live: liveBar,
+
+      modes: [
+        { id: 'now', label: '現在', disabled: !liveOk },
+        { id: 'hist', label: (D.meta.days || '平日') + '平均' },
+      ].map((m) => ({
+        label: m.label,
+        disabled: !!m.disabled,
+        cls: m.id === mode ? 'on' : '',
+        on: m.id === mode ? 'true' : 'false',
+        pick: () => this.setState({ mode: m.id }),
+      })),
+
+      // 路段直接上色（設計稿規範：不用光暈熱力圖層）
+      roads: rows.map((row) => {
+        const val = valueOf(row);
+        return {
+          x: row.x, y: row.y,
+          stroke: val ? `var(--ramp-${D.level(layer, val.v)})` : '#D8C6B8',
+          w: val ? 2.6 : 1.4,
+          dash: val ? (val.sim ? '4 1.5' : '') : '2 2',
+        };
+      }),
+
+      landmarks: (D.heatmap.landmarks || []).map((l) => ({
+        name: l.name, x: l.x, y: l.y,
+        weight: 700, color: '#8A3A18',
+      })),
+
+      pins: rows.map((row, i) => {
+        const val = valueOf(row);
+        return {
+          name: row.name, x: row.x, y: row.y, ...lab(row),
+          bg: val ? `var(--ramp-${D.level(layer, val.v)})` : '#FFFFFF',
+          cls: (val ? '' : 'gap') + (i === si ? ' sel' : ''),
+          on: i === si ? 'true' : 'false',
+          aria: row.name + (val ? ` ${val.v} ${unit}` : ' 沒有資料'),
+          pick: () => this.setState({ sel: i }),
+        };
+      }),
+
+      legend: (layer.legend || []).map((_, i) => ({ level: i })),
+      legendLo: (layer.legend_ends || [])[0] || '',
+      legendHi: (layer.legend_ends || [])[1] || '',
+
+      sel: {
+        where: s.name + (s.sub ? ' ' + s.sub : '') + '・'
+          + (isHist ? (cols[t] ? cols[t].label : '') + '（' + (D.meta.days || '平日') + '平均）' : '現在')
+          + (sv && sv.sim ? '・模擬' : ''),
+        v: sv ? String(sv.v) : '—',
+        unit: sv ? unit : '',
+        text: !sv
+          ? (isHist ? '這個入口沒有偵測器，我們留白，不補數字。' : '這個入口現在沒有即時讀數。')
+          : ((layer.level_text || [])[D.level(layer, sv.v)] || '')
+            + (sv.lowSample ? `（這一分鐘只有 ${sv.samples} 輛車有車速，測不準）` : ''),
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT = [ROOT / "processed" / "t4-morning.json", ROOT / "mock" / "t4-morning.json"]
 
 # PRODUCT.md 的台詞裡用到的數字
-SCRIPT = dict(worst_row="tiding-n", worst_col="08:45", bad_days=3, days=4, need=(4, 13),
+SCRIPT = dict(worst_row="minquan-br", worst_col="07:00", bad_days=1, days=18, need=(4, 13),
               shift_window="08:30–09:15", top_assumptions={"尖峰有多高", "道路容量（一次能過多少車）"})
 
 

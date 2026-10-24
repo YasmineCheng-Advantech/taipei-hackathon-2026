@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>錯峰情境</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.seg{appearance:none;border:0;border-radius:14px;min-height:44px;background:#DEDCDA;color:#3F3935;font:500 15px/1.3 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.08em;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.seg.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:12px;border-radius:6px;background:linear-gradient(180deg,#F2E6DE,#E8D7CB)}
+input[type=range]::-moz-range-track{height:12px;border-radius:6px;background:#EADBD0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-11px;border-radius:50%;background:linear-gradient(180deg,#6BEBFA,#14B8E2);box-shadow:inset 0 4px 0 rgba(255,255,255,.35),0 3px 0 #1C8DB3,0 6px 12px rgba(20,140,180,.3);border:0}
+input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#2AD4F0;box-shadow:0 3px 0 #1C8DB3;border:0}
+input[type=range]:focus-visible{outline:3px solid #0B3A4A;outline-offset:2px;border-radius:8px}
+.col{appearance:none;border:0;padding:0;background:transparent;position:relative;height:150px;cursor:pointer;border-radius:6px}
+.col.peak{background:rgba(201,58,34,.07)}
+.col.target{background:rgba(20,184,226,.09)}
+.col.sel{box-shadow:inset 0 0 0 2px #3A2418}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 240px at 50% 640px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 500px, #F8D6BD 860px, #FFF8F3 1180px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Menu.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>選單
+    </a>
+    <span class="sim">程式計算・含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; line-height: 1.5; letter-spacing: 0.08em; color: #5A2410">{{title}}</h1>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #6B4A3A">{{intro}}</p>
+    </div>
+
+    <section class="card" style="padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px">
+      <div role="group" aria-label="移到哪個時段" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{targets}}" as="t" hint-placeholder-count="2">
+          <button type="button" class="seg {{t.cls}}" aria-pressed="{{t.on}}" onClick="{{t.pick}}">{{t.label}}</button>
+        </sc-for>
+      </div>
+      <label for="shift" style="display: flex; align-items: baseline; justify-content: space-between; margin-top: 4px">
+        <span style="font-size: 15px; font-weight: 700; letter-spacing: 0.08em">{{sliderName}}</span>
+        <span style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84">{{shift}}{{sliderUnit}}</span>
+      </label>
+      <div style="position: relative">
+        <input id="shift" type="range" min="{{sliderMin}}" max="{{sliderMax}}" step="{{sliderStep}}" value="{{shift}}" onChange="{{onSlide}}" aria-valuetext="{{shiftText}}">
+        <sc-for list="{{refs}}" as="rf" hint-placeholder-count="1">
+          <span aria-hidden="true" style="position: absolute; left: {{rf.left}}%; top: 44px; transform: translateX(-50%); width: 2px; height: 10px; background: #3A2418"></span>
+        </sc-for>
+      </div>
+      <div style="position: relative; height: 34px; font-size: 11.5px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <span style="position: absolute; left: 0; top: 0">{{sliderMin}}{{sliderUnit}}</span>
+        <sc-for list="{{refs}}" as="rf" hint-placeholder-count="1">
+          <span style="position: absolute; left: {{rf.left}}%; top: 8px; transform: translateX(-30%); white-space: nowrap; color: #3A2418">{{rf.text}}</span>
+        </sc-for>
+        <span style="position: absolute; right: 0; top: 0">{{sliderMax}}{{sliderUnit}}</span>
+      </div>
+    </section>
+
+    <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+      <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #6B4A3A">最長排隊</span>
+        <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{q}}</b>
+        <span style="font-size: 11.5px; color: #6B4A3A">{{qRange}}</span>
+      </div>
+      <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #6B4A3A">排隊消散</span>
+        <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15">{{clear}}</b>
+        <span style="font-size: 11.5px; color: #6B4A3A">{{clearBase}}</span>
+      </div>
+      <div class="card" style="border-radius: 20px; padding: 12px; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-size: 12px; color: #6B4A3A">總延誤</span>
+        <b style="font-family: 'Grandstander', 'Noto Sans TC','PingFang TC','Microsoft JhengHei', sans-serif; font-weight: 800; font-size: 24px; line-height: 1.15; color: {{delayColor}}">{{delay}}</b>
+        <span style="font-size: 11.5px; color: #6B4A3A">和現在比</span>
+      </div>
+    </div>
+
+    <sc-if value="{{hasPeak}}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border-radius: 20px; background: #FCE4D8; color: #6E2409">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none; margin-top: 2px"><path d="M12 3l10 18H2z"></path><path d="M12 10v5"></path><path d="M12 18h.01"></path></svg>
+        <p style="margin: 0; font-size: 14px; line-height: 1.65"><b>移太多了：</b>{{peakText}} 變成新的尖峰，在那裡開始排隊。</p>
+      </div>
+    </sc-if>
+
+    <section class="card" aria-label="每 15 分鐘的排隊車輛" style="padding: 16px 14px 14px; display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 4px">
+        <h2 style="margin: 0; font-size: 15px; font-weight: 700; letter-spacing: 0.08em">每 15 分鐘還在排隊的車</h2>
+      </div>
+      <div style="display: flex; gap: 14px; padding: 0 4px; font-size: 12px; color: #6B4A3A">
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; box-shadow: inset 0 0 0 2px #B8A79B"></i>現在</span>
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; background: #E2582A"></i>移出 {{shift}}% 後</span>
+        <span style="display: flex; align-items: center; gap: 6px"><i aria-hidden="true" style="width: 14px; height: 10px; border-radius: 3px; background: rgba(201,58,34,.12)"></i>原本尖峰</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 2px; align-items: end">
+        <sc-for list="{{cols}}" as="c" hint-placeholder-count="14">
+          <button type="button" class="col {{c.cls}}" aria-label="{{c.aria}}" aria-pressed="{{c.on}}" onClick="{{c.pick}}">
+            <span aria-hidden="true" style="position: absolute; left: 1px; right: 1px; bottom: 0; height: {{c.bh}}px; border-radius: 4px 4px 2px 2px; box-shadow: inset 0 0 0 2px #B8A79B"></span>
+            <span aria-hidden="true" style="position: absolute; left: 4px; right: 4px; bottom: 0; height: {{c.h}}px; border-radius: 4px 4px 2px 2px; background: #E2582A"></span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 2px; font-size: 10.5px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <sc-for list="{{colHeads}}" as="h" hint-placeholder-count="14"><span>{{h}}</span></sc-for>
+      </div>
+      <p aria-live="polite" style="margin: 2px 4px 0; padding-top: 10px; border-top: 2px dotted #F1DCCD; font-size: 14px; line-height: 1.6">{{readout}}</p>
+    </section>
+    <a href="Sensitivity.dc.html" style="margin: 0 14px; min-height: 44px; display: flex; align-items: center; font-size: 14px; letter-spacing: 0.06em">這些數字有多可靠？看哪個假設最影響結論 →</a>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1180}}'>
+class Component extends DCLogic {
+  // 情境結果全部由排隊模型離線算好放在 JSON（scenario.results），網站只依滑桿挑一筆，不即時計算
+  constructor() {
+    super();
+    const s = D.scenario.slider || {};
+    this.state = { target: 0, shift: s.default != null ? s.default : 0, col: null };
+  }
+
+  renderVals() {
+    const S = this.state;
+    const sc = D.scenario;
+    const slider = sc.slider || {};
+    const T = sc.targets || [];
+    const cols = sc.cols || [];
+    const target = T[Math.min(S.target, Math.max(0, T.length - 1))] || {};
+    const baseline = sc.baseline || {};
+
+    // 依滑桿挑一筆預先算好的結果；刻度對不上時退回最接近的
+    let r = D.result(target.id, S.shift);
+    if (!r) {
+      const same = (sc.results || []).filter((x) => x.target === target.id);
+      r = same.reduce((best, x) => (!best || Math.abs(x.shift - S.shift) < Math.abs(best.shift - S.shift) ? x : best), null);
+    }
+    if (!r) {
+      return { title: sc.title || '', intro: sc.intro || '', targets: [], refs: [], cols: [], colHeads: [], nCols: 0,
+        shift: S.shift, shiftText: '', onSlide: () => {}, q: '—', qRange: '', clear: '—', clearBase: '',
+        delay: '—', delayColor: '#3A2418', hasPeak: false, peakText: '', readout: '這個情境沒有預先算好的結果。',
+        sliderName: slider.name || '', sliderUnit: slider.unit || '', sliderMin: slider.min, sliderMax: slider.max, sliderStep: slider.step };
+    }
+
+    const queue = r.queue || [];
+    const base = baseline.queue || [];
+    const peakSet = new Set(sc.peak_cols || []);
+    const targetSet = new Set(target.cols || []);
+    const ci = S.col != null ? Math.min(S.col, cols.length - 1)
+      : Math.max(0, queue.indexOf(Math.max(...queue)));
+
+    const qmax = D.num(r.queue_max);
+    const delay = D.num(r.delay_change);
+    const top = Math.max(...queue, ...base, 1);
+    const scale = 150 / top;
+    const fmt = (n) => Number(n).toLocaleString('en-US');
+    const unit = (r.queue_max && r.queue_max.unit) || '';
+
+    return {
+      title: sc.title || '',
+      intro: sc.intro || '',
+      nCols: cols.length,
+      colHeads: cols.map((c) => (c.label.endsWith(':00') ? c.label : '')),
+
+      targets: T.map((t, i) => ({
+        label: t.label, cls: i === S.target ? 'on' : '', on: i === S.target ? 'true' : 'false',
+        pick: () => this.setState({ target: i }),
+      })),
+
+      sliderName: slider.name || '',
+      sliderUnit: slider.unit || '',
+      sliderMin: slider.min, sliderMax: slider.max, sliderStep: slider.step,
+      shift: r.shift,
+      shiftText: `${slider.name || ''} ${r.shift}${slider.unit || ''}`,
+      onSlide: (e) => this.setState({ shift: Number(e.target.value), col: null }),
+      // 參考線（例如檀香山 1988 實際參與 6–7%）
+      refs: (sc.references || []).map((x) => ({
+        text: x.text,
+        left: Math.round(((x.value - slider.min) / Math.max(1, slider.max - slider.min)) * 100),
+      })),
+
+      q: fmt(qmax.value) + ' ' + unit,
+      qRange: qmax.lo != null ? `區間 ${fmt(qmax.lo)}–${fmt(qmax.hi)}` : '',
+      clear: r.clear_time || '—',
+      clearBase: baseline.clear_time ? '原本 ' + baseline.clear_time : '',
+      delay: (delay.value > 0 ? '+' : delay.value < 0 ? '−' : '') + Math.abs(delay.value) + (delay.unit || ''),
+      delayColor: delay.value < 0 ? '#0E6F84' : delay.value > 0 ? '#A12A0E' : '#3A2418',
+      hasPeak: !!r.new_peak,
+      peakText: r.new_peak ? ((cols.find((c) => c.id === r.new_peak) || {}).label || r.new_peak) : '',
+
+      cols: cols.map((c, i) => ({
+        h: Math.round((queue[i] || 0) * scale),
+        bh: Math.round((base[i] || 0) * scale),
+        cls: (peakSet.has(c.id) ? 'peak' : targetSet.has(c.id) ? 'target' : '') + (i === ci ? ' sel' : ''),
+        on: i === ci ? 'true' : 'false',
+        aria: `${c.label} 排隊 ${queue[i] || 0} ${unit}，現在 ${base[i] || 0} ${unit}`,
+        pick: () => this.setState({ col: i }),
+      })),
+
+      readout: cols[ci]
+        ? `${cols[ci].label}：還在排隊 ${fmt(queue[ci] || 0)} ${unit}（現在 ${fmt(base[ci] || 0)} ${unit}）`
+        : '',
+    };
+  }
+}
+</script>
+</body>
+</html>

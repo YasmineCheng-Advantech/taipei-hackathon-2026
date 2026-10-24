@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>產生今日推薦中</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes fill{0%{opacity:.25;transform:scaleY(.6)}100%{opacity:1;transform:scaleY(1)}}
+.bob{animation:bob 2.4s ease-in-out infinite}
+.cell{height:30px;border-radius:9px;box-shadow:inset 0 -3px 0 rgba(0,0,0,.08),inset 0 2px 0 rgba(255,255,255,.45);animation:fill .5s ease-out both}
+.hero-img{-webkit-mask-image:radial-gradient(closest-side,#000 72%,transparent 100%);mask-image:radial-gradient(closest-side,#000 72%,transparent 100%)}
+.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 22px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.16em;text-decoration:none}
+.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
+@media (prefers-reduced-motion: reduce){.bob,.cell{animation:none}}
+</style>
+</helmet>
+<div class="screen" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 0 calc(32px + env(safe-area-inset-bottom)); font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(80% 280px at 50% 330px, rgba(240,130,60,.38), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FDF1E8 160px, #F9DCC6 420px, #FBE6D6 640px, #FFF8F3 844px)">
+  <div class="bob" style="width: min(350px, calc(100% - 40px)); aspect-ratio: 350 / 343; max-height: 40vh">
+    <img class="hero-img" src="/_blob/9ec09c185edb5019891596a830757aa8" alt="" style="width: 100%; height: 100%; object-fit: contain">
+  </div>
+  <div style="margin: 20px 24px 0; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center">
+    <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.14em; color: #5A2410">{{title}}</h1>
+    <p style="margin: 0; font-size: 14px; letter-spacing: 0.08em; color: #6B4A3A">{{summary}}</p>
+  </div>
+  <div aria-hidden="true" style="align-self: stretch; margin: 24px 32px 0; display: grid; grid-template-columns: repeat({{nCols}}, minmax(0, 1fr)); gap: 4px">
+    <sc-for list="{{cells}}" as="c" hint-placeholder-count="10">
+      <div class="cell" style="background: {{c.bg}}; animation-delay: {{c.delay}}"></div>
+    </sc-for>
+  </div>
+  <ul style="align-self: stretch; margin: 22px 40px 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 14px; letter-spacing: 0.06em; color: #6B4A3A">
+    <sc-for list="{{steps}}" as="s" hint-placeholder-count="3">
+      <li style="display: flex; align-items: center; gap: 10px">
+        <span style="width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: {{s.dot}}; color: #FFFFFF; flex: none">
+          <svg width="11" height="11" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 7.5l3 3 6-7"></path></svg>
+        </span>
+        <span>{{s.text}}</span>
+      </li>
+    </sc-for>
+  </ul>
+  <sc-if value="{{done}}" hint-placeholder-val="{{ true }}">
+    <a class="cta" href="Today.dc.html" style="align-self: stretch; margin: 32px 40px 0">看今日推薦</a>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { step: 0 };
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (this.state.step >= 3) { clearInterval(this.timer); return; }
+      this.setState({ step: this.state.step + 1 });
+    }, 900);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  renderVals() {
+    // 動畫用使用者那個入口的真實色階，不是寫死的色塊
+    const p = app.profile();
+    const layer = D.layerOf('speed');
+    const ri = D.rowIndex(p.rowId);
+    const range = D.meta.time_range || {};
+    const metric = layer.name.replace('壅塞（', '').replace('）', '');
+    const texts = [
+      `讀取${p.entry}過去${D.meta.days || '平日'}的${metric}`,
+      `比較 ${range.start || ''}–${range.end || ''} 每 ${D.meta.bin_minutes || 15} 分鐘`,
+      '把建議分散到不同時段',
+    ];
+    const n = this.state.step;
+    return {
+      summary: app.summary(),
+      title: n >= 3 ? '好了！' : '正在把塞車捲起來…',
+      done: n >= 3,
+      nCols: D.cols.length,
+      cells: D.cols.map((_, i) => {
+        const c = D.cell(layer.id, ri, i);
+        return { bg: c.gap ? 'transparent' : `var(--ramp-${D.level(layer, c.v)})`, delay: (i * 0.12) + 's' };
+      }),
+      steps: texts.map((t, i) => ({ text: t, dot: i < n ? '#0E6F84' : '#E2CDBE' }))
+    };
+  }
+}
+</script>
+</body>
+</html>

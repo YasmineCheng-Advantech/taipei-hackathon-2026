@@ -22,7 +22,7 @@
     # 自己的電腦長時間收：每天 05:00–21:00、週末也收，收到 10/31 結束
     caffeinate -is python3 data/fetch/collect_vd.py --start 05:00 --end 21:00 --weekends --until 2026-10-31
 """
-import argparse, csv, datetime as dt, gzip, json, os, sys, time, urllib.parse, urllib.request
+import argparse, csv, datetime as dt, gzip, json, os, sys, time, urllib.error, urllib.parse, urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -139,12 +139,21 @@ class TDX:
         self.secret = os.environ.get('TDX_CLIENT_SECRET')
         self.token, self.expires = None, 0
         self.static_day = None
+        self.dead = False  # 金鑰被判定無效後就不再打 TDX，見 give_up()
 
     def enabled(self):
-        return bool(self.id and self.secret)
+        return bool(self.id and self.secret) and not self.dead
 
-    def auth(self):
-        if self.token and time.time() < self.expires - 300:
+    def give_up(self, why):
+        """金鑰無效時停止嘗試。繼續每 5 分鐘打一組壞掉的憑證沒有意義，
+        也不符合 CLAUDE.md「不對第三方系統做掃描、壓測」的精神。"""
+        self.dead = True
+        log(f"TDX 金鑰無效（{why}），這次執行不再嘗試 TDX。"
+            f"請到 https://tdx.transportdata.tw/ 重新產生金鑰、更新 .env 後重啟收集程式。"
+            f"臺北市的資料不受影響，會繼續收。")
+
+    def auth(self, force=False):
+        if not force and self.token and time.time() < self.expires - 300:
             return self.token
         data = urllib.parse.urlencode({'grant_type': 'client_credentials', 'client_id': self.id,
                                        'client_secret': self.secret}).encode()
@@ -154,7 +163,28 @@ class TDX:
         return self.token
 
     def poll(self, now):
-        h = {'Authorization': f"Bearer {self.auth()}"}
+        try:
+            self._poll(self.auth(), now)
+            return
+        except urllib.error.HTTPError as e:
+            if e.code == 401:
+                # 快取的 token 失效了（例如電腦睡醒、或憑證在 TDX 那端被換掉）。
+                # 原本只看 expires 判斷要不要重新取 token，所以一旦 401 就會卡住，
+                # 直到重啟才會恢復（10/24 實際卡了 20 次）。強制換一張新的再試一次。
+                log('TDX token 失效，重新取得後再試一次')
+                try:
+                    self._poll(self.auth(force=True), now)
+                    return
+                except urllib.error.HTTPError as e2:
+                    e = e2
+            # 400 unauthorized_client（取 token 就被拒）或換過 token 仍 401 → 金鑰本身壞了
+            if e.code in (400, 401):
+                self.give_up(f'HTTP {e.code}')
+            else:
+                raise
+
+    def _poll(self, token, now):
+        h = {'Authorization': f"Bearer {token}"}
         day = ROOT / 'tdx_freeway'
         if self.static_day != now.date():
             body = get_retry(TDX_STATIC_URL, headers=h)
@@ -216,6 +246,7 @@ def main():
     log(f"開始收集，{days} {args.start:%H:%M}–{args.end:%H:%M} 每 5 分鐘一次"
         + (f"，收到 {args.until} 為止" if args.until else '') + f"；輸出到 {ROOT}。按 Ctrl+C 停止")
     waiting = False
+    last_poll = 0.0  # 上一次「開始」抓取的時間，用來保證兩次請求至少相隔 INTERVAL
     while True:
         now = dt.datetime.now(TPE)
         if args.until and (now.date() > args.until or (now.date() == args.until and now.time() > args.end)):
@@ -223,6 +254,7 @@ def main():
             return
         if in_window(now, args.start, args.end, args.weekends):
             waiting = False
+            last_poll = time.time()
             poll_once(tdx)
         elif args.today and now.time() > args.end:
             log('今天的收集時段結束')
@@ -230,8 +262,14 @@ def main():
         elif not waiting:
             log('不在收集時段，等待中')
             waiting = True
-        # 睡到下一個整 5 分鐘
+        # 睡到下一個整 5 分鐘。但這一輪的工作（抓取、重試）會吃掉時間，若只對齊邊界，
+        # 兩次請求「開始」的間隔可能掉到 300 秒以下（實測量到 293 秒）。來源規定不可更頻繁，
+        # 所以再加一道下限：距離上次開始不足 INTERVAL 時，補睡到滿。
         time.sleep(INTERVAL - time.time() % INTERVAL + 1)
+        if last_poll:
+            short = INTERVAL - (time.time() - last_poll)
+            if short > 0:
+                time.sleep(short)
 
 
 if __name__ == '__main__':

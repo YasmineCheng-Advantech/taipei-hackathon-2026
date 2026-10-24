@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# commit 前掃描 staged 內容。啟用方式（clone 後跑一次）：
+#   git config core.hooksPath .githooks
+exec bash "$(dirname "$0")/scan-staged.sh"

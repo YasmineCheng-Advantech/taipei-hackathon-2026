@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>入口示意地圖</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.pin{appearance:none;border:0;position:absolute;width:44px;height:44px;margin:-22px 0 0 -22px;padding:0;background:transparent;cursor:pointer;display:grid;place-items:center}
+.pin i{display:block;width:22px;height:22px;border-radius:50%;border:3px solid #FFFFFF;box-shadow:0 2px 6px rgba(90,40,20,.3)}
+.pin.gap i{background:#FFFFFF !important;border:2.5px dashed #A8968A;box-shadow:none}
+.pin.sel i{width:28px;height:28px;box-shadow:0 0 0 3px #0E6F84,0 2px 6px rgba(90,40,20,.3)}
+.pin:focus-visible{outline:3px solid #0B3A4A;border-radius:50%}
+.lab{position:absolute;font-size:11.5px;font-weight:700;color:#3A2418;white-space:nowrap;pointer-events:none;background:rgba(255,255,255,.85);padding:0 4px;border-radius:6px}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:12px;border-radius:6px;background:linear-gradient(90deg,#FEF3DC,#FDD9A0,#FCB46E,#F2804A,#C93A22)}
+input[type=range]::-moz-range-track{height:12px;border-radius:6px;background:#EADBD0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;margin-top:-11px;border-radius:50%;background:linear-gradient(180deg,#6BEBFA,#14B8E2);box-shadow:inset 0 4px 0 rgba(255,255,255,.35),0 3px 0 #1C8DB3;border:0}
+input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:#2AD4F0;border:0}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 960px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 600px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 760px, #FFF8F3 960px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Menu.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>選單
+    </a>
+    <span class="sim">含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">內湖入口地圖</h1>
+      <span style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 30px; color: #0E6F84; margin-right: 6px">{{time}}</span>
+    </div>
+    <section class="card" style="padding: 14px">
+      <div style="position: relative; width: 330px; height: 330px; border-radius: 18px; background: #FFF9F4; overflow: hidden">
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" width="330" height="330" aria-hidden="true" style="position: absolute; inset: 0">
+          <path d="M0 97 C 18 90, 34 99, 52 95 S 82 90, 100 96" fill="none" stroke="#BFE6EE" stroke-width="5"></path>
+          <rect x="53" y="20" width="20" height="16" rx="5" fill="#FBE4D3" stroke="#E9C7AE" stroke-width="0.6"></rect>
+          <line x1="12" y1="35" x2="63" y2="28" stroke="{{r0}}" stroke-width="2.6" stroke-linecap="round"></line>
+          <line x1="24" y1="55" x2="63" y2="28" stroke="{{r1}}" stroke-width="2.6" stroke-linecap="round"></line>
+          <line x1="30" y1="74" x2="63" y2="28" stroke="{{r2}}" stroke-width="2.6" stroke-linecap="round"></line>
+          <line x1="46" y1="86" x2="63" y2="28" stroke="#D8C6B8" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="2 2"></line>
+          <line x1="60" y1="88" x2="63" y2="28" stroke="{{r4}}" stroke-width="2.6" stroke-linecap="round"></line>
+          <line x1="74" y1="78" x2="63" y2="28" stroke="{{r5}}" stroke-width="2.6" stroke-linecap="round"></line>
+          <line x1="84" y1="62" x2="63" y2="28" stroke="{{r6}}" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="4 1.5"></line>
+          <line x1="90" y1="30" x2="63" y2="28" stroke="#D8C6B8" stroke-width="1.4" stroke-linecap="round" stroke-dasharray="2 2"></line>
+        </svg>
+        <span style="position: absolute; left: 53%; top: 21.5%; width: 20%; text-align: center; font-size: 11px; font-weight: 700; color: #8A3A18; line-height: 1.3">內湖<br>科學園區</span>
+        <span style="position: absolute; left: 4%; bottom: 0.5%; font-size: 10.5px; color: #2E7C8E">基隆河</span>
+        <sc-for list="{{pins}}" as="p" hint-placeholder-count="8">
+          <button type="button" class="pin {{p.cls}}" style="left: {{p.x}}%; top: {{p.y}}%" aria-label="{{p.aria}}" aria-pressed="{{p.on}}" onClick="{{p.pick}}"><i style="background: {{p.bg}}"></i></button>
+          <span class="lab" style="left: {{p.lx}}%; top: {{p.ly}}%; transform: {{p.lt}}">{{p.name}}</span>
+        </sc-for>
+      </div>
+      <label for="t" style="display: block; margin: 12px 4px 0; font-size: 13px; color: #6B4A3A">拉動時間，看塞車怎麼從各入口長出來</label>
+      <input id="t" type="range" min="0" max="9" step="1" value="{{t}}" onChange="{{onT}}" aria-valuetext="{{time}}">
+      <div style="display: flex; justify-content: space-between; margin: -4px 4px 0; font-size: 11px; color: #6B4A3A; font-variant-numeric: tabular-nums"><span>07:00</span><span>08:00</span><span>09:15</span></div>
+    </section>
+    <section class="card" aria-live="polite" style="padding: 16px 20px; display: flex; flex-direction: column; gap: 4px">
+      <p style="margin: 0; font-size: 14px; color: #6B4A3A">{{sel.where}}</p>
+      <p style="margin: 0; display: flex; align-items: baseline; gap: 8px"><span style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 40px; line-height: 1.1; color: #5A2410">{{sel.v}}</span><span style="font-size: 14px; font-weight: 700">{{sel.unit}}</span></p>
+      <p style="margin: 0; font-size: 14px; line-height: 1.6">{{sel.text}}</p>
+    </section>
+    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 0 14px; font-size: 11.5px; color: #6B4A3A">
+      <span>順</span>
+      <span aria-hidden="true" style="display: inline-flex; gap: 2px"><i style="width: 16px; height: 10px; border-radius: 3px; background: #FEF3DC; box-shadow: inset 0 0 0 1px #EEDFC6"></i><i style="width: 16px; height: 10px; border-radius: 3px; background: #FDD9A0"></i><i style="width: 16px; height: 10px; border-radius: 3px; background: #FCB46E"></i><i style="width: 16px; height: 10px; border-radius: 3px; background: #F2804A"></i><i style="width: 16px; height: 10px; border-radius: 3px; background: #C93A22"></i><i style="width: 16px; height: 10px; border-radius: 3px; background: #7E170F"></i></span>
+      <span>塞（車速）</span><span style="flex: 1"></span>
+      <span aria-hidden="true" style="width: 12px; height: 12px; border-radius: 50%; border: 2px dashed #A8968A"></span><span>沒有偵測器</span>
+    </div>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  state = { t: 7, sel: 1 };
+  renderVals() {
+    const S = this.state;
+    const times = ['07:00','07:15','07:30','07:45','08:00','08:15','08:30','08:45','09:00','09:15'];
+    const E = [
+      { name: '內湖路一段', x: 12, y: 35, side: 'r', s: [56,57,57,54,47,30,22,24,36,49] },
+      { name: '堤頂大道', x: 24, y: 55, side: 'r', s: [58,59,59,52,44,29,14,10,17,35] },
+      { name: '民權大橋', x: 30, y: 74, side: 'r', s: [60,56,55,51,40,26,12,18,33,48] },
+      { name: '麥帥二橋', x: 46, y: 86, side: 'u', s: null },
+      { name: '成美橋', x: 60, y: 88, side: 'u', s: [59,60,55,51,42,27,15,11,25,42] },
+      { name: '環東大道', x: 74, y: 78, side: 'l', s: [56,56,55,49,38,20,16,25,40,52] },
+      { name: '國1 內湖', x: 84, y: 62, side: 'l', s: [58,58,55,41,27,15,16,30,41,52], sim: true },
+      { name: '康寧路三段', x: 90, y: 30, side: 'l', s: null }
+    ];
+    const ramp = ['#FEF3DC', '#FDD9A0', '#FCB46E', '#F2804A', '#C93A22', '#7E170F'];
+    const lv = (v) => (v >= 50 ? 0 : v >= 40 ? 1 : v >= 30 ? 2 : v >= 20 ? 3 : v >= 10 ? 4 : 5);
+    const texts = ['車流順暢。', '略有車多。', '開始變慢。', '明顯壅塞。', '嚴重壅塞，走走停停。', '幾乎停滯。'];
+    const lab = (e) => e.side === 'r' ? { lx: e.x + 5, ly: e.y, lt: 'translateY(-50%)' } : e.side === 'l' ? { lx: e.x - 5, ly: e.y, lt: 'translate(-100%, -50%)' } : { lx: e.x, ly: e.y - 6, lt: 'translate(-50%, -100%)' };
+    const s = E[S.sel];
+    const sv = s.s ? s.s[S.t] : null;
+    return {
+      t: S.t, time: times[S.t],
+      onT: (ev) => this.setState({ t: Number(ev.target.value) }),
+      ...Object.fromEntries(E.map((e, i) => ['r' + i, e.s ? ramp[Math.max(1, lv(e.s[S.t]))] : '#D8C6B8'])),
+      pins: E.map((e, i) => ({
+        name: e.name, x: e.x, y: e.y, ...lab(e),
+        bg: e.s ? ramp[lv(e.s[S.t])] : '#FFFFFF',
+        cls: (e.s ? '' : 'gap') + (i === S.sel ? ' sel' : ''),
+        on: i === S.sel ? 'true' : 'false',
+        aria: e.name + (e.s ? ' ' + e.s[S.t] + ' km/h' : ' 沒有偵測器'),
+        pick: () => this.setState({ sel: i })
+      })),
+      sel: {
+        where: s.name + '・' + times[S.t] + (s.sim ? '・模擬' : ''),
+        v: sv === null ? '—' : String(sv),
+        unit: sv === null ? '' : 'km/h',
+        text: sv === null ? '這個入口沒有偵測器，目前看不到。' : texts[lv(sv)]
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

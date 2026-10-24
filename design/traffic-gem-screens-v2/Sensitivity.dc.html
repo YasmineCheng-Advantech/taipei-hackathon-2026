@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>哪個假設最影響結論</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Grandstander:wght@800&amp;family=Noto+Sans+TC:wght@400;500;700;900&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.sim{padding:3px 10px;border-radius:999px;font-size:12px;font-weight:500;color:#7A5200;background-color:#FBF0D9;background-image:repeating-linear-gradient(135deg,rgba(122,82,0,.12) 0 1.5px,transparent 1.5px 5px);box-shadow:inset 0 0 0 1px #EBD9AE;white-space:nowrap}
+.card{background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13)}
+.item{appearance:none;border:0;background:transparent;width:100%;text-align:left;padding:10px 6px 12px;border-radius:16px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;color:#3A2418;display:flex;flex-direction:column;gap:8px}
+.item.on{background:#FFF4EC}
+.item:focus-visible{outline:3px solid #0B3A4A}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 960px; overflow: hidden; font-family: 'Noto Sans TC', system-ui, sans-serif; color: #3A2418; background: radial-gradient(70% 220px at 50% 600px, rgba(240,130,60,.22), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF5EE 160px, #FBE4D3 460px, #F8D6BD 760px, #FFF8F3 960px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 12px">
+    <a href="Scenario.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-size: 15px; letter-spacing: 0.1em; color: #8A3A18; text-decoration: none">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 4l-6 6 6 6"></path></svg>錯峰情境
+    </a>
+    <span class="sim">程式計算・含模擬資料</span>
+  </div>
+  <div style="padding: 0 16px; display: flex; flex-direction: column; gap: 12px">
+    <div style="margin: 0 0 0 14px; display: flex; flex-direction: column; gap: 4px">
+      <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.08em; color: #5A2410">哪個假設最影響結論？</h1>
+      <p style="margin: 0; font-size: 13.5px; line-height: 1.6; color: #6B4A3A">問題：最長排隊減半，08:30–09:15 經過的車要移出幾 %</p>
+    </div>
+
+    <section class="card" style="padding: 18px 20px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap">
+      <span style="font-size: 14px; color: #6B4A3A">目前估計</span>
+      <span style="font-family: 'Grandstander', 'Noto Sans TC', sans-serif; font-weight: 800; font-size: 44px; line-height: 1.05; color: #0E6F84">8.6%</span>
+      <span style="font-size: 13px; color: #6B4A3A">容量 1,000 輛、沒有回流時</span>
+    </section>
+
+    <section class="card" aria-label="每個假設改變時的結果範圍" style="padding: 14px 14px 12px; display: flex; flex-direction: column; gap: 2px">
+      <div aria-hidden="true" style="position: relative; height: 18px; margin: 0 6px; font-size: 11px; color: #6B4A3A; font-variant-numeric: tabular-nums">
+        <span style="position: absolute; left: 0">0%</span>
+        <span style="position: absolute; left: 33.3%; transform: translateX(-50%)">5%</span>
+        <span style="position: absolute; left: 66.7%; transform: translateX(-50%)">10%</span>
+        <span style="position: absolute; right: 0">15%</span>
+      </div>
+      <sc-for list="{{items}}" as="it" hint-placeholder-count="4">
+        <button type="button" class="item {{it.cls}}" aria-pressed="{{it.on}}" aria-label="{{it.aria}}" onClick="{{it.pick}}">
+          <span style="display: flex; justify-content: space-between; gap: 8px; font-size: 15px; font-weight: 700"><span>{{it.name}}</span><span style="font-size: 12.5px; font-weight: 500; color: #6B4A3A; white-space: nowrap">差 {{it.spread}} 點</span></span>
+          <span aria-hidden="true" style="position: relative; display: block; height: 22px; border-radius: 6px; background: repeating-linear-gradient(90deg, #F4ECE6 0 1px, transparent 1px 33.33%)">
+            <span style="position: absolute; top: -4px; bottom: -4px; left: 57.3%; width: 2px; background: #3A2418"></span>
+            <span style="position: absolute; top: 0; bottom: 0; left: {{it.left}}%; width: {{it.width}}%; border-radius: 6px; background: {{it.bg}}; box-shadow: inset 0 3px 0 rgba(255,255,255,.35)"></span>
+          </span>
+          <span style="display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: #6B4A3A; font-variant-numeric: tabular-nums"><span>{{it.lowText}} → {{it.low}}%</span><span>{{it.highText}} → {{it.high}}%</span></span>
+        </button>
+      </sc-for>
+      <div style="display: flex; align-items: center; gap: 8px; margin: 6px 6px 0; font-size: 12px; color: #6B4A3A"><i aria-hidden="true" style="width: 2px; height: 14px; background: #3A2418"></i>目前估計 8.6%</div>
+    </section>
+
+    <section class="card" aria-live="polite" style="padding: 16px 20px; display: flex; gap: 12px; align-items: flex-start">
+      <span aria-hidden="true" style="width: 36px; height: 36px; border-radius: 50%; flex: none; display: grid; place-items: center; background: #DDF4F8; color: #0E6F84">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"></ellipse><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"></path><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg>
+      </span>
+      <div style="display: flex; flex-direction: column; gap: 2px">
+        <p style="margin: 0; font-size: 13px; color: #6B4A3A">要讓「{{selName}}」更準，需要補</p>
+        <p style="margin: 0; font-size: 15px; font-weight: 700; line-height: 1.55">{{selNeeds}}</p>
+      </div>
+    </section>
+  </div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  state = { sel: 0 };
+  renderVals() {
+    const items = [
+      { name: '尖峰有多高', lowText: '低 20%', highText: '高 20%', low: 3.1, high: 12.9, spread: 9.8, needs: '收集期間 08:30–09:15 的實際流量' },
+      { name: '道路容量', lowText: '1,100 輛', highText: '900 輛', low: 4.4, high: 12.7, spread: 8.3, needs: 'VPMSV40 在塞車時段的最大通過量' },
+      { name: '回流（路變順後搬回尖峰）', lowText: '沒有回流', highText: '回流 30%', low: 8.6, high: 12.3, spread: 3.7, needs: '試辦前後的尖峰車流比較' },
+      { name: '尖峰有多寬', lowText: '窄 20%', highText: '寬 20%', low: 7.3, high: 9.3, spread: 2.0, needs: '收集期間各 15 分鐘的流量曲線' }
+    ];
+    const s = items[this.state.sel];
+    return {
+      selName: s.name, selNeeds: s.needs,
+      items: items.map((it, i) => ({
+        ...it,
+        spread: it.spread.toFixed(1),
+        left: ((it.low / 15) * 100).toFixed(1),
+        width: (((it.high - it.low) / 15) * 100).toFixed(1),
+        bg: i === this.state.sel ? '#14B8E2' : '#8FD6E4',
+        cls: i === this.state.sel ? 'on' : '', on: i === this.state.sel ? 'true' : 'false',
+        aria: it.name + '：' + it.low + '% 到 ' + it.high + '%',
+        pick: () => this.setState({ sel: i })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

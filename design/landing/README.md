@@ -1,5 +1,7 @@
 # 首頁改稿（依視覺提案第一張）
 
+> **10/23：主視覺確定換成 3D 瑞士捲（[`swiss-roll-proposal.webp`](swiss-roll-proposal.webp)，見 [`../BRAND.md`](../BRAND.md#視覺方向1023-確定3d-瑞士捲)）。** 只換插畫；配色、字標、文字、按鈕、預覽卡都沿用這版。
+
 視覺提案第一張（3D 玩具車、可愛風）的修改版。`index.html` 直接用瀏覽器打開就能看，不需要畫布的執行環境；`preview.png` 是 390×844（iPhone 14）的第一屏截圖。
 
 卡片上的數字取自 [`data/mock/t4-morning.json`](../../data/mock/t4-morning.json)：堤頂大道北向、08:30 前要到公司的建議。**全部是模擬資料。**

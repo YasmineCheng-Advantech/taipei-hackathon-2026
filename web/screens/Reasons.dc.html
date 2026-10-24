@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>為什麼沒辦法錯峰</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.chip{appearance:none;border:0;border-radius:16px;background:#DEDCDA;color:#3F3935;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;cursor:pointer;box-shadow:inset 0 -2px 0 rgba(0,0,0,.05)}
+.chip.on{background:linear-gradient(180deg,#F6AC72 0%,#F08A4F 42%,#E2582A 100%);color:#FFFFFF;box-shadow:inset 0 3px 0 rgba(255,255,255,.35),inset 0 0 0 2px rgba(255,214,170,.75)}
+.box{width:24px;height:24px;border-radius:7px;box-sizing:border-box;border:2px solid #4A4440;background:#FFFFFF;flex:none;display:grid;place-items:center;color:transparent}
+.chip.on .box{border:2px solid #FFFFFF;background:#FFFFFF;color:#E2582A}
+.consent{appearance:none;border:0;width:100%;text-align:left;cursor:pointer;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;color:#0B3A4A;background:#EAF8FB;border-radius:20px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;box-shadow:inset 0 0 0 2px #BFE6EE}
+.consent.on{background:#D6F3F8;box-shadow:inset 0 0 0 2px #14B8E2}
+.consent .box{border-color:#0E6F84;margin-top:2px}
+.consent.on .box{background:#0E6F84;border-color:#0E6F84;color:#FFFFFF}
+.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 22px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.16em;text-decoration:none}
+.cta:hover{color:#0B3A4A;filter:brightness(1.04)}
+.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
+.tab.on{color:#C8481F;font-weight:500}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(60% 160px at 50% 800px, rgba(240,130,60,.42), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF7F1 120px, #FBE6D6 380px, #F7D3B8 700px, #FFF8F3 960px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 30px">
+    <p style="margin: 0; font-size: 14px; letter-spacing: 0.14em; color: #8A3A18">第 2 步，共 2 步</p>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
+      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    </a>
+  </div>
+  <div style="padding: 10px 16px 0; display: flex; flex-direction: column; gap: 10px">
+    <h1 style="margin: 0 0 0 14px; font-size: 20px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">有什麼讓你沒辦法錯峰嗎</h1>
+    <p style="margin: 0 0 2px 14px; font-size: 14px; line-height: 1.6; letter-spacing: 0.06em; color: #6B4A3A">可以複選，也可以跳過。</p>
+    <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+      <sc-for list="{{items}}" as="c" hint-placeholder-count="5">
+        <button type="button" class="chip {{c.cls}}" aria-pressed="{{c.on}}" onClick="{{c.toggle}}" style="min-height: 52px; padding: 8px 16px; display: flex; align-items: center; gap: 14px; text-align: left; font-size: 16px; font-weight: 500; letter-spacing: 0.08em; line-height: 1.45">
+          <span class="box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg></span>
+          <span>{{c.label}}</span>
+        </button>
+      </sc-for>
+    </div>
+
+    <button type="button" class="consent {{consentCls}}" aria-pressed="{{consentOn}}" onClick="{{toggleConsent}}">
+      <span class="box" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 7.5l3 3 6-7"></path></svg></span>
+      <span style="display: flex; flex-direction: column; gap: 4px">
+        <b style="font-size: 16px; letter-spacing: 0.06em">匿名提供我的通勤資料</b>
+        <span style="font-size: 13px; line-height: 1.6">彙總後，作為和市府、企業協商的數據依據。不勾也能拿到建議。</span>
+      </span>
+    </button>
+    <div style="margin: 0 6px; padding: 12px 14px; border-radius: 18px; background: rgba(255,255,255,.7); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; font-size: 12.5px; line-height: 1.6">
+      <b style="color: #0E6F84">會送出</b><b style="color: #8A3A18">不會送出</b>
+      <span>常經過的入口</span><span>姓名、電話、帳號</span>
+      <span>最晚到、時間彈性</span><span>GPS 位置、住址</span>
+      <span>上面勾的原因、日期</span><span>任何可以認出你的東西</span>
+    </div>
+  </div>
+  <div class="cta-bar sticky"><a class="cta" href="Loading.dc.html">產生今日推薦</a></div>
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+    <a class="tab on" href="Today.dc.html">今日</a>
+    <a class="tab" href="City.dc.html">數據</a>
+    <a class="tab" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":960}}'>
+class Component extends DCLogic {
+  state = { on: {}, consent: false, ...app.load('Reasons') };
+  save(p) { this.setState(p); app.save('Reasons', { ...this.state, ...p }); }
+  renderVals() {
+    // 「為什麼沒辦法錯峰」的選項來自題目 JSON（decide.setup.constraints），對應 city.actions
+    const list = D.setup.constraints || [];
+    const on = this.state.on;
+    return {
+      items: list.map((c) => ({
+        ...c,
+        cls: on[c.id] ? 'on' : '',
+        on: on[c.id] ? 'true' : 'false',
+        toggle: () => this.save({ on: { ...on, [c.id]: !on[c.id] } })
+      })),
+      consentCls: this.state.consent ? 'on' : '',
+      consentOn: this.state.consent ? 'true' : 'false',
+      toggleConsent: () => this.save({ consent: !this.state.consent })
+    };
+  }
+}
+</script>
+</body>
+</html>
