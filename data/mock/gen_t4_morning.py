@@ -253,16 +253,20 @@ n_obs = sum(e["kind"] == "observed" for e in ENTRANCES)
 # 尖峰集中時段：有資料的入口裡，半數以上低於 BAD_SPEED 的時段（第一格到最後一格）；有真實讀數時只算有偵測器的入口
 LIVE = [e["id"] for e in ENTRANCES if (e["kind"] == "observed" if REAL_AT else e["kind"] != "gap")]
 JAM_T = [t for t in range(len(HEAT_COLS)) if sum(SPEED[(r, t)] < BAD_SPEED for r in LIVE) * 2 >= len(LIVE)]
+# 有真實讀數時這三個數字都是從真實格子算出來的（worst-cell 上面已限定只從 REAL_AT 挑，
+# peak-window 的 LIVE 也只取有偵測器的入口），不能沿用 tag() 的 sim 預設值 True：
+# 標成模擬會和 coverage 的 label「observed」自相矛盾，也會讓儀表板低估有多少真實資料。
+KSIM = not REAL_AT
 kpis = [
-    tag("computed", id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
+    tag("computed", sim=KSIM, id="worst-cell", title="最塞的一格", value=worst_speed, unit="km/h",
         note=(f"{EBY[wrow]['name']} {HEAT_TIMES[wt]}，平均車速最低；{BAD[(wrow, wt)][1]} 天裡有 "
               f"{BAD[(wrow, wt)][0]} 天低於 {BAD_SPEED} km/h"),
         ref={"row": wrow, "col": HEAT_COLS[wt]["id"]}),
-    tag("computed", id="peak-window", title="尖峰集中時段",
+    tag("computed", sim=KSIM, id="peak-window", title="尖峰集中時段",
         value=f"{HEAT_TIMES[JAM_T[0]]}–{HEAT_TIMES[JAM_T[-1]]}" if JAM_T else "無",
         note=(f"半數以上入口低於 {BAD_SPEED} km/h" if JAM_T else f"沒有一個時段半數以上入口低於 {BAD_SPEED} km/h")),
-    tag("observed", id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(ENTRANCES)}", unit="個入口有真實資料",
-        note="其餘為模擬或缺口，格子另有標示"),
+    tag("observed", sim=KSIM, id="coverage", title="偵測器覆蓋", value=f"{n_obs} / {len(ENTRANCES)}",
+        unit="個入口有真實資料", note="其餘為模擬或缺口，格子另有標示"),
 ]
 
 # ---------- 幫你決定：每個 入口 × 最晚到達 一份 ----------

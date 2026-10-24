@@ -1677,7 +1677,7 @@
         "col": "t0700"
       },
       "label": "computed",
-      "sim": true
+      "sim": false
     },
     {
       "id": "peak-window",
@@ -1685,7 +1685,7 @@
       "value": "無",
       "note": "沒有一個時段半數以上入口低於 20 km/h",
       "label": "computed",
-      "sim": true
+      "sim": false
     },
     {
       "id": "coverage",
@@ -1694,7 +1694,7 @@
       "unit": "個入口有真實資料",
       "note": "其餘為模擬或缺口，格子另有標示",
       "label": "observed",
-      "sim": true
+      "sim": false
     }
   ],
   "decide": {
