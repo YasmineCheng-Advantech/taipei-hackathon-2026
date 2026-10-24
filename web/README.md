@@ -52,7 +52,7 @@ build 時 ─→ 題目 JSON 內嵌 ─→ window.__TOPICS__ ─→ D.*  ─→ 
 **界線（CLAUDE.md 的即時層條款）：即時只回答「現在多塞」，不參與推薦、不進排隊模型、不改任何結論數字。**
 即時取不到時，只有即時那一列顯示「暫時取不到即時資料」，其他畫面照常 —— 所以離線也能跑完 Demo。
 
-用到即時資料的畫面：`Today`、`Heatmap`、`EntryMap`、`Ranking`、`City`。（首頁 `Main` 照設計稿是純主視覺，不放即時列。）
+用到即時資料的畫面：`Today`、`Heatmap`、`EntryMap`、`Ranking`。（首頁 `Main` 照設計稿是純主視覺，不放即時列。）
 它們在 class 上宣告 `usesLive = true`，即時資料更新時執行層會自動重畫。
 
 ### 即時車速的算法
