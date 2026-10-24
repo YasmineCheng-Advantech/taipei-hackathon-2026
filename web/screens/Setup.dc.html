@@ -20,17 +20,20 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
 .chip.on .radio i{background:#FFFFFF}
 .wheel-row{appearance:none;border:0;background:transparent;width:100%;height:42px;display:grid;grid-template-columns:2fr 1.1fr 0.3fr 1.1fr;align-items:center;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-size:21px;letter-spacing:.1em;color:#C8481F;cursor:pointer;font-variant-numeric:tabular-nums}
 .wheel-row.on{background:linear-gradient(180deg,#F6A46C 0%,#EE7A40 55%,#E2582A 100%);color:#FFFFFF;border-radius:14px;font-weight:700;box-shadow:inset 0 3px 0 rgba(255,255,255,.3)}
-.cta{display:flex;align-items:center;justify-content:center;height:62px;border-radius:999px;background:linear-gradient(180deg,#6BEBFA 0%,#2AD4F0 42%,#14B8E2 100%);box-shadow:inset 0 7px 0 rgba(255,255,255,.32),0 7px 0 #1C8DB3,0 18px 28px rgba(20,140,180,.25);color:#0B3A4A;font:900 22px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.16em;text-decoration:none}
+.cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
+.cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
 .cta:hover{color:#0B3A4A;filter:brightness(1.04)}
-.tab{display:flex;align-items:center;justify-content:center;padding-bottom:8px;font-size:19px;letter-spacing:.12em;color:#4A4440;text-decoration:none}
-.tab.on{color:#C8481F;font-weight:500}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
 </style>
 </helmet>
-<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(60% 160px at 50% 700px, rgba(240,130,60,.42), rgba(240,130,60,0) 70%), linear-gradient(180deg, #FFFFFF 0px, #FFF7F1 120px, #FBE6D6 380px, #F7D3B8 620px, #FFF8F3 844px)">
+<div class="screen has-tabs" style="position: relative; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #3A2418; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
   <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px 0 30px">
     <p style="margin: 0; font-size: 14px; letter-spacing: 0.14em; color: #8A3A18">第 1 步，共 2 步</p>
-    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #D2532A">
-      <svg width="30" height="24" viewBox="0 0 30 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M2 2h26M2 12h26M2 22h26"></path></svg>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
     </a>
   </div>
   <div style="padding: 4px 16px 0; display: flex; flex-direction: column; gap: 10px">
@@ -62,9 +65,8 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
     </div>
   </div>
   <div class="cta-bar sticky"><a class="cta" href="Reasons.dc.html">下一步</a></div>
-  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 66px; background: #FFFFFF; box-shadow: 0 -1px 0 #F1E4DA; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
     <a class="tab on" href="Today.dc.html">今日</a>
-    <a class="tab" href="City.dc.html">數據</a>
     <a class="tab" href="Settings.dc.html">設定</a>
   </nav>
 </div>
