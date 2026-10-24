@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>我們還沒開發到這裡</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+@keyframes wobble{0%,100%{transform:rotate(0)}20%{transform:rotate(-1.2deg)}40%{transform:rotate(1deg)}60%{transform:rotate(-.6deg)}}
+.wob{animation:wobble 3.2s ease-in-out infinite;transform-origin:50% 90%}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
+@media (prefers-reduced-motion: reduce){.wob{animation:none}}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; display: flex; flex-direction: column; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+  <div style="display: flex; align-items: center; justify-content: space-between; padding: 21px 15px 0 22px">
+    <a href="#back" aria-label="回上一頁" style="flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: #F07848">
+      <span style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 10px rgba(0,0,0,.08); display: grid; place-items: center">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5L4.5 7 9 11.5"></path></svg>
+      </span>
+    </a>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="flex: none; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
+    </a>
+  </div>
+
+  <div style="margin-top: 160px; display: flex; flex-direction: column; align-items: center">
+    <div style="position: relative; width: 255px; height: 155px">
+      <img class="wob" src="/_blob/5bb1d7f2bcf502d5c92b20f08ebe9b21" alt="打開引擎蓋冒煙、旁邊放著三角警示牌的紅色小汽車" style="display: block; width: 255px; height: 155px">
+    </div>
+    <div aria-hidden="true" style="width: 230px; height: 26px; margin-top: -8px; border-radius: 50%; background: radial-gradient(closest-side, rgba(150,70,20,.45), rgba(150,70,20,0))"></div>
+    <p style="margin: 40px 0 0; text-align: center; font-size: 17px; font-weight: 700; line-height: 32px; letter-spacing: 0.14em; color: #4E1408">我們還沒開發到這裡<br>一起幫工程師們加加油&gt;&lt;</p>
+  </div>
+
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab on" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

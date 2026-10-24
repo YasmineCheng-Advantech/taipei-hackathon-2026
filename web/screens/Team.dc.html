@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>開發團隊</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0}
+a{color:#0E6F84}a:hover{color:#0B3A4A}
+.av{width:52px;height:52px;border-radius:50%;background:#FFFFFF;box-shadow:0 6px 16px rgba(170,80,30,.16);display:grid;place-items:center;flex:none;overflow:hidden}
+.tab{display:flex;align-items:center;justify-content:center;font-size:15px;letter-spacing:.1em;color:#4F4F4F;text-decoration:none}
+.tab+.tab{box-shadow:inset 1px 0 0 #ECE7E3}
+.tab.on{color:#F07848}
+.tab:hover{color:#F07848}
+</style>
+</helmet>
+<div class="screen has-tabs" style="position: relative; display: flex; flex-direction: column; font-family: 'Noto Sans TC','PingFang TC','Microsoft JhengHei', system-ui, sans-serif; color: #4A4846; background: radial-gradient(190px 120px at 50% 672px, rgba(239,137,62,.95) 0%, rgba(239,137,62,.5) 45%, rgba(239,137,62,0) 100%), radial-gradient(240px 300px at 50% 560px, rgba(244,165,105,.5), rgba(244,165,105,0) 100%), linear-gradient(180deg, #FFFFFF 0px, #FFFFFF 50px, #FEF9F5 150px, #FFF4EE 200px, #FBE8D9 300px, #FADCC4 400px, #F8D5B9 450px, #F8CFB1 500px, #F8CDAB 550px, #F9CEAE 600px, #F9D6BA 650px, #FCE3CF 700px, #FEF5EE 750px, #FFFFFF 800px)">
+  <div style="display: flex; align-items: center; gap: 8px; padding: 21px 15px 0 22px">
+    <a href="Settings.dc.html" aria-label="回設定" style="flex: none; width: 44px; height: 44px; display: grid; place-items: center; color: #F07848">
+      <span style="width: 34px; height: 34px; border-radius: 50%; background: #FFFFFF; box-shadow: 0 3px 10px rgba(0,0,0,.08); display: grid; place-items: center">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 2.5L4.5 7 9 11.5"></path></svg>
+      </span>
+    </a>
+    <h1 style="flex: 1 1 auto; margin: 0; font-size: 23px; font-weight: 900; line-height: 34px; letter-spacing: 0.14em; color: #4E1408">開發團隊</h1>
+    <a href="Menu.dc.html" aria-label="開啟選單" style="flex: none; width: 48px; height: 48px; display: grid; place-items: center; color: #F07848">
+      <svg width="26" height="24" viewBox="0 0 26 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M2 2h22M2 12h22M2 22h22"></path></svg>
+    </a>
+  </div>
+
+  <ul style="margin: 110px 0 0; padding: 0 0 0 111px; list-style: none; display: flex; flex-direction: column; gap: 37px">
+    <sc-for list="{{people}}" as="p" hint-placeholder-count="3">
+      <li style="display: flex; align-items: center; gap: 14px; min-height: 52px">
+        <span class="av" aria-hidden="true">
+          <svg width="52" height="52" viewBox="0 0 52 52">
+            <defs><linearGradient id="{{p.gid}}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{{p.c1}}"></stop><stop offset="1" stop-color="{{p.c2}}"></stop></linearGradient></defs>
+            <circle cx="26" cy="21" r="8" fill="url(#{{p.gid}})"></circle>
+            <path d="M11 49c0-9 6.7-15.5 15-15.5S41 40 41 49z" fill="url(#{{p.gid}})"></path>
+          </svg>
+        </span>
+        <span style="display: flex; flex-direction: column; gap: 2px">
+          <b style="font-size: 15px; font-weight: 700; line-height: 21px; letter-spacing: 0.06em; color: #4E1408">{{p.role}}</b>
+          <span style="font-size: 16px; line-height: 22px; letter-spacing: 0.05em; color: #4E1408">{{p.name}}</span>
+        </span>
+      </li>
+    </sc-for>
+  </ul>
+
+  <nav aria-label="主要分頁" style="position: absolute; left: 0; right: 0; bottom: 0; height: 62px; background: #FFFFFF; box-shadow: 0 -1px 0 #ECE7E3, 0 -6px 16px rgba(120,60,20,.04); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr))">
+    <a class="tab" href="Today.dc.html">今日</a>
+    <a class="tab on" href="Settings.dc.html">設定</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    // 三位的名字與角色是作品資訊，不是題目資料，所以留在這裡而不是題目 JSON
+    return {
+      people: [
+        { gid: 'av-o', role: 'Engineer', name: 'Yasmine Cheng', c1: '#F6A86A', c2: '#EE5F2E' },
+        { gid: 'av-b', role: '吉祥物', name: 'Potter Yang', c1: '#2FD6F6', c2: '#1E8FB8' },
+        { gid: 'av-p', role: 'UI/UX', name: 'Coi Chang', c1: '#F7A5AE', c2: '#E8566A' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
