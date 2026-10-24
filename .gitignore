@@ -20,3 +20,26 @@ dist/
 # 作業系統與編輯器
 .DS_Store
 *.log
+
+# 團隊內部工作檔：留在每個人的電腦上，不進公開 repo
+# （repo 是公開的，訪客只需要看到作品本身、資料與來源）
+CLAUDE.md
+ROLES.md
+HANDOVER.md
+PRODUCT.md
+SCREENS.md
+design/
+docs/proposal.md
+docs/constraints-plan.md
+docs/handoff-*.md
+docs/phone-distraction/
+docs/topics/
+docs/vd-explore/
+data/SOP.md
+data/DRILL.md
+data/LOCAL.md
+data/FIELDS.md
+data/RISK_CORPUS.md
+data/TASKS.md
+.claude/
+.githooks/
