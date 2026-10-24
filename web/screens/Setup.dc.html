@@ -18,14 +18,18 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
 .chip.on .radio{border:3px solid #FFFFFF;background:transparent}
 .radio i{width:12px;height:12px;border-radius:50%;background:transparent}
 .chip.on .radio i{background:#FFFFFF}
-/* 最晚到達是真的滾輪：外層卡片畫固定的橘色選取條，內層捲動容器用 scroll-snap 對齊 */
+/* 最晚到達是三個獨立滾輪（上午下午／時／分）。每一欄各自捲動，
+   卡片中間畫一條固定的橘色選取條，列在底下捲過去。每一欄只列出「配得出有資料的時段」的值，
+   所以不管怎麼捲，選出來的一定是 decide.setup.deadlines 裡真的有 plan 的時間。 */
 .wheel-card{position:relative;background:#FFFFFF;border-radius:26px;box-shadow:0 12px 32px rgba(214,100,40,.13);padding:6px 12px}
 .wheel-sel{position:absolute;left:12px;right:12px;top:34px;height:28px;border-radius:12px;background:linear-gradient(180deg,#F6A46C 0%,#EE7A40 55%,#E2582A 100%);box-shadow:inset 0 3px 0 rgba(255,255,255,.3);pointer-events:none}
-.wheel{position:relative;z-index:1;height:84px;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.wheels{position:relative;z-index:1;display:grid;grid-template-columns:2fr 0.9fr 0.3fr 0.9fr 0.9fr;align-items:center}
+.wheel{height:84px;overflow-y:auto;scroll-snap-type:y mandatory;overscroll-behavior:contain;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .wheel::-webkit-scrollbar{display:none}
 .wheel-pad{height:28px}
-.wheel-row{appearance:none;border:0;background:transparent;width:100%;height:28px;scroll-snap-align:center;display:grid;grid-template-columns:2fr 0.9fr 0.3fr 0.9fr 0.9fr;align-items:center;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-size:18px;letter-spacing:.1em;color:#EE9A6E;cursor:pointer;font-variant-numeric:tabular-nums}
+.wheel-row{appearance:none;border:0;background:transparent;width:100%;height:28px;padding:0;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;font-family:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;font-size:18px;letter-spacing:.1em;color:#EE9A6E;cursor:pointer;font-variant-numeric:tabular-nums}
 .wheel-row.on{color:#FFFFFF;font-weight:700}
+.wheel-colon{text-align:center;font-size:18px;font-weight:700;color:#FFFFFF;letter-spacing:.1em}
 .cta{position:relative;height:58px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:linear-gradient(180deg,#56E3FA 0%,#2BD5F6 50%,#1CC3EC 100%);box-shadow:0 6px 0 #2C8FB2,0 14px 24px rgba(20,140,180,.22);color:#1E4A5E;font:900 19px/1 'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;letter-spacing:.13em;text-decoration:none;overflow:hidden}
 .cta::before{content:'';position:absolute;left:12px;right:12px;top:5px;height:22px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,.14));pointer-events:none}
 .cta:hover{color:#0B3A4A;filter:brightness(1.04)}
@@ -52,15 +56,32 @@ a{color:#0E6F84}a:hover{color:#0B3A4A}
     <h2 style="margin: 8px 0 0 14px; font-size: 18px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">最晚幾點要到公司</h2>
     <div class="wheel-card">
       <div class="wheel-sel" aria-hidden="true"></div>
-      <div class="wheel" id="dl-wheel">
-        <div class="wheel-pad" aria-hidden="true"></div>
-        <sc-for list="{{wheel}}" as="w" hint-placeholder-count="4">
-          <button type="button" class="wheel-row {{w.cls}}" aria-label="{{w.aria}}" aria-pressed="{{w.on}}" onClick="{{w.pick}}">
-            <span>{{w.ampm}}</span><span style="text-align: center">{{w.h}}</span><span style="text-align: center">{{w.colon}}</span><span style="text-align: center">{{w.m}}</span><span></span>
-          </button>
-        </sc-for>
-        <div class="wheel-pad" aria-hidden="true"></div>
+      <div class="wheels">
+        <div class="wheel" id="w-ap" role="listbox" aria-label="上午或下午">
+          <div class="wheel-pad" aria-hidden="true"></div>
+          <sc-for list="{{apCol}}" as="o" hint-placeholder-count="2">
+            <button type="button" class="wheel-row {{o.cls}}" role="option" aria-selected="{{o.on}}" onClick="{{o.pick}}">{{o.text}}</button>
+          </sc-for>
+          <div class="wheel-pad" aria-hidden="true"></div>
+        </div>
+        <div class="wheel" id="w-h" role="listbox" aria-label="幾點">
+          <div class="wheel-pad" aria-hidden="true"></div>
+          <sc-for list="{{hCol}}" as="o" hint-placeholder-count="3">
+            <button type="button" class="wheel-row {{o.cls}}" role="option" aria-selected="{{o.on}}" onClick="{{o.pick}}">{{o.text}}</button>
+          </sc-for>
+          <div class="wheel-pad" aria-hidden="true"></div>
+        </div>
+        <span class="wheel-colon" aria-hidden="true">:</span>
+        <div class="wheel" id="w-m" role="listbox" aria-label="幾分">
+          <div class="wheel-pad" aria-hidden="true"></div>
+          <sc-for list="{{mCol}}" as="o" hint-placeholder-count="2">
+            <button type="button" class="wheel-row {{o.cls}}" role="option" aria-selected="{{o.on}}" onClick="{{o.pick}}">{{o.text}}</button>
+          </sc-for>
+          <div class="wheel-pad" aria-hidden="true"></div>
+        </div>
+        <span></span>
       </div>
+      <p class="sr-only" aria-live="polite" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">{{dlAria}}</p>
     </div>
     <h2 style="margin: 8px 0 0 14px; font-size: 18px; font-weight: 500; letter-spacing: 0.14em; color: #3A2A22">你的時間有多少彈性</h2>
     <div style="background: #FFFFFF; border-radius: 26px; box-shadow: 0 12px 32px rgba(214,100,40,.13); padding: 12px 18px; display: flex; flex-direction: column; gap: 8px">
@@ -93,31 +114,66 @@ class Component extends DCLogic {
   };
   save(p) { this.setState(p); app.save('Setup', { ...this.state, ...p }); }
 
-  // 最晚到達是滾輪：捲動停下來後取對齊中間的那一列。每列 28px，上下各墊一列讓頭尾也能置中。
+  // ---- 最晚到達：三個獨立滾輪 ----
+  // 每一欄的內容都從 decide.setup.deadlines 推出來（分的選項跟著「上午下午＋時」走），
+  // 所以三欄各自怎麼捲，合起來一定是有 plan 的時間，不會選到沒有資料的分鐘。
   ROW = 28;
-  // 自動檢查是在 Node 裡跑的，沒有真的 DOM；取不到就當作沒有滾輪，邏輯照樣要能跑
-  wheelEl() { return typeof document === 'object' && document.getElementById ? document.getElementById('dl-wheel') : null; }
-  componentDidMount() {
-    const sc = this.wheelEl();
-    if (!sc) return;
-    const n = (D.setup.deadlines || []).length;
-    if (!n) return;
-    requestAnimationFrame(() => { sc.scrollTop = this.state.dl * this.ROW; });
-    let t = null;
-    sc.addEventListener('scroll', () => {
-      clearTimeout(t);
-      t = setTimeout(() => {
-        const i = Math.max(0, Math.min(n - 1, Math.round(sc.scrollTop / this.ROW)));
-        if (i !== this.state.dl) this.save({ dl: i });
-      }, 90);
-    }, { passive: true });
+  WHEELS = ['w-ap', 'w-h', 'w-m'];
+  el(id) { return typeof document === 'object' && document.getElementById ? document.getElementById(id) : null; }
+  // 自動檢查是在 Node 裡跑的，沒有 DOM 也沒有 rAF
+  next(fn) { if (typeof requestAnimationFrame === 'function') requestAnimationFrame(fn); }
+
+  /** deadlines 拆成 { i, hh, mm, ap }，ap 是「上午」或「下午」 */
+  slots() {
+    return (D.setup.deadlines || []).map((t, i) => {
+      const [hh, mm] = t.split(':').map(Number);
+      return { i, t, hh, mm, ap: hh < 12 ? '上午' : '下午', mins: hh * 60 + mm };
+    });
   }
 
-  // 直接點某一列時也捲過去，兩種操作結果一樣
-  pickDl(i) {
-    const sc = this.wheelEl();
-    if (sc) sc.scrollTo({ top: i * this.ROW, behavior: 'smooth' });
-    this.save({ dl: i });
+  /** 在候選裡挑時間最接近現在這個的；候選是空的就不動 */
+  nearest(cands, mins) {
+    if (!cands.length) return null;
+    return cands.reduce((a, b) => (Math.abs(b.mins - mins) < Math.abs(a.mins - mins) ? b : a));
+  }
+
+  /** 捲完某一欄之後，把其他欄捲到對的位置（正在被拖的那一欄不要動它） */
+  syncWheels(skip) {
+    const idx = this.idx || {};
+    this.WHEELS.forEach((id) => {
+      if (id === skip) return;
+      const el = this.el(id);
+      if (!el) return;
+      const want = (idx[id] || 0) * this.ROW;
+      if (Math.abs(el.scrollTop - want) > 1) el.scrollTop = want;
+    });
+  }
+
+  componentDidMount() {
+    if (!this.el('w-ap')) return;
+    this.next(() => this.syncWheels(null));
+    this.WHEELS.forEach((id) => {
+      const el = this.el(id);
+      if (!el) return;
+      let t = null;
+      el.addEventListener('scroll', () => {
+        clearTimeout(t);
+        t = setTimeout(() => {
+          const list = (this.cols || {})[id] || [];
+          const i = Math.max(0, Math.min(list.length - 1, Math.round(el.scrollTop / this.ROW)));
+          const opt = list[i];
+          if (opt && opt.dl !== this.state.dl) { this.save({ dl: opt.dl }); this.next(() => this.syncWheels(id)); }
+        }, 90);
+      }, { passive: true });
+    });
+  }
+
+  /** 點某一列：捲過去並選起來 */
+  pickDl(id, i, dl) {
+    const el = this.el(id);
+    if (el) el.scrollTo({ top: i * this.ROW, behavior: 'smooth' });
+    this.save({ dl });
+    this.next(() => this.syncWheels(id));
   }
 
   renderVals() {
@@ -125,22 +181,42 @@ class Component extends DCLogic {
     const rows = (D.setup.rows || []).map((id) => ({ id, label: (D.rowById(id) || {}).name || id }));
     const dls = D.setup.deadlines || [];
     const flex = D.setup.flex || [];
-    const wheel = dls.map((t, i) => {
-      const [hh, mm] = t.split(':');
-      const ampm = Number(hh) < 12 ? '上午' : '下午';
-      const h12 = Number(hh) % 12 || 12;
-      const sel = i === S.dl;
-      return {
-        ampm, h: String(h12).padStart(2, '0'), colon: sel ? ':' : '', m: mm,
-        cls: sel ? 'on' : '', on: sel ? 'true' : 'false',
-        aria: ampm + ' ' + t + ' 前到',
-        pick: () => this.pickDl(i)
-      };
-    });
+    // 三個滾輪欄位：上午下午 / 時 / 分
+    const slots = this.slots();
+    const cur = slots[S.dl] || slots[0] || null;
+    // 一欄 = 一組可選值；target(v) 回傳「選了這個值之後要落在哪個 deadline」
+    const col = (id, values, text, target) => {
+      const list = values.map((v) => ({ v, dl: (target(v) || cur).i }));
+      this.cols[id] = list;
+      return list.map((o, n) => ({
+        text: text(o.v),
+        cls: cur && o.dl === cur.i ? 'on' : '',
+        on: cur && o.dl === cur.i ? 'true' : 'false',
+        pick: () => this.pickDl(id, n, o.dl)
+      }));
+    };
+    this.cols = {}; this.idx = {};
+    let apCol = [], hCol = [], mCol = [], dlAria = '尚無可選的時段';
+    if (cur) {
+      const uniq = (xs) => [...new Set(xs)];
+      const aps = uniq(slots.map((x) => x.ap));
+      const hs = uniq(slots.filter((x) => x.ap === cur.ap).map((x) => x.hh));
+      const ms = uniq(slots.filter((x) => x.ap === cur.ap && x.hh === cur.hh).map((x) => x.mm));
+      apCol = col('w-ap', aps, (v) => v, (v) => this.nearest(slots.filter((x) => x.ap === v), cur.mins));
+      hCol = col('w-h', hs, (v) => String(v % 12 || 12).padStart(2, '0'),
+        (v) => this.nearest(slots.filter((x) => x.ap === cur.ap && x.hh === v), cur.mins));
+      mCol = col('w-m', ms, (v) => String(v).padStart(2, '0'),
+        (v) => slots.find((x) => x.ap === cur.ap && x.hh === cur.hh && x.mm === v));
+      this.idx['w-ap'] = Math.max(0, aps.indexOf(cur.ap));
+      this.idx['w-h'] = Math.max(0, hs.indexOf(cur.hh));
+      this.idx['w-m'] = Math.max(0, ms.indexOf(cur.mm));
+      dlAria = cur.ap + ' ' + cur.t + ' 前到';
+    }
+
     const sel = (cur, id, fn) => ({ cls: cur === id ? 'on' : '', on: cur === id ? 'true' : 'false', pick: fn });
     return {
       rows: rows.map((r) => ({ ...r, ...sel(S.row, r.id, () => this.save({ row: r.id })) })),
-      wheel,
+      apCol, hCol, mCol, dlAria,
       flex: flex.map((f) => ({ ...f, ...sel(S.flex, f.id, () => this.save({ flex: f.id })) }))
     };
   }
